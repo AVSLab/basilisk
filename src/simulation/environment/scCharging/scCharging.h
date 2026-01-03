@@ -31,6 +31,7 @@
 #include "architecture/msgPayloadDefC/PlasmaFluxMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 #include "simulation/environment/scCharging/chargedSpaceCraft.h"
+#include "architecture/msgPayloadDefC/ElectronBeamMsgPayload.h"
 #include <vector>
 #include <Eigen/Dense>
 
@@ -79,6 +80,7 @@ private:
 public:
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of spacecraft state input messages
     ReadFunctor<PlasmaFluxMsgPayload> plasmaFluxInMsg;          //!< plasma flux input message
+    std::vector<ReadFunctor<ElectronBeamMsgPayload>> eBeamInMsgs; //!< vector of E_beam parameters
 
     std::vector<Message<VoltMsgPayload>*> voltOutMsgs;          //!< vector of voltage output messages
 

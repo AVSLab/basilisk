@@ -280,6 +280,8 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
     /* add the message reader to the vector of input spacecraft state messages */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
+    ReadFunctor<ElectronBeamMsgPayload> beamMsg;
+    this->eBeamInMsgs.push_back(beamMsg);
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
     this->r_BN_NList.push_back(zero);
