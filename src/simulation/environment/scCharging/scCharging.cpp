@@ -72,6 +72,11 @@ void ScCharging::Reset(uint64_t CurrentSimNanos)
     if (this->numSat < 1) {
         bskLogger.bskLog(BSK_ERROR, "ScCharging must have 1 or more spacecraft added. You added %lu.", this->numSat);
     }
+//    // Check sunlit area messages
+//    for (uint32_t i=0; i < this->numSat; i++) {
+//        if (!this->scSunlitAreaInMsgs[i].isLinked()) {
+//            bskLogger.bskLog(BSK_WARNING, "scSunlitAreaInMsgs[%d] not linked. Using hardcoded defaults.", i);
+//        }
 }
 
 /*! This is the main method that gets called every time the module is updated.  Calculates total current and finds equilibrium potential.
@@ -219,6 +224,8 @@ void ScCharging::addSpacecraft(Message<SCStatesMsgPayload> *tmpScMsg)
 
     ReadFunctor<ElectronBeamMsgPayload> beamMsg;
     this->eBeamInMsgs.push_back(beamMsg);
+//    // Create slot for sunlit area input
+//    this->scSunlitAreaInMsgs.emplace_back();
     Eigen::Vector3d zero;
     zero << 0.0, 0.0, 0.0;
     this->r_BN_NList.push_back(zero);
