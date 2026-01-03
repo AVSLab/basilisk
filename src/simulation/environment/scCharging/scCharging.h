@@ -41,6 +41,7 @@
 #define kTph 2              // ejected electron thermal energy [eV]
 #define Tsee 5              // secondary electron emission temperature [eV]
 #define Tb 5                // backscattering electron temperature [eV]
+#define Teb 20              // electron-beam electron temperature [eV]
 
 /*! @brief This module computes the equilibrium electric potential of any spacecaft that are added to the module
  */

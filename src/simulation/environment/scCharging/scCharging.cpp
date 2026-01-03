@@ -459,7 +459,7 @@ double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string cra
     // find respective craft type's current due to electron beam
     if (craftType == "servicer"){   // servicer current
         if (EEB > (phiS - phiT)){
-            IEBs = IEB;
+            IEBs = IEB * (1-exp(-(EEB-phiS+phiT)/Teb));
         } else if (EEB <= (phiS - phiT)){
             IEBs = 0.;
         } else {
@@ -469,7 +469,7 @@ double ScCharging::electronBeamCurrent(double phiS, double phiT, std::string cra
         return IEBs;
     } else if (craftType == "target"){  // target current
         if (EEB > (phiS - phiT)){
-            IEBt = -alphaEB * IEB;
+            IEBt = -alphaEB * IEB * (1-exp(-(EEB-phiS+phiT)/Teb));
         } else if (EEB <= (phiS - phiT)){
             IEBt = 0.;
         } else {
