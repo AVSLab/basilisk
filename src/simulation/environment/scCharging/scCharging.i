@@ -39,6 +39,8 @@ struct SCStatesMsg_C;
 struct PlasmaFluxMsg_C;
 %include "architecture/msgPayloadDefC/VoltMsgPayload.h"
 struct VoltMsg_C;
+%include "architecture/msgPayloadDefC/ElectronBeamMsgPayload.h"
+struct ElectronBeamMsg_C;
 
 
 
@@ -47,4 +49,3 @@ struct VoltMsg_C;
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-
