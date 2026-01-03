@@ -83,80 +83,26 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     // read the input messages
     this->readMessages();
 
-    // define area and interval
-    double a = 12.566370614359172;
 
     /* Create and populate all instances of chargedSpaceCraft objects */
     std::vector<chargedSpaceCraft> spaceCrafts(this->numSat);
 
-    // define spacecraft member values (user inputs)
-    std::string names[] = {"target", "servicer"}; //!< all craft names
-    std::string electronGunCrafts[] = {"servicer"};   //!< names off all e- gun equipped craft
-    double alphaEB = 1.1;   //!< electron gun variable
-    double currentEB = 4.5; //!< electron gun variable
-    double energyEB = 3.3;  //!< electron gun variable
-    double electronGunParameters[][3] = {{alphaEB, currentEB, energyEB}};
-    int priorities[] = {1, 2};
-    double Avec[] = {a, a*10};
-    double A_sunlitVec[] = {a/2, a};
+    // Servicer must be index 0, Target index 1 for coupling logic
+    std::string names[] = {"servicer", "target"};
 
-    // populate object members
-    for (int w = 0; w < this->numSat; w++) {
-        // assign each object an ID
-        spaceCrafts[w].setID("ID", w);
-
-        // give object members values as defined by user
-        spaceCrafts[w].name = names[w];
-        spaceCrafts[w].priority = priorities[w];
-        spaceCrafts[w].A = Avec[w];
-        spaceCrafts[w].A_sunlit = A_sunlitVec[w];
-
-        // defaults (no gun)
-        spaceCrafts[w].emitsEB               = false;
-        spaceCrafts[w].electronGun.alphaEB   = NAN;
-        spaceCrafts[w].electronGun.currentEB = NAN;
-        spaceCrafts[w].electronGun.energyEB  = NAN;
-
-        // fill EB values if this craft is an EB craft
-        for (int p = 0; p < int(sizeof(electronGunCrafts)/sizeof(electronGunCrafts[0])); ++p) {
-            if (names[w] == electronGunCrafts[p]) {
-                spaceCrafts[w].emitsEB               = true;
-                spaceCrafts[w].electronGun.alphaEB   = electronGunParameters[p][0];
-                spaceCrafts[w].electronGun.currentEB = electronGunParameters[p][1];
-                spaceCrafts[w].electronGun.energyEB  = electronGunParameters[p][2];
-                break;
-            }
+    //Populate SpaceCraft-Beam data from Messages
+    for (int i = 0; i < (int)this->numSat; i++) {
+        spaceCrafts[i].A = 50.264; // Area will come from message
+        spaceCrafts[i].A_sunlit = 25.132; // Sunlit-Area will come from computeSCSunlitFacetArea module
+        if (this->eBeamInMsgs[i].isLinked()) {
+            ElectronBeamMsgPayload beam = this->eBeamInMsgs[i]();
+            spaceCrafts[i].electronGun.currentEB = beam.currentEB;
+            spaceCrafts[i].electronGun.energyEB = beam.energyEB;
+            spaceCrafts[i].electronGun.alphaEB = beam.alphaEB;
+            spaceCrafts[i].emitsEB = true;
         }
-        }
-
-    std::vector<int> orderByPriority(this->numSat);      //!< unsorted array of spacecraft ID's
-    for (int n = 0; n < this->numSat; n++) {
-        orderByPriority[n] = spaceCrafts[n].getID("ID");
-    }
-    // selection sort priority array from highest to lowest priority
-    int minInd;
-    for (int k = 0; k < this->numSat - 1; k++) {
-        minInd = k;     //!< index of lowest valued element
-        for (int m = k + 1; m < this->numSat; m++) {
-            if (spaceCrafts[m].priority > spaceCrafts[minInd].priority) {
-                minInd = m;
-            }
-        }
-        if (minInd != k) {
-            int temp = orderByPriority[minInd];
-            orderByPriority[minInd] = orderByPriority[k];
-            orderByPriority[k] = temp;
-        }
-    }
-    /* Error messages for user inputs (need to move to Reset) */
-    // notifies user there are more craft specified to emit an EB than there are craft
-    if ((sizeof(electronGunCrafts) / sizeof(electronGunCrafts[0])) > this->numSat) {
-        bskLogger.bskLog(BSK_ERROR, "ScCharging.Reset: More craft equipped with electron gun than total craft");
-    }
-    // notifies user that input priority settings are incorrect
-    for (int z = 0; z + 1 < this->numSat; z++) {
-        if ((spaceCrafts[z].priority > spaceCrafts[z + 1].priority) && (!spaceCrafts[z].emitsEB) && (spaceCrafts[z + 1].priority)) {
-            bskLogger.bskLog(BSK_ERROR, "ScCharging.Reset: One or more target crafts designated higher priority than servicer craft");
+        if (!this->eBeamInMsgs[i].isLinked()){
+            spaceCrafts[i].emitsEB = false;
         }
     }
 
