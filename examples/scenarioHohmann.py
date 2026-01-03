@@ -231,8 +231,7 @@ def run(show_plots, rFirst, rSecond):
 
     # Override information with SPICE
     timeInitString = "2021 MAY 04 07:47:48.965 (UTC)"
-    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                     timeInitString,
+    gravFactory.createSpiceInterface(time=timeInitString,
                                      epochInMsg=True)
     gravFactory.spiceObject.zeroBase = 'Earth'
     gravFactory.addBodiesTo(scObject)

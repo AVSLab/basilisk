@@ -134,8 +134,7 @@ def run(show_plots, cmOffset, planetCase, simTime):
         # for gravity acceleration calculations
         venus = gravFactory.createVenus()
         timeInitString = "2012 MAY 1 00:28:30.0"
-        gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
-                                         timeInitString,
+        gravFactory.createSpiceInterface(time=timeInitString,
                                          epochInMsg=True)
 
         scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, -1)

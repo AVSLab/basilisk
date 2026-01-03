@@ -128,29 +128,52 @@ void SpiceInterface::clearKeeper()
 /*! Reset the module to origina configuration values.
 
  */
+/*! Reset the module to original configuration values. */
 void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 {
+    // Allow explicit kernels (full paths) to bypass SPICEDataPath requirement
+    const bool hasExplicitKernels = !this->kernelPaths.empty();
+
     //! - Bail if the SPICEDataPath is not present
-    if(this->SPICEDataPath == "")
+    if (!hasExplicitKernels && this->SPICEDataPath == "")
     {
         bskLogger.bskLog(BSK_ERROR, "SPICE data path was not set.  No SPICE.");
         return;
     }
+
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
-        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
+        if (hasExplicitKernels)
+        {
+            // Load kernels by explicit path list
+            for (const auto& kp : this->kernelPaths)
+            {
+                auto kernel = SpiceKernel::request(std::filesystem::path(kp));
+                if (!kernel->wasLoadSuccesful()) {
+                    bskLogger.bskLog(BSK_ERROR, "Unable to load SPICE kernel: %s", kp.c_str());
+                    continue;
+                }
+                this->loadedKernels[kernel->getPath()] = kernel;
+            }
         }
-        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
+        else
+        {
+            // Load default kernels from SPICEDataPath
+            if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "naif0012.tls");
+            }
+            if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
+                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "pck00010.tpc");
+            }
+            if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
+                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
+            }
+            if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
+                bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
+            }
         }
-        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de-403-masses.tpc");
-        }
-        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            bskLogger.bskLog(BSK_ERROR, "Unable to load %s", "de430.tpc");
-        }
+
         this->SPICELoaded = true;
     }
 
@@ -189,7 +212,6 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
     this->UpdateState(CurrenSimNanos);
 }
-
 
 /*! This method is used to initialize the zero-time that will be used to
  calculate all system time values in the Update method.  It also creates the
@@ -401,6 +423,28 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
     delete [] name;
 
     return;
+}
+
+void SpiceInterface::addKernelPath(const std::string& kernelPath)
+{
+    if (kernelPath.empty()) {
+        bskLogger.bskLog(BSK_WARNING, "spiceInterface: ignoring empty kernel path");
+        return;
+    }
+    this->kernelPaths.push_back(kernelPath);
+}
+
+void SpiceInterface::addKernelPaths(const std::vector<std::string>& kernelPaths)
+{
+    for (const auto& k : kernelPaths) {
+        addKernelPath(k);
+    }
+}
+
+void SpiceInterface::clearKernelPaths()
+{
+    this->kernelPaths.clear();
+    this->configuredLoadedKernelKeys.clear();
 }
 
 

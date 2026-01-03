@@ -18,7 +18,6 @@
 
 import os
 import requests
-import bskLargeData
 
 # define the print color codes
 statusColor = '\033[92m'
@@ -65,10 +64,7 @@ def process_github_folder(api_url, dest_folder):
 def main():
     """
     Script to download all GitHub Basilisk examples into the local folder called ``examples``.
-    This script also downloads the large BSK data files by loading ``bskLargeData.py``.
     """
-    # install the large BSK data files
-    bskLargeData.main()
 
     # Display the task message
     print(f"{statusColor}Task: Downloading BSK examples folder{endColor}")

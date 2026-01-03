@@ -126,5 +126,7 @@ jobs:
         with:
           python-version: 3.13
           conan-args: --opNav True --allOptPkg --mujoco True --mujocoReplay True
+      - name: Pre-fetch supportData
+        run: bskLargeData
       - name: Build docs
         uses: ./.github/actions/docs

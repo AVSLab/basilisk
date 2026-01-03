@@ -41,17 +41,6 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 "*" = ["*.so", "*.dll", "*.lib", "*.pyd", "*.a", "*.dylib"]  # Include all built objects.
-Basilisk = [
-    "supportData/AlbedoData/*",
-    "supportData/AtmosphereData/*",
-    "supportData/DentonGEO/*",
-    "supportData/EphemerisData/*.tpc",
-    "supportData/EphemerisData/*.dat",
-    "supportData/EphemerisData/*.tls",
-    "supportData/EphemerisData/*.tsc",
-    "supportData/LocalGravData/*",
-    "supportData/MagneticField/*"
-]
 
 [tool.setuptools.dynamic]
 version = {file = "docs/source/bskVersion.txt"}

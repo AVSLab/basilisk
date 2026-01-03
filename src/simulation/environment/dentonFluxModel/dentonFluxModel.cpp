@@ -59,10 +59,6 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
     {
         bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.kpIndex was not set.");
     }
-    if (this->dataPath == "")
-    {
-        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel.dataPath was not set.");
-    }
     // Check the desired array size is not larger than the maximum value
     if (this->numOutputEnergies > MAX_PLASMA_FLUX_SIZE)
     {
@@ -119,10 +115,24 @@ void DentonFluxModel::Reset(uint64_t CurrentSimNanos)
         this->inputEnergies[i] = this->inputEnergies[i-1] + step;
     }
 
-    // Read in Denton data files
-    readDentonDataFile(this->eDataFileName, this->mean_e_flux);
-    readDentonDataFile(this->iDataFileName, this->mean_i_flux);
+    if (this->eDataFullPath == "" || this->iDataFullPath == "") {
+        bskLogger.bskLog(BSK_ERROR, "DentonFluxModel: configureDentonFiles() was not called.");
+        return;
+    }
 
+    readDentonDataFile(this->eDataFullPath, this->mean_e_flux);
+    readDentonDataFile(this->iDataFullPath, this->mean_i_flux);
+
+}
+
+/*! Method to configure the Denton data file paths
+    @param eFile electron data file full path
+    @param iFile ion data file full path
+*/
+void DentonFluxModel::configureDentonFiles(const std::string& eFile, const std::string& iFile)
+{
+    this->eDataFullPath = eFile;
+    this->iDataFullPath = iFile;
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
@@ -316,21 +326,13 @@ double DentonFluxModel::bilinear(int x1, int x2, double y1, double y2, double y,
 
 }
 
-/*! Read in the Denton data file
-    @param fileName data file name
-    @param data data array pointer
-
-*/
-void DentonFluxModel::readDentonDataFile(std::string fileName,
+void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
                                          double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
 {
     double temp = 0.0;
 
-    // Input file stream object
-    std::ifstream inputFile;
-
     // Read data from file:
-    inputFile.open(this->dataPath + fileName);
+    std::ifstream inputFile(fullPath);
 
     // Read information into array: Data includes information about mean, standard deviation,
     // median and percentiles (7 types of values in total). Only mean is relevant for this module
@@ -351,7 +353,8 @@ void DentonFluxModel::readDentonDataFile(std::string fileName,
             }
         }
     } else {
-        bskLogger.bskLog(BSK_ERROR, ("Could not open " + this->dataPath + fileName).c_str());
+        bskLogger.bskLog(BSK_ERROR, ("Could not open " + fullPath).c_str());
+        return;
     }
 
     // Close file

@@ -11,6 +11,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- The denton flux model API has changed. The module now uses the new data fetching
+  API and thus relies on users passing in the correct support data location via
+  ``configureDentonFiles``. Previously, the module automatically searched for the
+  data files in the ``supportData`` folder.
 - When building from source on Python 3.13 using SWIG 4.4.0, a build failure may occur
   if ``pyLimitedAPI`` is set to an ABI lower than Python 3.13 (e.g., ``0x03080000``).
   SWIG 4.4.0 introduces a new C-API codepath for Python 3.13 that expects newer

@@ -3,6 +3,7 @@ prune docs
 prune src/tests
 prune **/_UnitTest
 prune **/_Documentation
+prune supportData
 
 global-exclude *.pdf *.png *.jpg *.jpeg *.gif *.JPG *.svg *.psd
 global-exclude *.ipynb *.bib *.tex

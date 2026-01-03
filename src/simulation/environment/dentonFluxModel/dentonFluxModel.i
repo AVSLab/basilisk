@@ -19,6 +19,7 @@
 
 %module dentonFluxModel
 
+%include "std_string.i"
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
@@ -34,7 +35,6 @@
 
 %include "sys_model.i"
 %include "dentonFluxModel.h"
-
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsg_C;
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
