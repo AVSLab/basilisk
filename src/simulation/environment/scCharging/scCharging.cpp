@@ -106,114 +106,95 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
         }
     }
 
-    std::vector<double> equilibriums(this->numSat);  //!< equilibriums for each craft [eV]
-    VoltMsgPayload voltMsgBuffer;  //!< [] voltage out message buffer
+    std::vector<double> equilibriums(this->numSat, 0.0);
+    double bracket[2] = {-400000.0, 400000.0};
 
-    // loop over all satellites
-    for (long unsigned int c = 0; c < this->numSat; c++) {
+    // SOLVE SERVICER POTENTIAL (ID 0)
+    int sID = 0; // use index 0 for servicer
+    std::function<double(double)> sumCurrentsServicer = [&](double phiS) -> double {
+        // Environmental currents (including SEE and Backscatter from plasma)
+        double nonBeamCurrents = electronCurrent(phiS, spaceCrafts[sID].A) +
+                        ionCurrent(phiS, spaceCrafts[sID].A) +
+                        SEEelectronCurrent(phiS, spaceCrafts[sID].A) +
+                        SEEionCurrent(phiS, spaceCrafts[sID].A) +
+                        backscatteringCurrent(phiS, spaceCrafts[sID].A) +
+                        photoelectricCurrent(phiS, spaceCrafts[sID].A_sunlit);
 
-        // index of craft based on priority
-        int ID = orderByPriority[c];
+        // Beam emission current from Servicer
+        double iBeamS = electronBeamCurrent(phiS, 0.0, "servicer",
+                                            spaceCrafts[sID].electronGun.energyEB,
+                                            spaceCrafts[sID].electronGun.currentEB,
+                                            spaceCrafts[sID].electronGun.alphaEB);
 
-        // values required for sumCurrents
-        double A = spaceCrafts[ID].A;
-        double A_sunlit = spaceCrafts[ID].A_sunlit;
+        double totalCurrentS = nonBeamCurrents + iBeamS;
 
-        // function that sums all calculated currents to be fed to bisectionSolve
-        std::function<double(double)> sumCurrents = [&](double phi)-> double
-        {
-            if (spaceCrafts[ID].emitsEB) {
-            return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit);
-            } else if (!spaceCrafts[ID].emitsEB) {
-                return electronCurrent(phi, A) + ionCurrent(phi, A) + SEEelectronCurrent(phi, A) + SEEionCurrent(phi, A) + backscatteringCurrent(phi, A) + photoelectricCurrent(phi, A_sunlit) + SEEelectronBeamCurrent(equilibriums[0], phi, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB) + electronBeamBackscattering(equilibriums[0], phi, spaceCrafts[orderByPriority[0]].electronGun.energyEB, spaceCrafts[orderByPriority[0]].electronGun.currentEB, spaceCrafts[orderByPriority[0]].electronGun.alphaEB);
-            } else {
-                bskLogger.bskLog(BSK_ERROR, "ScCharging.UpdateState: EB emission boolean not specified");
-                return NAN;
-            }
-        };
+        // Print components and TOTAL for Servicer potential calculation
+        std::cout << "  [Servicer Loop] phiS: " << std::setw(10) << phiS
+                  << " | EnvI: " << nonBeamCurrents
+                  << " | BeamI: " << iBeamS
+                  << " | TOTAL: " << totalCurrentS << std::endl;
 
-        // small, physics-sensible grid (negative to positive potentials)
-        static const double grid[] = {
-            -1e4, -3e3, -1e3, -3e2, -1e2, -30, -10, -3, 0, 3, 10, 30, 100, 300, 1e3, 3e3, 1e4, 1e5
-        };
+        return totalCurrentS;
+    };
+    equilibriums[0] = bisectionSolve(bracket, 1e-6, sumCurrentsServicer);
 
-        bool got = false;
-        double left = grid[0], right = grid[1];
-        double fl = sumCurrents(left), fr = sumCurrents(right);
-        for (double v : {-100000, -10000, -1000, -100, -10, 0, 10, 100, 1000, 10000, 100000}) {
-            std::cout << spaceCrafts[ID].name << " I(" << v << ") = " << sumCurrents(v) << "\n";
-        }
+    // SOLVE TARGET POTENTIAL (ID 1)
+    int tID = 1; // use index 1 for target
+    double fixedPhiS = equilibriums[0]; // use the solved servicer potential
 
+    std::function<double(double)> sumCurrentsTarget = [&](double phiT) -> double {
+        // Environmental currents
+        double nonBeamCurrents = electronCurrent(phiT, spaceCrafts[tID].A) +
+                        ionCurrent(phiT, spaceCrafts[tID].A) +
+                        SEEelectronCurrent(phiT, spaceCrafts[tID].A) +
+                        SEEionCurrent(phiT, spaceCrafts[tID].A) +
+                        backscatteringCurrent(phiT, spaceCrafts[tID].A) +
+                        photoelectricCurrent(phiT, spaceCrafts[tID].A_sunlit);
 
-        // scan for a sign change
-        for (size_t i = 0; i + 1 < sizeof(grid)/sizeof(grid[0]); ++i) {
-            left  = grid[i];    fl = sumCurrents(left);
-            right = grid[i+1];  fr = sumCurrents(right);
-            // handle exact zeros immediately
-            if (std::isfinite(fl) && fl == 0.0) {
-                equilibriums[c] = left;
-                std::cout << spaceCrafts[ID].name << " equilibrium (exact bound): " << equilibriums[c] << std::endl;
-                goto wrote_eq;
-            }
-            if (std::isfinite(fr) && fr == 0.0) {
-                equilibriums[c] = right;
-                std::cout << spaceCrafts[ID].name << " equilibrium (exact bound): " << equilibriums[c] << std::endl;
-                goto wrote_eq;
-            }
-            // strictly opposite signs only
-            if (std::isfinite(fl) && std::isfinite(fr) && (fl * fr < 0.0)) { got = true; break; }
-        }
+        // Beam current arriving at target (Negative current)
+        // Note: sID is still 0 here because the beam parameters belong to the Servicer
+        double iBeamT = electronBeamCurrent(fixedPhiS, phiT, "target",
+                                            spaceCrafts[sID].electronGun.energyEB,
+                                            spaceCrafts[sID].electronGun.currentEB,
+                                            spaceCrafts[sID].electronGun.alphaEB);
 
-        // fallback: expand symmetrically if needed
-        if (!got) {
-            left = -1.0; right = 1.0; fl = sumCurrents(left); fr = sumCurrents(right);
-            // quick zero checks
-            if (std::isfinite(fl) && fl == 0.0) { equilibriums[c] = left;  goto wrote_eq; }
-            if (std::isfinite(fr) && fr == 0.0) { equilibriums[c] = right; goto wrote_eq; }
+        // SEE and Backscatter caused by the beam (Positive currents)
+        double iSEE_EB = SEEelectronBeamCurrent(fixedPhiS, phiT,
+                                                spaceCrafts[sID].electronGun.energyEB,
+                                                spaceCrafts[sID].electronGun.currentEB,
+                                                spaceCrafts[sID].electronGun.alphaEB);
 
-            for (int k = 0; k < 22 && (!std::isfinite(fl) || !std::isfinite(fr) || fl*fr >= 0.0); ++k) {
-                left *= 2.0;  right *= 2.0;
-                fl = sumCurrents(left); fr = sumCurrents(right);
-                if (std::isfinite(fl) && fl == 0.0) { equilibriums[c] = left;  goto wrote_eq; }
-                if (std::isfinite(fr) && fr == 0.0) { equilibriums[c] = right; goto wrote_eq; }
-                if (std::isfinite(fl) && std::isfinite(fr) && (fl*fr < 0.0)) { got = true; break; }
-            }
-        }
+        double iBS_EB = electronBeamBackscattering(fixedPhiS, phiT,
+                                                   spaceCrafts[sID].electronGun.energyEB,
+                                                   spaceCrafts[sID].electronGun.currentEB,
+                                                   spaceCrafts[sID].electronGun.alphaEB);
 
-        if (got) {
-            // re-evaluate at chosen endpoints
-            double fa = sumCurrents(left), fb = sumCurrents(right);
+        double totalCurrentT = nonBeamCurrents + iBeamT + iSEE_EB + iBS_EB;
 
-            // accept exact zeros immediately
-            if (std::isfinite(fa) && fa == 0.0) { equilibriums[c] = left;  goto wrote_eq; }
-            if (std::isfinite(fb) && fb == 0.0) { equilibriums[c] = right; goto wrote_eq; }
+        // Print components and TOTAL for Target potential calculation
+        std::cout << "  [Target Loop]   phiT: " << std::setw(10) << phiT
+                  << " | EnvI: " << nonBeamCurrents
+                  << " | BeamArrivalI: " << iBeamT
+                  << " | BeamSEE: " << iSEE_EB
+                  << " | TOTAL: " << totalCurrentT << std::endl;
 
-            // strictly opposite signs only
-            if (!std::isfinite(fa) || !std::isfinite(fb) || fa * fb >= 0.0) {
-                bskLogger.bskLog(BSK_WARNING, "scCharging: invalid bracket at call; using midpoint");
-                equilibriums[c] = 0.5 * (left + right);
-                goto wrote_eq;
-            }
+        return totalCurrentT;
+    };
+    equilibriums[1] = bisectionSolve(bracket, 1e-8, sumCurrentsTarget);
 
-            double interval[2] = {left, right};
-            double Veq = bisectionSolve(interval, 1e-6, sumCurrents);
-            equilibriums[c] = Veq;
-        } else {
-            bskLogger.bskLog(BSK_WARNING, "scCharging: could not bracket root; returning midpoint");
-            equilibriums[c] = 0.5*(left + right);
-        }
+    std::cout << "FINAL Result -> Servicer: " << equilibriums[0] << " V | Target: " << equilibriums[1] << " V" << std::endl;
+    std::cout << "--- DEBUG END ---\n" << std::endl;
 
+    // WRITE MESSAGES
+    for (int i = 0; i < (int)this->numSat; i++) {
+        VoltMsgPayload voltMsgBuffer;
+        voltMsgBuffer.voltage = equilibriums[i];
+        this->voltOutMsgs.at(i)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
 
-        // after the bisection / root finding finishes and equilibriums[c] is set:
-        wrote_eq:
-            std::cout << spaceCrafts[ID].name
-                      << " equilibrium: " << equilibriums[c] << std::endl;
-
-            // Now publish that equilibrium to the message
-            VoltMsgPayload voltMsgBuffer;
-            voltMsgBuffer.voltage = equilibriums[c];
-            this->voltOutMsgs.at(c)->write(&voltMsgBuffer, this->moduleID, CurrentSimNanos);
-
+        /* KEEP THESE FOR MESSAGING SYSTEM LATER */
+        // CurrentMsgPayload peMsg = {};
+        // peMsg.current = photoelectricCurrent(equilibriums[i], spaceCrafts[i].A_sunlit);
+        // this->photoelectricOutMsgs.at(i)->write(&peMsg, this->moduleID, CurrentSimNanos);
     }
 }
 
