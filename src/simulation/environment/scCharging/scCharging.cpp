@@ -83,6 +83,13 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
     // read the input messages
     this->readMessages();
 
+    // Diagnostic check for plasma environment
+    if (this->energies.size() > 0) {
+        std::cout << "\n--- DEBUG START (Time: " << CurrentSimNanos << ") ---" << std::endl;
+        std::cout << "Plasma Energies size: " << this->energies.size() << std::endl;
+        std::cout << "First Energy Level: " << this->energies[0] << " eV" << std::endl;
+        std::cout << "First Electron Flux: " << this->electronFlux[0] << std::endl;
+    }
 
     /* Create and populate all instances of chargedSpaceCraft objects */
     std::vector<chargedSpaceCraft> spaceCrafts(this->numSat);
@@ -100,9 +107,12 @@ void ScCharging::UpdateState(uint64_t CurrentSimNanos)
             spaceCrafts[i].electronGun.energyEB = beam.energyEB;
             spaceCrafts[i].electronGun.alphaEB = beam.alphaEB;
             spaceCrafts[i].emitsEB = true;
+            std::cout << "[DEBUG] SC " << i << " Beam linked. Current: "
+                      << beam.currentEB << " Energy: " << beam.energyEB << std::endl;
         }
         if (!this->eBeamInMsgs[i].isLinked()){
             spaceCrafts[i].emitsEB = false;
+            std::cout << "[DEBUG] SC " << i << " Beam NOT linked." << std::endl;
         }
     }
 
