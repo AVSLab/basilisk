@@ -1,0 +1,38 @@
+.. _Folder_effectorInterfaces:
+
+effectorInterfaces
+==================
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+
+   _GeneralModuleFiles/index
+   dipoleMapping/index
+   errorConversion/index
+   forceTorqueThrForceMapping/index
+   hingedJointArrayMotor/index
+   hingedRigidBodyPIDMotor/index
+   jointMotionCompensator/index
+   prescribedRot2DOF/index
+   rwMotorTorque/index
+   rwMotorVoltage/index
+   rwNullSpace/index
+   solarArrayReference/index
+   thrFiringRemainder/index
+   thrFiringSchmitt/index
+   thrForceMapping/index
+   thrMomentumDumping/index
+   thrustRWDesat/index
+   thrusterPlatformReference/index
+   thrusterPlatformState/index
+   torque2Dipole/index
+   torqueScheduler/index
+   vscmgGimbalRateServo/index
+   vscmgVelocitySteering/index

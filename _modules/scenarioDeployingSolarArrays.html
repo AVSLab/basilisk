@@ -1,0 +1,866 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioDeployingSolarArrays &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioDeployingSolarArrays</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioDeployingSolarArrays</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates the multi-body prescribed motion dynamics capability of the</span>
+<span class="sd">:ref:`prescribedMotionStateEffector` module through an illustrative rotational solar array deployment scenario.</span>
+<span class="sd">The spacecraft in this example consists of a rigid hub and two symmetrical solar arrays. Each array is modeled as a</span>
+<span class="sd">collection of 10 prescribed motion elements. Therefore, 20 instances of the :ref:`prescribedMotionStateEffector` module</span>
+<span class="sd">are required to simulate the array deployments.</span>
+
+<span class="sd">Note that in order to simulate hub-relative prescribed motion, kinematic profiler modules must be connected to the</span>
+<span class="sd">prescribed motion state effector modules. The kinematic profiler modules specify the translational and rotational</span>
+<span class="sd">states of each prescribed sub-component relative to the spacecraft hub and write the sub-component states at each time</span>
+<span class="sd">step to the prescribed motions state effector modules using the Basilisk messaging system. Currently two kinematic</span>
+<span class="sd">profiler modules exist in Basilisk that can be used to simulate prescribed motion. The first</span>
+<span class="sd">:ref:`prescribedLinearTranslation` module prescribes linear translational motion of a prescribed sub-component</span>
+<span class="sd">relative to the hub; while the second :ref:`prescribedRotation1DOF` module prescribes 1 DOF rotational motion relative</span>
+<span class="sd">to the hub.</span>
+
+<span class="sd">The type of deployment simulated in this scenario is a purely 1 DOF rotational solar array deployment; therefore only the</span>
+<span class="sd">:ref:`prescribedRotation1DOF` module is used in this scenario to profile the array element prescribed motion. Note that</span>
+<span class="sd">20 instances of this rotational profiler module are required to profile the array deployments. Also note that because</span>
+<span class="sd">only rotational motion is profiled in this scenario, stand-alone :ref:`PrescribedTranslationMsgPayload` messages</span>
+<span class="sd">are required to be written for each array element and must be connected directly to the element prescribed motion state</span>
+<span class="sd">effector modules. This ensures that both the translational and rotational motion of each array element is defined</span>
+<span class="sd">relative to the hub for the entire simulation.</span>
+
+<span class="sd">In this deployment scenario, the solar array positioned along the +X hub-frame axis fully deploys first, followed</span>
+<span class="sd">by deployment of the second solar array. Further, each array deploys in two stages, meaning that there are four</span>
+<span class="sd">simulation chunks required in this scenario. The 1 DOF rotational kinematic profiler modules prescribe a bang-coast-bang</span>
+<span class="sd">acceleration profile for each array element during both deployment phases. After first initializing all array elements</span>
+<span class="sd">to their stowed configuration, the array elements rotate together in the initial deployment phase downward away from the</span>
+<span class="sd">spacecraft hub. Array 1 rotates 108 degrees about +Y hub-frame axis while array 2 rotates -108 degrees about the</span>
+<span class="sd">+Y hub-frame axis. After the initial deployment phase for each array, the main deployment phase beings where the array</span>
+<span class="sd">elements unfurl simultaneously to their final deployment configurations. Note that each array element is given a</span>
+<span class="sd">different acceleration profile such that all array elements lock into place together at the final time.</span>
+
+<span class="sd">Finally, note that in order to exclusively use the 1 DOF rotational profiler modules to prescribe the array deployments,</span>
+<span class="sd">the translational position of the array elements must be updated at the start of the main deployment phase for each</span>
+<span class="sd">array. The array element frames are shifted outwards to each array&#39;s deployed center of mass location.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioDeployingSolarArrays.py</span>
+
+<span class="sd">The scenario outputs eight plots. The first two plots illustrate the array element angles relative to the</span>
+<span class="sd">hub; while the following two plots illustrate the array element rates relative to the hub. The final plots</span>
+<span class="sd">illustrate the hub&#39;s inertial motion during the array deployment. The hub&#39;s inertial position, attitude,</span>
+<span class="sd">angular velocity, and angular velocity magnitude are given. This scenario also creates a Vizard simulation to</span>
+<span class="sd">visualize the solar array deployment.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The following plots illustrate the solar array deployment scenario simulation results.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_Array1ElementTheta.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_Array2ElementTheta.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_Array1ElementThetaDot.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_Array2ElementThetaDot.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_HubInertialPosition.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_HubInertialMRPAttitude.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_HubInertialAngularVelocity.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDeployingSolarArrays_HubInertialAngularVelocityNorm.svg</span>
+<span class="sd">    :align: center</span>
+
+<span class="sd">Visualization in Vizard</span>
+<span class="sd">-----------------------</span>
+
+<span class="sd">An image captured from the Vizard visualization of this simulation script is shown below. In this image, the arrays</span>
+<span class="sd">are shown in their fully deployed configuration.</span>
+
+<span class="sd">.. image:: /_images/static/scenarioDeployingSolarArrays.jpg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Solar Array Deployment Scenario</span>
+<span class="c1">#   Author:             Leah Kiner</span>
+<span class="c1">#   Creation Date:      March 4, 2024</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedMotionStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedRotation1DOF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioDeployingSolarArrays.html#scenarioDeployingSolarArrays.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenario can be run with the followings set up parameter:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+    <span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">&quot;dynTask&quot;</span>
+    <span class="n">fswTaskName</span> <span class="o">=</span> <span class="s2">&quot;fswTask&quot;</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">dynTimeStep</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">fswTimeStep</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">dataRecStep</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">dynProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dynTimeStep</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">fswProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">fswTimeStep</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">dataRecRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dataRecStep</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">simProc</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">dynProcessRate</span><span class="p">))</span>
+    <span class="n">simProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">fswProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Add the spacecraft module</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Define the mass properties of the rigid spacecraft hub</span>
+    <span class="n">massHub</span> <span class="o">=</span> <span class="mi">800</span>  <span class="c1"># [kg]</span>
+    <span class="n">lengthHub</span> <span class="o">=</span> <span class="mf">4.0</span>  <span class="c1"># [m]</span>
+    <span class="n">widthHub</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [m]</span>
+    <span class="n">depthHub</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [m]</span>
+    <span class="n">IHub_11</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">massHub</span> <span class="o">*</span> <span class="p">(</span><span class="n">lengthHub</span> <span class="o">*</span> <span class="n">lengthHub</span> <span class="o">+</span> <span class="n">depthHub</span> <span class="o">*</span> <span class="n">depthHub</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">IHub_22</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">massHub</span> <span class="o">*</span> <span class="p">(</span><span class="n">lengthHub</span> <span class="o">*</span> <span class="n">lengthHub</span> <span class="o">+</span> <span class="n">widthHub</span> <span class="o">*</span> <span class="n">widthHub</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">IHub_33</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">massHub</span> <span class="o">*</span> <span class="p">(</span><span class="n">widthHub</span> <span class="o">*</span> <span class="n">widthHub</span> <span class="o">+</span> <span class="n">depthHub</span> <span class="o">*</span> <span class="n">depthHub</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">massHub</span>  <span class="c1"># kg</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">IHub_11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">IHub_22</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">IHub_33</span><span class="p">]]</span>  <span class="c1"># [kg m^2] (Hub approximated as rectangular prism)</span>
+
+    <span class="c1"># Set the initial inertial hub states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="c1"># Define the array element configuration properties</span>
+    <span class="c1"># B frame is the hub body frame</span>
+    <span class="c1"># S1 and S2 frames are the solar array body frames</span>
+    <span class="c1"># M1 and M2 frames are the mount frames</span>
+
+    <span class="c1"># Position vector of mount frame with respect to solar array frame in hub frame components</span>
+    <span class="n">r_M1S1_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">r_M2S2_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+
+    <span class="c1"># Position vector of solar array frame origin points with respect to hub frame origin point B</span>
+    <span class="c1"># expressed in B frame components</span>
+    <span class="n">rArray1SB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+    <span class="n">rArray2SB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>   <span class="c1"># [m]</span>
+
+    <span class="c1"># Position vector of mount frame origin points with respect to hub frame origin point B</span>
+    <span class="n">r_M1B_B</span> <span class="o">=</span> <span class="n">r_M1S1_B</span> <span class="o">+</span> <span class="n">rArray1SB_B</span>  <span class="c1"># [m]</span>
+    <span class="n">r_M2B_B</span> <span class="o">=</span> <span class="n">r_M2S2_B</span> <span class="o">+</span> <span class="n">rArray2SB_B</span>  <span class="c1"># [m]</span>
+
+    <span class="c1"># Array element geometric parameters</span>
+    <span class="n">num_elements</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">mass_element</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">rot_hat_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># Array articulation axis in mount frame components</span>
+    <span class="n">radius_array</span> <span class="o">=</span> <span class="mf">4.0</span>  <span class="c1"># [m]</span>
+    <span class="n">length_element</span> <span class="o">=</span> <span class="n">radius_array</span>  <span class="c1"># [m]</span>
+    <span class="n">width_element</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">thickness_element</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [m]</span>
+    <span class="n">I_element_11</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_element</span> <span class="o">*</span> <span class="p">(</span><span class="n">length_element</span> <span class="o">*</span> <span class="n">length_element</span>
+                                            <span class="o">+</span> <span class="n">thickness_element</span> <span class="o">*</span> <span class="n">thickness_element</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">I_element_22</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_element</span> <span class="o">*</span> <span class="p">(</span><span class="n">length_element</span> <span class="o">*</span> <span class="n">length_element</span>
+                                            <span class="o">+</span> <span class="n">width_element</span> <span class="o">*</span> <span class="n">width_element</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">I_element_33</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">mass_element</span> <span class="o">*</span> <span class="p">(</span><span class="n">width_element</span> <span class="o">*</span> <span class="n">width_element</span>
+                                            <span class="o">+</span> <span class="n">thickness_element</span> <span class="o">*</span> <span class="n">thickness_element</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">IElement_PntPc_P</span> <span class="o">=</span> <span class="p">[[</span><span class="n">I_element_11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">I_element_22</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">I_element_33</span><span class="p">]]</span>  <span class="c1"># [kg m^2] (Elements approximated as rectangular prisms)</span>
+
+    <span class="c1"># Deployment temporal information</span>
+    <span class="n">ramp_duration</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [s]</span>
+    <span class="n">init_deploy_duration</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="mf">60.0</span>  <span class="c1"># [s]</span>
+    <span class="n">main_deploy_duration</span> <span class="o">=</span> <span class="mf">30.0</span> <span class="o">*</span> <span class="mf">60.0</span>  <span class="c1"># [s]</span>
+    <span class="n">init_coast_duration</span> <span class="o">=</span> <span class="n">init_deploy_duration</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ramp_duration</span>
+    <span class="n">main_coast_duration</span> <span class="o">=</span> <span class="n">main_deploy_duration</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ramp_duration</span>
+
+    <span class="c1"># Rotation 1 initial parameters</span>
+    <span class="n">array1ThetaInit1</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">array2ThetaInit1</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">prv_PM1Init1</span> <span class="o">=</span> <span class="n">array1ThetaInit1</span> <span class="o">*</span> <span class="n">rot_hat_M</span>
+    <span class="n">prv_PM2Init1</span> <span class="o">=</span> <span class="n">array2ThetaInit1</span> <span class="o">*</span> <span class="n">rot_hat_M</span>
+    <span class="n">sigma_PM1Init1</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2MRP</span><span class="p">(</span><span class="n">prv_PM1Init1</span><span class="p">)</span>
+    <span class="n">sigma_PM2Init1</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2MRP</span><span class="p">(</span><span class="n">prv_PM2Init1</span><span class="p">)</span>
+    <span class="n">r_PM1_M1Init1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">r_PM2_M2Init1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+
+    <span class="c1"># Rotation 2 initial parameters</span>
+    <span class="n">array1ThetaInit2</span> <span class="o">=</span> <span class="mf">108.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">array2ThetaInit2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">108.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">prv_PM1Init2</span> <span class="o">=</span> <span class="n">array1ThetaInit2</span> <span class="o">*</span> <span class="n">rot_hat_M</span>
+    <span class="n">prv_PM2Init2</span> <span class="o">=</span> <span class="n">array2ThetaInit2</span> <span class="o">*</span> <span class="n">rot_hat_M</span>
+    <span class="n">sigma_PM1Init2</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2MRP</span><span class="p">(</span><span class="n">prv_PM1Init2</span><span class="p">)</span>
+    <span class="n">sigma_PM2Init2</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2MRP</span><span class="p">(</span><span class="n">prv_PM2Init2</span><span class="p">)</span>
+    <span class="n">r_PM1_M1Init2</span> <span class="o">=</span> <span class="p">[</span><span class="n">radius_array</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">r_PM2_M2Init2</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">radius_array</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+
+    <span class="c1"># Create the solar array elements</span>
+    <span class="n">array1ElementList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">array2ElementList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">array1ElementList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prescribedMotionStateEffector</span><span class="o">.</span><span class="n">PrescribedMotionStateEffector</span><span class="p">())</span>
+        <span class="n">array2ElementList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prescribedMotionStateEffector</span><span class="o">.</span><span class="n">PrescribedMotionStateEffector</span><span class="p">())</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;array1Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;array2Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">mass_element</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">mass_element</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setIPntPc_P</span><span class="p">(</span><span class="n">IElement_PntPc_P</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setIPntPc_P</span><span class="p">(</span><span class="n">IElement_PntPc_P</span><span class="p">)</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_MB_B</span><span class="p">(</span><span class="n">r_M1B_B</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_MB_B</span><span class="p">(</span><span class="n">r_M2B_B</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PcP_P</span><span class="p">([</span><span class="o">-</span> <span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">),</span>
+                                        <span class="mf">0.0</span><span class="p">,</span>
+                                        <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)])</span>  <span class="c1"># [m] For triangular wedge</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PcP_P</span><span class="p">([</span><span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">),</span>
+                                        <span class="mf">0.0</span><span class="p">,</span>
+                                        <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)])</span>  <span class="c1"># [m] For triangular wedge</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PM_M</span><span class="p">(</span><span class="n">r_PM1_M1Init1</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PM_M</span><span class="p">(</span><span class="n">r_PM2_M2Init1</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setRPrime_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m/s]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setRPrime_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m/s]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setRPrimePrime_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m/s^2]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setRPrimePrime_PM_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [m/s^2]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setOmega_PM_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setOmega_PM_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setOmegaPrime_PM_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setOmegaPrime_PM_P</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setSigma_PM</span><span class="p">(</span><span class="n">sigma_PM1Init1</span><span class="p">)</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setSigma_PM</span><span class="p">(</span><span class="n">sigma_PM2Init1</span><span class="p">)</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setSigma_MB</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setSigma_MB</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+        <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Create the array element reference angle messages</span>
+    <span class="n">array1ElementRefMsgList1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">array2ElementRefMsgList1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">array1ElementMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+        <span class="n">array2ElementMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">()</span>
+        <span class="n">array1ElementMessageData</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">array1ThetaInit2</span>  <span class="c1"># [rad]</span>
+        <span class="n">array2ElementMessageData</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">array2ThetaInit1</span>  <span class="c1"># [rad]</span>
+        <span class="n">array1ElementMessageData</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">array2ElementMessageData</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">array1ElementRefMsgList1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array1ElementMessageData</span><span class="p">))</span>
+        <span class="n">array2ElementRefMsgList1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array2ElementMessageData</span><span class="p">))</span>
+
+    <span class="c1"># Create stand-alone element translational state messages</span>
+    <span class="n">array1ElementTranslationMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsgPayload</span><span class="p">()</span>
+    <span class="n">array2ElementTranslationMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsgPayload</span><span class="p">()</span>
+    <span class="n">array1ElementTranslationMessageData</span><span class="o">.</span><span class="n">r_PM_M</span> <span class="o">=</span> <span class="n">r_PM1_M1Init1</span>  <span class="c1"># [m]</span>
+    <span class="n">array2ElementTranslationMessageData</span><span class="o">.</span><span class="n">r_PM_M</span> <span class="o">=</span> <span class="n">r_PM2_M2Init1</span>  <span class="c1"># [m]</span>
+    <span class="n">array1ElementTranslationMessageData</span><span class="o">.</span><span class="n">rPrime_PM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">array2ElementTranslationMessageData</span><span class="o">.</span><span class="n">rPrime_PM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+    <span class="n">array1ElementTranslationMessageData</span><span class="o">.</span><span class="n">rPrimePrime_PM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">array2ElementTranslationMessageData</span><span class="o">.</span><span class="n">rPrimePrime_PM_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">array1ElementTranslationMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array1ElementTranslationMessageData</span><span class="p">)</span>
+    <span class="n">array2ElementTranslationMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array2ElementTranslationMessageData</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the prescribedRotation1DOF module configuration data</span>
+    <span class="n">array1MaxRotAccelList1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">array2MaxRotAccelList1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">thetaInit</span> <span class="o">=</span> <span class="n">array1ThetaInit1</span>  <span class="c1"># [rad]</span>
+                <span class="n">thetaRef</span> <span class="o">=</span> <span class="n">array1ThetaInit2</span>  <span class="c1"># [rad]</span>
+                <span class="n">thetaDDotMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">thetaRef</span> <span class="o">-</span> <span class="n">thetaInit</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">init_coast_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">)</span>
+                                                               <span class="o">+</span> <span class="p">(</span><span class="n">ramp_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">))</span>
+                <span class="n">array1MaxRotAccelList1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thetaDDotMax</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">thetaInit</span> <span class="o">=</span> <span class="n">array2ThetaInit1</span>  <span class="c1"># [rad]</span>
+                <span class="n">thetaRef</span> <span class="o">=</span> <span class="n">array2ThetaInit1</span>  <span class="c1"># [rad]</span>
+                <span class="n">thetaDDotMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">thetaRef</span> <span class="o">-</span> <span class="n">thetaInit</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">init_coast_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">)</span>
+                                                               <span class="o">+</span> <span class="p">(</span><span class="n">ramp_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">))</span>
+                <span class="n">array2MaxRotAccelList1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thetaDDotMax</span><span class="p">)</span>
+
+    <span class="n">array1RotProfilerList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">array2RotProfilerList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">array1RotProfilerList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prescribedRotation1DOF</span><span class="o">.</span><span class="n">PrescribedRotation1DOF</span><span class="p">())</span>
+        <span class="n">array2RotProfilerList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prescribedRotation1DOF</span><span class="o">.</span><span class="n">PrescribedRotation1DOF</span><span class="p">())</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedRotation1DOFArray1Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedRotation1DOFArray2Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setCoastOptionBangDuration</span><span class="p">(</span><span class="n">ramp_duration</span><span class="p">)</span>  <span class="c1"># [s]</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setCoastOptionBangDuration</span><span class="p">(</span><span class="n">ramp_duration</span><span class="p">)</span>  <span class="c1"># [s]</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setRotHat_M</span><span class="p">(</span><span class="n">rot_hat_M</span><span class="p">)</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setRotHat_M</span><span class="p">(</span><span class="n">rot_hat_M</span><span class="p">)</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaDDotMax</span><span class="p">(</span><span class="n">array1MaxRotAccelList1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaDDotMax</span><span class="p">(</span><span class="n">array2MaxRotAccelList1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="n">array1ThetaInit1</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="n">array2ThetaInit1</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array1ElementRefMsgList1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array2ElementRefMsgList1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedRotationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedRotationOutMsg</span><span class="p">)</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedRotationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedRotationOutMsg</span><span class="p">)</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedTranslationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array1ElementTranslationMessage</span><span class="p">)</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedTranslationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array2ElementTranslationMessage</span><span class="p">)</span>
+
+    <span class="c1"># Set up data logging</span>
+    <span class="n">scStateData</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element1PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element2PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element3PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element4PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element5PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element6PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element7PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element8PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element9PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array1Element10PrescribedDataLog</span> <span class="o">=</span> <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element1PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element2PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element3PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element4PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element5PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element6PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element7PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element8PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element9PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+    <span class="n">array2Element10PrescribedDataLog</span> <span class="o">=</span> <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">dataRecRate</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">scStateData</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element1PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element2PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element3PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element4PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element5PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element6PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element7PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element8PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element9PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array1Element10PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element1PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element2PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element3PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element4PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element5PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element6PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element7PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element8PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element9PrescribedDataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">array2Element10PrescribedDataLog</span><span class="p">)</span>
+
+    <span class="c1"># Set up Vizard visualization</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">scBodyList</span> <span class="o">=</span> <span class="p">[</span><span class="n">scObject</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+            <span class="n">scBodyList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Array1Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedMotionConfigLogOutMsg</span><span class="p">])</span>
+            <span class="n">scBodyList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Array2Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedMotionConfigLogOutMsg</span><span class="p">])</span>
+
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scBodyList</span><span class="p">,</span>
+                                                  <span class="c1"># saveFile=filename</span>
+                                                  <span class="p">)</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showSpacecraftAsSprites</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span>
+                                     <span class="p">,</span> <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">]</span>
+                                     <span class="p">,</span> <span class="n">modelPath</span><span class="o">=</span><span class="s2">&quot;CYLINDER&quot;</span>
+                                     <span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">widthHub</span><span class="p">,</span> <span class="n">depthHub</span><span class="p">,</span> <span class="n">lengthHub</span><span class="p">]</span>
+                                     <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;gray&quot;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+            <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                         <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Array1Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span>
+                                         <span class="c1"># Specifying relative model path is useful for sharing scenarios and resources:</span>
+                                         <span class="n">modelPath</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;dataForExamples&quot;</span><span class="p">,</span> <span class="s2">&quot;triangularPanel.obj&quot;</span><span class="p">),</span>
+                                         <span class="c1"># Specifying absolute model path is preferable for live-streaming:</span>
+                                         <span class="c1"># modelPath=os.path.join(path, &quot;dataForExamples&quot;, &quot;triangularPanel.obj&quot;),</span>
+                                         <span class="n">rotation</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mf">1.3</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">],</span>
+                                         <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+            <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                         <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Array2Element&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span>
+                                         <span class="c1"># Specifying relative model path is useful for sharing scenarios and resources:</span>
+                                         <span class="n">modelPath</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;dataForExamples&quot;</span><span class="p">,</span> <span class="s2">&quot;triangularPanel.obj&quot;</span><span class="p">),</span>
+                                         <span class="c1"># Specifying absolute model path is preferable for live-streaming:</span>
+                                         <span class="c1"># modelPath=os.path.join(path, &quot;dataForExamples&quot;, &quot;triangularPanel.obj&quot;),</span>
+                                         <span class="n">rotation</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mf">1.3</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">],</span>
+                                         <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">))</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">simTime1</span> <span class="o">=</span> <span class="n">init_deploy_duration</span> <span class="o">+</span> <span class="mi">10</span>  <span class="c1"># [s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime1</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Update the configuration data for the array 1 modules</span>
+    <span class="n">array1MaxRotAccelList2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">thetaInit</span> <span class="o">=</span> <span class="n">array1ThetaInit2</span>  <span class="c1"># [rad]</span>
+        <span class="n">thetaRef</span> <span class="o">=</span> <span class="p">(</span><span class="mi">36</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span> <span class="o">+</span> <span class="n">array1ThetaInit2</span>  <span class="c1"># [rad]</span>
+        <span class="n">thetaDDotMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">thetaRef</span> <span class="o">-</span> <span class="n">thetaInit</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">main_coast_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">)</span>
+                                                       <span class="o">+</span> <span class="p">(</span><span class="n">ramp_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array1MaxRotAccelList2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thetaDDotMax</span><span class="p">)</span>
+
+    <span class="c1"># Update the array 1 stand-alone element translational state messages</span>
+    <span class="n">array1ElementTranslationMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsgPayload</span><span class="p">(</span>
+        <span class="n">r_PM_M</span><span class="o">=</span><span class="n">r_PM1_M1Init2</span><span class="p">,</span>   <span class="c1"># [m]</span>
+        <span class="n">rPrime_PM_M</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>  <span class="c1"># [m/s]</span>
+        <span class="n">rPrimePrime_PM_M</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>  <span class="c1"># [m/s^2]</span>
+    <span class="p">)</span>
+    <span class="n">array1ElementTranslationMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array1ElementTranslationMessageData</span><span class="p">)</span>
+
+    <span class="n">array1ElementRefMsgList2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedTranslationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array1ElementTranslationMessage</span><span class="p">)</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PcP_P</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)])</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PM_M</span><span class="p">(</span><span class="n">r_PM1_M1Init2</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">array1ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setSigma_PM</span><span class="p">(</span><span class="n">sigma_PM1Init2</span><span class="p">)</span>
+
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="n">array1ThetaInit2</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaDDotMax</span><span class="p">(</span><span class="n">array1MaxRotAccelList2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># [rad/s^2]</span>
+
+        <span class="n">array1ElementMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">(</span>
+            <span class="n">theta</span><span class="o">=</span><span class="p">(</span><span class="mi">36</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span> <span class="o">+</span> <span class="n">array1ThetaInit2</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">thetaDot</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad/s]</span>
+        <span class="p">)</span>
+        <span class="n">array1ElementRefMsgList2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array1ElementMessageData</span><span class="p">))</span>
+
+        <span class="n">array1RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array1ElementRefMsgList2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">simTime2</span> <span class="o">=</span> <span class="n">main_deploy_duration</span> <span class="o">+</span> <span class="mi">10</span>  <span class="c1"># [s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime1</span> <span class="o">+</span> <span class="n">simTime2</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Update the configuration data for the array 2 modules</span>
+    <span class="n">array2MaxRotAccelList2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">thetaInit</span> <span class="o">=</span> <span class="n">array2ThetaInit1</span>  <span class="c1"># [rad]</span>
+        <span class="n">thetaRef</span> <span class="o">=</span> <span class="n">array2ThetaInit2</span>  <span class="c1"># [rad]</span>
+        <span class="n">thetaDDotMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">thetaRef</span> <span class="o">-</span> <span class="n">thetaInit</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">init_coast_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">)</span>
+                                                       <span class="o">+</span> <span class="p">(</span><span class="n">ramp_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array2MaxRotAccelList2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thetaDDotMax</span><span class="p">)</span>
+
+    <span class="n">array2ElementRefMsgList2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaDDotMax</span><span class="p">(</span><span class="n">array2MaxRotAccelList2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># [rad/s^2]</span>
+
+        <span class="n">array2ElementMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">(</span>
+            <span class="n">theta</span><span class="o">=</span><span class="n">array2ThetaInit2</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">thetaDot</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># [rad/s]</span>
+        <span class="p">)</span>
+        <span class="n">array2ElementRefMsgList2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array2ElementMessageData</span><span class="p">))</span>
+
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array2ElementRefMsgList2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">simTime3</span> <span class="o">=</span> <span class="n">init_deploy_duration</span> <span class="o">+</span> <span class="mi">10</span>  <span class="c1"># [s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime1</span> <span class="o">+</span> <span class="n">simTime2</span> <span class="o">+</span> <span class="n">simTime3</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Update the configuration data for the array 2 modules</span>
+    <span class="n">array2MaxRotAccelList3</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">thetaInit</span> <span class="o">=</span> <span class="n">array2ThetaInit2</span>  <span class="c1"># [rad]</span>
+        <span class="n">thetaRef</span> <span class="o">=</span> <span class="p">(</span><span class="mi">36</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span> <span class="o">+</span> <span class="n">array2ThetaInit2</span>  <span class="c1"># [rad]</span>
+        <span class="n">thetaDDotMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">thetaRef</span> <span class="o">-</span> <span class="n">thetaInit</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">main_coast_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">)</span>
+                                                       <span class="o">+</span> <span class="p">(</span><span class="n">ramp_duration</span> <span class="o">*</span> <span class="n">ramp_duration</span><span class="p">))</span>  <span class="c1"># [rad/s^2]</span>
+        <span class="n">array2MaxRotAccelList3</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thetaDDotMax</span><span class="p">)</span>
+
+    <span class="c1"># Update the array 2 stand-alone element translational state messages</span>
+    <span class="n">array2ElementTranslationMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsgPayload</span><span class="p">(</span>
+        <span class="n">r_PM_M</span><span class="o">=</span><span class="n">r_PM2_M2Init2</span><span class="p">,</span>   <span class="c1"># [m]</span>
+        <span class="n">rPrime_PM_M</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>   <span class="c1"># [m/s]</span>
+        <span class="n">rPrimePrime_PM_M</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>   <span class="c1"># [m/s^2]</span>
+    <span class="p">)</span>
+    <span class="n">array2ElementTranslationMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">PrescribedTranslationMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array2ElementTranslationMessageData</span><span class="p">)</span>
+
+    <span class="n">array2ElementRefMsgList3</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">prescribedTranslationInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array2ElementTranslationMessage</span><span class="p">)</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PcP_P</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">radius_array</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">72</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)])</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setR_PM_M</span><span class="p">(</span><span class="n">r_PM2_M2Init2</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">array2ElementList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setSigma_PM</span><span class="p">(</span><span class="n">sigma_PM2Init2</span><span class="p">)</span>
+
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="n">array2ThetaInit2</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">setThetaDDotMax</span><span class="p">(</span><span class="n">array2MaxRotAccelList3</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># [rad/s^2]</span>
+
+        <span class="n">array2ElementMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsgPayload</span><span class="p">(</span>
+            <span class="n">theta</span><span class="o">=</span><span class="p">(</span><span class="mi">36</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span> <span class="o">+</span> <span class="n">array2ThetaInit2</span><span class="p">,</span>   <span class="c1"># [rad]</span>
+            <span class="n">thetaDot</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># [rad/s]</span>
+        <span class="p">)</span>
+        <span class="n">array2ElementRefMsgList3</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">HingedRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">array2ElementMessageData</span><span class="p">))</span>
+
+        <span class="n">array2RotProfilerList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spinningBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">array2ElementRefMsgList3</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">simTime4</span> <span class="o">=</span> <span class="n">main_deploy_duration</span> <span class="o">+</span> <span class="mi">10</span>  <span class="c1"># [s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime1</span> <span class="o">+</span> <span class="n">simTime2</span> <span class="o">+</span> <span class="n">simTime3</span> <span class="o">+</span> <span class="n">simTime4</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged data</span>
+    <span class="n">timespan</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>  <span class="c1"># [min]</span>
+    <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">r_BN_N</span>  <span class="c1"># [m]</span>
+    <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">omega_BN_B</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">theta_array1Element1</span> <span class="o">=</span> <span class="n">array1Element1PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element2</span> <span class="o">=</span> <span class="n">array1Element2PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element3</span> <span class="o">=</span> <span class="n">array1Element3PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element4</span> <span class="o">=</span> <span class="n">array1Element4PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element5</span> <span class="o">=</span> <span class="n">array1Element5PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element6</span> <span class="o">=</span> <span class="n">array1Element6PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element7</span> <span class="o">=</span> <span class="n">array1Element7PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element8</span> <span class="o">=</span> <span class="n">array1Element8PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element9</span> <span class="o">=</span> <span class="n">array1Element9PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array1Element10</span> <span class="o">=</span> <span class="n">array1Element10PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element1</span> <span class="o">=</span> <span class="n">array2Element1PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element2</span> <span class="o">=</span> <span class="n">array2Element2PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element3</span> <span class="o">=</span> <span class="n">array2Element3PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element4</span> <span class="o">=</span> <span class="n">array2Element4PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element5</span> <span class="o">=</span> <span class="n">array2Element5PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element6</span> <span class="o">=</span> <span class="n">array2Element6PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element7</span> <span class="o">=</span> <span class="n">array2Element7PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element8</span> <span class="o">=</span> <span class="n">array2Element8PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element9</span> <span class="o">=</span> <span class="n">array2Element9PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">theta_array2Element10</span> <span class="o">=</span> <span class="n">array2Element10PrescribedDataLog</span><span class="o">.</span><span class="n">theta</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg]</span>
+    <span class="n">thetaDot_array1Element1</span> <span class="o">=</span> <span class="n">array1Element1PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element2</span> <span class="o">=</span> <span class="n">array1Element2PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element3</span> <span class="o">=</span> <span class="n">array1Element3PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element4</span> <span class="o">=</span> <span class="n">array1Element4PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element5</span> <span class="o">=</span> <span class="n">array1Element5PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element6</span> <span class="o">=</span> <span class="n">array1Element6PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element7</span> <span class="o">=</span> <span class="n">array1Element7PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element8</span> <span class="o">=</span> <span class="n">array1Element8PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element9</span> <span class="o">=</span> <span class="n">array1Element9PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array1Element10</span> <span class="o">=</span> <span class="n">array1Element10PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element1</span> <span class="o">=</span> <span class="n">array2Element1PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element2</span> <span class="o">=</span> <span class="n">array2Element2PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element3</span> <span class="o">=</span> <span class="n">array2Element3PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element4</span> <span class="o">=</span> <span class="n">array2Element4PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element5</span> <span class="o">=</span> <span class="n">array2Element5PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element6</span> <span class="o">=</span> <span class="n">array2Element6PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element7</span> <span class="o">=</span> <span class="n">array2Element7PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element8</span> <span class="o">=</span> <span class="n">array2Element8PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element9</span> <span class="o">=</span> <span class="n">array2Element9PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+    <span class="n">thetaDot_array2Element10</span> <span class="o">=</span> <span class="n">array2Element10PrescribedDataLog</span><span class="o">.</span><span class="n">thetaDot</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span>  <span class="c1"># [deg/s]</span>
+
+    <span class="c1"># Plot the results</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot array 1 element angles</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_1$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_2$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_3$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_4$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_5$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_6$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_7$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_8$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_9$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array1Element10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_</span><span class="si">{10}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Array 1 Element Angles&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_Array1ElementTheta&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Plot array 2 element angles</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_1$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_2$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_3$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_4$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_5$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_6$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_7$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_8$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_9$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">theta_array2Element10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_</span><span class="si">{10}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Array 2 Element Angles&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_Array2ElementTheta&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Plot array 1 element angle rates</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_1$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_2$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_3$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_4$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_5$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_6$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_7$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_8$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_9$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array1Element10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_</span><span class="si">{10}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Array 1 Element Angle Rates&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_Array1ElementThetaDot&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># Plot array 2 element angle rates</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_1$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_2$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_3$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_4$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_5$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_6$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_7$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_8$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_9$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">thetaDot_array2Element10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_</span><span class="si">{10}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Array 2 Element Angle Rates&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_Array2ElementThetaDot&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="c1"># Plot r_BN_N</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">r_BN_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{N}</span><span class="s1"> r_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$ Spacecraft Inertial Trajectory&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(m)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_HubInertialPosition&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1"># Plot sigma_BN</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sigma_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$ Spacecraft Inertial MRP Attitude&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_HubInertialMRPAttitude&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="c1"># Plot omega_BN_B</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{1}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_</span><span class="si">{3}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Spacecraft Hub Angular Velocity $</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{B}</span><span class="s1"> \omega_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_HubInertialAngularVelocity&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+    <span class="c1"># Plot omega_BN_B norm</span>
+    <span class="n">omega_BN_BNorm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timespan</span><span class="p">,</span> <span class="n">omega_BN_BNorm</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Hub Angular Velocity Norm $|</span><span class="si">{}</span><span class="s1">^\mathcal</span><span class="si">{B}</span><span class="s1"> \omega_{\mathcal</span><span class="si">{B}</span><span class="s1">/\mathcal</span><span class="si">{N}</span><span class="s1">}|$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(deg/s)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(min)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_HubInertialAngularVelocityNorm&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>   <span class="c1"># show_plots</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

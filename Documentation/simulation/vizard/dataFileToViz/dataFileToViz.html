@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: dataFileToViz &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="dataFileToViz" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">vizard</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">dataFileToViz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vizInterface/index.html">vizInterface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">vizard</a></li>
+          <li class="breadcrumb-item"><a href="index.html">dataFileToViz</a></li>
+      <li class="breadcrumb-item active">Module: dataFileToViz</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/vizard/dataFileToViz/dataFileToViz.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-datafiletoviz">
+<span id="datafiletoviz"></span><h1>Module: dataFileToViz<a class="headerlink" href="#module-datafiletoviz" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module reads in simulation data of one or more spacecraft, likely created outside of Basilisk,
+and creates associated Basilisk messages such that <a class="reference internal" href="../vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> can stream of save a <a class="reference internal" href="../../../../Vizard/Vizard.html#vizard"><span class="std std-ref">Vizard</span></a>
+compatible data file.  This makes it possible to use Vizard to illustrate a simulation.  The use of this module
+is demonstrates in <a class="reference internal" href="../../../../examples/scenarioDataToViz.html#scenariodatatoviz"><span class="std std-ref">scenarioDataToViz</span></a>.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The module currently reads in the spacecraft position, velocity and orientation states.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following messages are set directly within <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>.  Additional messages are set within the
+<code class="docutils literal notranslate"><span class="pre">VizSpacecraftData</span></code> data structures for each spacecraft.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scStateOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Vector of spacecraft output messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>thrScOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#throutputmsgpayload"><span class="std std-ref">THROutputMsgPayload</span></a></p></td>
+<td><p>(optional) vector of vectors of thruster output messages per spacecraft</p></td>
+</tr>
+<tr class="row-even"><td><p>rwScOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#rwconfiglogmsgpayload"><span class="std std-ref">RWConfigLogMsgPayload</span></a></p></td>
+<td><p>(optional) vector of vectors of RW output messages per spacecraft</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The module assumes the data file is in plain text form and the following format:</p>
+<ul class="simple">
+<li><p>time</p></li>
+<li><p>inertial position states (m)</p></li>
+<li><p>inertial velocity states (m/s)</p></li>
+<li><p>inertial attitude state in terms of either MRPs, quaternions or 3-2-1 Euler angles (rad)</p></li>
+<li><p>inertial angular velocity vector in radians per second (rad/s)</p></li>
+<li><p>(optional) thruster force values (N)</p></li>
+<li><p>(optional) RW Speed <span class="math notranslate nohighlight">\(\Omega\)</span> (rad/s) and RW motor torque <span class="math notranslate nohighlight">\(u_s\)</span> (N)</p></li>
+<li><p>repeat on the same line for additional spacecraft</p></li>
+</ul>
+<p>The required module configuration is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">testModule</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">DataFileToViz</span><span class="p">()</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;testModule&quot;</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">setNumOfSatellites</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">dataFileName</span> <span class="o">=</span> <span class="s2">&quot;dataFile.dat&quot;</span>
+<span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testModule</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">setNumOfSatellites()</span></code> must be called with at least 1 spacecraft.</p>
+<p>The module is configurable with the following optional parameters:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module Optional Parameters</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">delimiter</span></code></p></td>
+<td><p>“ “</p></td>
+<td><p>delimiter string that separates data on a line</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">convertPosToMeters</span></code></p></td>
+<td><p>1000.0</p></td>
+<td><p>conversion factor to convert position and velocity measures to meters and meters per second.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">headerLine</span></code></p></td>
+<td><p>True</p></td>
+<td><p>Boolean flag if the data file contains a header line that should be dismissed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">attitudeType</span></code></p></td>
+<td><p>0</p></td>
+<td><p>Specify the attitude coordinate set used in the data file.  0 - MRP, 1 - quaternions
+as <span class="math notranslate nohighlight">\((q_0, q_1, q_2, q_3)\)</span>, and 2 - (3-2-1) Euler angles in radians</p></td>
+</tr>
+</tbody>
+</table>
+<p>To add Thrusters to the setup, for each of the spacecraft included do the following steps.  The spacecraft
+can contain a number of thruster clusters defined through <code class="docutils literal notranslate"><span class="pre">ThrClusterMap</span></code>.  In the examle below, the
+spacecraft contains 2 clusters (ADCS and DV) which contain one thruster each.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># setup thruster cluster for the current spacecraft</span>
+<span class="n">thSetAdcs1</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+<span class="c1"># set the number of thruster in this cluster</span>
+<span class="n">thSetAdcs1</span><span class="o">.</span><span class="n">thrCount</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># set the thruster cluster tag label string</span>
+<span class="n">thSetAdcs1</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="s2">&quot;adcs_sc_0&quot;</span>
+<span class="c1"># (Optional) set the color for the thruster visualization in this cluster.</span>
+<span class="n">thSetAdcs1</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+<span class="n">thSetDV1</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+<span class="n">thSetDV1</span><span class="o">.</span><span class="n">thrCount</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">thSetDV1</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="s2">&quot;dv_sc_0&quot;</span>
+<span class="n">thSetDV1</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+<span class="c1"># assign this thruster cluster to module</span>
+<span class="n">thList1</span> <span class="o">=</span> <span class="p">[</span><span class="n">thSetAdcs1</span><span class="p">,</span> <span class="n">thSetDV1</span><span class="p">]</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrClusterMap</span><span class="p">(</span><span class="n">dataFileToViz</span><span class="o">.</span><span class="n">VizThrConfig</span><span class="p">(</span><span class="n">thList1</span><span class="p">))</span>
+
+<span class="c1"># add the position and orientation information for each thruster in this cluster</span>
+<span class="c1"># ADCS1</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>  <span class="c1"># thr location in B frame, meters</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># thr force direction in B frame</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="c1"># DV1</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.</span><span class="p">])</span>  <span class="c1"># thr location in B frame, meters</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># thr force direction in B frame</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These steps must be done for each spacecraft in the data file.  If a spacecraft does not have thrusters, then
+an empty thruster cluster vector must be added for that spacecraft.
+See <a class="reference internal" href="_UnitTest/test_dataFileToViz.html#test-datafiletoviz"><span class="std std-ref">test_dataFileToViz</span></a> for an example on how to configure for thruster information.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">testModule</span><span class="o">.</span><span class="n">appendThrClusterMap</span><span class="p">([])</span>
+</pre></div>
+</div>
+<p>To add RW devices to the list, for each spacecraft you must specify the number of RW that it contains through:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">testModule</span><span class="o">.</span><span class="n">appendNumOfRWs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, the RW position, spin axis direction, the wheel speed and the maximum motor torque value is setup using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">testModule</span><span class="o">.</span><span class="n">appendRwPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendRwDir</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendOmegaMax</span><span class="p">(</span><span class="mf">3000.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">)</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">appendUMax</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Repeat the above steps for each wheel.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413DataFileToViz">
+<span id="_CPPv313DataFileToViz"></span><span id="_CPPv213DataFileToViz"></span><span id="DataFileToViz"></span><span class="target" id="class_data_file_to_viz"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DataFileToViz</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv413DataFileToViz" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;dataFileToViz.h&gt;</em></div>
+<p>Defines a data structure for the spacecraft state messages and ID’s. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz13DataFileToVizEv">
+<span id="_CPPv3N13DataFileToViz13DataFileToVizEv"></span><span id="_CPPv2N13DataFileToViz13DataFileToVizEv"></span><span id="DataFileToViz::DataFileToViz"></span><span class="target" id="class_data_file_to_viz_1a2e2a27a7955cab647f46adbf602fe39e"></span><span class="sig-name descname"><span class="n"><span class="pre">DataFileToViz</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz13DataFileToVizEv" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_data_file_to_viz"><span class="std std-ref">DataFileToViz</span></a> Constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToVizD0Ev">
+<span id="_CPPv3N13DataFileToVizD0Ev"></span><span id="_CPPv2N13DataFileToVizD0Ev"></span><span id="DataFileToViz::~DataFileToViz"></span><span class="target" id="class_data_file_to_viz_1a0653d02a552421ca837f4d8818ba3b7e"></span><span class="sig-name descname"><span class="n"><span class="pre">~DataFileToViz</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToVizD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_data_file_to_viz"><span class="std std-ref">DataFileToViz</span></a> Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz5ResetE8uint64_t">
+<span id="_CPPv3N13DataFileToViz5ResetE8uint64_t"></span><span id="_CPPv2N13DataFileToViz5ResetE8uint64_t"></span><span id="DataFileToViz::Reset__uint64_t"></span><span class="target" id="class_data_file_to_viz_1ae8fa4d27daf7ed87359306624936bb57"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>A Reset method to put the module back into a clean state </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current sim time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz11UpdateStateE8uint64_t">
+<span id="_CPPv3N13DataFileToViz11UpdateStateE8uint64_t"></span><span id="_CPPv2N13DataFileToViz11UpdateStateE8uint64_t"></span><span id="DataFileToViz::UpdateState__uint64_t"></span><span class="target" id="class_data_file_to_viz_1a7adf3353a661f209ffb051f6bb743391"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update this module at the task rate </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current sim time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz12appendThrPosEAL3E_d">
+<span id="_CPPv3N13DataFileToViz12appendThrPosEAL3E_d"></span><span id="_CPPv2N13DataFileToViz12appendThrPosEA3_d"></span><span id="DataFileToViz::appendThrPos__doubleA"></span><span class="target" id="class_data_file_to_viz_1a88e76f2766c22de0bad953f1e9148a1b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendThrPos</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pos_B</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz12appendThrPosEAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a thruster 3d position vector to the list of thruster locations </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz12appendThrDirEAL3E_d">
+<span id="_CPPv3N13DataFileToViz12appendThrDirEAL3E_d"></span><span id="_CPPv2N13DataFileToViz12appendThrDirEA3_d"></span><span id="DataFileToViz::appendThrDir__doubleA"></span><span class="target" id="class_data_file_to_viz_1aaa11e71b35d401db2ebf62c09c767b7d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendThrDir</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dir_B</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz12appendThrDirEAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a thruster 3d unit direction vector to the list. The input vectors gets normalized before being added to the list. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz17appendThrForceMaxEd">
+<span id="_CPPv3N13DataFileToViz17appendThrForceMaxEd"></span><span id="_CPPv2N13DataFileToViz17appendThrForceMaxEd"></span><span id="DataFileToViz::appendThrForceMax__double"></span><span class="target" id="class_data_file_to_viz_1aa0a81c915eef551b5e6d4eee1766101c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendThrForceMax</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz17appendThrForceMaxEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a thruster maximum force value to the list of thrusters. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz19appendThrClusterMapENSt6vectorI13ThrClusterMapEENSt6vectorIiEE">
+<span id="_CPPv3N13DataFileToViz19appendThrClusterMapENSt6vectorI13ThrClusterMapEENSt6vectorIiEE"></span><span id="_CPPv2N13DataFileToViz19appendThrClusterMapENSt6vectorI13ThrClusterMapEENSt6vectorIiEE"></span><span id="DataFileToViz::appendThrClusterMap__std::vector:ThrClusterMap:.std::vector:i:"></span><span class="target" id="class_data_file_to_viz_1a2233a3dbdce5f3c66b1d8fc22b8bea3b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendThrClusterMap</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv413ThrClusterMap" title="ThrClusterMap"><span class="n"><span class="pre">ThrClusterMap</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">thrMsgData</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numThrPerCluster</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz19appendThrClusterMapENSt6vectorI13ThrClusterMapEENSt6vectorIiEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a thruster cluster map for each spacecraft </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz11appendRwPosEAL3E_d">
+<span id="_CPPv3N13DataFileToViz11appendRwPosEAL3E_d"></span><span id="_CPPv2N13DataFileToViz11appendRwPosEA3_d"></span><span id="DataFileToViz::appendRwPos__doubleA"></span><span class="target" id="class_data_file_to_viz_1ab4a61d19c6d71ea320d9afa6d63e5138"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendRwPos</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pos_B</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz11appendRwPosEAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a thruster 3d position vector to the list of thruster locations </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz11appendRwDirEAL3E_d">
+<span id="_CPPv3N13DataFileToViz11appendRwDirEAL3E_d"></span><span id="_CPPv2N13DataFileToViz11appendRwDirEA3_d"></span><span id="DataFileToViz::appendRwDir__doubleA"></span><span class="target" id="class_data_file_to_viz_1a34f06df50f1b509e53a04e0a2dd424c9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendRwDir</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dir_B</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz11appendRwDirEAL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a RW spin axis unit direction vector to the list. The input vectors gets normalized before being added to the list. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz14appendOmegaMaxEd">
+<span id="_CPPv3N13DataFileToViz14appendOmegaMaxEd"></span><span id="_CPPv2N13DataFileToViz14appendOmegaMaxEd"></span><span id="DataFileToViz::appendOmegaMax__double"></span><span class="target" id="class_data_file_to_viz_1abba04d142483897c3ca4312b55ad82c6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendOmegaMax</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz14appendOmegaMaxEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a RW wheel rate value to the list </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10appendUMaxEd">
+<span id="_CPPv3N13DataFileToViz10appendUMaxEd"></span><span id="_CPPv2N13DataFileToViz10appendUMaxEd"></span><span id="DataFileToViz::appendUMax__double"></span><span class="target" id="class_data_file_to_viz_1a35d2efd993957125a0a57be4ba0819d8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendUMax</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz10appendUMaxEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a RW maximum motor torque value to the list </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz18setNumOfSatellitesEi">
+<span id="_CPPv3N13DataFileToViz18setNumOfSatellitesEi"></span><span id="_CPPv2N13DataFileToViz18setNumOfSatellitesEi"></span><span id="DataFileToViz::setNumOfSatellites__i"></span><span class="target" id="class_data_file_to_viz_1a36a24cc39bb0c2e85d263c78ad9b11b9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNumOfSatellites</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numSat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz18setNumOfSatellitesEi" title="Link to this definition"></a><br /></dt>
+<dd><p>set the number of satellites being read in </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz14appendNumOfRWsEi">
+<span id="_CPPv3N13DataFileToViz14appendNumOfRWsEi"></span><span id="_CPPv2N13DataFileToViz14appendNumOfRWsEi"></span><span id="DataFileToViz::appendNumOfRWs__i"></span><span class="target" id="class_data_file_to_viz_1a41c423824e11fd55a310633506fb0e1a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendNumOfRWs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numRW</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz14appendNumOfRWsEi" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a RW output msg list for each spacecraft </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz12dataFileNameE">
+<span id="_CPPv3N13DataFileToViz12dataFileNameE"></span><span id="_CPPv2N13DataFileToViz12dataFileNameE"></span><span id="DataFileToViz::dataFileName__ss"></span><span class="target" id="class_data_file_to_viz_1a104a76085ae868ec362750a41f5226ef"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dataFileName</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz12dataFileNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of the simulation data file. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz14scStateOutMsgsE">
+<span id="_CPPv3N13DataFileToViz14scStateOutMsgsE"></span><span id="_CPPv2N13DataFileToViz14scStateOutMsgsE"></span><span id="DataFileToViz::scStateOutMsgs__std::vector:Message:SCStatesMsgPayload:P:"></span><span class="target" id="class_data_file_to_viz_1af60b2f91889b85ac654c515f722267a8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz14scStateOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft state messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz9delimiterE">
+<span id="_CPPv3N13DataFileToViz9delimiterE"></span><span id="_CPPv2N13DataFileToViz9delimiterE"></span><span id="DataFileToViz::delimiter__ss"></span><span class="target" id="class_data_file_to_viz_1a8366ef20f85d56e07d1bbd2bd5fb9d8a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">delimiter</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz9delimiterE" title="Link to this definition"></a><br /></dt>
+<dd><p>delimiter string that separates data on a line </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz18convertPosToMetersE">
+<span id="_CPPv3N13DataFileToViz18convertPosToMetersE"></span><span id="_CPPv2N13DataFileToViz18convertPosToMetersE"></span><span id="DataFileToViz::convertPosToMeters__double"></span><span class="target" id="class_data_file_to_viz_1a2bcfa6312555a2b28d4266da02df6697"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">convertPosToMeters</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz18convertPosToMetersE" title="Link to this definition"></a><br /></dt>
+<dd><p>conversion factor to meters </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10headerLineE">
+<span id="_CPPv3N13DataFileToViz10headerLineE"></span><span id="_CPPv2N13DataFileToViz10headerLineE"></span><span id="DataFileToViz::headerLine__b"></span><span class="target" id="class_data_file_to_viz_1aa126e11d3b1f47e82c23fa9481107c1f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">headerLine</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz10headerLineE" title="Link to this definition"></a><br /></dt>
+<dd><p>[bool] flag to mark first line as a header </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz12attitudeTypeE">
+<span id="_CPPv3N13DataFileToViz12attitudeTypeE"></span><span id="_CPPv2N13DataFileToViz12attitudeTypeE"></span><span id="DataFileToViz::attitudeType__i"></span><span class="target" id="class_data_file_to_viz_1ab3a6c126700bcd4868523f2f7dfe658a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attitudeType</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz12attitudeTypeE" title="Link to this definition"></a><br /></dt>
+<dd><p>0 - MRP, 1 - EP or quaternions (q0, q1, q2, q3), 2 - (3-2-1) Euler angles </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz12thrMsgDataSCE">
+<span id="_CPPv3N13DataFileToViz12thrMsgDataSCE"></span><span id="_CPPv2N13DataFileToViz12thrMsgDataSCE"></span><span id="DataFileToViz::thrMsgDataSC__std::vector:std::vector:ThrClusterMap::"></span><span class="target" id="class_data_file_to_viz_1aedc16761826730bf1383015df2a39cfc"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/vizStructures.html#_CPPv413ThrClusterMap" title="ThrClusterMap"><span class="n"><span class="pre">ThrClusterMap</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrMsgDataSC</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz12thrMsgDataSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) vector of sets of thruster cluster mapping info </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz12thrScOutMsgsE">
+<span id="_CPPv3N13DataFileToViz12thrScOutMsgsE"></span><span id="_CPPv2N13DataFileToViz12thrScOutMsgsE"></span><span id="DataFileToViz::thrScOutMsgs__std::vector:std::vector:Message:THROutputMsgPayload:P::"></span><span class="target" id="class_data_file_to_viz_1af7e9b4ea1ee5a9f5359c8395d342ddb2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/THROutputMsgPayload.html#_CPPv419THROutputMsgPayload" title="THROutputMsgPayload"><span class="n"><span class="pre">THROutputMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrScOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz12thrScOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) vector of spacecraft thruster output message vectors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz11rwScOutMsgsE">
+<span id="_CPPv3N13DataFileToViz11rwScOutMsgsE"></span><span id="_CPPv2N13DataFileToViz11rwScOutMsgsE"></span><span id="DataFileToViz::rwScOutMsgs__std::vector:std::vector:Message:RWConfigLogMsgPayload:P::"></span><span class="target" id="class_data_file_to_viz_1a5a10b519e77b98284214a9c83e57b4f7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#_CPPv421RWConfigLogMsgPayload" title="RWConfigLogMsgPayload"><span class="n"><span class="pre">RWConfigLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwScOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz11rwScOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>(Optional) vector of sets of RW msg names, each entry is per SC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz9bskLoggerE">
+<span id="_CPPv3N13DataFileToViz9bskLoggerE"></span><span id="_CPPv2N13DataFileToViz9bskLoggerE"></span><span id="DataFileToViz::bskLogger__BSKLogger"></span><span class="target" id="class_data_file_to_viz_1acb214551e50f384f3f795fa9dad66828"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] BSK Logging object </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10pullVectorEPNSt13istringstreamEPd">
+<span id="_CPPv3N13DataFileToViz10pullVectorEPNSt13istringstreamEPd"></span><span id="_CPPv2N13DataFileToViz10pullVectorEPNSt13istringstreamEPd"></span><span id="DataFileToViz::pullVector__std::istringstreamP.doubleP"></span><span class="target" id="class_data_file_to_viz_1a3dfefad6fc500b1f8c55f3f0f8dfc58c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pullVector</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">istringstream</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">iss</span></span>, <span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz10pullVectorEPNSt13istringstreamEPd" title="Link to this definition"></a><br /></dt>
+<dd><p>pull a 3-d set of double values from the input stream </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz11pullVector4EPNSt13istringstreamEPd">
+<span id="_CPPv3N13DataFileToViz11pullVector4EPNSt13istringstreamEPd"></span><span id="_CPPv2N13DataFileToViz11pullVector4EPNSt13istringstreamEPd"></span><span id="DataFileToViz::pullVector4__std::istringstreamP.doubleP"></span><span class="target" id="class_data_file_to_viz_1a3ed675e7d1f56f0ee6e31821a79e285b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pullVector4</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">istringstream</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">iss</span></span>, <span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">*</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz11pullVector4EPNSt13istringstreamEPd" title="Link to this definition"></a><br /></dt>
+<dd><p>pull a 4-d set of double values from the input stream </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10pullScalarEPNSt13istringstreamE">
+<span id="_CPPv3N13DataFileToViz10pullScalarEPNSt13istringstreamE"></span><span id="_CPPv2N13DataFileToViz10pullScalarEPNSt13istringstreamE"></span><span id="DataFileToViz::pullScalar__std::istringstreamP"></span><span class="target" id="class_data_file_to_viz_1acb44fef6c8bc64430c4928b0c5158266"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pullScalar</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">istringstream</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">iss</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DataFileToViz10pullScalarEPNSt13istringstreamE" title="Link to this definition"></a><br /></dt>
+<dd><p>pull a double from the input stream </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz16numThrPerClusterE">
+<span id="_CPPv3N13DataFileToViz16numThrPerClusterE"></span><span id="_CPPv2N13DataFileToViz16numThrPerClusterE"></span><span id="DataFileToViz::numThrPerCluster__std::vector:std::vector:i::"></span><span class="target" id="class_data_file_to_viz_1a7aa343c4a085b0cc77bc699348ffaad8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numThrPerCluster</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz16numThrPerClusterE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector containing list of numbers of thruster per cluster per spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10fileHandleE">
+<span id="_CPPv3N13DataFileToViz10fileHandleE"></span><span id="_CPPv2N13DataFileToViz10fileHandleE"></span><span id="DataFileToViz::fileHandle__std::ifstream"></span><span class="target" id="class_data_file_to_viz_1a25e88137df642192823e332144a74318"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ifstream</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fileHandle</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz10fileHandleE" title="Link to this definition"></a><br /></dt>
+<dd><p>file handle to the simulation data input file </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10thrPosListE">
+<span id="_CPPv3N13DataFileToViz10thrPosListE"></span><span id="_CPPv2N13DataFileToViz10thrPosListE"></span><span id="DataFileToViz::thrPosList__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_data_file_to_viz_1abb7890b9e8227a9345cb0037ad8542ba"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrPosList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz10thrPosListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector of thrust positions </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10thrDirListE">
+<span id="_CPPv3N13DataFileToViz10thrDirListE"></span><span id="_CPPv2N13DataFileToViz10thrDirListE"></span><span id="DataFileToViz::thrDirList__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_data_file_to_viz_1a23eedf642b84d3ff4e359881961e397b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrDirList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz10thrDirListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vector of thrust unit direction vectors in B-frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz15thrForceMaxListE">
+<span id="_CPPv3N13DataFileToViz15thrForceMaxListE"></span><span id="_CPPv2N13DataFileToViz15thrForceMaxListE"></span><span id="DataFileToViz::thrForceMaxList__std::vector:double:"></span><span class="target" id="class_data_file_to_viz_1a948c82527e6deb518a71abcee98dd176"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrForceMaxList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz15thrForceMaxListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vector of thrust maximum force values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz9rwPosListE">
+<span id="_CPPv3N13DataFileToViz9rwPosListE"></span><span id="_CPPv2N13DataFileToViz9rwPosListE"></span><span id="DataFileToViz::rwPosList__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_data_file_to_viz_1a69365cd5bb13ca81ff650c654455eb96"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwPosList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz9rwPosListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector of RW positions </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz9rwDirListE">
+<span id="_CPPv3N13DataFileToViz9rwDirListE"></span><span id="_CPPv2N13DataFileToViz9rwDirListE"></span><span id="DataFileToViz::rwDirList__std::vector:Eigen::Vector3d:"></span><span class="target" id="class_data_file_to_viz_1a138034bb15cfdd6eecf5937b16e2d7ad"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwDirList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz9rwDirListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vector of RW sprin axis unit direction vectors in B-frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz14rwOmegaMaxListE">
+<span id="_CPPv3N13DataFileToViz14rwOmegaMaxListE"></span><span id="_CPPv2N13DataFileToViz14rwOmegaMaxListE"></span><span id="DataFileToViz::rwOmegaMaxList__std::vector:double:"></span><span class="target" id="class_data_file_to_viz_1a1ae1903fb890e1a7f5981b1d1fb7e89f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwOmegaMaxList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz14rwOmegaMaxListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r/s] vector of RW maximum spin rate values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz10rwUMaxListE">
+<span id="_CPPv3N13DataFileToViz10rwUMaxListE"></span><span id="_CPPv2N13DataFileToViz10rwUMaxListE"></span><span id="DataFileToViz::rwUMaxList__std::vector:double:"></span><span class="target" id="class_data_file_to_viz_1a42a2c46669835751982c7fab3acd2ecf"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwUMaxList</span></span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz10rwUMaxListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] vector of RW maximum motor torque values values </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz5numRWE">
+<span id="_CPPv3N13DataFileToViz5numRWE"></span><span id="_CPPv2N13DataFileToViz5numRWE"></span><span id="DataFileToViz::numRW__i"></span><span class="target" id="class_data_file_to_viz_1a326a8c641cb67601f51f28cff0ebed70"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numRW</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz5numRWE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; number of RWs across all spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DataFileToViz6numThrE">
+<span id="_CPPv3N13DataFileToViz6numThrE"></span><span id="_CPPv2N13DataFileToViz6numThrE"></span><span id="DataFileToViz::numThr__i"></span><span class="target" id="class_data_file_to_viz_1a44bd87396f6510e6f1e2d316fb87a6c7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numThr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DataFileToViz6numThrE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; number of Thrusters across all spacecraft </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="dataFileToViz" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

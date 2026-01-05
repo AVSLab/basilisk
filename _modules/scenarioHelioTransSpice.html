@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioHelioTransSpice &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioHelioTransSpice</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioHelioTransSpice</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">The purpose of this simulation is to illustrate how to set a spacecraft&#39;s heliocentric translational motion using</span>
+<span class="sd">custom Spice files. This allows the user to easily visualize a mission trajectory using Vizard.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioHelioTransSpice.py</span>
+
+<span class="sd">Configuring Translational Motion Using Custom Spice Files</span>
+<span class="sd">---------------------------------------------------------</span>
+
+<span class="sd">To set up the spacecraft&#39;s heliocentric translational motion via custom Spice files, the user should first create a</span>
+<span class="sd">string list containing the desired file names to upload. This script loads a single Spice file::</span>
+
+<span class="sd">    customSpiceFiles = [&quot;spacecraft_21T01.bsp&quot;]</span>
+
+<span class="sd">Next, the ``loadSpiceKernel()`` method of class SpiceInterface should be called to load the custom Spice files.</span>
+<span class="sd">This method accepts a file name and the path to the desired file to load::</span>
+
+<span class="sd">    spiceObject.loadSpiceKernel(file, os.path.join(path, &quot;dataForExamples&quot;, &quot;Spice/&quot;))</span>
+
+<span class="sd">Note that setting up the orbital elements and initial conditions using the ``orbitalMotion`` module is no longer needed.</span>
+
+<span class="sd">After the Spice files are loaded, the final step is to connect the configured Spice translational output message to</span>
+<span class="sd">the spacecraft object&#39;s ``transRefInMsg`` input message::</span>
+
+<span class="sd">    scObject.transRefInMsg.subscribeTo(spiceObject.transRefStateOutMsgs[0])</span>
+
+<span class="sd">Finally, add the Spice object to the simulation task list::</span>
+
+<span class="sd">    scSim.AddModelToTask(simTaskName, spiceObject)</span>
+
+<span class="sd">Ensure to unload the Spice kernels at the end of each simulation::</span>
+
+<span class="sd">    spiceObject.unloadSpiceKernel(file, os.path.join(path, &quot;dataForExamples&quot;, &quot;Spice/&quot;))</span>
+
+<span class="sd">Simulation Visualization In Vizard</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The following image illustrates the expected visualization of this simulation script.</span>
+
+<span class="sd">.. image:: /_images/static/scenarioHelioTransSpice.jpg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose: This simulation shows how to specify a spacecraft&#39;s heliocentric translational motion through loading custom Spice files.</span>
+<span class="c1"># Author:   Leah Kiner</span>
+<span class="c1"># Creation Date: Feb. 4 2022</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioHelioTransSpice.html#scenarioHelioTransSpice.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Heliocentric mission simulation scenarion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1"># Configure the simulation</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Shows the simulation progress bar in the terminal</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create the dynamics process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># Create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mf">60.</span><span class="p">)</span>
+
+    <span class="c1"># Add the dynamics task to the dynamics process</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># Configure the spacecraft object</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spiceSat&quot;</span>  <span class="c1"># Name of the spacecraft</span>
+
+    <span class="c1"># Create gravitational bodies</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">createBodies</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">,</span> <span class="s2">&quot;venus&quot;</span><span class="p">,</span> <span class="s2">&quot;mars barycenter&quot;</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Create and configure the default SPICE support module.</span>
+    <span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2028 February 24 5:30:30.0&quot;</span>  <span class="c1"># Store the date and time of the start of the simulation.</span>
+    <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">timeInitString</span><span class="p">,</span> <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create a string list of all custom Spice files to upload</span>
+    <span class="n">customSpiceFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;spacecraft_21T01.bsp&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Load the custom Spice files using the SpiceInterface class loadSpiceKernel() method</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">customSpiceFiles</span><span class="p">:</span>
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">loadSpiceKernel</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;dataForExamples&quot;</span><span class="p">,</span> <span class="s2">&quot;Spice/&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Add spacecraft name</span>
+    <span class="n">scNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-60000&quot;</span><span class="p">]</span>
+    <span class="n">spiceObject</span><span class="o">.</span><span class="n">addSpacecraftNames</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">scNames</span><span class="p">))</span>
+
+    <span class="c1"># Connect the configured Spice translational output message to spacecraft object&#39;s transRefInMsg input message</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">transRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">transRefStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Add the Spice and spacecraft objects to the simulation task list.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># define the spacecraft inertia and other parameters</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">600.</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># m - position vector of body-fixed point B relative to CM</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1"># To set the spacecraft initial conditions, the following initial position and velocity variables are set:</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.000</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.00</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.00</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+    <span class="c1"># Configure Vizard settings</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">colorMsgContent</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ColorMsgPayload</span><span class="p">(</span><span class="n">colorRGBA</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;Yellow&quot;</span><span class="p">))</span>
+
+        <span class="n">colorMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ColorMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">colorMsgContent</span><span class="p">)</span>
+
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                                  <span class="p">,</span> <span class="n">oscOrbitColorList</span><span class="o">=</span><span class="p">[</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;Magenta&quot;</span><span class="p">)]</span>
+                                                  <span class="p">,</span> <span class="n">trueOrbitColorInMsgList</span><span class="o">=</span><span class="n">colorMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()</span>
+                                                  <span class="c1"># , saveFile=__file__</span>
+                                                  <span class="p">)</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">epochInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">epochMsg</span><span class="p">)</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">orbitLinesOn</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">spacecraftHelioViewSizeMultiplier</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showSpacecraftLabels</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showCelestialBodyLabels</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">mainCameraTarget</span> <span class="o">=</span> <span class="s2">&quot;sun&quot;</span>  <span class="c1"># Gives heliocentric view</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showMissionTime</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Initialize and execute simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span>  <span class="c1"># sec</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="n">day</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># change true orbit line color</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">colorMsgContent</span><span class="o">.</span><span class="n">colorRGBA</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;Cyan&quot;</span><span class="p">)</span>
+        <span class="n">colorMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">colorMsgContent</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">4.5</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="n">day</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Unload custom Spice kernels at the end of each simulation</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">unloadSpiceKernels</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">customSpiceFiles</span><span class="p">:</span>
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">unloadSpiceKernel</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="s2">&quot;Spice/&quot;</span><span class="p">))</span>
+
+    <span class="k">return</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

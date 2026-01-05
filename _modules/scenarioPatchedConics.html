@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioPatchedConics &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioPatchedConics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioPatchedConics</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This tutorial considers a patched conics approach to an interplanetary transfer from Earth to Jupiter, by way of a</span>
+<span class="sd">heliocentric Hohmann transfer.  The patched conic solution is evaluated making the typical conic trajectory</span>
+<span class="sd">assumptions where an impulsive Dv changes an Earth-centric circular orbit into a hyperbolic departure orbit that</span>
+<span class="sd">escapes the Earth system in the Earth&#39;s heliocentric direction.  After an elliptical heliocentric transfer orbit</span>
+<span class="sd">the craft reaches the Jupiter region.  The Jupiter relative arrival is a hyperbolic arrival orbit.</span>
+<span class="sd">To simulate this solution, a continuous multi-body gravity integration is performed to illustrate</span>
+<span class="sd">how close the patched conic solution is to reaching a Jupiter fly-by.  The simulation is started and stopped to</span>
+<span class="sd">change the integration time steps to appropriate values, and also change relative to what planet the trajectory is</span>
+<span class="sd">logged.  However, the simulation state always includes the gravity of Earth, Sun and Jupiter.  To keep this tutorial</span>
+<span class="sd">simple, the planets are assumed to be at fixed locations and their ephemeris message is not updated.</span>
+
+<span class="sd">The detail of the simulation script is as follows.</span>
+<span class="sd">This script sets up a basic spacecraft which starts in circular Low Earth Orbit, with logging with respect to the</span>
+<span class="sd">Earth. The spacecraft then leaves on a hyperbolic orbit with respect to Earth until it reaches the edge of the Earth&#39;s</span>
+<span class="sd">sphere of influence. The frame of reference is then switched to a Sun centered inertial, and the planetary positions</span>
+<span class="sd">are adjusted accordingly.</span>
+
+<span class="sd">The Earth&#39;s velocity is then added to the spacecraft (to account for the heliocentric velocity of the</span>
+<span class="sd">spacecraft) and the simulation is run until the spacecraft approaches Jupiter&#39;s Sphere of Influence (SOI). To allow</span>
+<span class="sd">the simulation to catch up, the time step is reduced just prior to approaching Jupiter&#39;s SOI. Then the logging is set</span>
+<span class="sd">to be relative to Jupiter.</span>
+
+<span class="sd">Note that the output position and velocity (when reading message logs) will be relative to the planet that is the</span>
+<span class="sd">central body during that logging period. So to use the last state in each segment, it needed to be adjusted to account</span>
+<span class="sd">for the planet/Sun&#39;s position and velocity.</span>
+
+<span class="sd">How to setup a basic spacecraft simulation is shown in the earlier tutorial :ref:`scenarioBasicOrbit`.</span>
+<span class="sd">Simulating a Hohmann transfer is illustrated in :ref:`scenarioOrbitManeuver`.</span>
+<span class="sd">Setting up multiple gravitational bodies is shown in :ref:`scenarioOrbitMultiBody`</span>
+<span class="sd">while providing pseudo-SPICE messages is laid out in :ref:`scenarioCSS`.</span>
+
+<span class="sd">This simulation combines all those techniques as well as changing logging relative to multiple bodies for a single</span>
+<span class="sd">simulation.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioPatchedConics.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The following images illustrate the expected simulation run returns for a range of script configurations.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True</span>
+
+<span class="sd">Plots below illustrate the scenario results for the Earth-centered departure, the heliocentric Hohmann transfer, the</span>
+<span class="sd">Jupiter centered fly-by, and a heliocentric log plot of the entire transfer.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioPatchedConics1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioPatchedConics2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioPatchedConics3.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioPatchedConics4.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioPatchedConics5.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose: Patched Conics Interplanetary Trajectory</span>
+<span class="c1"># Author:   Divinaa Burder</span>
+<span class="c1"># Creation Date: March 27, 2019</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simIncludeGravBody</span><span class="p">,</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioPatchedConics.html#scenarioPatchedConics.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">5.</span><span class="p">)</span>
+
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">jupiter</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createJupiter</span><span class="p">()</span>
+    <span class="n">sun</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSun</span><span class="p">()</span>
+
+    <span class="c1"># by default the SPICE object will use the solar system barycenter as the inertial origin</span>
+    <span class="c1"># If the spacecraft() output is desired relative to another celestial object, the zeroBase string</span>
+    <span class="c1"># name of the SPICE object needs to be changed.</span>
+    <span class="c1"># In order to specify which body the spacecraft position and velocities are integrated relative to, the `isCentralBody`</span>
+    <span class="c1"># flag is used.</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># create simulation messages</span>
+    <span class="c1">#</span>
+    <span class="c1"># The planets and the Sun are artificially placed at the beginning of this tutorial using state messages to mimic</span>
+    <span class="c1"># SPICE states. An example of this is shown below.</span>
+    <span class="c1"># However, since this is a simplified scenario where the planets are not moving, both the Earth and Jupiter are</span>
+    <span class="c1"># assigned zero velocities in the ephemeris messages. The spacecraft&#39;s velocity is manually adjusted to add Earth&#39;s</span>
+    <span class="c1"># velocity after the spacecraft reaches the edge of Earth&#39;s Sphere of Influence,</span>
+    <span class="c1"># and to discount Jupiter&#39;s velocity upon</span>
+    <span class="c1"># entering Jupiter&#39;s Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative</span>
+    <span class="c1"># positions and velocities even when the planets are not moving.</span>
+    <span class="n">rEarth</span> <span class="o">=</span> <span class="mf">149598023.</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">rJupiter</span> <span class="o">=</span> <span class="mf">778298361.</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">earthStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">(</span>
+        <span class="n">PositionVector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">rEarth</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">VelocityVector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">earthMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthStateMsg</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;earth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">earthMsg</span><span class="p">)</span>
+
+    <span class="n">jupiterStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">(</span>
+        <span class="n">PositionVector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rJupiter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">VelocityVector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">jupiterMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jupiterStateMsg</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;jupiter barycenter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">jupiterMsg</span><span class="p">)</span>
+
+    <span class="n">sunStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">(</span>
+        <span class="n">PositionVector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">VelocityVector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;sun&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="c1">#  Earth Centered Circular orbit and hyperbolic departure</span>
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="c1">#   setup orbit and simulation time</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">r_E</span><span class="p">,</span> <span class="n">v_E</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">r_E</span><span class="p">,</span> <span class="n">v_E</span><span class="p">)</span>      <span class="c1"># this stores consistent initial orbit elements</span>
+    <span class="n">vel_N_Earth</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Hohmann transfer calculations</span>
+    <span class="n">at</span> <span class="o">=</span> <span class="p">(</span><span class="n">rEarth</span> <span class="o">+</span> <span class="n">rJupiter</span><span class="p">)</span> <span class="o">*</span> <span class="mf">.5</span>
+    <span class="n">vPt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sun</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rEarth</span> <span class="o">-</span> <span class="n">sun</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">at</span><span class="p">)</span>
+    <span class="n">vAt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sun</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rJupiter</span> <span class="o">-</span> <span class="n">sun</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">at</span><span class="p">)</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">at</span> <span class="o">/</span> <span class="n">at</span> <span class="o">/</span> <span class="n">at</span><span class="p">)</span>
+    <span class="n">T2</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="n">n1</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">v_Earth</span> <span class="o">=</span> <span class="mf">29.7859</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># speed of the earth</span>
+    <span class="n">v_Earth_rel</span> <span class="o">=</span> <span class="n">vPt</span> <span class="o">-</span> <span class="n">v_Earth</span>  <span class="c1"># Required earth relative velocity</span>
+    <span class="n">aHyp</span> <span class="o">=</span> <span class="o">-</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="n">v_Earth_rel</span> <span class="o">*</span> <span class="n">v_Earth_rel</span><span class="p">)</span>  <span class="c1"># Semimajor axis of departure hyperbola</span>
+    <span class="n">eHyp</span> <span class="o">=</span> <span class="n">rLEO</span> <span class="o">*</span> <span class="n">v_Earth_rel</span> <span class="o">*</span> <span class="n">v_Earth_rel</span> <span class="o">/</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Eccentricity of hyperbolic departure orbit</span>
+    <span class="n">v0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_Earth_rel</span> <span class="o">*</span> <span class="n">v_Earth_rel</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rLEO</span><span class="p">)</span>  <span class="c1"># Earth relative speed s/c needs post burn</span>
+    <span class="n">v_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">rLEO</span><span class="p">)</span>
+    <span class="n">deltaV1</span> <span class="o">=</span> <span class="n">v0</span> <span class="o">-</span> <span class="n">v_c</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">eHyp</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># Burn angle</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">phi</span>
+    <span class="n">t0_Tp</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">E</span>
+
+    <span class="c1"># initialize Spacecraft States with the initialization variables</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_E</span>  <span class="c1"># m   - r_BN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">v_E</span>  <span class="c1"># m/s - v_BN_N</span>
+
+    <span class="c1"># set the simulation time</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">t0_Tp</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                              <span class="c1"># , saveFile=__file__</span>
+                                              <span class="p">)</span>
+    <span class="c1">#   initialize Simulation:  This function clears the simulation log, and runs the self_init()</span>
+    <span class="c1">#   cross_init() and reset() routines on each module.</span>
+    <span class="c1">#   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),</span>
+    <span class="c1">#   then the all messages are auto-discovered that are shared across different BSK threads.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># write planet state messages again to avoid long time difference errors in the gravity effector</span>
+    <span class="n">earthMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">jupiterMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jupiterStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">sunMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+    <span class="n">posRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">velRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span>
+
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">posRef</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">velRef</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+
+    <span class="n">v_S_E</span> <span class="o">=</span> <span class="n">vN</span> <span class="o">-</span> <span class="n">vel_N_Earth</span>  <span class="c1"># vel of s/c (S) wrt Earth (E)</span>
+
+    <span class="n">vHat</span> <span class="o">=</span> <span class="n">v_S_E</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v_S_E</span><span class="p">)</span>
+    <span class="n">v_S_E</span> <span class="o">=</span> <span class="n">v_S_E</span> <span class="o">+</span> <span class="n">vHat</span> <span class="o">*</span> <span class="n">deltaV1</span>
+
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">v_S_E</span> <span class="o">+</span> <span class="n">vel_N_Earth</span>
+    <span class="n">velRef</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># run simulation for 2nd chunk</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">+</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">110000</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># write planet state messages again to avoid long time difference errors in the gravity effector</span>
+    <span class="n">earthMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">jupiterMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jupiterStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">sunMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="n">endEarthTime</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Interplanetary Hohmann Transfer</span>
+    <span class="c1">#</span>
+    <span class="c1"># change who is the central body</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">sun</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># The simulation is stopped when the spacecraft reaches the edge of Earth&#39;s Sphere of Influence, and a new time step of</span>
+    <span class="c1"># 1 week is specified by the following:</span>
+    <span class="n">oneWeek</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>  <span class="c1"># Changing timestep to 1 week</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">oneWeek</span>
+    <span class="c1"># And the task period is updated in the simulation using:</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">updateTaskPeriod</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">)</span>
+
+    <span class="c1"># The Earth&#39;s position and  velocity also need to be added to the spacecraft to account</span>
+    <span class="c1"># for the heliocentric position</span>
+    <span class="c1"># and velocity of the spacecraft. Similar to scenarioOrbitManeuver.py, the states are retrieved,</span>
+    <span class="c1"># manipulated and fed back to the simulation by:</span>
+    <span class="n">posRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">velRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span>
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">posRef</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">velRef</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+
+    <span class="n">pos_N_Earth</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">149598023</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">depVel_N_Earth</span> <span class="o">=</span> <span class="p">[</span><span class="mf">29.7859</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">rN</span> <span class="o">+</span> <span class="n">pos_N_Earth</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">vN</span> <span class="o">+</span> <span class="n">depVel_N_Earth</span>
+    <span class="n">posRef</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">velRef</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># to avoid the planet message becoming too stale and the resulting loss in time accuracy</span>
+    <span class="c1"># we break up the integration into chunks of less than 100 days</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">stopTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">+</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">110000</span><span class="p">)</span> <span class="o">+</span> <span class="n">T2</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">steps</span> <span class="o">-</span> <span class="n">oneWeek</span><span class="o">*</span><span class="mi">1</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+        <span class="c1"># write planet state messages again to avoid long time difference errors in the gravity effector</span>
+        <span class="n">earthMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+        <span class="n">jupiterMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jupiterStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+        <span class="n">sunMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+    <span class="n">hohmann_PosData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">hohmann_VelData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="n">endSunTime</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hohmann_PosData</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># CHANGING TIME STEP BEFORE JUPITER ARRIVAL</span>
+    <span class="c1">#</span>
+    <span class="c1"># Since the next time-step is pre-calculated, the simulation is stopped prior to approaching Jupiter&#39;s Sphere of</span>
+    <span class="c1"># Influence. This ensures there is no loss or conflicts in the logged data.</span>
+    <span class="c1"># The time step is reduced to 100 seconds, and</span>
+    <span class="c1"># the simulation is propagated until it reaches Jupiter&#39;s SOI. Similar to the</span>
+    <span class="c1"># Interplanetary section, the position and</span>
+    <span class="c1"># velocity states are pulled and manipulated to be Jupiter-centric and then fed back to the simulation.</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">500.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">updateTaskPeriod</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">)</span>
+    <span class="n">dataLog</span><span class="o">.</span><span class="n">updateTimeInterval</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">20</span><span class="o">*</span><span class="mi">60</span><span class="p">))</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">+</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">110000</span><span class="p">)</span> <span class="o">+</span> <span class="n">T2</span> <span class="o">-</span> <span class="n">oneWeek</span><span class="o">*</span><span class="mf">0.5</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># write planet state messages again to avoid long time difference errors in the gravity effector</span>
+    <span class="n">earthMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">jupiterMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jupiterStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">sunMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+    <span class="n">timeSwitch_posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">endTimeStepSwitchTime</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeSwitch_posData</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Jupiter Fly-by</span>
+    <span class="c1">#</span>
+    <span class="c1"># The simulation is then run to log the fly-by data.</span>
+    <span class="c1">#</span>
+    <span class="c1"># At the end of the transfer, the logged data (which is always in the inertial frame,</span>
+    <span class="c1"># in this case, the heliocentric</span>
+    <span class="c1"># frame) for each section is manipulated for plotting purposes.</span>
+    <span class="c1"># To show the Earth-centered departure, the position and velocity of</span>
+    <span class="c1"># the spacecraft are adjusted to be Earth-centric.</span>
+    <span class="c1"># The heliocentric Hohmann transfer does not need to be adjusted since it is already in the form required.</span>
+    <span class="c1"># The position and velocity data of the spacecraft within Jupiter&#39;s SOI are adjusted to be Jupiter centered so the</span>
+    <span class="c1"># trajectory of the flyby with respect to Jupiter can be shown.</span>
+    <span class="c1">#</span>
+    <span class="n">sun</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">jupiter</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">posRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">velRef</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubVelocity</span><span class="p">)</span>
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">posRef</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">velRef</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span>
+
+    <span class="n">pos_N_Jup</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rJupiter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">vel_N_Jup</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">13.0697</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">rN</span> <span class="o">-</span> <span class="n">pos_N_Jup</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">vN</span> <span class="o">-</span> <span class="n">vel_N_Jup</span>
+
+    <span class="n">posRef</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">velRef</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+
+    <span class="c1"># Setup data logging before the simulation is initialized</span>
+
+    <span class="c1"># scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, simulationTimeStep)</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">+</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">110000</span><span class="p">)</span> <span class="o">+</span> <span class="n">T2</span> <span class="o">+</span> <span class="n">oneWeek</span><span class="o">*</span><span class="mi">6</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># write planet state messages again to avoid long time difference errors in the gravity effector</span>
+    <span class="n">earthMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">jupiterMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">jupiterStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+    <span class="n">sunMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunStateMsg</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">)</span>
+
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">dataVel</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="n">posJup</span> <span class="o">=</span> <span class="n">dataPos</span><span class="p">[</span><span class="n">endTimeStepSwitchTime</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">velJup</span> <span class="o">=</span> <span class="n">dataVel</span><span class="p">[</span><span class="n">endTimeStepSwitchTime</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Earth Centered Departure</span>
+    <span class="n">pos_S_EC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">vel_S_EC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">endEarthTime</span><span class="p">):</span>
+        <span class="n">r_S_E</span> <span class="o">=</span> <span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_N_Earth</span>
+        <span class="n">v_S_E</span> <span class="o">=</span> <span class="n">velData</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">vel_N_Earth</span>
+
+        <span class="n">pos_S_EC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r_S_E</span><span class="p">)</span>
+        <span class="n">vel_S_EC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_S_E</span><span class="p">)</span>
+
+    <span class="c1"># Jupiter Centered Arrival</span>
+    <span class="n">pos_S_JC</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posJup</span><span class="p">)):</span>
+        <span class="n">r_S_J</span> <span class="o">=</span> <span class="n">posJup</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_N_Jup</span>
+        <span class="n">pos_S_JC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r_S_J</span><span class="p">)</span>
+
+    <span class="n">pos_S_JC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pos_S_JC</span><span class="p">)</span>
+
+    <span class="c1"># Plots</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="c1"># plot the results</span>
+
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#, figsize=tuple(np.array((1.0, b / oe.a)) * 4.75), dpi=100)</span>
+    <span class="c1"># plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">50000</span><span class="p">,</span> <span class="o">-</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">])</span>
+    <span class="c1"># draw the planet</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">planetColor</span> <span class="o">=</span> <span class="s1">&#39;#008800&#39;</span>
+    <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+    <span class="c1"># draw the actual orbit</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">endEarthTime</span><span class="p">):</span>
+        <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">pos_S_EC</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">vel_S_EC</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span><span class="p">)</span>
+        <span class="n">fData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">f</span> <span class="o">+</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+             <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated Flight&#39;</span><span class="p">)</span>
+    <span class="c1"># draw the full osculating orbit from the initial conditions</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fData</span><span class="p">)):</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#555555&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Orbit Track&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Earth velocity direction [km]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Sunward direction [km]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">25000</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">300</span><span class="p">])):</span>
+        <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">pos_S_EC</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">vel_S_EC</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">300</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">rData</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span><span class="p">,</span>
+             <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Earth Relative Radius [km]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">planetColor</span> <span class="o">=</span> <span class="s1">&#39;#008800&#39;</span>
+    <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">sun</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">149598000</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+    <span class="c1"># draw the actual orbit</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">hohmann_PosData</span><span class="p">)):</span>
+        <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">hohmann_PosData</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">hohmann_VelData</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">)</span>
+        <span class="n">fData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">f</span> <span class="o">+</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">149598000</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span><span class="p">[</span><span class="n">endEarthTime</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">endEarthTime</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+             <span class="n">rData</span><span class="p">[</span><span class="n">endEarthTime</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">endEarthTime</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#008800&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+             <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated Flight&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Y axis - Sunward Direction [AU]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;X axis - Velocity Direction [AU]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">20000000</span><span class="p">,</span> <span class="mi">20000000</span><span class="p">,</span> <span class="o">-</span><span class="mi">20000000</span><span class="p">,</span> <span class="mi">20000000</span><span class="p">])</span>
+    <span class="c1"># draw the planet</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">planetColor</span> <span class="o">=</span> <span class="s1">&#39;#008800&#39;</span>
+    <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">jupiter</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+    <span class="c1"># draw actual orbit</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos_S_JC</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">,</span> <span class="n">pos_S_JC</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated Flight&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Jupiter velocity direction [km]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Anti-Sunward direction [km]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;4&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+
+    <span class="n">dataTime_EC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rData_EC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dataTime_HC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rData_HC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dataTime_TS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rData_TS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dataTime_JC</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rData_JC</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># To speed up the simulation, only certain data points are recorded for plotting</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataPos</span><span class="p">)):</span>
+
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">endEarthTime</span><span class="p">:</span>
+            <span class="n">dataTime_EC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">dataPos</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">dataVel</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">rData_EC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="p">(</span><span class="n">endEarthTime</span> <span class="o">&lt;</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">endSunTime</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># Records every 2nd data point</span>
+                <span class="n">dataTime_HC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">dataPos</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">dataVel</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">rData_HC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">)</span>
+
+
+        <span class="k">elif</span><span class="p">(</span><span class="n">endSunTime</span> <span class="o">&lt;</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">endTimeStepSwitchTime</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># Records every 20th data point</span>
+                <span class="n">dataTime_TS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">dataPos</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">dataVel</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">rData_TS</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if idx % 5 == 0: # Records every 5th data point</span>
+            <span class="n">dataTime_JC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem_parab</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">dataPos</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">dataVel</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">rData_JC</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">)</span>
+
+    <span class="n">dataTime_EC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataTime_EC</span><span class="p">)</span>
+    <span class="n">dataTime_HC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataTime_HC</span><span class="p">)</span>
+    <span class="n">dataTime_TS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataTime_TS</span><span class="p">)</span>
+    <span class="n">dataTime_JC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataTime_JC</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataTime_EC</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2HOUR</span><span class="p">,</span> <span class="n">rData_EC</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Earth Centered&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataTime_HC</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2HOUR</span><span class="p">,</span> <span class="n">rData_HC</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#008800&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Heliocentric transfer&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataTime_TS</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2HOUR</span><span class="p">,</span> <span class="n">rData_TS</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#555555&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Time Switch&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataTime_JC</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2HOUR</span><span class="p">,</span> <span class="n">rData_JC</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Jupiter Centered&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [h]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Heliocentric Radius [km]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;5&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="n">hubPos_N</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="n">hubPos_N</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dataPos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dataPos</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dataPos</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]]]</span>
+
+
+    <span class="k">return</span> <span class="n">dataPos</span><span class="p">,</span> <span class="n">figureList</span></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test script can be run as a</span>
+<span class="c1"># stand-along python script</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span>  <span class="c1"># show_plots</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

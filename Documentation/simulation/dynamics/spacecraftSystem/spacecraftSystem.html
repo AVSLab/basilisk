@@ -1,0 +1,908 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: spacecraftSystem &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="sphericalPendulum" href="../sphericalPendulum/index.html" />
+    <link rel="prev" title="spacecraftSystem" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spacecraftSystem</a></li>
+      <li class="breadcrumb-item active">Module: spacecraftSystem</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/spacecraftSystem/spacecraftSystem.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spacecraftsystem">
+<span id="spacecraftsystem"></span><h1>Module: spacecraftSystem<a class="headerlink" href="#module-spacecraftsystem" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This module allows for multiple spacecraft units (mother craft and a docked daughter craft, etc.) to be simulated as an integrated dynamical system.  See <a class="reference external" href="http://hanspeterschaub.info/Papers/grads/CodyAllard.pdf">Dr. Cody Allard’s dissertation</a> for more information.  However, this is still work in progress and not all effectors are compatible with this manner of doing the dynamics.  Use <a class="reference internal" href="../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> to create a spacecraft simulation object unless you are familiar what this expanded spacecraft dynamics module provides.</p>
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This is an instantiation of the <a class="reference internal" href="../_GeneralModuleFiles/dynamicObject.html#dynamicobject"><span class="std std-ref">Module: dynamicObject</span></a> abstract class that is a spacecraft with <a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">Module: stateEffector</span></a>’s and
+<a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#dynamiceffector"><span class="std std-ref">Module: dynamicEffector</span></a>’s attached to it. The spacecraftDynamics allows for both translation and
+rotation. <a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">Module: stateEffector</span></a>’s such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching
+stateEffectors. <a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#dynamiceffector"><span class="std std-ref">Module: dynamicEffector</span></a>’s such as thrusters, external force and torque, SRP etc can be added to the spacecraft
+by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
+the hub.  In contrast to <a class="reference internal" href="../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a>, this class allows for several complex spacecraft components to form a system.  This hubs can be rigidly connected or free-flying.</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/ada6d2c141f493711959e3b0059e5a7b/Basilisk-SPACECRAFTSYSTEM-20180712.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>spacecraft element state output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>scMassStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCMassPropsMsgPayload.html#scmasspropsmsgpayload"><span class="std std-ref">SCMassPropsMsgPayload</span></a></p></td>
+<td><p>spacecraft element mass property output message</p></td>
+</tr>
+<tr class="row-even"><td><p>scEnergyMomentumOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCEnergyMomentumMsgPayload.html#scenergymomentummsgpayload"><span class="std std-ref">SCEnergyMomentumMsgPayload</span></a></p></td>
+<td><p>spacecraft element energy and momentum output message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411DockingData">
+<span id="_CPPv311DockingData"></span><span id="_CPPv211DockingData"></span><span id="DockingData"></span><span class="target" id="struct_docking_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DockingData</span></span></span><a class="headerlink" href="#_CPPv411DockingData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftSystem.h&gt;</em></div>
+<p>docking data structure </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11DockingData11DockingDataEv">
+<span id="_CPPv3N11DockingData11DockingDataEv"></span><span id="_CPPv2N11DockingData11DockingDataEv"></span><span id="DockingData::DockingData"></span><span class="target" id="struct_docking_data_1af1f2df112e1ece7d8a24932bb81f721a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DockingData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11DockingData11DockingDataEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11DockingData6r_DB_BE">
+<span id="_CPPv3N11DockingData6r_DB_BE"></span><span id="_CPPv2N11DockingData6r_DB_BE"></span><span id="DockingData::r_DB_B__Eigen::Vector3d"></span><span class="target" id="struct_docking_data_1af0374eba11aa8875b894de7ed5cee95a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_DB_B</span></span></span><a class="headerlink" href="#_CPPv4N11DockingData6r_DB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11DockingData6dcm_DBE">
+<span id="_CPPv3N11DockingData6dcm_DBE"></span><span id="_CPPv2N11DockingData6dcm_DBE"></span><span id="DockingData::dcm_DB__Eigen::Matrix3d"></span><span class="target" id="struct_docking_data_1a1196f43be409bda7e9209bc12bd378e1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_DB</span></span></span><a class="headerlink" href="#_CPPv4N11DockingData6dcm_DBE" title="Link to this definition"></a><br /></dt>
+<dd><p>variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11DockingData6r_DP_PE">
+<span id="_CPPv3N11DockingData6r_DP_PE"></span><span id="_CPPv2N11DockingData6r_DP_PE"></span><span id="DockingData::r_DP_P__Eigen::Vector3d"></span><span class="target" id="struct_docking_data_1ace770bdc8fb01dd248f1a326b092360d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_DP_P</span></span></span><a class="headerlink" href="#_CPPv4N11DockingData6r_DP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11DockingData6dcm_DPE">
+<span id="_CPPv3N11DockingData6dcm_DPE"></span><span id="_CPPv2N11DockingData6dcm_DPE"></span><span id="DockingData::dcm_DP__Eigen::Matrix3d"></span><span class="target" id="struct_docking_data_1a1645db82a5470859592c87bb8f7c273b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_DP</span></span></span><a class="headerlink" href="#_CPPv4N11DockingData6dcm_DPE" title="Link to this definition"></a><br /></dt>
+<dd><p>variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11DockingData8portNameE">
+<span id="_CPPv3N11DockingData8portNameE"></span><span id="_CPPv2N11DockingData8portNameE"></span><span id="DockingData::portName__ss"></span><span class="target" id="struct_docking_data_1a1dff3f731833b7339b6fff6442f8888a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">portName</span></span></span><a class="headerlink" href="#_CPPv4N11DockingData8portNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>variable </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414SpacecraftUnit">
+<span id="_CPPv314SpacecraftUnit"></span><span id="_CPPv214SpacecraftUnit"></span><span id="SpacecraftUnit"></span><span class="target" id="class_spacecraft_unit"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftUnit</span></span></span><a class="headerlink" href="#_CPPv414SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftSystem.h&gt;</em></div>
+<p>spacecraft dynamic effector </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14SpacecraftUnitEv">
+<span id="_CPPv3N14SpacecraftUnit14SpacecraftUnitEv"></span><span id="_CPPv2N14SpacecraftUnit14SpacecraftUnitEv"></span><span id="SpacecraftUnit::SpacecraftUnit"></span><span class="target" id="class_spacecraft_unit_1a029d885e28fbf1755530763f266846c0"></span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftUnit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14SpacecraftUnitEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnitD0Ev">
+<span id="_CPPv3N14SpacecraftUnitD0Ev"></span><span id="_CPPv2N14SpacecraftUnitD0Ev"></span><span id="SpacecraftUnit::~SpacecraftUnit"></span><span class="target" id="class_spacecraft_unit_1a542db59a75ae505632b51616d8d3b70c"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpacecraftUnit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnitD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit16addStateEffectorEP13StateEffector">
+<span id="_CPPv3N14SpacecraftUnit16addStateEffectorEP13StateEffector"></span><span id="_CPPv2N14SpacecraftUnit16addStateEffectorEP13StateEffector"></span><span id="SpacecraftUnit::addStateEffector__StateEffectorP"></span><span class="target" id="class_spacecraft_unit_1abf8a4ba2a5a05b1c852c162671802083"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addStateEffector</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newStateEffector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit16addStateEffectorEP13StateEffector" title="Link to this definition"></a><br /></dt>
+<dd><p>Attaches a stateEffector to the system. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit18addDynamicEffectorEP15DynamicEffector">
+<span id="_CPPv3N14SpacecraftUnit18addDynamicEffectorEP15DynamicEffector"></span><span id="_CPPv2N14SpacecraftUnit18addDynamicEffectorEP15DynamicEffector"></span><span id="SpacecraftUnit::addDynamicEffector__DynamicEffectorP"></span><span class="target" id="class_spacecraft_unit_1aefe890e240131f67ef095b55e8a51acc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addDynamicEffector</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newDynamicEffector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit18addDynamicEffectorEP15DynamicEffector" title="Link to this definition"></a><br /></dt>
+<dd><p>Attaches a dynamicEffector. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14addDockingPortEP11DockingData">
+<span id="_CPPv3N14SpacecraftUnit14addDockingPortEP11DockingData"></span><span id="_CPPv2N14SpacecraftUnit14addDockingPortEP11DockingData"></span><span id="SpacecraftUnit::addDockingPort__DockingDataP"></span><span class="target" id="class_spacecraft_unit_1a463ff3e62a0a25fcf4516b300eb5b07c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addDockingPort</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411DockingData" title="DockingData"><span class="n"><span class="pre">DockingData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newDockingPort</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14addDockingPortEP11DockingData" title="Link to this definition"></a><br /></dt>
+<dd><p>Attaches a dynamicEffector. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit10SelfInitSCE7int64_t">
+<span id="_CPPv3N14SpacecraftUnit10SelfInitSCE7int64_t"></span><span id="_CPPv2N14SpacecraftUnit10SelfInitSCE7int64_t"></span><span id="SpacecraftUnit::SelfInitSC__int64_t"></span><span class="target" id="class_spacecraft_unit_1a4423ccc2926e1334f079f0dd5f4f305f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInitSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit10SelfInitSCE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Lets spacecraft plus create its own msgs. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit7ResetSCE8uint64_t">
+<span id="_CPPv3N14SpacecraftUnit7ResetSCE8uint64_t"></span><span id="_CPPv2N14SpacecraftUnit7ResetSCE8uint64_t"></span><span id="SpacecraftUnit::ResetSC__uint64_t"></span><span class="target" id="class_spacecraft_unit_1a843bdacaac79688da31859e3e36163d7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResetSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit7ResetSCE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit21writeOutputMessagesSCE8uint64_t7int64_t">
+<span id="_CPPv3N14SpacecraftUnit21writeOutputMessagesSCE8uint64_t7int64_t"></span><span id="_CPPv2N14SpacecraftUnit21writeOutputMessagesSCE8uint64_t7int64_t"></span><span id="SpacecraftUnit::writeOutputMessagesSC__uint64_t.int64_t"></span><span class="target" id="class_spacecraft_unit_1a25b63efcf8529d876a6cf8dd546ae973"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessagesSC</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">clockTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit21writeOutputMessagesSCE8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to write all of the class output messages. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14linkInStatesSCER15DynParamManager">
+<span id="_CPPv3N14SpacecraftUnit14linkInStatesSCER15DynParamManager"></span><span id="_CPPv2N14SpacecraftUnit14linkInStatesSCER15DynParamManager"></span><span id="SpacecraftUnit::linkInStatesSC__DynParamManagerR"></span><span class="target" id="class_spacecraft_unit_1a340ccfd87c401c9a48ac313a15d81b3a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStatesSC</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14linkInStatesSCER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to get access to the hub’s states. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit20initializeDynamicsSCER15DynParamManager">
+<span id="_CPPv3N14SpacecraftUnit20initializeDynamicsSCER15DynParamManager"></span><span id="_CPPv2N14SpacecraftUnit20initializeDynamicsSCER15DynParamManager"></span><span id="SpacecraftUnit::initializeDynamicsSC__DynParamManagerR"></span><span class="target" id="class_spacecraft_unit_1ae3ccd5694b37d4202bd52984f1239dc5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeDynamicsSC</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit20initializeDynamicsSCER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit6dockedE">
+<span id="_CPPv3N14SpacecraftUnit6dockedE"></span><span id="_CPPv2N14SpacecraftUnit6dockedE"></span><span id="SpacecraftUnit::docked__b"></span><span class="target" id="class_spacecraft_unit_1af013e0506a175402d4cca4a28daa96a0"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">docked</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit6dockedE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14spacecraftNameE">
+<span id="_CPPv3N14SpacecraftUnit14spacecraftNameE"></span><span id="_CPPv2N14SpacecraftUnit14spacecraftNameE"></span><span id="SpacecraftUnit::spacecraftName__ss"></span><span class="target" id="class_spacecraft_unit_1a8a830b45a78c6c0e7666917d2200746c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftName</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14spacecraftNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of the spacecraft so that multiple spacecraft can be distinguished. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit13scStateOutMsgE">
+<span id="_CPPv3N14SpacecraftUnit13scStateOutMsgE"></span><span id="_CPPv2N14SpacecraftUnit13scStateOutMsgE"></span><span id="SpacecraftUnit::scStateOutMsg__Message:SCStatesMsgPayload:"></span><span class="target" id="class_spacecraft_unit_1a4e441237d1d8b08369c7c3527b5314c6"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit13scStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of the state output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit17scMassStateOutMsgE">
+<span id="_CPPv3N14SpacecraftUnit17scMassStateOutMsgE"></span><span id="_CPPv2N14SpacecraftUnit17scMassStateOutMsgE"></span><span id="SpacecraftUnit::scMassStateOutMsg__Message:SCMassPropsMsgPayload:"></span><span class="target" id="class_spacecraft_unit_1a5eecdd47c21825020dc01ee6205cbe5f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCMassPropsMsgPayload.html#_CPPv421SCMassPropsMsgPayload" title="SCMassPropsMsgPayload"><span class="n"><span class="pre">SCMassPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scMassStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit17scMassStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of the state output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit22scEnergyMomentumOutMsgE">
+<span id="_CPPv3N14SpacecraftUnit22scEnergyMomentumOutMsgE"></span><span id="_CPPv2N14SpacecraftUnit22scEnergyMomentumOutMsgE"></span><span id="SpacecraftUnit::scEnergyMomentumOutMsg__Message:SCEnergyMomentumMsgPayload:"></span><span class="target" id="class_spacecraft_unit_1a5354643e1eb5e2e34cc429436bc2b424"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCEnergyMomentumMsgPayload.html#_CPPv426SCEnergyMomentumMsgPayload" title="SCEnergyMomentumMsgPayload"><span class="n"><span class="pre">SCEnergyMomentumMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scEnergyMomentumOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit22scEnergyMomentumOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of the state output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit12totOrbEnergyE">
+<span id="_CPPv3N14SpacecraftUnit12totOrbEnergyE"></span><span id="_CPPv2N14SpacecraftUnit12totOrbEnergyE"></span><span id="SpacecraftUnit::totOrbEnergy__double"></span><span class="target" id="class_spacecraft_unit_1a0182b827b48d14767e490a5ba8b45f57"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">totOrbEnergy</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit12totOrbEnergyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[J] Total orbital kinetic energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit12totRotEnergyE">
+<span id="_CPPv3N14SpacecraftUnit12totRotEnergyE"></span><span id="_CPPv2N14SpacecraftUnit12totRotEnergyE"></span><span id="SpacecraftUnit::totRotEnergy__double"></span><span class="target" id="class_spacecraft_unit_1aa1b82e0fb52324b7495fa2c3acf5fba1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">totRotEnergy</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit12totRotEnergyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[J] Total rotational energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14rotEnergyContrE">
+<span id="_CPPv3N14SpacecraftUnit14rotEnergyContrE"></span><span id="_CPPv2N14SpacecraftUnit14rotEnergyContrE"></span><span id="SpacecraftUnit::rotEnergyContr__double"></span><span class="target" id="class_spacecraft_unit_1aff7692f3906a3645835cbc5bc22fab03"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rotEnergyContr</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14rotEnergyContrE" title="Link to this definition"></a><br /></dt>
+<dd><p>[J] Contribution of stateEffector to total rotational energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit23orbPotentialEnergyContrE">
+<span id="_CPPv3N14SpacecraftUnit23orbPotentialEnergyContrE"></span><span id="_CPPv2N14SpacecraftUnit23orbPotentialEnergyContrE"></span><span id="SpacecraftUnit::orbPotentialEnergyContr__double"></span><span class="target" id="class_spacecraft_unit_1ad9bb2405bb5b00b0bc1b10ba8ec110b2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbPotentialEnergyContr</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit23orbPotentialEnergyContrE" title="Link to this definition"></a><br /></dt>
+<dd><p>[J] Contribution of stateEffector to total rotational energy </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit18totOrbAngMomPntN_NE">
+<span id="_CPPv3N14SpacecraftUnit18totOrbAngMomPntN_NE"></span><span id="_CPPv2N14SpacecraftUnit18totOrbAngMomPntN_NE"></span><span id="SpacecraftUnit::totOrbAngMomPntN_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a601738e395152e20e2862e5444baf05e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">totOrbAngMomPntN_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit18totOrbAngMomPntN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2/s] Total orbital angular momentum about N in N frame compenents </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit18totRotAngMomPntC_NE">
+<span id="_CPPv3N14SpacecraftUnit18totRotAngMomPntC_NE"></span><span id="_CPPv2N14SpacecraftUnit18totRotAngMomPntC_NE"></span><span id="SpacecraftUnit::totRotAngMomPntC_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a8285a03edb471308947b67b8ef163619"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">totRotAngMomPntC_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit18totRotAngMomPntC_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2/s] Total rotational angular momentum about C in N frame compenents </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit20rotAngMomPntCContr_BE">
+<span id="_CPPv3N14SpacecraftUnit20rotAngMomPntCContr_BE"></span><span id="_CPPv2N14SpacecraftUnit20rotAngMomPntCContr_BE"></span><span id="SpacecraftUnit::rotAngMomPntCContr_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a20e70e41ecf64c22bec8badd8578e30b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rotAngMomPntCContr_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit20rotAngMomPntCContr_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2/s] Contribution of stateEffector to total rotational angular mom. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit28backSubMatricesContributionsE">
+<span id="_CPPv3N14SpacecraftUnit28backSubMatricesContributionsE"></span><span id="_CPPv2N14SpacecraftUnit28backSubMatricesContributionsE"></span><span id="SpacecraftUnit::backSubMatricesContributions__BackSubMatrices"></span><span class="target" id="class_spacecraft_unit_1a485bbc4faf4aca6320fee4a2a68f683f"></span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">backSubMatricesContributions</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit28backSubMatricesContributionsE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit18sumForceExternal_NE">
+<span id="_CPPv3N14SpacecraftUnit18sumForceExternal_NE"></span><span id="_CPPv2N14SpacecraftUnit18sumForceExternal_NE"></span><span id="SpacecraftUnit::sumForceExternal_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1ada3a045252ac0cf4e60e3882c1fb4af0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sumForceExternal_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit18sumForceExternal_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] Sum of forces given in the inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit18sumForceExternal_BE">
+<span id="_CPPv3N14SpacecraftUnit18sumForceExternal_BE"></span><span id="_CPPv2N14SpacecraftUnit18sumForceExternal_BE"></span><span id="SpacecraftUnit::sumForceExternal_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1af76172e4448e0c54d86f27306fb203f8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sumForceExternal_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit18sumForceExternal_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] Sum of forces given in the body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit15sumTorquePntB_BE">
+<span id="_CPPv3N14SpacecraftUnit15sumTorquePntB_BE"></span><span id="_CPPv2N14SpacecraftUnit15sumTorquePntB_BE"></span><span id="SpacecraftUnit::sumTorquePntB_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1af482c8b0de5ce1b2cde54b32bbac6cda"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sumTorquePntB_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit15sumTorquePntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] Total torque about point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit9oldV_CN_NE">
+<span id="_CPPv3N14SpacecraftUnit9oldV_CN_NE"></span><span id="_CPPv2N14SpacecraftUnit9oldV_CN_NE"></span><span id="SpacecraftUnit::oldV_CN_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1aa3731b522d756ccc5870f0cf8514d310"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oldV_CN_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit9oldV_CN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit9oldV_BN_NE">
+<span id="_CPPv3N14SpacecraftUnit9oldV_BN_NE"></span><span id="_CPPv2N14SpacecraftUnit9oldV_BN_NE"></span><span id="SpacecraftUnit::oldV_BN_N__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a1004ccc9001881806d710a02620e4124"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oldV_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit9oldV_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit13oldOmega_BN_BE">
+<span id="_CPPv3N14SpacecraftUnit13oldOmega_BN_BE"></span><span id="_CPPv2N14SpacecraftUnit13oldOmega_BN_BE"></span><span id="SpacecraftUnit::oldOmega_BN_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a283897006ba332364f0db5dabaed46c5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oldOmega_BN_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit13oldOmega_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit12dvAccum_CN_BE">
+<span id="_CPPv3N14SpacecraftUnit12dvAccum_CN_BE"></span><span id="_CPPv2N14SpacecraftUnit12dvAccum_CN_BE"></span><span id="SpacecraftUnit::dvAccum_CN_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1ac73744519357b2ba9adfa7009fb8f1b0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvAccum_CN_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit12dvAccum_CN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit12dvAccum_BN_BE">
+<span id="_CPPv3N14SpacecraftUnit12dvAccum_BN_BE"></span><span id="_CPPv2N14SpacecraftUnit12dvAccum_BN_BE"></span><span id="SpacecraftUnit::dvAccum_BN_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a0a8274a0e04c0f9b29d6a03b9ae51229"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvAccum_BN_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit12dvAccum_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit26nonConservativeAccelpntB_BE">
+<span id="_CPPv3N14SpacecraftUnit26nonConservativeAccelpntB_BE"></span><span id="_CPPv2N14SpacecraftUnit26nonConservativeAccelpntB_BE"></span><span id="SpacecraftUnit::nonConservativeAccelpntB_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1a3222e7288fe00c331f5ccd09168949cb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nonConservativeAccelpntB_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit26nonConservativeAccelpntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s/s] Current spacecraft body acceleration in the B frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit13omegaDot_BN_BE">
+<span id="_CPPv3N14SpacecraftUnit13omegaDot_BN_BE"></span><span id="_CPPv2N14SpacecraftUnit13omegaDot_BN_BE"></span><span id="SpacecraftUnit::omegaDot_BN_B__Eigen::Vector3d"></span><span class="target" id="class_spacecraft_unit_1ad1df7ae3c22c24c89c600471db35aa80"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaDot_BN_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit13omegaDot_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s/s] angular acceleration of body wrt to N in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit3hubE">
+<span id="_CPPv3N14SpacecraftUnit3hubE"></span><span id="_CPPv2N14SpacecraftUnit3hubE"></span><span id="SpacecraftUnit::hub__HubEffector"></span><span class="target" id="class_spacecraft_unit_1a4bbe5f153f6669bcb2b3a05ac6c0c6b9"></span><a class="reference internal" href="../_GeneralModuleFiles/hubEffector.html#_CPPv411HubEffector" title="HubEffector"><span class="n"><span class="pre">HubEffector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hub</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit3hubE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit9gravFieldE">
+<span id="_CPPv3N14SpacecraftUnit9gravFieldE"></span><span id="_CPPv2N14SpacecraftUnit9gravFieldE"></span><span id="SpacecraftUnit::gravField__GravityEffector"></span><span class="target" id="class_spacecraft_unit_1a166de176e2863df5a6eed5b2a1a84ed7"></span><a class="reference internal" href="../_GeneralModuleFiles/gravityEffector.html#_CPPv415GravityEffector" title="GravityEffector"><span class="n"><span class="pre">GravityEffector</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gravField</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit9gravFieldE" title="Link to this definition"></a><br /></dt>
+<dd><p>Gravity effector for gravitational field experienced by spacecraft. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit6statesE">
+<span id="_CPPv3N14SpacecraftUnit6statesE"></span><span id="_CPPv2N14SpacecraftUnit6statesE"></span><span id="SpacecraftUnit::states__std::vector:StateEffectorP:"></span><span class="target" id="class_spacecraft_unit_1afab2a524f0d10739e9c0c96084a18540"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">states</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit6statesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of state effectors attached to dynObject. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit12dynEffectorsE">
+<span id="_CPPv3N14SpacecraftUnit12dynEffectorsE"></span><span id="_CPPv2N14SpacecraftUnit12dynEffectorsE"></span><span id="SpacecraftUnit::dynEffectors__std::vector:DynamicEffectorP:"></span><span class="target" id="class_spacecraft_unit_1a98e6d9333b0c3ec06255e684d4b0cb12"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dynEffectors</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit12dynEffectorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of dynamic effectors attached to dynObject. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit13dockingPointsE">
+<span id="_CPPv3N14SpacecraftUnit13dockingPointsE"></span><span id="_CPPv2N14SpacecraftUnit13dockingPointsE"></span><span id="SpacecraftUnit::dockingPoints__std::vector:DockingDataP:"></span><span class="target" id="class_spacecraft_unit_1ac50dcd9260157bb52070e591dcae8641"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411DockingData" title="DockingData"><span class="n"><span class="pre">DockingData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dockingPoints</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit13dockingPointsE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit24inertialPositionPropertyE">
+<span id="_CPPv3N14SpacecraftUnit24inertialPositionPropertyE"></span><span id="_CPPv2N14SpacecraftUnit24inertialPositionPropertyE"></span><span id="SpacecraftUnit::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a180fa5005a74a39617ad7890a041553e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_N inertial position relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit24inertialVelocityPropertyE">
+<span id="_CPPv3N14SpacecraftUnit24inertialVelocityPropertyE"></span><span id="_CPPv2N14SpacecraftUnit24inertialVelocityPropertyE"></span><span id="SpacecraftUnit::inertialVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a81894d5710b27fe54e6a16869ae139f4"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] v_N inertial velocity relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit9bskLoggerE">
+<span id="_CPPv3N14SpacecraftUnit9bskLoggerE"></span><span id="_CPPv2N14SpacecraftUnit9bskLoggerE"></span><span id="SpacecraftUnit::bskLogger__BSKLogger"></span><span class="target" id="class_spacecraft_unit_1a82970e4a9eaf6492b3d7bd352a1ddeb7"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN14SpacecraftUnit21assignStateParamNamesEv4Type">
+<span id="_CPPv3I0EN14SpacecraftUnit21assignStateParamNamesE4Type"></span><span id="_CPPv2I0EN14SpacecraftUnit21assignStateParamNamesE4Type"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Type</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_spacecraft_unit_1a60e66f0b4fccf8252df2e82b5503a4c8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">assignStateParamNames</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN14SpacecraftUnit21assignStateParamNamesEv4Type" title="SpacecraftUnit::assignStateParamNames::Type"><span class="n"><span class="pre">Type</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">effector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN14SpacecraftUnit21assignStateParamNamesEv4Type" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit4m_SCE">
+<span id="_CPPv3N14SpacecraftUnit4m_SCE"></span><span id="_CPPv2N14SpacecraftUnit4m_SCE"></span><span id="SpacecraftUnit::m_SC__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a1dd292750f6327a98ee8a4fb064add94"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">m_SC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit4m_SCE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] spacecrafts total mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit7mDot_SCE">
+<span id="_CPPv3N14SpacecraftUnit7mDot_SCE"></span><span id="_CPPv2N14SpacecraftUnit7mDot_SCE"></span><span id="SpacecraftUnit::mDot_SC__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a42f0d2e2e8e4e0301b68b357e4fb90ec"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">mDot_SC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit7mDot_SCE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg/s] Time derivative of spacecrafts total mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit9ISCPntB_BE">
+<span id="_CPPv3N14SpacecraftUnit9ISCPntB_BE"></span><span id="_CPPv2N14SpacecraftUnit9ISCPntB_BE"></span><span id="SpacecraftUnit::ISCPntB_B__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a217bfd42e55cac95d9bb393a87e7b518"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ISCPntB_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit9ISCPntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2] Inertia of s/c about point B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit3c_BE">
+<span id="_CPPv3N14SpacecraftUnit3c_BE"></span><span id="_CPPv2N14SpacecraftUnit3c_BE"></span><span id="SpacecraftUnit::c_B__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a0312144b28c753b56f3f4c029e07fb8b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">c_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit3c_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Vector from point B to CoM of s/c in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit8cPrime_BE">
+<span id="_CPPv3N14SpacecraftUnit8cPrime_BE"></span><span id="_CPPv2N14SpacecraftUnit8cPrime_BE"></span><span id="SpacecraftUnit::cPrime_B__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a89737f549bd8fe776dc1bd67d3223874"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">cPrime_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit8cPrime_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Body time derivative of c_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit6cDot_BE">
+<span id="_CPPv3N14SpacecraftUnit6cDot_BE"></span><span id="_CPPv2N14SpacecraftUnit6cDot_BE"></span><span id="SpacecraftUnit::cDot_B__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1a474ef6c024236f03ccc1e95d53f5c921"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">cDot_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit6cDot_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Inertial time derivative of c_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14ISCPntBPrime_BE">
+<span id="_CPPv3N14SpacecraftUnit14ISCPntBPrime_BE"></span><span id="_CPPv2N14SpacecraftUnit14ISCPntBPrime_BE"></span><span id="SpacecraftUnit::ISCPntBPrime_B__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1abbe165640206ad87d64155dbb22b25f3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ISCPntBPrime_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14ISCPntBPrime_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2/s] Body time derivative of ISCPntB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit3g_NE">
+<span id="_CPPv3N14SpacecraftUnit3g_NE"></span><span id="_CPPv2N14SpacecraftUnit3g_NE"></span><span id="SpacecraftUnit::g_N__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_unit_1aec669f03b98d4bf0cb6b634e07360997"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">g_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit3g_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] Gravitational acceleration in N frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit6hubR_NE">
+<span id="_CPPv3N14SpacecraftUnit6hubR_NE"></span><span id="_CPPv2N14SpacecraftUnit6hubR_NE"></span><span id="SpacecraftUnit::hubR_N__StateDataP"></span><span class="target" id="class_spacecraft_unit_1a1941ac2608f61d214d62b948358f6ad0"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubR_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit6hubR_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data accesss to inertial position for the hub. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit6hubV_NE">
+<span id="_CPPv3N14SpacecraftUnit6hubV_NE"></span><span id="_CPPv2N14SpacecraftUnit6hubV_NE"></span><span id="SpacecraftUnit::hubV_N__StateDataP"></span><span class="target" id="class_spacecraft_unit_1a6b76ad77f8a8980592d3a88a705737fa"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubV_N</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit6hubV_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data access to inertial velocity for the hub. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit13hubOmega_BN_BE">
+<span id="_CPPv3N14SpacecraftUnit13hubOmega_BN_BE"></span><span id="_CPPv2N14SpacecraftUnit13hubOmega_BN_BE"></span><span id="SpacecraftUnit::hubOmega_BN_B__StateDataP"></span><span class="target" id="class_spacecraft_unit_1a3f57a3dcb5e8a443a3074651ad01dd07"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubOmega_BN_B</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit13hubOmega_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data access to the attitude rate of the hub. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit8hubSigmaE">
+<span id="_CPPv3N14SpacecraftUnit8hubSigmaE"></span><span id="_CPPv2N14SpacecraftUnit8hubSigmaE"></span><span id="SpacecraftUnit::hubSigma__StateDataP"></span><span class="target" id="class_spacecraft_unit_1a6877472ab0548792d4ff0901d3dba175"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubSigma</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit8hubSigmaE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data access to sigmaBN for the hub. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit15hubGravVelocityE">
+<span id="_CPPv3N14SpacecraftUnit15hubGravVelocityE"></span><span id="_CPPv2N14SpacecraftUnit15hubGravVelocityE"></span><span id="SpacecraftUnit::hubGravVelocity__StateDataP"></span><span class="target" id="class_spacecraft_unit_1a51c2191224bee67780524b7cf33d8619"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">hubGravVelocity</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit15hubGravVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data access to the gravity-accumulated DV on the Body frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit14BcGravVelocityE">
+<span id="_CPPv3N14SpacecraftUnit14BcGravVelocityE"></span><span id="_CPPv2N14SpacecraftUnit14BcGravVelocityE"></span><span id="SpacecraftUnit::BcGravVelocity__StateDataP"></span><span class="target" id="class_spacecraft_unit_1a16bf54a2f9f398ab4629b1930efdcb70"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">BcGravVelocity</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit14BcGravVelocityE" title="Link to this definition"></a><br /></dt>
+<dd><p>State data access to the gravity-accumulated DV on point Bc. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit13propName_m_SCE">
+<span id="_CPPv3N14SpacecraftUnit13propName_m_SCE"></span><span id="_CPPv2N14SpacecraftUnit13propName_m_SCE"></span><span id="SpacecraftUnit::propName_m_SC__ss"></span><span class="target" id="class_spacecraft_unit_1abdd46ec1fa09c1db1924609ba2ebe1ae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_m_SC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit13propName_m_SCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of m_SC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit16propName_mDot_SCE">
+<span id="_CPPv3N14SpacecraftUnit16propName_mDot_SCE"></span><span id="_CPPv2N14SpacecraftUnit16propName_mDot_SCE"></span><span id="SpacecraftUnit::propName_mDot_SC__ss"></span><span class="target" id="class_spacecraft_unit_1a9bb1958feb01659cf8cd1099fdd7a5eb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_mDot_SC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit16propName_mDot_SCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of mDot_SC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit23propName_centerOfMassSCE">
+<span id="_CPPv3N14SpacecraftUnit23propName_centerOfMassSCE"></span><span id="_CPPv2N14SpacecraftUnit23propName_centerOfMassSCE"></span><span id="SpacecraftUnit::propName_centerOfMassSC__ss"></span><span class="target" id="class_spacecraft_unit_1a799590f596f76ff094a7f3660a22ef53"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_centerOfMassSC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit23propName_centerOfMassSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of centerOfMassSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit18propName_inertiaSCE">
+<span id="_CPPv3N14SpacecraftUnit18propName_inertiaSCE"></span><span id="_CPPv2N14SpacecraftUnit18propName_inertiaSCE"></span><span id="SpacecraftUnit::propName_inertiaSC__ss"></span><span class="target" id="class_spacecraft_unit_1a672900f1092f6ca4efb22ff90f77705a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertiaSC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit18propName_inertiaSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertiaSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit23propName_inertiaPrimeSCE">
+<span id="_CPPv3N14SpacecraftUnit23propName_inertiaPrimeSCE"></span><span id="_CPPv2N14SpacecraftUnit23propName_inertiaPrimeSCE"></span><span id="SpacecraftUnit::propName_inertiaPrimeSC__ss"></span><span class="target" id="class_spacecraft_unit_1ac62996c3d16722ba8fcf3d8504807488"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_inertiaPrimeSC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit23propName_inertiaPrimeSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of inertiaPrimeSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit28propName_centerOfMassPrimeSCE">
+<span id="_CPPv3N14SpacecraftUnit28propName_centerOfMassPrimeSCE"></span><span id="_CPPv2N14SpacecraftUnit28propName_centerOfMassPrimeSCE"></span><span id="SpacecraftUnit::propName_centerOfMassPrimeSC__ss"></span><span class="target" id="class_spacecraft_unit_1a6525bca1bf547130c606bec248d88df9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_centerOfMassPrimeSC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit28propName_centerOfMassPrimeSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of centerOfMassPrimeSC </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpacecraftUnit26propName_centerOfMassDotSCE">
+<span id="_CPPv3N14SpacecraftUnit26propName_centerOfMassDotSCE"></span><span id="_CPPv2N14SpacecraftUnit26propName_centerOfMassDotSCE"></span><span id="SpacecraftUnit::propName_centerOfMassDotSC__ss"></span><span class="target" id="class_spacecraft_unit_1ae2be155ddda69c12629018dfb50d38e4"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propName_centerOfMassDotSC</span></span></span><a class="headerlink" href="#_CPPv4N14SpacecraftUnit26propName_centerOfMassDotSCE" title="Link to this definition"></a><br /></dt>
+<dd><p>property name of centerOfMassDotSC </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
+<dl>
+<dt class="sig sig-object cpp">
+<em class="property"><span class="pre">friend</span> <span class="pre">class</span></em> <span class="pre">SpacecraftSystem</span></dt>
+</dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416SpacecraftSystem">
+<span id="_CPPv316SpacecraftSystem"></span><span id="_CPPv216SpacecraftSystem"></span><span id="SpacecraftSystem"></span><span class="target" id="class_spacecraft_system"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftSystem</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><a class="headerlink" href="#_CPPv416SpacecraftSystem" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftSystem.h&gt;</em></div>
+<p>spacecraft dynamic effector </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem16SpacecraftSystemEv">
+<span id="_CPPv3N16SpacecraftSystem16SpacecraftSystemEv"></span><span id="_CPPv2N16SpacecraftSystem16SpacecraftSystemEv"></span><span id="SpacecraftSystem::SpacecraftSystem"></span><span class="target" id="class_spacecraft_system_1adffb01adf98e06b30063dbaddf963021"></span><span class="sig-name descname"><span class="n"><span class="pre">SpacecraftSystem</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem16SpacecraftSystemEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+<p>This is the constructor, setting variables to default values </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystemD0Ev">
+<span id="_CPPv3N16SpacecraftSystemD0Ev"></span><span id="_CPPv2N16SpacecraftSystemD0Ev"></span><span id="SpacecraftSystem::~SpacecraftSystem"></span><span class="target" id="class_spacecraft_system_1aefaeeee330133aa6f974a20336ee0f3e"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpacecraftSystem</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystemD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+<p>This is the destructor, nothing to report here </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem18initializeDynamicsEv">
+<span id="_CPPv3N16SpacecraftSystem18initializeDynamicsEv"></span><span id="_CPPv2N16SpacecraftSystem18initializeDynamicsEv"></span><span id="SpacecraftSystem::initializeDynamics"></span><span class="target" id="class_spacecraft_system_1ac66b7856e0753ea7bdf25cc1b0037071"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeDynamics</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem18initializeDynamicsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes all of the dynamics and variables for the s/c. </p>
+<p>This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors, stateEffectors, and the hub, initialize gravity, and initialize the sim with the initial conditions specified in python for the simulation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem21computeEnergyMomentumEd">
+<span id="_CPPv3N16SpacecraftSystem21computeEnergyMomentumEd"></span><span id="_CPPv2N16SpacecraftSystem21computeEnergyMomentumEd"></span><span id="SpacecraftSystem::computeEnergyMomentum__double"></span><span class="target" id="class_spacecraft_system_1a66c9bbd65ecb353f14c78b6b54303141"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEnergyMomentum</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem21computeEnergyMomentumEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the total energy and momentum of the s/c. </p>
+<p>This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy, total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used for validation purposes. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem23computeEnergyMomentumSCEdR14SpacecraftUnit">
+<span id="_CPPv3N16SpacecraftSystem23computeEnergyMomentumSCEdR14SpacecraftUnit"></span><span id="_CPPv2N16SpacecraftSystem23computeEnergyMomentumSCEdR14SpacecraftUnit"></span><span id="SpacecraftSystem::computeEnergyMomentumSC__double.SpacecraftUnitR"></span><span class="target" id="class_spacecraft_system_1a2ef548bdba8049ac75ac54e7b0f1c083"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEnergyMomentumSC</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spacecraft</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem23computeEnergyMomentumSCEdR14SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the total energy and momentum of the s/c. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem27computeEnergyMomentumSystemEd">
+<span id="_CPPv3N16SpacecraftSystem27computeEnergyMomentumSystemEd"></span><span id="_CPPv2N16SpacecraftSystem27computeEnergyMomentumSystemEd"></span><span id="SpacecraftSystem::computeEnergyMomentumSystem__double"></span><span class="target" id="class_spacecraft_system_1af24b31ea9674e19334276efbdd282a06"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEnergyMomentumSystem</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem27computeEnergyMomentumSystemEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the total energy and momentum of the s/c. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem25updateSpacecraftMassPropsEdR14SpacecraftUnit">
+<span id="_CPPv3N16SpacecraftSystem25updateSpacecraftMassPropsEdR14SpacecraftUnit"></span><span id="_CPPv2N16SpacecraftSystem25updateSpacecraftMassPropsEdR14SpacecraftUnit"></span><span id="SpacecraftSystem::updateSpacecraftMassProps__double.SpacecraftUnitR"></span><span class="target" id="class_spacecraft_system_1a5270c807cea836719424cfe2083c2188"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateSpacecraftMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span>, <a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spacecraft</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem25updateSpacecraftMassPropsEdR14SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the total mass properties of the s/c. </p>
+<p>This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem21updateSystemMassPropsEd">
+<span id="_CPPv3N16SpacecraftSystem21updateSystemMassPropsEd"></span><span id="_CPPv2N16SpacecraftSystem21updateSystemMassPropsEd"></span><span id="SpacecraftSystem::updateSystemMassProps__double"></span><span class="target" id="class_spacecraft_system_1abb0a617141d737c550757f2c639ead4a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateSystemMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem21updateSystemMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the total mass properties of the s/c. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem23initializeSCPosVelocityER14SpacecraftUnit">
+<span id="_CPPv3N16SpacecraftSystem23initializeSCPosVelocityER14SpacecraftUnit"></span><span id="_CPPv2N16SpacecraftSystem23initializeSCPosVelocityER14SpacecraftUnit"></span><span id="SpacecraftSystem::initializeSCPosVelocity__SpacecraftUnitR"></span><span class="target" id="class_spacecraft_system_1a674ba2b5b1c8ecc141cb11a8fb9b6b60"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeSCPosVelocity</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spacecraft</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem23initializeSCPosVelocityER14SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem5ResetE8uint64_t">
+<span id="_CPPv3N16SpacecraftSystem5ResetE8uint64_t"></span><span id="_CPPv2N16SpacecraftSystem5ResetE8uint64_t"></span><span id="SpacecraftSystem::Reset__uint64_t"></span><span class="target" id="class_spacecraft_system_1a45cf1aed8029392fed3fc16f4aa3bd18"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N16SpacecraftSystem19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N16SpacecraftSystem19writeOutputMessagesE8uint64_t"></span><span id="SpacecraftSystem::writeOutputMessages__uint64_t"></span><span class="target" id="class_spacecraft_system_1a418283f717ec8daf2cf5d9d0170bb120"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">clockTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to write all of the class output messages. </p>
+<p>This is the method where the messages of the state of vehicle are written </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem11UpdateStateE8uint64_t">
+<span id="_CPPv3N16SpacecraftSystem11UpdateStateE8uint64_t"></span><span id="_CPPv2N16SpacecraftSystem11UpdateStateE8uint64_t"></span><span id="SpacecraftSystem::UpdateState__uint64_t"></span><span class="target" id="class_spacecraft_system_1a9184ecb23127370c6fb800cd01e0fd25"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Runtime hook back into Basilisk arch. </p>
+<p>This method is a part of sysModel and is used to integrate the state and update the state in the messaging system </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem17equationsOfMotionEdd">
+<span id="_CPPv3N16SpacecraftSystem17equationsOfMotionEdd"></span><span id="_CPPv2N16SpacecraftSystem17equationsOfMotionEdd"></span><span id="SpacecraftSystem::equationsOfMotion__double.double"></span><span class="target" id="class_spacecraft_system_1aa4f0a13101addc4f05595197887fd5f3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equationsOfMotion</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTimeSeconds</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem17equationsOfMotionEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the equations of motion for the whole system. </p>
+<p>This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled in this method. At the end of this method all of the states will have their corresponding state derivatives set in the dynParam Manager thus solving for Xdot </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem19equationsOfMotionSCEddR14SpacecraftUnit">
+<span id="_CPPv3N16SpacecraftSystem19equationsOfMotionSCEddR14SpacecraftUnit"></span><span id="_CPPv2N16SpacecraftSystem19equationsOfMotionSCEddR14SpacecraftUnit"></span><span id="SpacecraftSystem::equationsOfMotionSC__double.double.SpacecraftUnitR"></span><span class="target" id="class_spacecraft_system_1a51ca0bcf3076a95fdf6e05f824a428d4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equationsOfMotionSC</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTimeSeconds</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span>, <a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spacecraft</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem19equationsOfMotionSCEddR14SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the equations of motion for the whole system. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem23equationsOfMotionSystemEdd">
+<span id="_CPPv3N16SpacecraftSystem23equationsOfMotionSystemEdd"></span><span id="_CPPv2N16SpacecraftSystem23equationsOfMotionSystemEdd"></span><span id="SpacecraftSystem::equationsOfMotionSystem__double.double"></span><span class="target" id="class_spacecraft_system_1ad594da6128eb0193ef3cd9ad164fac3c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equationsOfMotionSystem</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTimeSeconds</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem23equationsOfMotionSystemEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the equations of motion for the whole system. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem25findPriorStateInformationER14SpacecraftUnit">
+<span id="_CPPv3N16SpacecraftSystem25findPriorStateInformationER14SpacecraftUnit"></span><span id="_CPPv2N16SpacecraftSystem25findPriorStateInformationER14SpacecraftUnit"></span><span id="SpacecraftSystem::findPriorStateInformation__SpacecraftUnitR"></span><span class="target" id="class_spacecraft_system_1a376bd692de1a6cd31df3151082b50879"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">findPriorStateInformation</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spacecraft</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem25findPriorStateInformationER14SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem30calculateDeltaVandAccelerationER14SpacecraftUnitd">
+<span id="_CPPv3N16SpacecraftSystem30calculateDeltaVandAccelerationER14SpacecraftUnitd"></span><span id="_CPPv2N16SpacecraftSystem30calculateDeltaVandAccelerationER14SpacecraftUnitd"></span><span id="SpacecraftSystem::calculateDeltaVandAcceleration__SpacecraftUnitR.double"></span><span class="target" id="class_spacecraft_system_1a7bf8e773791e820fb128066be3922182"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">calculateDeltaVandAcceleration</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spacecraft</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localTimeStep</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem30calculateDeltaVandAccelerationER14SpacecraftUnitd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem25attachSpacecraftToPrimaryEP14SpacecraftUnitNSt6stringENSt6stringE">
+<span id="_CPPv3N16SpacecraftSystem25attachSpacecraftToPrimaryEP14SpacecraftUnitNSt6stringENSt6stringE"></span><span id="_CPPv2N16SpacecraftSystem25attachSpacecraftToPrimaryEP14SpacecraftUnitNSt6stringENSt6stringE"></span><span id="SpacecraftSystem::attachSpacecraftToPrimary__SpacecraftUnitP.ss.ss"></span><span class="target" id="class_spacecraft_system_1a776745d9ba910f60dfc28246c19091ce"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attachSpacecraftToPrimary</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newSpacecraft</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dockingPortNameOfNewSpacecraft</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dockingToPortName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem25attachSpacecraftToPrimaryEP14SpacecraftUnitNSt6stringENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Attaches a spacecraft to the primary spacecraft chain. </p>
+<p>This method attaches a spacecraft to the chain of spacecraft attached to the primary spacecraft </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem21addSpacecraftUndockedEP14SpacecraftUnit">
+<span id="_CPPv3N16SpacecraftSystem21addSpacecraftUndockedEP14SpacecraftUnit"></span><span id="_CPPv2N16SpacecraftSystem21addSpacecraftUndockedEP14SpacecraftUnit"></span><span id="SpacecraftSystem::addSpacecraftUndocked__SpacecraftUnitP"></span><span class="target" id="class_spacecraft_system_1af64e355724b55e68a06db1be9b80f383"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftUndocked</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newSpacecraft</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem21addSpacecraftUndockedEP14SpacecraftUnit" title="Link to this definition"></a><br /></dt>
+<dd><p>Attaches a spacecraft to the primary spacecraft chain. </p>
+<p>This method adds a spacecraft to the simulation as a free floating spacecraft </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem25determineAttachedSCStatesEv">
+<span id="_CPPv3N16SpacecraftSystem25determineAttachedSCStatesEv"></span><span id="_CPPv2N16SpacecraftSystem25determineAttachedSCStatesEv"></span><span id="SpacecraftSystem::determineAttachedSCStates"></span><span class="target" id="class_spacecraft_system_1a49cad62bf64f993cbc6f03d4e4b024d7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">determineAttachedSCStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem25determineAttachedSCStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem14preIntegrationE8uint64_t">
+<span id="_CPPv3N16SpacecraftSystem14preIntegrationE8uint64_t"></span><span id="_CPPv2N16SpacecraftSystem14preIntegrationE8uint64_t"></span><span id="SpacecraftSystem::preIntegration__uint64_t"></span><span class="target" id="class_spacecraft_system_1a68491fc85461aabd1b185c91763900e3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">final</span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem14preIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>pre-integration steps </p>
+<p>Prepare for integration process, not currently implemented in <a class="reference internal" href="#class_spacecraft_system"><span class="std std-ref">SpacecraftSystem</span></a> </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integrateToThisTimeNanos</strong> – Time to integrate to </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem15postIntegrationE8uint64_t">
+<span id="_CPPv3N16SpacecraftSystem15postIntegrationE8uint64_t"></span><span id="_CPPv2N16SpacecraftSystem15postIntegrationE8uint64_t"></span><span id="SpacecraftSystem::postIntegration__uint64_t"></span><span class="target" id="class_spacecraft_system_1a8b67c1b0680f118d14b0817486a2c356"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">final</span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem15postIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>post-integration steps </p>
+<p>Perform post-integration steps, not currently implemented in <a class="reference internal" href="#class_spacecraft_system"><span class="std std-ref">SpacecraftSystem</span></a> </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integrateToThisTimeNanos</strong> – Time to integrate to </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem16numOutMsgBuffersE">
+<span id="_CPPv3N16SpacecraftSystem16numOutMsgBuffersE"></span><span id="_CPPv2N16SpacecraftSystem16numOutMsgBuffersE"></span><span id="SpacecraftSystem::numOutMsgBuffers__uint64_t"></span><span class="target" id="class_spacecraft_system_1a8a3535be3bab274615e7c565f943478a"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numOutMsgBuffers</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem16numOutMsgBuffersE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of output message buffers for I/O. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem19sysTimePropertyNameE">
+<span id="_CPPv3N16SpacecraftSystem19sysTimePropertyNameE"></span><span id="_CPPv2N16SpacecraftSystem19sysTimePropertyNameE"></span><span id="SpacecraftSystem::sysTimePropertyName__ss"></span><span class="target" id="class_spacecraft_system_1acef37d41484287a12675d32d23340b18"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sysTimePropertyName</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem19sysTimePropertyNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name of the system time property. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem24primaryCentralSpacecraftE">
+<span id="_CPPv3N16SpacecraftSystem24primaryCentralSpacecraftE"></span><span id="_CPPv2N16SpacecraftSystem24primaryCentralSpacecraftE"></span><span id="SpacecraftSystem::primaryCentralSpacecraft__SpacecraftUnit"></span><span class="target" id="class_spacecraft_system_1a1ce781575e1d355cdc077bbf50904574"></span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">primaryCentralSpacecraft</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem24primaryCentralSpacecraftE" title="Link to this definition"></a><br /></dt>
+<dd><p>Primary spacecraft in which other spacecraft can attach/detach to/from. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem25spacecraftDockedToPrimaryE">
+<span id="_CPPv3N16SpacecraftSystem25spacecraftDockedToPrimaryE"></span><span id="_CPPv2N16SpacecraftSystem25spacecraftDockedToPrimaryE"></span><span id="SpacecraftSystem::spacecraftDockedToPrimary__std::vector:SpacecraftUnitP:"></span><span class="target" id="class_spacecraft_system_1a7af6cdd5a23810b6f69d71267d8d8ac6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftDockedToPrimary</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem25spacecraftDockedToPrimaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft currently docked with primary spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem18unDockedSpacecraftE">
+<span id="_CPPv3N16SpacecraftSystem18unDockedSpacecraftE"></span><span id="_CPPv2N16SpacecraftSystem18unDockedSpacecraftE"></span><span id="SpacecraftSystem::unDockedSpacecraft__std::vector:SpacecraftUnitP:"></span><span class="target" id="class_spacecraft_system_1aa506868b737deacc747fba407727bd45"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv414SpacecraftUnit" title="SpacecraftUnit"><span class="n"><span class="pre">SpacecraftUnit</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unDockedSpacecraft</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem18unDockedSpacecraftE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft currently detached from all other spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem27numberOfSCAttachedToPrimaryE">
+<span id="_CPPv3N16SpacecraftSystem27numberOfSCAttachedToPrimaryE"></span><span id="_CPPv2N16SpacecraftSystem27numberOfSCAttachedToPrimaryE"></span><span id="SpacecraftSystem::numberOfSCAttachedToPrimary__i"></span><span class="target" id="class_spacecraft_system_1aa606d710003104370c90fed0272a9eb0"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numberOfSCAttachedToPrimary</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem27numberOfSCAttachedToPrimaryE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem9bskLoggerE">
+<span id="_CPPv3N16SpacecraftSystem9bskLoggerE"></span><span id="_CPPv2N16SpacecraftSystem9bskLoggerE"></span><span id="SpacecraftSystem::bskLogger__BSKLogger"></span><span class="target" id="class_spacecraft_system_1a35f42b0168104bcbc3d713a410791dad"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16SpacecraftSystem7sysTimeE">
+<span id="_CPPv3N16SpacecraftSystem7sysTimeE"></span><span id="_CPPv2N16SpacecraftSystem7sysTimeE"></span><span id="SpacecraftSystem::sysTime__Eigen::MatrixXdP"></span><span class="target" id="class_spacecraft_system_1a3b6960359d8c6ab66f2964bb7fcef422"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sysTime</span></span></span><a class="headerlink" href="#_CPPv4N16SpacecraftSystem7sysTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] System time </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spacecraftSystem" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../sphericalPendulum/index.html" class="btn btn-neutral float-right" title="sphericalPendulum" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

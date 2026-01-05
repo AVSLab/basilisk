@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: mtbFeedforward &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="mtbFeedforward" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attControl</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../lowPassFilterTorqueCommand/index.html">lowPassFilterTorqueCommand</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpFeedback/index.html">mrpFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpPD/index.html">mrpPD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpSteering/index.html">mrpSteering</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">mtbFeedforward</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mtbMomentumManagement/index.html">mtbMomentumManagement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mtbMomentumManagementSimple/index.html">mtbMomentumManagementSimple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prvSteering/index.html">prvSteering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rateServoFullNonlinear/index.html">rateServoFullNonlinear</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumManagement/index.html">thrMomentumManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attControl</a></li>
+          <li class="breadcrumb-item"><a href="index.html">mtbFeedforward</a></li>
+      <li class="breadcrumb-item active">Module: mtbFeedforward</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attControl/mtbFeedforward/mtbFeedforward.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mtbfeedforward">
+<span id="mtbfeedforward"></span><h1>Module: mtbFeedforward<a class="headerlink" href="#module-mtbfeedforward" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes the torque produced by the magnetic torque bars and applies it to the current commanded body torque as a feedforward term.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages. The module msg connection is set by the
+user from python. The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vehControlInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>input message containing the current control torque in the Body frame</p></td>
+</tr>
+<tr class="row-odd"><td><p>dipoleRequestMtbInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/MTBCmdMsgPayload.html#mtbcmdmsgpayload"><span class="std std-ref">MTBCmdMsgPayload</span></a></p></td>
+<td><p>input message containing the individual dipole requests for each torque bar on the vehicle</p></td>
+</tr>
+<tr class="row-even"><td><p>tamSensorBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TAMSensorBodyMsgPayload.html#tamsensorbodymsgpayload"><span class="std std-ref">TAMSensorBodyMsgPayload</span></a></p></td>
+<td><p>input message for magnetic field sensor data</p></td>
+</tr>
+<tr class="row-odd"><td><p>mtbParamsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.html#mtbarrayconfigmsgpayload"><span class="std std-ref">MTBArrayConfigMsgPayload</span></a></p></td>
+<td><p>input message for MTB layout</p></td>
+</tr>
+<tr class="row-even"><td><p>vehControlOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>output message containing the current control torque in the Body frame</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The following presents the mathematics for computing the expected torque produced by the torque rods given their alignment matrix, Gt, the individual rod dipole commands, and the local magnetic field vector in the Body frame. This value is then fed forward to reaction wheels by adding it to the current command Body frame torque to drive the net momentum of the reaction wheel system to zero.</p>
+<p>The expected torque produced by the torque rods is given by</p>
+<div class="math notranslate nohighlight">
+\[{}^{\cal B} {\pmb \tau}_{\text{rods}} = [G_t] {\pmb\mu}_{\text{cmds}} \times \ {}^{\cal B}{\bf b}\]</div>
+<p>and the feed forward command used to dump the momentum of the reaction wheels is simply the
+negation of the expected torque produced by the rods.</p>
+<div class="math notranslate nohighlight">
+\[{}^{\cal B} {\pmb\tau}_{\text{ff}} = - {}^{\cal B}{\pmb\tau}_{\text{rods}}\]</div>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>See the example script <a class="reference internal" href="../../../../examples/scenarioMtbMomentumManagementSimple.html#scenariomtbmomentummanagementsimple"><span class="std std-ref">scenarioMtbMomentumManagementSimple</span></a> for an illustration on how to use this module. Note that the user must specify the torque rod alignment matrix <code class="docutils literal notranslate"><span class="pre">GtMatrix_B</span></code> in row major form.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423SelfInit_mtbFeedforwardP20mtbFeedforwardConfig7int64_t">
+<span id="_CPPv323SelfInit_mtbFeedforwardP20mtbFeedforwardConfig7int64_t"></span><span id="_CPPv223SelfInit_mtbFeedforwardP20mtbFeedforwardConfig7int64_t"></span><span id="SelfInit_mtbFeedforward__mtbFeedforwardConfigP.int64_t"></span><span class="target" id="mtb_feedforward_8h_1af0f6aa88f981f8f9d3d66d07280e0fca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_mtbFeedforward</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420mtbFeedforwardConfig" title="mtbFeedforwardConfig"><span class="n"><span class="pre">mtbFeedforwardConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423SelfInit_mtbFeedforwardP20mtbFeedforwardConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Update_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t">
+<span id="_CPPv321Update_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t"></span><span id="_CPPv221Update_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t"></span><span id="Update_mtbFeedforward__mtbFeedforwardConfigP.uint64_t.int64_t"></span><span class="target" id="mtb_feedforward_8h_1acedf32fef6882286001896865985c763"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_mtbFeedforward</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420mtbFeedforwardConfig" title="mtbFeedforwardConfig"><span class="n"><span class="pre">mtbFeedforwardConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Update_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the feedforward torque rod torque.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420Reset_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t">
+<span id="_CPPv320Reset_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t"></span><span id="_CPPv220Reset_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t"></span><span id="Reset_mtbFeedforward__mtbFeedforwardConfigP.uint64_t.int64_t"></span><span class="target" id="mtb_feedforward_8h_1aa996d9f4de07e7023850410987edadbf"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_mtbFeedforward</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv420mtbFeedforwardConfig" title="mtbFeedforwardConfig"><span class="n"><span class="pre">mtbFeedforwardConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420Reset_mtbFeedforwardP20mtbFeedforwardConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values. Check if required input messages are connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420mtbFeedforwardConfig">
+<span id="_CPPv320mtbFeedforwardConfig"></span><span id="_CPPv220mtbFeedforwardConfig"></span><span id="mtbFeedforwardConfig"></span><span class="target" id="structmtb_feedforward_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mtbFeedforwardConfig</span></span></span><a class="headerlink" href="#_CPPv420mtbFeedforwardConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;mtbFeedforward.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig15vehControlInMsgE">
+<span id="_CPPv3N20mtbFeedforwardConfig15vehControlInMsgE"></span><span id="_CPPv2N20mtbFeedforwardConfig15vehControlInMsgE"></span><span id="mtbFeedforwardConfig::vehControlInMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="structmtb_feedforward_config_1a064dfb509cc11a345107991849e4ebd9"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehControlInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig15vehControlInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input message containing the current control torque in the Body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig21dipoleRequestMtbInMsgE">
+<span id="_CPPv3N20mtbFeedforwardConfig21dipoleRequestMtbInMsgE"></span><span id="_CPPv2N20mtbFeedforwardConfig21dipoleRequestMtbInMsgE"></span><span id="mtbFeedforwardConfig::dipoleRequestMtbInMsg__MTBCmdMsg_C"></span><span class="target" id="structmtb_feedforward_config_1a69074347791db0d47bcf889f18648823"></span><span class="n"><span class="pre">MTBCmdMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dipoleRequestMtbInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig21dipoleRequestMtbInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input message containing the individual dipole requests for each torque bar on the vehicle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig18tamSensorBodyInMsgE">
+<span id="_CPPv3N20mtbFeedforwardConfig18tamSensorBodyInMsgE"></span><span id="_CPPv2N20mtbFeedforwardConfig18tamSensorBodyInMsgE"></span><span id="mtbFeedforwardConfig::tamSensorBodyInMsg__TAMSensorBodyMsg_C"></span><span class="target" id="structmtb_feedforward_config_1ac03de8706ca7ba320558d20ce29f8c8d"></span><span class="n"><span class="pre">TAMSensorBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tamSensorBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig18tamSensorBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Tesla] input message for magnetic field sensor data in the Body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig25mtbArrayConfigParamsInMsgE">
+<span id="_CPPv3N20mtbFeedforwardConfig25mtbArrayConfigParamsInMsgE"></span><span id="_CPPv2N20mtbFeedforwardConfig25mtbArrayConfigParamsInMsgE"></span><span id="mtbFeedforwardConfig::mtbArrayConfigParamsInMsg__MTBArrayConfigMsg_C"></span><span class="target" id="structmtb_feedforward_config_1ac308a62b97abca0d524970b3bf44e796"></span><span class="n"><span class="pre">MTBArrayConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mtbArrayConfigParamsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig25mtbArrayConfigParamsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input message containing configuration parameters for all the torque bars on the vehicle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig16vehControlOutMsgE">
+<span id="_CPPv3N20mtbFeedforwardConfig16vehControlOutMsgE"></span><span id="_CPPv2N20mtbFeedforwardConfig16vehControlOutMsgE"></span><span id="mtbFeedforwardConfig::vehControlOutMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="structmtb_feedforward_config_1a80a66dd5e2ec1c2e975a93908d91661b"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehControlOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig16vehControlOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output message containing the current control torque in the Body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig20mtbArrayConfigParamsE">
+<span id="_CPPv3N20mtbFeedforwardConfig20mtbArrayConfigParamsE"></span><span id="_CPPv2N20mtbFeedforwardConfig20mtbArrayConfigParamsE"></span><span id="mtbFeedforwardConfig::mtbArrayConfigParams__MTBArrayConfigMsgPayload"></span><span class="target" id="structmtb_feedforward_config_1a98c25191694b4bf0f71729d6076084ce"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/MTBArrayConfigMsgPayload.html#_CPPv424MTBArrayConfigMsgPayload" title="MTBArrayConfigMsgPayload"><span class="n"><span class="pre">MTBArrayConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mtbArrayConfigParams</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig20mtbArrayConfigParamsE" title="Link to this definition"></a><br /></dt>
+<dd><p>configuration for MTB layout </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20mtbFeedforwardConfig9bskLoggerE">
+<span id="_CPPv3N20mtbFeedforwardConfig9bskLoggerE"></span><span id="_CPPv2N20mtbFeedforwardConfig9bskLoggerE"></span><span id="mtbFeedforwardConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structmtb_feedforward_config_1ac534664831d24a97665c040a77888965"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N20mtbFeedforwardConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="mtbFeedforward" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

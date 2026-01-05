@@ -1,0 +1,8 @@
+.. _MJSysMassMatrixMsgPayload:
+
+MJSysMassMatrixMsgPayload
+=================================
+
+.. autodoxygenfile:: MJSysMassMatrixMsgPayload.h
+   :project: msgPayloadDefCpp
+

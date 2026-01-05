@@ -1,0 +1,621 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: pixelLineBiasUKF &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="pixelLineBiasUKF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">opticalNavigation</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../faultDetection/index.html">faultDetection</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">pixelLineBiasUKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../relativeODuKF/index.html">relativeODuKF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">opticalNavigation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">pixelLineBiasUKF</a></li>
+      <li class="breadcrumb-item active">Module: pixelLineBiasUKF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/opticalNavigation/pixelLineBiasUKF/pixelLineBiasUKF.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pixellinebiasukf">
+<span id="pixellinebiasukf"></span><h1>Module: pixelLineBiasUKF<a class="headerlink" href="#module-pixellinebiasukf" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module filters position measurements that have been processed from planet images in order to estimate spacecraft relative position to an observed body in the inertial frame. It is similar to the relativeOD filter except that it estimates measurement bias in pixels and therefore integrates the pixel and line transformation in the measurement model. This means this module reads in circle data directly.</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/b8a5ad81cba609990c2dd9829c2bcde1/Basilisk-PixelLineBiasUKF-20190620.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>navigation translation output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>filtDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PixelLineFilterMsgPayload.html#pixellinefiltermsgpayload"><span class="std std-ref">PixelLineFilterMsgPayload</span></a></p></td>
+<td><p>output filter data message</p></td>
+</tr>
+<tr class="row-even"><td><p>circlesInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavCirclesMsgPayload.html#opnavcirclesmsgpayload"><span class="std std-ref">OpNavCirclesMsgPayload</span></a></p></td>
+<td><p>input messages with circles information</p></td>
+</tr>
+<tr class="row-odd"><td><p>cameraConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#cameraconfigmsgpayload"><span class="std std-ref">CameraConfigMsgPayload</span></a></p></td>
+<td><p>camera config input message</p></td>
+</tr>
+<tr class="row-even"><td><p>attInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>attitude input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425SelfInit_pixelLineBiasUKFP22PixelLineBiasUKFConfig7int64_t">
+<span id="_CPPv325SelfInit_pixelLineBiasUKFP22PixelLineBiasUKFConfig7int64_t"></span><span id="_CPPv225SelfInit_pixelLineBiasUKFP22PixelLineBiasUKFConfig7int64_t"></span><span id="SelfInit_pixelLineBiasUKF__PixelLineBiasUKFConfigP.int64_t"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1af34a5fc5508e7086bba5b403d784fa84"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_pixelLineBiasUKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425SelfInit_pixelLineBiasUKFP22PixelLineBiasUKFConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method creates the two moduel output messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>moduleId</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423Update_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t">
+<span id="_CPPv323Update_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t"></span><span id="_CPPv223Update_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t"></span><span id="Update_pixelLineBiasUKF__PixelLineBiasUKFConfigP.uint64_t.int64_t"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1a8ed0fcb9837dad3ae4a0c9a71a68f9ec"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_pixelLineBiasUKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423Update_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the relative position measurements and outputs an estimate of the spacecraft states in the intertial frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleId</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Reset_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t">
+<span id="_CPPv322Reset_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t"></span><span id="_CPPv222Reset_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t"></span><span id="Reset_pixelLineBiasUKF__PixelLineBiasUKFConfigP.uint64_t.int64_t"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1a94e7317ae22bf16ca626874151a99e0e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_pixelLineBiasUKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Reset_pixelLineBiasUKFP22PixelLineBiasUKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the relative OD filter to an initial state and initializes the internal estimation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleId</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426pixelLineBiasUKFTwoBodyDynA16PIXLINE_N_STATES_ddPd">
+<span id="_CPPv326pixelLineBiasUKFTwoBodyDynA16PIXLINE_N_STATES_ddPd"></span><span id="_CPPv226pixelLineBiasUKFTwoBodyDynAPIXLINE_N_STATES_ddPd"></span><span id="pixelLineBiasUKFTwoBodyDyn__doubleA.double.doubleP"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1ab232c65865b2703ceae47d7681da2391"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelLineBiasUKFTwoBodyDyn</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateDeriv</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426pixelLineBiasUKFTwoBodyDynA16PIXLINE_N_STATES_ddPd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426pixelLineBiasUKFTimeUpdateP22PixelLineBiasUKFConfigd">
+<span id="_CPPv326pixelLineBiasUKFTimeUpdateP22PixelLineBiasUKFConfigd"></span><span id="_CPPv226pixelLineBiasUKFTimeUpdateP22PixelLineBiasUKFConfigd"></span><span id="pixelLineBiasUKFTimeUpdate__PixelLineBiasUKFConfigP.double"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1a14564b409884f7e6a55b2db53f379b76"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelLineBiasUKFTimeUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">updateTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426pixelLineBiasUKFTimeUpdateP22PixelLineBiasUKFConfigd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the time update for the relative OD kalman filter. It propagates the sigma points forward in time and then gets the current covariance and state estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>updateTime</strong> – The time that we need to fix the filter to (seconds) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv426pixelLineBiasUKFMeasUpdateP22PixelLineBiasUKFConfig">
+<span id="_CPPv326pixelLineBiasUKFMeasUpdateP22PixelLineBiasUKFConfig"></span><span id="_CPPv226pixelLineBiasUKFMeasUpdateP22PixelLineBiasUKFConfig"></span><span id="pixelLineBiasUKFMeasUpdate__PixelLineBiasUKFConfigP"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1a135620b6ec5a05d0b71b1e5b8ba9dea6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelLineBiasUKFMeasUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426pixelLineBiasUKFMeasUpdateP22PixelLineBiasUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the measurement update for the kalman filter. It applies the observations in the obs vectors to the current state estimate and updates the state/covariance with that information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the OD filter </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427pixelLineBiasUKFCleanUpdateP22PixelLineBiasUKFConfig">
+<span id="_CPPv327pixelLineBiasUKFCleanUpdateP22PixelLineBiasUKFConfig"></span><span id="_CPPv227pixelLineBiasUKFCleanUpdateP22PixelLineBiasUKFConfig"></span><span id="pixelLineBiasUKFCleanUpdate__PixelLineBiasUKFConfigP"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1a60174e108c5174895de6647d5587789a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelLineBiasUKFCleanUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427pixelLineBiasUKFCleanUpdateP22PixelLineBiasUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method cleans the filter states after a bad upadate on the fly. It removes the potentially corrupted previous estimates and puts the filter back to a working state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the OD filter </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414relODStatePropP22PixelLineBiasUKFConfigPdd">
+<span id="_CPPv314relODStatePropP22PixelLineBiasUKFConfigPdd"></span><span id="_CPPv214relODStatePropP22PixelLineBiasUKFConfigPdd"></span><span id="relODStateProp__PixelLineBiasUKFConfigP.doubleP.double"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1af02ef3bae5dfbf16fee3a72dd9520927"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODStateProp</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateInOut</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414relODStatePropP22PixelLineBiasUKFConfigPdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method propagates a relative OD state vector forward in time. Note that the calling parameter is updated in place to save on data copies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>stateInOut</strong> – The state that is propagated </p></li>
+<li><p><strong>dt</strong> – Time step (s) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425pixelLineBiasUKFMeasModelP22PixelLineBiasUKFConfig">
+<span id="_CPPv325pixelLineBiasUKFMeasModelP22PixelLineBiasUKFConfig"></span><span id="_CPPv225pixelLineBiasUKFMeasModelP22PixelLineBiasUKFConfig"></span><span id="pixelLineBiasUKFMeasModel__PixelLineBiasUKFConfigP"></span><span class="target" id="pixel_line_bias_u_k_f_8h_1ad7d265d43428cce4f856942d510aab03"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pixelLineBiasUKFMeasModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422PixelLineBiasUKFConfig" title="PixelLineBiasUKFConfig"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425pixelLineBiasUKFMeasModelP22PixelLineBiasUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the measurement model. Given that the data is coming from the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the OD filter </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422PixelLineBiasUKFConfig">
+<span id="_CPPv322PixelLineBiasUKFConfig"></span><span id="_CPPv222PixelLineBiasUKFConfig"></span><span id="PixelLineBiasUKFConfig"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PixelLineBiasUKFConfig</span></span></span><a class="headerlink" href="#_CPPv422PixelLineBiasUKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;pixelLineBiasUKF.h&gt;</em></div>
+<p>Top level structure for the relative OD unscented kalman filter. Used to estimate the spacecraft’s inertial position relative to a body. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig14navStateOutMsgE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig14navStateOutMsgE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig14navStateOutMsgE"></span><span id="PixelLineBiasUKFConfig::navStateOutMsg__NavTransMsg_C"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a8e0dc09509b3db8f726658e5b2f75bf8"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig14navStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>navigation translation output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig14filtDataOutMsgE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig14filtDataOutMsgE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig14filtDataOutMsgE"></span><span id="PixelLineBiasUKFConfig::filtDataOutMsg__PixelLineFilterMsg_C"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a4fd474e1407dbb6f57c40d01d341b26a"></span><span class="n"><span class="pre">PixelLineFilterMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filtDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig14filtDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output filter data message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig12circlesInMsgE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig12circlesInMsgE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig12circlesInMsgE"></span><span id="PixelLineBiasUKFConfig::circlesInMsg__OpNavCirclesMsg_C"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a6f3d0635b679b420e89c0f7e38a1c12c"></span><span class="n"><span class="pre">OpNavCirclesMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">circlesInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig12circlesInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] input messages with circles information </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig17cameraConfigInMsgE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig17cameraConfigInMsgE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig17cameraConfigInMsgE"></span><span id="PixelLineBiasUKFConfig::cameraConfigInMsg__CameraConfigMsg_C"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a1d5e264f477160cee08ad44fa3f7c612"></span><span class="n"><span class="pre">CameraConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig17cameraConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>camera config input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig8attInMsgE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig8attInMsgE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig8attInMsgE"></span><span id="PixelLineBiasUKFConfig::attInMsg__NavAttMsg_C"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a359c4b91cb3ab8a38e40814e9adc7caa"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig8attInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig8moduleIdE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig8moduleIdE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig8moduleIdE"></span><span id="PixelLineBiasUKFConfig::moduleId__i"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a83d324bca1d14d742b00805aaa4f9ff8"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">moduleId</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig8moduleIdE" title="Link to this definition"></a><br /></dt>
+<dd><p>module ID </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9numStatesE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9numStatesE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9numStatesE"></span><span id="PixelLineBiasUKFConfig::numStates__s"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ae4d831917ac30410e8f89162b167865e"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStates</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9numStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of states for this filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig12countHalfSPsE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig12countHalfSPsE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig12countHalfSPsE"></span><span id="PixelLineBiasUKFConfig::countHalfSPs__s"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1aaf0bbd7d85d9a0a4e48fc809aa99fb86"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">countHalfSPs</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig12countHalfSPsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of sigma points over 2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig6numObsE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig6numObsE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig6numObsE"></span><span id="PixelLineBiasUKFConfig::numObs__s"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a8cd74a5fa37b38e6fef118b320f15e14"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numObs</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig6numObsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of measurements this cycle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig4betaE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig4betaE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig4betaE"></span><span id="PixelLineBiasUKFConfig::beta__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a275bc61348afcec9619ad9c4299edad9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig4betaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Beta parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig5alphaE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig5alphaE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig5alphaE"></span><span id="PixelLineBiasUKFConfig::alpha__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a9ffe2f0cf5a7c08c177e00b5b812e7a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Alpha parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig5kappaE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig5kappaE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig5kappaE"></span><span id="PixelLineBiasUKFConfig::kappa__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a63808b3ec9d9cfcb4950447759ee1e0d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kappa</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig5kappaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Kappa parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9lambdaValE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9lambdaValE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9lambdaValE"></span><span id="PixelLineBiasUKFConfig::lambdaVal__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a433bbcff3112b05b607c12bc908eb855"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lambdaVal</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9lambdaValE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lambda parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig5gammaE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig5gammaE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig5gammaE"></span><span id="PixelLineBiasUKFConfig::gamma__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ae7fbb96e5243ea6ca3ec5172c4ec7023"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gamma</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig5gammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gamma parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9switchMagE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9switchMagE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9switchMagE"></span><span id="PixelLineBiasUKFConfig::switchMag__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a5fdd3640d7c9fd1562a865ee2be15838"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">switchMag</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9switchMagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Threshold for where we switch MRP set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig2dtE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig2dtE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig2dtE"></span><span id="PixelLineBiasUKFConfig::dt__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a03c0b3e28404e3d218efc7d07668d8ae"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dt</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig2dtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] seconds since last data epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig7timeTagE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig7timeTagE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig7timeTagE"></span><span id="PixelLineBiasUKFConfig::timeTag__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a94e25efc40a3fb69918f17d779d08213"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTag</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig7timeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time tag for statecovar/etc </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig13gyrAggTimeTagE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig13gyrAggTimeTagE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig13gyrAggTimeTagE"></span><span id="PixelLineBiasUKFConfig::gyrAggTimeTag__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ab869a19e24d35d82846233eb7de4eb79"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gyrAggTimeTag</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig13gyrAggTimeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time-tag for aggregated gyro data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig13aggSigma_b2b1E">
+<span id="_CPPv3N22PixelLineBiasUKFConfig13aggSigma_b2b1E"></span><span id="_CPPv2N22PixelLineBiasUKFConfig13aggSigma_b2b1E"></span><span id="PixelLineBiasUKFConfig::aggSigma_b2b1__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a8891cd5a218a59da8a3d05866dcc57a2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aggSigma_b2b1</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig13aggSigma_b2b1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Aggregated attitude motion from gyros </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig14dcm_BdyGyrpltfE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig14dcm_BdyGyrpltfE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig14dcm_BdyGyrpltfE"></span><span id="PixelLineBiasUKFConfig::dcm_BdyGyrpltf__doubleAA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ae8669ecdaa8f8d32eebf8df5125c97c8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BdyGyrpltf</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig14dcm_BdyGyrpltfE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM for converting gyro data to body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig2wME">
+<span id="_CPPv3N22PixelLineBiasUKFConfig2wME"></span><span id="_CPPv2N22PixelLineBiasUKFConfig2wME"></span><span id="PixelLineBiasUKFConfig::wM__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a06a3a69310268823d27d86cc7147882c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wM</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig2wME" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Weighting vector for sigma points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig2wCE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig2wCE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig2wCE"></span><span id="PixelLineBiasUKFConfig::wC__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a66cb19f1e4a1fde20181cbc35f4b56aa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wC</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig2wCE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Weighting vector for sigma points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9stateInitE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9stateInitE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9stateInitE"></span><span id="PixelLineBiasUKFConfig::stateInit__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a53e1e10255da9941de5fcf37b5356783"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInit</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9stateInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate to initialize filter to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig5stateE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig5stateE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig5stateE"></span><span id="PixelLineBiasUKFConfig::state__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1af14ba9fe97b6e8afbe8685e20113b022"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9statePrevE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9statePrevE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9statePrevE"></span><span id="PixelLineBiasUKFConfig::statePrev__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1aa3e4d51948d28491952bd853f9c36a10"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">statePrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9statePrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig4sBarE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig4sBarE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig4sBarE"></span><span id="PixelLineBiasUKFConfig::sBar__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1acc7714a464487d881573e5ae5fbe6c0a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig4sBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig8sBarPrevE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig8sBarPrevE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig8sBarPrevE"></span><span id="PixelLineBiasUKFConfig::sBarPrev__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a7bac67a70eb964260947a608003a9d1b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBarPrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig8sBarPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig5covarE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig5covarE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig5covarE"></span><span id="PixelLineBiasUKFConfig::covar__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a3033fc504b90e84bceefd7f50b28908f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig5covarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9covarPrevE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9covarPrevE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9covarPrevE"></span><span id="PixelLineBiasUKFConfig::covarPrev__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1af47d98185c162086f5b253f47edb9e56"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarPrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9covarPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9covarInitE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9covarInitE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9covarInitE"></span><span id="PixelLineBiasUKFConfig::covarInit__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ad018e28338d73f4ae71cd1e88fa27df2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarInit</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9covarInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Covariance to init filter with </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig4xBarE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig4xBarE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig4xBarE"></span><span id="PixelLineBiasUKFConfig::xBar__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1aeb6fe3e63ad0c0937138a5622ceaf33f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig4xBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current mean state estimate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig3obsE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig3obsE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig3obsE"></span><span id="PixelLineBiasUKFConfig::obs__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a44b0162d7cb7d149d653eaf321e4201a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">obs</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig3obsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Observation vector for frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig5yMeasE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig5yMeasE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig5yMeasE"></span><span id="PixelLineBiasUKFConfig::yMeas__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1af7203516fedac22847660c3fe2c9b737"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yMeas</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig5yMeasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement model data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig2SPE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig2SPE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig2SPE"></span><span id="PixelLineBiasUKFConfig::SP__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ae6123096154da51d7f5e9c4befdf3b71"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SP</span></span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig2SPE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sigma point matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig6qNoiseE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig6qNoiseE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig6qNoiseE"></span><span id="PixelLineBiasUKFConfig::qNoise__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ab2bbfcd964b7b168633051c69fc2a0ea"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig6qNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] process noise matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig7sQnoiseE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig7sQnoiseE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig7sQnoiseE"></span><span id="PixelLineBiasUKFConfig::sQnoise__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a86783facf7652bb62a638469b9c8ccab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sQnoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig7sQnoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] cholesky of Qnoise </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9measNoiseE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9measNoiseE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9measNoiseE"></span><span id="PixelLineBiasUKFConfig::measNoise__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a1c3aa6fdfb11d997500d42d55bbac159"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">measNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">PIXLINE_N_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">PIXLINE_N_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9measNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement Noise </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig12planetIdInitE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig12planetIdInitE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig12planetIdInitE"></span><span id="PixelLineBiasUKFConfig::planetIdInit__i"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a84530e2b4c07ec1b977302875fe26666"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetIdInit</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig12planetIdInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Planet being navigated inital value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig8planetIdE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig8planetIdE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig8planetIdE"></span><span id="PixelLineBiasUKFConfig::planetId__i"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a7dbdd37e4fc3c5ac82259ca82042d409"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetId</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig8planetIdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Planet being navigated as per measurement </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig17firstPassCompleteE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig17firstPassCompleteE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig17firstPassCompleteE"></span><span id="PixelLineBiasUKFConfig::firstPassComplete__uint32_t"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a11381659f3f3dd3141712ec9b9f9bdce"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstPassComplete</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig17firstPassCompleteE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Flag to know if first filter update </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig8postFitsE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig8postFitsE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig8postFitsE"></span><span id="PixelLineBiasUKFConfig::postFits__doubleA"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a2a7a9635fc18b897b0d0c8589c31e714"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postFits</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig8postFitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] PostFit residuals </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig10timeTagOutE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig10timeTagOutE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig10timeTagOutE"></span><span id="PixelLineBiasUKFConfig::timeTagOut__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1af729180458b7d51090f47742f44eb1d2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTagOut</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig10timeTagOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Output time-tag information </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig11maxTimeJumpE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig11maxTimeJumpE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig11maxTimeJumpE"></span><span id="PixelLineBiasUKFConfig::maxTimeJump__double"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a1319fb8f17cc1d403adf2e74a1bd0550"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxTimeJump</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig11maxTimeJumpE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Maximum time jump to allow in propagation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig15circlesInBufferE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig15circlesInBufferE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig15circlesInBufferE"></span><span id="PixelLineBiasUKFConfig::circlesInBuffer__OpNavCirclesMsgPayload"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a67db7f6c7ae2dace90fb6002eb8da1ca"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavCirclesMsgPayload.html#_CPPv422OpNavCirclesMsgPayload" title="OpNavCirclesMsgPayload"><span class="n"><span class="pre">OpNavCirclesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">circlesInBuffer</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig15circlesInBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ST sensor data read in from message bus </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig11cameraSpecsE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig11cameraSpecsE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig11cameraSpecsE"></span><span id="PixelLineBiasUKFConfig::cameraSpecs__CameraConfigMsgPayload"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a394e20a312e61c2aa4ce428e8597127e"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#_CPPv422CameraConfigMsgPayload" title="CameraConfigMsgPayload"><span class="n"><span class="pre">CameraConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraSpecs</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig11cameraSpecsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Camera specs for nav </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig7attInfoE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig7attInfoE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig7attInfoE"></span><span id="PixelLineBiasUKFConfig::attInfo__NavAttMsgPayload"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1a99644a7c93f62877f2ef85c0988fedeb"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attInfo</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig7attInfoE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Att info for frame transformation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22PixelLineBiasUKFConfig9bskLoggerE">
+<span id="_CPPv3N22PixelLineBiasUKFConfig9bskLoggerE"></span><span id="_CPPv2N22PixelLineBiasUKFConfig9bskLoggerE"></span><span id="PixelLineBiasUKFConfig::bskLogger__BSKLoggerP"></span><span class="target" id="struct_pixel_line_bias_u_k_f_config_1ab919d6bf6ee73bca6e65bc50ded3a310"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N22PixelLineBiasUKFConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="pixelLineBiasUKF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

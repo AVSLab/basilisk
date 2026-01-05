@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenario_AttEclipse &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenario_AttEclipse</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenario_AttEclipse</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This bskSim script demonstrates how to use sun safe pointing in conjunction with the Eclipse,</span>
+<span class="sd">RW, CSS Weighted Least Squares Estimator, and</span>
+<span class="sd">CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.</span>
+
+<span class="sd">This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to</span>
+<span class="sd">illustrate</span>
+
+<span class="sd">#. how to add the eclipse module to simulate shadows being cast over a CSS constellation,</span>
+<span class="sd">#. how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs, and</span>
+<span class="sd">#. configure a custom timestep for the dynamics and FSW processes.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::</span>
+
+<span class="sd">      python3 scenario_AttitudeEclipse.py</span>
+
+<span class="sd">The simulation layout is shown in the following illustration.  Two simulation processes are created: one</span>
+<span class="sd">which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm</span>
+<span class="sd">modules.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenario_AttEclipseUpdated.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 seconds leads to excessively long</span>
+<span class="sd">computational time. The user can change the standard time step for either or both processes by</span>
+<span class="sd">changing the ``fswRate`` and ``dynRate``::</span>
+
+<span class="sd">  TheBSKSim = BSKSim(1.0, 1.0)</span>
+
+<span class="sd">The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).</span>
+<span class="sd">The user is cautioned when setting a changing the standard time step</span>
+<span class="sd">as too large a time step can lead to propagated inaccuracy.</span>
+
+<span class="sd">When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,</span>
+<span class="sd">attitude error, RW motor torque, and RW speed.</span>
+
+<span class="sd">Custom Dynamics Configurations Instructions</span>
+<span class="sd">-------------------------------------------</span>
+<span class="sd">The fundamental simulation setup is a combination of the setups used in</span>
+<span class="sd">:ref:`scenarioAttitudeFeedback` and :ref:`scenarioCSS`.</span>
+<span class="sd">The dynamics simulation is setup using a :ref:`spacecraft` module to which an Earth gravity</span>
+<span class="sd">effector is attached. In addition a CSS constellation and RW pyramid are attached.</span>
+
+<span class="sd">The new element is adding the eclipse module ``self.eclipseObject`` to the simulation environment.</span>
+
+<span class="sd">The module requires spice data regarding the location of the sun, the planets, and the spacecraft</span>
+<span class="sd">to simulate shadow-casting effects. In combination these inputs can produce an output that is attached to the</span>
+<span class="sd">CSS constellation which simulates a shadow. The eclipse object output is sent to the individual CSS sensors.</span>
+
+<span class="sd">Custom FSW Configurations Instructions</span>
+<span class="sd">--------------------------------------</span>
+
+<span class="sd">The general flight algorithm setup is different than the earlier simulation scripts. Here we</span>
+<span class="sd">use the :ref:`sunSafePoint` guidance module, the :ref:`CSSWlsEst` module to evaluate the</span>
+<span class="sd">sun pointing vector, and the :ref:`mrpFeedback` module to provide the desired :math:`{\mathbf L}_r`</span>
+<span class="sd">control torque vector.</span>
+
+<span class="sd">The :ref:`sunSafePoint` guidance module is used to steer the spacecraft to point towards the sun direction vector.</span>
+<span class="sd">This is used for functionality like safe mode, or a power generation mode. The inputs of the module are the</span>
+<span class="sd">sun direction vector (as provided by the :ref:`CSSWlsEst` module), as well as the body rate</span>
+<span class="sd">information (as provided by the simpleNav module).</span>
+
+<span class="sd">The ``sHatBdyCmd`` defines the desired body pointing vector that will align with the sun direction vector.</span>
+<span class="sd">The sun direction vector itself is calculated through the use of a CSS constellation and the :ref:`CSSWlsEst`</span>
+<span class="sd">module. The</span>
+<span class="sd">setup for the CSS constellation can be found in the :ref:`scenarioCSS` scenario. The :ref:`CSSWlsEst` module</span>
+<span class="sd">is a weighted least-squares minimum-norm algorithm used to estimate the body-relative sun heading using a cluster of</span>
+<span class="sd">coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    showPlots = True</span>
+
+<span class="sd">This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through</span>
+<span class="sd">the Earth&#39;s shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_shadowFraction.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The :ref:`CSSWlsEst` module calculates the position of the sun based on input from the CSS.</span>
+<span class="sd">The corresponding vector&#39;s three</span>
+<span class="sd">components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to</span>
+<span class="sd">[0.0,0.0,0.0].</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_sunDirectionVector.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The spacecraft does not change attitude if the sun direction vector is not detectable.</span>
+<span class="sd">Once the CSS rediscovers the sun upon</span>
+<span class="sd">exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_AttEclipse_rwSpeed.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Get current file path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1"># Import utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">vizSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="c1"># Import master classes: simulation base class and scenario base class</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/..&#39;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BSK_masters</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_Dynamics</span><span class="o">,</span><span class="w"> </span><span class="nn">BSK_Fsw</span>
+
+<span class="c1"># Import plotting file for your scenario</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../plotting&#39;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_Plotting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">BSK_plt</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../../scenarios&#39;</span><span class="p">)</span>
+
+<span class="c1"># To begin, one must first create a class that will</span>
+<span class="c1"># inherent from the masterSim class and provide a name to the sim.</span>
+<span class="c1"># This is accomplished through:</span>
+<span class="c1"># Create your own scenario child class</span>
+<div class="viewcode-block" id="scenario_AttitudeEclipse">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_AttEclipse.html#scenario_AttEclipse.scenario_AttitudeEclipse">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">scenario_AttitudeEclipse</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">scenario_AttitudeEclipse</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fswRate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dynRate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;scenario_AttitudeEclipse&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssEstRec</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_DynModel</span><span class="p">(</span><span class="n">BSK_Dynamics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_FswModel</span><span class="p">(</span><span class="n">BSK_Fsw</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_outputs</span><span class="p">()</span>
+
+        <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following line</span>
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span>
+                                            <span class="c1"># , saveFile=__file__</span>
+                                            <span class="p">,</span> <span class="n">rwEffectorList</span><span class="o">=</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector</span>
+                                            <span class="p">)</span>
+
+<div class="viewcode-block" id="scenario_AttitudeEclipse.configure_initial_conditions">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_AttEclipse.html#scenario_AttEclipse.scenario_AttitudeEclipse.configure_initial_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Configure Dynamics initial conditions</span>
+
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">7000000.0</span>  <span class="c1"># meters</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;earth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+        <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span></div>
+
+
+<div class="viewcode-block" id="scenario_AttitudeEclipse.log_outputs">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_AttEclipse.html#scenario_AttEclipse.scenario_AttitudeEclipse.log_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">samplingTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">processTasksTimeStep</span>
+
+        <span class="c1"># Dynamics process outputs: log messages below if desired.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">eclipseObject</span><span class="o">.</span><span class="n">eclipseOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+
+        <span class="c1"># FSW process outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssEstRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="o">.</span><span class="n">navStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cssEstRec</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="scenario_AttitudeEclipse.pull_outputs">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_AttEclipse.html#scenario_AttEclipse.scenario_AttitudeEclipse.pull_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pull_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">showPlots</span><span class="p">):</span>
+        <span class="n">num_RW</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># number of wheels used in the scenario</span>
+
+        <span class="c1"># Dynamics process outputs: pull log messages below if any</span>
+        <span class="n">shadowFactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shadowRec</span><span class="o">.</span><span class="n">shadowFactor</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># FSW process outputs</span>
+        <span class="n">dataUsReq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="o">.</span><span class="n">motorTorque</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_RW</span><span class="p">)],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sigma_BR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">omega_BR_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sunSafeRec</span><span class="o">.</span><span class="n">omega_BR_B</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">RW_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span><span class="o">.</span><span class="n">wheelSpeeds</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_RW</span><span class="p">)],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sunPoint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cssEstRec</span><span class="o">.</span><span class="n">vehSunPntBdy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Plot results</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">clear_all_plots</span><span class="p">()</span>
+        <span class="n">timeData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cssEstRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sigma_BR</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rw_cmd_torque</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">,</span> <span class="n">num_RW</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">omega_BR_B</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">RW_speeds</span><span class="p">,</span> <span class="n">num_RW</span><span class="p">)</span>
+
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_shadow_fraction</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">shadowFactor</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_sun_point</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sunPoint</span><span class="p">)</span>
+
+        <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+            <span class="n">BSK_plt</span><span class="o">.</span><span class="n">show_all_plots</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitudeErrorNorm&quot;</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorque&quot;</span><span class="p">,</span> <span class="s2">&quot;rateError&quot;</span><span class="p">,</span> <span class="s2">&quot;rwSpeed&quot;</span><span class="p">,</span> <span class="s2">&quot;shadowFraction&quot;</span><span class="p">,</span> <span class="s2">&quot;sunDirectionVector&quot;</span><span class="p">]</span>
+            <span class="n">figureList</span> <span class="o">=</span> <span class="n">BSK_plt</span><span class="o">.</span><span class="n">save_all_plots</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">figureNames</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figureList</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runScenario</span><span class="p">(</span><span class="n">TheScenario</span><span class="p">):</span>
+    <span class="c1"># Initialize simulation</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="c1"># Configure FSW mode</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s1">&#39;sunSafePoint&#39;</span>
+
+    <span class="c1"># Configure run time and execute simulation</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">60.0</span><span class="p">)</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">TheScenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_AttEclipse.html#scenario_AttEclipse.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            showPlots (bool): Determines if the script should display plots</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">scenario</span> <span class="o">=</span> <span class="n">scenario_AttitudeEclipse</span><span class="p">()</span>
+    <span class="n">runScenario</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
+    <span class="c1"># Pull the results of the base simulation running the chosen scenario</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">pull_outputs</span><span class="p">(</span><span class="n">showPlots</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

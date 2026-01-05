@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_cModuleTemplate &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_cModuleTemplate</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_cModuleTemplate</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        cModuleTemplate</span>
+<span class="c1">#   Author:             (First Name) (Last Name)</span>
+<span class="c1">#   Creation Date:      Month Day, Year</span>
+<span class="c1">#</span>
+
+<span class="c1"># import packages as needed e.g. &#39;numpy&#39;, &#39;ctypes, &#39;math&#39; etc.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>  <span class="c1"># import the message definitions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.moduleTemplates</span><span class="w"> </span><span class="kn">import</span> <span class="n">cModuleTemplate</span>  <span class="c1"># import the module that is to be tested</span>
+<span class="c1"># Import all of the modules that we are going to be called in this simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>  <span class="c1"># general support file with common unit test functions</span>
+
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(conditionstring)</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<div class="viewcode-block" id="test_module">
+<a class="viewcode-back" href="../Documentation/moduleTemplates/cModuleTemplate/_UnitTest/test_cModuleTemplate.html#test_cModuleTemplate.test_module">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_module</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>     <span class="c1"># update &quot;module&quot; in this function name to reflect the module name</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Compose a general description of what is being tested in this unit test script.  Add enough information so</span>
+<span class="sd">    the reader understands the purpose and limitations of the test.  As this test script is not parameterized, only</span>
+<span class="sd">    one version of this script will run.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    Here discuss what parameters are being checked.  For example, in this file we are checking the values of the</span>
+<span class="sd">    variables</span>
+
+<span class="sd">    - ``dummy``</span>
+<span class="sd">    - ``dataVector[3]``</span>
+
+<span class="sd">    **General Documentation Comments**</span>
+<span class="sd">    </span>
+<span class="sd">    If the script generates figures, these figures will be automatically pulled from ``matplotlib`` and included below.</span>
+<span class="sd">    Make sure that the figures have appropriate axes labels and a figure title if needed.  The figures content</span>
+<span class="sd">    should be understood by just looking at the figure.</span>
+
+<span class="sd">    At the end of the script where a print statement says that the script passes, also add a print statement</span>
+<span class="sd">    saying what accuracy tolerance(s) were used.</span>
+
+<span class="sd">    Don&#39;t use any of the AutoTeX methods we used to use as the goal is to have all the validation reporting</span>
+<span class="sd">    contained within this HTML ``pytest`` report.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># pass on the testPlotFixture so that the main test function may set the DataStore attributes</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">fswModuleTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fswModuleTestFunction</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>                       <span class="c1"># create empty array to store test log messages</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>               <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>         <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">bskLogging</span><span class="o">.</span><span class="n">setDefaultLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>     <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+
+    <span class="c1"># Construct algorithm and associated C++ container</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cModuleTemplate&quot;</span>           <span class="c1"># update python name of test module</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the test module configuration data</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="mi">1</span>                              <span class="c1"># update module parameter with required values</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">dumVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]</span>
+
+    <span class="c1"># Create input message and size it because the regular creator of that message</span>
+    <span class="c1"># is not part of the test.</span>
+    <span class="n">inputMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>  <span class="c1"># Create a structure for the input message</span>
+    <span class="n">inputMessageData</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>             <span class="c1"># Set up a list as a 3-vector</span>
+    <span class="n">inputMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">inputMessageData</span><span class="p">)</span>
+
+    <span class="c1"># Setup logging on the test module output message so that we get all the writes to it</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">variableName</span> <span class="o">=</span> <span class="s2">&quot;dummy&quot;</span>                              <span class="c1"># name the module variable to be logged</span>
+    <span class="n">moduleLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="n">variableName</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">moduleLog</span><span class="p">)</span>
+
+    <span class="c1"># connect the message interfaces</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inputMsg</span><span class="p">)</span>
+
+
+    <span class="c1"># Need to call the self-init and cross-init methods</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Set the simulation time.</span>
+    <span class="c1"># NOTE: the total simulation time may be longer than this value. The</span>
+    <span class="c1"># simulation is stopped at the next logging event on or after the</span>
+    <span class="c1"># simulation end time.</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>        <span class="c1"># seconds to stop simulation</span>
+
+    <span class="c1"># Begin the simulation time run set above</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># reset the module to test this functionality</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="c1"># this module reset function needs a time input (in NanoSeconds)</span>
+
+    <span class="c1"># run the module again for an additional 1.0 seconds</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>        <span class="c1"># seconds to stop simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+    <span class="c1"># This pulls the actual data log from the simulation run.</span>
+    <span class="c1"># Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)</span>
+    <span class="n">variableState</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">moduleLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">moduleLog</span><span class="p">,</span> <span class="n">variableName</span><span class="p">))</span>
+
+    <span class="c1"># set the filtered output truth states</span>
+    <span class="n">trueVector</span> <span class="o">=</span> <span class="p">[</span>
+               <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+               <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+               <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+               <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+               <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+               <span class="p">]</span>
+
+    <span class="c1"># compare the module results to the truth values</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="n">dummyTrue</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+    <span class="n">variableStateNoTime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">variableState</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueVector</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueVector</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed dataVector&quot;</span> <span class="o">+</span>
+                                <span class="s2">&quot; unit test at t=&quot;</span> <span class="o">+</span>
+                                <span class="nb">str</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">)</span> <span class="o">+</span>
+                                <span class="s2">&quot;sec</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># check a scalar double value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">variableStateNoTime</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dummyTrue</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed &quot;</span> <span class="o">+</span>
+                                <span class="n">variableName</span> <span class="o">+</span> <span class="s2">&quot; unit test at t=&quot;</span> <span class="o">+</span>
+                                <span class="nb">str</span><span class="p">(</span><span class="n">variableState</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">)</span> <span class="o">+</span>
+                                <span class="s2">&quot;sec</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Note that we can continue to step the simulation however we feel like.</span>
+    <span class="c1"># Just because we stop and query data does not mean everything has to stop for good</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.6</span><span class="p">))</span>    <span class="c1"># run an additional 0.6 seconds</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   print out success message if no error were found</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This test uses an accuracy value of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FAILED &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># close all prior figures so we start with a clean slate</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">variableState</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">variableState</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [s]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Variable Description [unit]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Title of Sample Plot&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">dataVector</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$s_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Msg Output Vector States&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unitTestScript can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">fswModuleTestFunction</span><span class="p">(</span>
+               <span class="kc">True</span>        <span class="c1"># show_plots</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: atmosphereBase &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: magneticFieldBase" href="magneticFieldBase.html" />
+    <link rel="prev" title="_GeneralModuleFiles" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spiceInterface/index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: atmosphereBase</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/_GeneralModuleFiles/atmosphereBase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-atmospherebase">
+<span id="atmospherebase"></span><h1>Module: atmosphereBase<a class="headerlink" href="#module-atmospherebase" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>General atmosphere base class used to calculate neutral density/temperature using arbitrary models
+The Atmosphere class is used to calculate the neutral density and temperature above a body using arbitrary models.
+Each atmosphere is attached to a specific planet, but provides support for
+multiple spacecraft through <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scStateInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of spacecraft state input messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>envOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#atmopropsmsgpayload"><span class="std std-ref">AtmoPropsMsgPayload</span></a></p></td>
+<td><p>vector of atmospheric density output messages</p></td>
+</tr>
+<tr class="row-even"><td><p>planetPosInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>(optional) planet state input message.  If not provided the planet state is zero information.</p></td>
+</tr>
+<tr class="row-odd"><td><p>epochInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a></p></td>
+<td><p>(optional) epoch date/time input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414AtmosphereBase">
+<span id="_CPPv314AtmosphereBase"></span><span id="_CPPv214AtmosphereBase"></span><span id="AtmosphereBase"></span><span class="target" id="class_atmosphere_base"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AtmosphereBase</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv414AtmosphereBase" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;atmosphereBase.h&gt;</em></div>
+<p>atmospheric density base class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase14AtmosphereBaseEv">
+<span id="_CPPv3N14AtmosphereBase14AtmosphereBaseEv"></span><span id="_CPPv2N14AtmosphereBase14AtmosphereBaseEv"></span><span id="AtmosphereBase::AtmosphereBase"></span><span class="target" id="class_atmosphere_base_1a178bbd8004a2e1480ec4275d285fc6c4"></span><span class="sig-name descname"><span class="n"><span class="pre">AtmosphereBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase14AtmosphereBaseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes some basic parameters for the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBaseD0Ev">
+<span id="_CPPv3N14AtmosphereBaseD0Ev"></span><span id="_CPPv2N14AtmosphereBaseD0Ev"></span><span id="AtmosphereBase::~AtmosphereBase"></span><span class="target" id="class_atmosphere_base_1a8692c5df091d8b3a5f4321b20ea9e5d6"></span><span class="sig-name descname"><span class="n"><span class="pre">~AtmosphereBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBaseD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase5ResetE8uint64_t">
+<span id="_CPPv3N14AtmosphereBase5ResetE8uint64_t"></span><span id="_CPPv2N14AtmosphereBase5ResetE8uint64_t"></span><span id="AtmosphereBase::Reset__uint64_t"></span><span class="target" id="class_atmosphere_base_1acf488c63b173d77eb82722e94cf6f167"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE">
+<span id="_CPPv3N14AtmosphereBase20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="_CPPv2N14AtmosphereBase20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE"></span><span id="AtmosphereBase::addSpacecraftToModel__Message:SCStatesMsgPayload:P"></span><span class="target" id="class_atmosphere_base_1adbff075a6d7981151eb903e24f3861ef"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase20addSpacecraftToModelEP7MessageI18SCStatesMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds the spacecraft message to a vector of sc messages and automatically creates the corresponding output message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmpScMsg</strong> – A spacecraft state message name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase11UpdateStateE8uint64_t">
+<span id="_CPPv3N14AtmosphereBase11UpdateStateE8uint64_t"></span><span id="_CPPv2N14AtmosphereBase11UpdateStateE8uint64_t"></span><span id="AtmosphereBase::UpdateState__uint64_t"></span><span class="target" id="class_atmosphere_base_1a63a45c45949db984bf2e6a1194900f0a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the current local magnetic field for each spacecraft and writes their respective messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase13scStateInMsgsE">
+<span id="_CPPv3N14AtmosphereBase13scStateInMsgsE"></span><span id="_CPPv2N14AtmosphereBase13scStateInMsgsE"></span><span id="AtmosphereBase::scStateInMsgs__std::vector:ReadFunctor:SCStatesMsgPayload::"></span><span class="target" id="class_atmosphere_base_1a9b5b0e1af20d1ebdb21e0fec9529c83d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase13scStateInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of the spacecraft position/velocity input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase10envOutMsgsE">
+<span id="_CPPv3N14AtmosphereBase10envOutMsgsE"></span><span id="_CPPv2N14AtmosphereBase10envOutMsgsE"></span><span id="AtmosphereBase::envOutMsgs__std::vector:Message:AtmoPropsMsgPayload:P:"></span><span class="target" id="class_atmosphere_base_1a033e0b9d7fc434a0f5bab37ddb2e21d0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">envOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase10envOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector of message names to be written out by the environment. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase14planetPosInMsgE">
+<span id="_CPPv3N14AtmosphereBase14planetPosInMsgE"></span><span id="_CPPv2N14AtmosphereBase14planetPosInMsgE"></span><span id="AtmosphereBase::planetPosInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_atmosphere_base_1aea875260b51bc274bb14ae82e11d4562"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetPosInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase14planetPosInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message name for the planet’s SPICE position message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase10epochInMsgE">
+<span id="_CPPv3N14AtmosphereBase10epochInMsgE"></span><span id="_CPPv2N14AtmosphereBase10epochInMsgE"></span><span id="AtmosphereBase::epochInMsg__ReadFunctor:EpochMsgPayload:"></span><span class="target" id="class_atmosphere_base_1a151baabc64d6d064bdb1b58d3e8cf5d3"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#_CPPv415EpochMsgPayload" title="EpochMsgPayload"><span class="n"><span class="pre">EpochMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase10epochInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) epoch date/time input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase11envMinReachE">
+<span id="_CPPv3N14AtmosphereBase11envMinReachE"></span><span id="_CPPv2N14AtmosphereBase11envMinReachE"></span><span id="AtmosphereBase::envMinReach__double"></span><span class="target" id="class_atmosphere_base_1aba6dc979521231d5e1b5ed3d53224c06"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">envMinReach</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase11envMinReachE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Minimum planet-relative position needed for the environment to work, default is off (neg. value) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase11envMaxReachE">
+<span id="_CPPv3N14AtmosphereBase11envMaxReachE"></span><span id="_CPPv2N14AtmosphereBase11envMaxReachE"></span><span id="AtmosphereBase::envMaxReach__double"></span><span class="target" id="class_atmosphere_base_1adaa6e3808f939ca766660d42434aa6b2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">envMaxReach</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase11envMaxReachE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Maximum distance at which the environment will be calculated, default is off (neg. value) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase12planetRadiusE">
+<span id="_CPPv3N14AtmosphereBase12planetRadiusE"></span><span id="_CPPv2N14AtmosphereBase12planetRadiusE"></span><span id="AtmosphereBase::planetRadius__double"></span><span class="target" id="class_atmosphere_base_1afbaf28c140d42847542ea181df10ded8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetRadius</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase12planetRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Radius of the planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase9bskLoggerE">
+<span id="_CPPv3N14AtmosphereBase9bskLoggerE"></span><span id="_CPPv2N14AtmosphereBase9bskLoggerE"></span><span id="AtmosphereBase::bskLogger__BSKLogger"></span><span class="target" id="class_atmosphere_base_1aa36946330f659948aef5ea736c646a6d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase13writeMessagesE8uint64_t">
+<span id="_CPPv3N14AtmosphereBase13writeMessagesE8uint64_t"></span><span id="_CPPv2N14AtmosphereBase13writeMessagesE8uint64_t"></span><span id="AtmosphereBase::writeMessages__uint64_t"></span><span class="target" id="class_atmosphere_base_1a89fde725b5700960183bda51ffe0057a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current time used for time-stamping the message </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase12readMessagesEv">
+<span id="_CPPv3N14AtmosphereBase12readMessagesEv"></span><span id="_CPPv2N14AtmosphereBase12readMessagesEv"></span><span id="AtmosphereBase::readMessages"></span><span class="target" id="class_atmosphere_base_1a414f3280b6652855f5f60d91b3760dc5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the incoming command message and set the associated spacecraft positions for computing the atmosphere. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase21updateLocalAtmosphereEd">
+<span id="_CPPv3N14AtmosphereBase21updateLocalAtmosphereEd"></span><span id="_CPPv2N14AtmosphereBase21updateLocalAtmosphereEd"></span><span id="AtmosphereBase::updateLocalAtmosphere__double"></span><span class="target" id="class_atmosphere_base_1ac79f6aac6a0771b86e59dec71eff51eb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateLocalAtmosphere</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase21updateLocalAtmosphereEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to update the local magnetic field based on each spacecraft’s position. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase17updateRelativePosEP26SpicePlanetStateMsgPayloadP18SCStatesMsgPayload">
+<span id="_CPPv3N14AtmosphereBase17updateRelativePosEP26SpicePlanetStateMsgPayloadP18SCStatesMsgPayload"></span><span id="_CPPv2N14AtmosphereBase17updateRelativePosEP26SpicePlanetStateMsgPayloadP18SCStatesMsgPayload"></span><span id="AtmosphereBase::updateRelativePos__SpicePlanetStateMsgPayloadP.SCStatesMsgPayloadP"></span><span class="target" id="class_atmosphere_base_1a6423e9d72c239fd63db24214e238ab49"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateRelativePos</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">planetState</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">scState</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase17updateRelativePosEP26SpicePlanetStateMsgPayloadP18SCStatesMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to determine the spacecraft position vector relative to the planet. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>planetState</strong> – A space planetstate message struct. </p></li>
+<li><p><strong>scState</strong> – A spacecraft states message struct. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd">
+<span id="_CPPv3N14AtmosphereBase23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd"></span><span id="_CPPv2N14AtmosphereBase23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd"></span><span id="AtmosphereBase::evaluateAtmosphereModel__AtmoPropsMsgPayloadP.double"></span><span class="target" id="class_atmosphere_base_1a248236143082c4648ff99b1e6b85ee9b"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evaluateAtmosphereModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">msg</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase23evaluateAtmosphereModelEP19AtmoPropsMsgPayloadd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase11customResetE8uint64_t">
+<span id="_CPPv3N14AtmosphereBase11customResetE8uint64_t"></span><span id="_CPPv2N14AtmosphereBase11customResetE8uint64_t"></span><span id="AtmosphereBase::customReset__uint64_t"></span><span class="target" id="class_atmosphere_base_1a11f752c534eb972c577cd5d1f365c235"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase11customResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom <a class="reference internal" href="#class_atmosphere_base_1acf488c63b173d77eb82722e94cf6f167"><span class="std std-ref">Reset()</span></a> method. This allows a child class to add additional functionality to the <a class="reference internal" href="#class_atmosphere_base_1acf488c63b173d77eb82722e94cf6f167"><span class="std std-ref">Reset()</span></a> method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase19customWriteMessagesE8uint64_t">
+<span id="_CPPv3N14AtmosphereBase19customWriteMessagesE8uint64_t"></span><span id="_CPPv2N14AtmosphereBase19customWriteMessagesE8uint64_t"></span><span id="AtmosphereBase::customWriteMessages__uint64_t"></span><span class="target" id="class_atmosphere_base_1aa27ce1f3f843cafd13c44810429ec0e0"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customWriteMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase19customWriteMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom output message writing method. This allows a child class to add additional functionality. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase18customReadMessagesEv">
+<span id="_CPPv3N14AtmosphereBase18customReadMessagesEv"></span><span id="_CPPv2N14AtmosphereBase18customReadMessagesEv"></span><span id="AtmosphereBase::customReadMessages"></span><span class="target" id="class_atmosphere_base_1a234555d45144382690d473c9498b63a2"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customReadMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase18customReadMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom output input reading method. This allows a child class to add additional functionality. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase26customSetEpochFromVariableEv">
+<span id="_CPPv3N14AtmosphereBase26customSetEpochFromVariableEv"></span><span id="_CPPv2N14AtmosphereBase26customSetEpochFromVariableEv"></span><span id="AtmosphereBase::customSetEpochFromVariable"></span><span class="target" id="class_atmosphere_base_1a9e9e1091a6e8c9b291d6c3b5d5fd115d"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">customSetEpochFromVariable</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14AtmosphereBase26customSetEpochFromVariableEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom <a class="reference internal" href="#class_atmosphere_base_1a9e9e1091a6e8c9b291d6c3b5d5fd115d"><span class="std std-ref">customSetEpochFromVariable()</span></a> method. This allows a child class to specify how the module epoch information is set by a module variable. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase6r_BP_NE">
+<span id="_CPPv3N14AtmosphereBase6r_BP_NE"></span><span id="_CPPv2N14AtmosphereBase6r_BP_NE"></span><span id="AtmosphereBase::r_BP_N__Eigen::Vector3d"></span><span class="target" id="class_atmosphere_base_1a991eed54587277fee469680bab538fdb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BP_N</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase6r_BP_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] sc position vector relative to planet in inertial N frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase6r_BP_PE">
+<span id="_CPPv3N14AtmosphereBase6r_BP_PE"></span><span id="_CPPv2N14AtmosphereBase6r_BP_PE"></span><span id="AtmosphereBase::r_BP_P__Eigen::Vector3d"></span><span class="target" id="class_atmosphere_base_1a26fc03f27e1d6c62289fd4906524917e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BP_P</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase6r_BP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] sc position vector relative to planet in planet-fixed frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase11orbitRadiusE">
+<span id="_CPPv3N14AtmosphereBase11orbitRadiusE"></span><span id="_CPPv2N14AtmosphereBase11orbitRadiusE"></span><span id="AtmosphereBase::orbitRadius__double"></span><span class="target" id="class_atmosphere_base_1a3c14cfc0ff1dc77e8845fb913500b1e3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbitRadius</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase11orbitRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] sc orbit radius about planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase13orbitAltitudeE">
+<span id="_CPPv3N14AtmosphereBase13orbitAltitudeE"></span><span id="_CPPv2N14AtmosphereBase13orbitAltitudeE"></span><span id="AtmosphereBase::orbitAltitude__double"></span><span class="target" id="class_atmosphere_base_1ae9565f0d5946e6c083ed623f86907bf1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbitAltitude</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase13orbitAltitudeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] sc altitude above planetRadius </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase12envOutBufferE">
+<span id="_CPPv3N14AtmosphereBase12envOutBufferE"></span><span id="_CPPv2N14AtmosphereBase12envOutBufferE"></span><span id="AtmosphereBase::envOutBuffer__std::vector:AtmoPropsMsgPayload:"></span><span class="target" id="class_atmosphere_base_1a744fe30eca4f98a616dbdabac688a2c8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AtmoPropsMsgPayload.html#_CPPv419AtmoPropsMsgPayload" title="AtmoPropsMsgPayload"><span class="n"><span class="pre">AtmoPropsMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">envOutBuffer</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase12envOutBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Message buffer for magnetic field messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase8scStatesE">
+<span id="_CPPv3N14AtmosphereBase8scStatesE"></span><span id="_CPPv2N14AtmosphereBase8scStatesE"></span><span id="AtmosphereBase::scStates__std::vector:SCStatesMsgPayload:"></span><span class="target" id="class_atmosphere_base_1a71c9fe398c0dcae969589eb9988caaf9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStates</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase8scStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of the spacecraft state messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase11planetStateE">
+<span id="_CPPv3N14AtmosphereBase11planetStateE"></span><span id="_CPPv2N14AtmosphereBase11planetStateE"></span><span id="AtmosphereBase::planetState__SpicePlanetStateMsgPayload"></span><span class="target" id="class_atmosphere_base_1ad75ed9ac36d5732ae2832bd1964abd69"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetState</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase11planetStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>planet state message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14AtmosphereBase13epochDateTimeE">
+<span id="_CPPv3N14AtmosphereBase13epochDateTimeE"></span><span id="_CPPv2N14AtmosphereBase13epochDateTimeE"></span><span id="AtmosphereBase::epochDateTime__tm"></span><span class="target" id="class_atmosphere_base_1a3ede27ff380075349be6ae52dd20576b"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">tm</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochDateTime</span></span></span><a class="headerlink" href="#_CPPv4N14AtmosphereBase13epochDateTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>time/date structure containing the epoch information using a Gregorian calendar </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_GeneralModuleFiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="magneticFieldBase.html" class="btn btn-neutral float-right" title="Module: magneticFieldBase" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

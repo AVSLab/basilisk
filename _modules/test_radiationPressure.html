@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_radiationPressure &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_radiationPressure</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_radiationPressure</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># RadiationPressure Unit Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Test the proper function of the Radiation Pressure Dynamics module.</span>
+<span class="c1">#           This is done by comparing expected torques and forces to</span>
+<span class="c1">#           what is simulated</span>
+<span class="c1"># Author:   Patrick Kenneally</span>
+<span class="c1"># Creation Date:  Feb. 9, 2017</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+
+
+
+<span class="c1">#Import all of the modules that we are going to call in this simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">radiationPressure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(True)</span>
+<div class="viewcode-block" id="test_unitRadiationPressure">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/RadiationPressure/_UnitTest/test_radiationPressure.html#test_radiationPressure.test_unitRadiationPressure">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;modelType, eclipseOn&quot;</span><span class="p">,</span> <span class="p">[</span>
+      <span class="p">(</span><span class="s2">&quot;cannonball&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lookup&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;lookup&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;cannonballLookup&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unitRadiationPressure</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">modelType</span><span class="p">,</span> <span class="n">eclipseOn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">unitRadiationPressure</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">modelType</span><span class="p">,</span> <span class="n">eclipseOn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">unitRadiationPressure</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">modelType</span><span class="p">,</span> <span class="n">eclipseOn</span><span class="p">):</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">testTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTestTask&quot;</span>
+    <span class="n">testProcessName</span> <span class="o">=</span> <span class="s2">&quot;unitTestProcess&quot;</span>
+    <span class="n">testTaskRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">r_N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">16937711153.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">138435806556.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">60051616256.6</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">sun_r_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">507128401.716</span><span class="p">,</span> <span class="mf">22652490.9092</span><span class="p">,</span> <span class="o">-</span><span class="mf">14854379.6232</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">]</span>
+
+    <span class="c1"># Create a simulation container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="c1"># Ensure simulation is empty</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">testProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">testTaskRate</span><span class="p">))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraft&quot;</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+
+    <span class="n">srpDynEffector</span> <span class="o">=</span> <span class="n">radiationPressure</span><span class="o">.</span><span class="n">RadiationPressure</span><span class="p">()</span>
+    <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;RadiationPressure&quot;</span>
+    <span class="n">srpDynEffector2</span> <span class="o">=</span> <span class="n">radiationPressure</span><span class="o">.</span><span class="n">RadiationPressure</span><span class="p">()</span>
+    <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;RadiationPressure2&quot;</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">srpDynEffector</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">srpDynEffector2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;cannonball&quot;</span><span class="p">:</span>
+        <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">setUseCannonballModel</span><span class="p">()</span>
+        <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">coefficientReflection</span> <span class="o">=</span> <span class="mf">1.2</span>
+    <span class="k">elif</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;lookup&quot;</span><span class="p">:</span>
+        <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">setUseFacetedCPUModel</span><span class="p">()</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">radiationPressure</span><span class="o">.</span><span class="n">SRPLookupTableHandler</span><span class="p">()</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">parseAndLoadXML</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/cube_lookup.xml&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">forceBLookup</span><span class="p">)):</span>
+            <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">addForceLookupBEntry</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">forceBLookup</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">addTorqueLookupBEntry</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">torqueBLookup</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">addSHatLookupBEntry</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">sHatBLookup</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="k">elif</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;cannonballLookup&quot;</span><span class="p">:</span>
+        <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">setUseFacetedCPUModel</span><span class="p">()</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">radiationPressure</span><span class="o">.</span><span class="n">SRPLookupTableHandler</span><span class="p">()</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">parseAndLoadXML</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/cannonballLookup.xml&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">forceBLookup</span><span class="p">)):</span>
+            <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">addForceLookupBEntry</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">forceBLookup</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">addTorqueLookupBEntry</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">torqueBLookup</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">addSHatLookupBEntry</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">sHatBLookup</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">setUseCannonballModel</span><span class="p">()</span>
+        <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="mf">182018.072141393</span> <span class="c1">#set to give a force of 1N at 1AU to make spherical table generation easy</span>
+        <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">coefficientReflection</span> <span class="o">=</span> <span class="mf">1.2</span>
+        <span class="n">r_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="mf">10.</span><span class="o">*</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mf">1000.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="mf">10.</span><span class="o">*</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mf">1000.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="mf">10.</span><span class="o">*</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mf">1000.</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="n">sun_r_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>  <span class="c1"># [m]</span>
+        <span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">eclipseOn</span><span class="p">:</span>
+        <span class="n">sunEclipseMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
+        <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">sunEclMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunEclipseMsgData</span><span class="p">)</span>
+        <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunEclMsg</span><span class="p">)</span>
+        <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunEclMsg</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">srpDynEffector</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">srpDynEffector2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sigma_BN</span>
+
+
+    <span class="n">sunSpiceMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunSpiceMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">sun_r_N</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunSpiceMsg</span><span class="p">)</span>
+    <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">sunEphmInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+    <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">sunEphmInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="n">srpDynEffectorLog</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">,</span> <span class="s2">&quot;forceExternal_N&quot;</span><span class="p">,</span> <span class="s2">&quot;torqueExternalPntB_B&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">effector</span> <span class="ow">in</span> <span class="p">[</span><span class="n">srpDynEffector</span><span class="p">,</span> <span class="n">srpDynEffector2</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">effLog</span> <span class="ow">in</span> <span class="n">srpDynEffectorLog</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">effLog</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Configure a simulation stop time and execute the simulation run</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">srpDynEffector</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">,</span> <span class="n">testTaskRate</span><span class="p">)</span>
+    <span class="n">srpDynEffector2</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span><span class="p">,</span> <span class="n">testTaskRate</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="n">srpDataForce_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">forceExternal_B</span><span class="p">)</span>
+    <span class="n">srpDataForce_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">forceExternal_N</span><span class="p">)</span>
+    <span class="n">srpTorqueData</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">torqueExternalPntB_B</span><span class="p">)</span>
+
+    <span class="n">srp2DataForce_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">forceExternal_B</span><span class="p">)</span>
+    <span class="n">srp2DataForce_N</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">forceExternal_N</span><span class="p">)</span>
+    <span class="n">srp2TorqueData</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">srpDynEffectorLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">torqueExternalPntB_B</span><span class="p">)</span>
+
+    <span class="n">errTol</span> <span class="o">=</span> <span class="mf">1E-12</span>
+    <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;cannonball&quot;</span><span class="p">:</span>
+        <span class="n">truthForceExternal_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">truthForceExternal_N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.44694525395e-06</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.94212316004e-05</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.42121070088e-06</span><span class="p">]</span>
+        <span class="n">truthTorqueExternalPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthForceExternal_B</span><span class="p">,</span>
+                                                                    <span class="n">srpDataForce_B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTol</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Force_B&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthForceExternal_N</span><span class="p">,</span>
+                                                                <span class="n">srpDataForce_N</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                <span class="n">errTol</span><span class="p">,</span>
+                                                                <span class="s2">&quot;Force_N&quot;</span><span class="p">,</span>
+                                                                <span class="n">testFailCount</span><span class="p">,</span>
+                                                                <span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthTorqueExternalPntB_B</span><span class="p">,</span>
+                                                                <span class="n">srpTorqueData</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                <span class="n">errTol</span><span class="p">,</span>
+                                                                <span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+                                                                <span class="n">testFailCount</span><span class="p">,</span>
+                                                                <span class="n">testMessages</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;lookup&quot;</span><span class="p">:</span>
+        <span class="n">errTolTorque</span> <span class="o">=</span> <span class="n">errTol</span><span class="o">/</span><span class="mi">100</span>
+        <span class="n">truthForceExternal_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.26720220706099184E-04</span><span class="p">,</span> <span class="o">-</span> <span class="mf">0.13596079145805012E-04</span><span class="p">,</span> <span class="mf">0.93948649829282319E-05</span><span class="p">]</span>
+        <span class="n">truthForceExternal_N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">truthTorqueExternalPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.80492463017846114E-12</span><span class="p">,</span> <span class="mf">0.50888380426172319E-12</span><span class="p">,</span> <span class="mf">0.10249431804585393E-11</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">eclipseOn</span><span class="p">:</span>
+            <span class="n">truthForceExternal_B</span> <span class="o">=</span> <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">shadowFactor</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truthForceExternal_B</span><span class="p">)</span>
+            <span class="n">truthTorqueExternalPntB_B</span> <span class="o">=</span> <span class="n">sunEclipseMsgData</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truthTorqueExternalPntB_B</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthForceExternal_B</span><span class="p">,</span>
+                                                                    <span class="n">srpDataForce_B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTol</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Force_B&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthForceExternal_N</span><span class="p">,</span>
+                                                                    <span class="n">srpDataForce_N</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTol</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Force_N&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">truthTorqueExternalPntB_B</span><span class="p">,</span>
+                                                                    <span class="n">srpTorqueData</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTolTorque</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s2">&quot;cannonballLookup&quot;</span><span class="p">:</span>
+        <span class="n">errTolTorque</span> <span class="o">=</span> <span class="n">errTol</span><span class="o">/</span><span class="mi">100</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">srp2DataForce_N</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">srpDataForce_B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTol</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Force_B&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">srp2DataForce_B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">srpDataForce_N</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTol</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Force_N&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">srp2TorqueData</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">srpTorqueData</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:],</span>
+                                                                    <span class="n">errTolTorque</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span>
+                                                                    <span class="n">testMessages</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">eclipseOn</span><span class="p">:</span>
+        <span class="n">modelType</span> <span class="o">=</span> <span class="n">modelType</span> <span class="o">+</span> <span class="s1">&#39;WithEclipse&#39;</span>   <span class="c1">#Do this so that the AutoTeX messages are clearly distinguishable.</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">modelType</span><span class="p">)</span>
+        <span class="n">passFailText</span> <span class="o">=</span> <span class="s2">&quot;PASSED&quot;</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;ForestGreen&#39;</span>  <span class="c1"># color to write auto-documented &quot;PASSED&quot; message in in LATEX</span>
+        <span class="n">snippetName</span> <span class="o">=</span> <span class="n">modelType</span> <span class="o">+</span> <span class="s1">&#39;FailMsg&#39;</span>
+        <span class="n">snippetContent</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>  <span class="c1"># write formatted LATEX string to file to be used by auto-documentation.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">passFailText</span> <span class="o">=</span> <span class="s1">&#39;FAILED&#39;</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;Red&#39;</span>  <span class="c1"># color to write auto-documented &quot;FAILED&quot; message in in LATEX</span>
+        <span class="n">snippetName</span> <span class="o">=</span> <span class="n">modelType</span> <span class="o">+</span> <span class="s1">&#39;FailMsg&#39;</span>
+        <span class="n">snippetContent</span> <span class="o">=</span> <span class="n">passFailText</span>
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">testMessages</span><span class="p">:</span>
+            <span class="n">snippetContent</span> <span class="o">+=</span> <span class="s2">&quot;. &quot;</span> <span class="o">+</span> <span class="n">message</span>
+        <span class="n">snippetContent</span> <span class="o">+=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>  <span class="c1"># write formatted LATEX string to file to be used by auto-documentation.</span>
+    <span class="n">snippetName</span> <span class="o">=</span> <span class="n">modelType</span> <span class="o">+</span> <span class="s1">&#39;PassFail&#39;</span>  <span class="c1"># name of file to be written for auto-documentation which specifies if this test was passed or failed.</span>
+    <span class="n">snippetContent</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="n">passFailText</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span> <span class="c1">#write formatted LATEX string to file to be used by auto-documentation.</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="c1">#write formatted LATEX string to file to be used by auto-documentation.</span>
+
+    <span class="c1"># write test accuracy to LATEX file for AutoTex</span>
+    <span class="n">snippetName</span> <span class="o">=</span> <span class="n">modelType</span> <span class="o">+</span> <span class="s1">&#39;Accuracy&#39;</span>
+    <span class="n">snippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.1e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">errTol</span><span class="p">)</span><span class="c1">#write formatted LATEX string to file to be used by auto-documentation.</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="c1">#write formatted LATEX string to file to be used by auto-documentation.</span>
+    <span class="k">if</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s1">&#39;lookupWithEclipse&#39;</span> <span class="ow">or</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s1">&#39;lookup&#39;</span> <span class="ow">or</span> <span class="n">modelType</span> <span class="o">==</span> <span class="s1">&#39;cannonballLookup&#39;</span><span class="p">:</span>
+        <span class="n">snippetName</span> <span class="o">=</span> <span class="n">modelType</span> <span class="o">+</span> <span class="s1">&#39;TorqueAccuracy&#39;</span>
+        <span class="n">snippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.1e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">errTolTorque</span><span class="p">)</span>  <span class="c1"># write formatted LATEX string to file to be used by auto-documentation.</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span>
+                                        <span class="n">path</span><span class="p">)</span>  <span class="c1"># write formatted LATEX string to file to be used by auto-documentation.</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED&quot;</span><span class="p">)</span>
+
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unitRadiationPressure</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;cannonball&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

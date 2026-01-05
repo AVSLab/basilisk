@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAsteroidLanding &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioSimpleDocking" href="scenarioSimpleDocking.html" />
+    <link rel="prev" title="scenarioSRPInPanels" href="scenarioSRPInPanels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioUnbalancedThrusters.html">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSRPInPanels.html">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioAsteroidLanding</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/mujoco/scenarioAsteroidLanding.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenarioasteroidlanding">
+<span id="id1"></span><h1>scenarioAsteroidLanding<a class="headerlink" href="#scenarioasteroidlanding" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-scenarioAsteroidLanding">It’s recommended to review the following scenario(s) first (and any
+recommended scenario(s) that they may have):</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">examples/mujoco/scenarioArmWithThrusters.py</span></code></p></li>
+</ol>
+<p>This scripts shows how one could simulate a spacecraft landing on
+an asteroid. It illustrates force-vector actuators, loading meshes
+for bodies, and collisions. This is done using the MuJoCo-based
+<a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynamicObject.html#dynamicobject"><span class="std std-ref">DynamicObject</span></a> <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>.</p>
+<p>The multi-body system is defined in the XML file <code class="docutils literal notranslate"><span class="pre">sat_ast_landing.xml</span></code>.
+This XML illustrates various interesting features. First, is the use
+of the <code class="docutils literal notranslate"><span class="pre">&lt;default&gt;</span></code> element to avoid data repetition in the XML file.
+Second, it’s the use of multiple free-floating bodies, in this case
+the ‘hub’ of the spacecraft and the ‘asteroid’ body. Multiple independent
+spacecraft are also possible (see <code class="docutils literal notranslate"><span class="pre">examples/mujoco/scenarioSimpleDocking.py</span></code>).
+Finally, this showcases how to load a mesh (for the geometry of the
+asteroid). The actual file path must then be provided on construction of <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>.</p>
+<p>Unless specifically included, gravity is not modeled in <cite>:ref:`MJScene&lt;MJScene&gt;</cite>
+simulations. However, in this scenario we want to simulate a spacecraft
+landing on the asteroid, thus we need to model gravity. This is done by
+creating a custom <code class="docutils literal notranslate"><span class="pre">ConstantGravity</span></code> model that applies a constant force
+in the inertial frame. This is obviously a simplification, akin to
+considering a constant downward gravity near the surface of the Earth.</p>
+<p>Previously seen scenarios have always used actuators defined in
+the XML file, and of the <cite>MJSingularActuator</cite> type. <code class="docutils literal notranslate"><span class="pre">MJSingularActuator</span></code>
+are characterized by being controlled by a single scalar value.
+For the case of <code class="docutils literal notranslate"><span class="pre">MJSingularActuator</span></code> tied to a site, these generate
+a force/torque in the local frame of their site. The resulting
+force and/or torque vectors are the product of the scalar input of the
+<code class="docutils literal notranslate"><span class="pre">MJSingularActuator</span></code> times the constant direction vectors in the site
+reference frame defined by the <cite>gear</cite> attribute of this actuator.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MJSingularActuator</span></code> are ideal to model forces/torques that always
+applied along a fixed direction in the site frame. However, in this scenario,
+we need to apply a force in the inertial frame. To do so, we use a
+<code class="docutils literal notranslate"><span class="pre">MJForceActuator</span></code>, which allows us to define a force vector with arbitrary
+direction and magnitude (thus 3 scalar values are used to control it).
+Still, the desired force vector given to this actuator is still in the
+site reference frame. To produce a force fixed in the inertial frame,
+we need to use the attitude of the site frame to continuously rotate
+the force in the site-fixed frame such that it’s always acting in the
+same inertial direction.</p>
+<p>This is implemented through two mechanisms. First, we need to add
+a new actuator. Previous scripts retrieved actuators defined in
+the XML through <code class="docutils literal notranslate"><span class="pre">getSingleActuator</span></code>. In this case, we create a
+new actuator of the <code class="docutils literal notranslate"><span class="pre">MJForceActuator</span></code> type with <code class="docutils literal notranslate"><span class="pre">addForceActuator</span></code>.
+Second, we use the <code class="docutils literal notranslate"><span class="pre">ConstantGravity</span></code> model, which accounts for
+the rotation of the site frame to produce a force vector that
+produces a gravity force that is constant in the inertial frame.</p>
+<p>It is possible to add <code class="docutils literal notranslate"><span class="pre">MJSingleActuator</span></code>, <code class="docutils literal notranslate"><span class="pre">MJForceActuator</span></code>,
+<code class="docutils literal notranslate"><span class="pre">MJTorqueActuator</span></code>, and <code class="docutils literal notranslate"><span class="pre">MJForceTorqueActuator</span></code> through Python
+or C++ function calls (<code class="docutils literal notranslate"><span class="pre">addSingleActuator</span></code>, <code class="docutils literal notranslate"><span class="pre">addForceActuator</span></code>, etc.).
+These can later be retrieved with <code class="docutils literal notranslate"><span class="pre">getSingleActuator</span></code>,
+<code class="docutils literal notranslate"><span class="pre">getForceActuator</span></code>, etc.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenarioAsteroidLanding.ConstantGravity">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenarioAsteroidLanding.</span></span><span class="sig-name descname"><span class="pre">ConstantGravity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioAsteroidLanding.html#ConstantGravity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAsteroidLanding.ConstantGravity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SysModel</span></code></p>
+<p>A class to model constant gravity force in a simulation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenarioAsteroidLanding.ConstantGravity.force_N">
+<span class="sig-name descname"><span class="pre">force_N</span></span><a class="headerlink" href="#scenarioAsteroidLanding.ConstantGravity.force_N" title="Link to this definition"></a></dt>
+<dd><p>The constant gravitational force vector in the inertial frame (N frame).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sequence[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenarioAsteroidLanding.ConstantGravity.frameInMsg">
+<span class="sig-name descname"><span class="pre">frameInMsg</span></span><a class="headerlink" href="#scenarioAsteroidLanding.ConstantGravity.frameInMsg" title="Link to this definition"></a></dt>
+<dd><p>Reader for spacecraft state messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>messaging.SCStatesMsgReader</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenarioAsteroidLanding.ConstantGravity.forceOutMsg">
+<span class="sig-name descname"><span class="pre">forceOutMsg</span></span><a class="headerlink" href="#scenarioAsteroidLanding.ConstantGravity.forceOutMsg" title="Link to this definition"></a></dt>
+<dd><p>Message to output the computed force in the body-fixed frame (B frame).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>messaging.ForceAtSiteMsg</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAsteroidLanding.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioAsteroidLanding.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioAsteroidLanding.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAsteroidLanding.run" title="Link to this definition"></a></dt>
+<dd><p>Main function, see scenario description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>showPlots</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, simulation results are plotted and show.
+Defaults to False.</p></li>
+<li><p><strong>visualize</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> visualization tool is
+run on the simulation results. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioSRPInPanels.html" class="btn btn-neutral float-left" title="scenarioSRPInPanels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioSimpleDocking.html" class="btn btn-neutral float-right" title="scenarioSimpleDocking" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

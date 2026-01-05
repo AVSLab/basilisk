@@ -1,0 +1,217 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building Custom Modules &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using a Custom Python Installation" href="customPython.html" />
+    <link rel="prev" title="Building the Software Framework" href="installBuild.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../Install.html">Install</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pullCloneBSK.html">Download Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnLinux.html">Setup On Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnMacOS.html">Setup On macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installOnWindows.html">Setup On Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installBuild.html">Building the Software Framework</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Building Custom Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#directory-structure">Directory Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frequently-asked-questions">Frequently Asked Questions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customPython.html">Using a Custom Python Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installBuildConan.html">Advanced: Directly Building the Software Framework Using Conan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipInstall.html">Advanced: Building and Installing Pre-Compiled Basilisk Wheels</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Install.html">Install</a></li>
+      <li class="breadcrumb-item active">Building Custom Modules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Install/buildExtModules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="building-custom-modules">
+<span id="buildextmodules"></span><h1>Building Custom Modules<a class="headerlink" href="#building-custom-modules" title="Link to this heading"></a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h2>
+<aside class="sidebar">
+<p class="sidebar-title">Source Code</p>
+<p>An example external folder with custom Basilisk modules and message definitions can be downloaded <a class="reference download internal" download="" href="../_downloads/32b35afa78c4cb5b5cc782606c9b5f14/External.zip"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+</aside>
+<p>It is preferred that the user not put their own modules inside the official Basilisk folder unless this module is intended to be pushed back to the repository.  This keeps the official Basilisk folder free from local customizations and thus easier to keep up to date.  With Basilisk 2.0 and onwards the user has the ability to create modules which are not included in basilisk repository.  The new build system allows a single folder containing custom BSK modules to be included into a single Basilisk build. This document outlines how this is done.  The resulting build product will contain both the official Basilisk modules as well as modules available within this external folder.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To learn how to write Basilisk module, see the documentation at <a class="reference internal" href="../Learn/makingModules.html#makingmodules"><span class="std std-ref">Basics of Writing Basilisk Modules</span></a>.  Building custom modules outside of the Basilisk source folder follows the same guidelines.</p>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>To build external modules provide add this command line argument to <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span><span class="n">pathToExternalModules</span> <span class="o">&lt;</span><span class="n">pathToYourProjectParent</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Both absolute or relative paths to the external module folder are acceptable.  Let the sample folder with custom Basilisk code be called <code class="docutils literal notranslate"><span class="pre">External</span></code> for the sake of this documentation.  Further, assume it is located next to the Basilisk source directory.  From the Basilisk source directory the command line build argument would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">conanfile</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">clean</span> <span class="o">--</span><span class="n">pathToExternalModules</span> <span class="o">../</span><span class="n">External</span>
+</pre></div>
+</div>
+<p>By calling the above command a project file (Xcode, MS Visual Studio or makefile) is created that integrates both the core Basilisk components as well as the modules from this external folder.  The IDE shows these under a folder called <code class="docutils literal notranslate"><span class="pre">ExternalModules</span></code>.  The custom messages are grouped with the core BSK messages under <code class="docutils literal notranslate"><span class="pre">architecture/msgPayloadDefC</span></code> and <code class="docutils literal notranslate"><span class="pre">architecture/msgPayloadDefCpp</span></code>.</p>
+</section>
+<section id="directory-structure">
+<h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading"></a></h2>
+<p>The external module inclusion follows a strict directory structure resembling the existing Basilisk repository.
+A single folder contains all the custom Basilisk modules and message definitions in a specific
+sub-folder structure shown below.</p>
+<img alt="../_images/buildExtModules.svg" class="align-center" src="../_images/buildExtModules.svg" />
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">External</span></code>:  This is the parent folder that holds all the custom Basilisk modules, support files and messages.  Note that this folder can have any name, <cite>External</cite> is just a sample name here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExternalModules</span></code>: (required, must have this name) This folder contains sub-folders for each custom Basilisk module. This folder contains the typical source code required to build and test a module.  The sub-folders have the individual module names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExternalModules/_GeneralModuleFiles</span></code>: (optional, but must have this name) This is useful for source code which is shared between the multiple modules. If the answer to the question “Will this code need to be included in more than one module?” is yes. Then, that support code belongs in <code class="docutils literal notranslate"><span class="pre">_GeneralModuleFiles</span></code>. While building external modules the Basilisk build system links <code class="docutils literal notranslate"><span class="pre">_GeneralModuleFiles</span></code> to these external modules. The files should be located directly inside <code class="docutils literal notranslate"><span class="pre">_GeneralModulesFiles</span></code>, no sub folders are supported in this module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msgPayloadDefC</span></code>: (optional, must have this name) This folder contains the definition of all the custom C Message header files. The naming should follow this convention <code class="docutils literal notranslate"><span class="pre">&lt;Message-type&gt;MsgPayload.h</span></code> as discussed in <a class="reference internal" href="../Learn/makingModules/makingModules-2.html#makingmodules-2"><span class="std std-ref">Creating New Message Definitions</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msgPayloadDefCpp</span></code>: (optional, must have this name) This folder contains the definition of all the C++ message header files. It follows the same naming convention as C header files.</p></li>
+</ol>
+</section>
+<section id="frequently-asked-questions">
+<h2>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Can I store my custom Basilisk folder on another drive?</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>On Linux and macOS, yes.  On Window this must be on the same drive as the Basilisk source</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>How flexible are the folder names?</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>While the primary folder, called <code class="docutils literal notranslate"><span class="pre">External</span></code> above, can assume any name, the key sub-folders must follow the exact naming shown above.  If you change this you must write your own <code class="docutils literal notranslate"><span class="pre">cmake</span></code> file.  Enjoy…</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>How do I import these custom modules when I write a Basilisk python simulation script?</p>
+<blockquote>
+<div><ul>
+<li><p>The custom Basilisk modules are built into a <code class="docutils literal notranslate"><span class="pre">Basilisk.ExternalModules</span></code> package.  For example, to load a module called <code class="docutils literal notranslate"><span class="pre">customCppModule</span></code>, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.ExternalModules</span><span class="w"> </span><span class="kn">import</span> <span class="n">customCppModule</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installBuild.html" class="btn btn-neutral float-left" title="Building the Software Framework" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="customPython.html" class="btn btn-neutral float-right" title="Using a Custom Python Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

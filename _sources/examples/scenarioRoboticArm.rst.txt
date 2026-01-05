@@ -1,0 +1,13 @@
+.. _scenarioRoboticArm:
+
+scenarioRoboticArm
+==================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioRoboticArm
+   :members:
+   :show-inheritance:
+

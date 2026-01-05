@@ -1,0 +1,620 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: gravityEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: gravityModel" href="gravityModel.html" />
+    <link rel="prev" title="Module: fuelSlosh" href="fuelSlosh.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: gravityEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/gravityEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gravityeffector">
+<span id="gravityeffector"></span><h1>Module: gravityEffector<a class="headerlink" href="#module-gravityeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Abstract class that is used to implement an effector impacting a GRAVITY body
+that does not itself maintain a state or represent a changing component of
+the body (for example: gravity, thrusters, solar radiation pressure, etc.)</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/0199e14b38d0024b7b738199843c4143/Basilisk-GravityEffector-20170712.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>centralBodyOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>central planet body state output message</p></td>
+</tr>
+</tbody>
+</table>
+<p>The gravity effector contains a list of <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code> objects which contain the planet mass and size properties etc.
+The following table lists the Spice planet ephemeris input message that can be connected to a <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code> object.
+If no message is connected, then the planet has zero position and orientation information by default.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>planetBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>planet spice ephemerisis input message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The user must provide a list of <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code> objects to the spacecraft using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="n">gravBodyList</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each gravity body data object can be created using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">earth</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+<span class="n">earth</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s1">&#39;earth_planet_data&#39;</span>
+<span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>  <span class="c1"># meters^3/s^2</span>
+<span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="mf">6378136.6</span>  <span class="c1"># meters</span>
+<span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">simIncludeGradBody.py</span></code> helper file contains a gravity body factor class to facilitate
+setting up gravity bodies.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412GravBodyData">
+<span id="_CPPv312GravBodyData"></span><span id="_CPPv212GravBodyData"></span><span id="GravBodyData"></span><span class="target" id="class_grav_body_data"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GravBodyData</span></span></span><a class="headerlink" href="#_CPPv412GravBodyData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;gravityEffector.h&gt;</em></div>
+<p>Container for gravitational body data</p>
+<p>This class is designed to hold all of the information for a gravity body. The nominal use-case has it initialized at the python level and attached to dynamics using the AddGravityBody method. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData12GravBodyDataEv">
+<span id="_CPPv3N12GravBodyData12GravBodyDataEv"></span><span id="_CPPv2N12GravBodyData12GravBodyDataEv"></span><span id="GravBodyData::GravBodyData"></span><span class="target" id="class_grav_body_data_1aa5cd7b9573a2aec62248afb38e4eb4db"></span><span class="sig-name descname"><span class="n"><span class="pre">GravBodyData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12GravBodyData12GravBodyDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initializes <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data_1ad3af2d7231162bd600d41e836c2024c6"><span class="std std-ref"><span class="pre">localPlanet</span></span></a></code> to zero except for <code class="docutils literal notranslate"><span class="pre">localPlanet.J20002Pfix</span></code>, which is initialized to the identity matrix. Additionally, initializes <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data_1ae1c8e116d59e2ff174823bcb8db67050"><span class="std std-ref"><span class="pre">gravityModel</span></span></a></code> to a <code class="docutils literal notranslate"><a class="reference internal" href="pointMassGravityModel.html#class_point_mass_gravity_model"><span class="std std-ref"><span class="pre">PointMassGravityModel</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData8initBodyE7int64_t">
+<span id="_CPPv3N12GravBodyData8initBodyE7int64_t"></span><span id="_CPPv2N12GravBodyData8initBodyE7int64_t"></span><span id="GravBodyData::initBody__int64_t"></span><span class="target" id="class_grav_body_data_1a0bfdbbe31a06e61b5482ca55a9def194"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initBody</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12GravBodyData8initBodyE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Initializes the gravityModel, logging and raising an error if the initialization fails. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData22computeGravityInertialEN5Eigen8Vector3dE8uint64_t">
+<span id="_CPPv3N12GravBodyData22computeGravityInertialEN5Eigen8Vector3dE8uint64_t"></span><span id="_CPPv2N12GravBodyData22computeGravityInertialEN5Eigen8Vector3dE8uint64_t"></span><span id="GravBodyData::computeGravityInertial__Eigen::Vector3d.uint64_t"></span><span class="target" id="class_grav_body_data_1accb9b0280caa76025274096d91ae6bec"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeGravityInertial</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_I</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">simTimeNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12GravBodyData22computeGravityInertialEN5Eigen8Vector3dE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the gravitational acceleration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r_I</strong> – inertial position vector </p></li>
+<li><p><strong>simTimeNanos</strong> – simulation time (ns) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData13loadEphemerisEv">
+<span id="_CPPv3N12GravBodyData13loadEphemerisEv"></span><span id="_CPPv2N12GravBodyData13loadEphemerisEv"></span><span id="GravBodyData::loadEphemeris"></span><span class="target" id="class_grav_body_data_1a32d91b7cbc77594f542dfb8b869374c4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadEphemeris</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12GravBodyData13loadEphemerisEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Read the ephemeris data from planetBodyInMsg if it’s linked. Otherwise, zeros <code class="docutils literal notranslate"><span class="pre">this-&gt;</span><a class="reference internal" href="#class_grav_body_data_1ad3af2d7231162bd600d41e836c2024c6"><span class="std std-ref"><span class="pre">localPlanet</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData18registerPropertiesER15DynParamManager">
+<span id="_CPPv3N12GravBodyData18registerPropertiesER15DynParamManager"></span><span id="_CPPv2N12GravBodyData18registerPropertiesER15DynParamManager"></span><span id="GravBodyData::registerProperties__DynParamManagerR"></span><span class="target" id="class_grav_body_data_1aac9590b0cccc1ac8baa38fb6b92ee610"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12GravBodyData18registerPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates the following properies in the given statesIn object. <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="p">[</span><span class="n">planetName</span><span class="p">]</span><span class="o">.</span><span class="n">r_PN_N</span>
+<span class="o">-</span> <span class="p">[</span><span class="n">planetName</span><span class="p">]</span><span class="o">.</span><span class="n">v_PN_N</span>
+<span class="o">-</span> <span class="p">[</span><span class="n">planetName</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+<span class="o">-</span> <span class="p">[</span><span class="n">planetName</span><span class="p">]</span><span class="o">.</span><span class="n">J20002Pfix</span>
+<span class="o">-</span> <span class="p">[</span><span class="n">planetName</span><span class="p">]</span><span class="o">.</span><span class="n">J20002Pfix_dot</span>
+</pre></div>
+</div>
+</p>
+<p><code class="docutils literal notranslate"><span class="pre">vr_PN_N</span></code>, <code class="docutils literal notranslate"><span class="pre">v_PN_N</span></code>, and <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data_1a101a84380b7bfe98bb825277e4a4a099"><span class="std std-ref"><span class="pre">mu</span></span></a></code> are initialized to zero, while <code class="docutils literal notranslate"><span class="pre">J20002Pfix</span></code> and <code class="docutils literal notranslate"><span class="pre">J20002Pfix_dot</span></code> are initialized to the values stored in <code class="docutils literal notranslate"><span class="pre">this-&gt;</span><a class="reference internal" href="#class_grav_body_data_1ad3af2d7231162bd600d41e836c2024c6"><span class="std std-ref"><span class="pre">localPlanet</span></span></a></code>. This usually means that <code class="docutils literal notranslate"><span class="pre">J20002Pfix</span></code> is initialized to the identity matrix and <code class="docutils literal notranslate"><span class="pre">J20002Pfix_dot</span></code> to zero. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData13isCentralBodyE">
+<span id="_CPPv3N12GravBodyData13isCentralBodyE"></span><span id="_CPPv2N12GravBodyData13isCentralBodyE"></span><span id="GravBodyData::isCentralBody__b"></span><span class="target" id="class_grav_body_data_1a604f53c740bd327f57d469ece798902d"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isCentralBody</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData13isCentralBodyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag indicating that object is center </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData12gravityModelE">
+<span id="_CPPv3N12GravBodyData12gravityModelE"></span><span id="_CPPv2N12GravBodyData12gravityModelE"></span><span id="GravBodyData::gravityModel__std::shared_ptr:GravityModel:"></span><span class="target" id="class_grav_body_data_1ae1c8e116d59e2ff174823bcb8db67050"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="gravityModel.html#_CPPv412GravityModel" title="GravityModel"><span class="n"><span class="pre">GravityModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gravityModel</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData12gravityModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>Model used to compute the gravity of the object </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData2muE">
+<span id="_CPPv3N12GravBodyData2muE"></span><span id="_CPPv2N12GravBodyData2muE"></span><span id="GravBodyData::mu__double"></span><span class="target" id="class_grav_body_data_1a101a84380b7bfe98bb825277e4a4a099"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m3/s^2] central body gravitational param </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData10radEquatorE">
+<span id="_CPPv3N12GravBodyData10radEquatorE"></span><span id="_CPPv2N12GravBodyData10radEquatorE"></span><span id="GravBodyData::radEquator__double"></span><span class="target" id="class_grav_body_data_1a068638bd3692b4cf600b427aa2e31a0c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radEquator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData10radEquatorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Equatorial radius for the body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData11radiusRatioE">
+<span id="_CPPv3N12GravBodyData11radiusRatioE"></span><span id="_CPPv2N12GravBodyData11radiusRatioE"></span><span id="GravBodyData::radiusRatio__double"></span><span class="target" id="class_grav_body_data_1a0474148bcd5fc46c38c4387af22f87af"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusRatio</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData11radiusRatioE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] ratio of polar over equatorial radius </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData10planetNameE">
+<span id="_CPPv3N12GravBodyData10planetNameE"></span><span id="_CPPv2N12GravBodyData10planetNameE"></span><span id="GravBodyData::planetName__ss"></span><span class="target" id="class_grav_body_data_1a89b6e4b81088a73876816d1af9b56253"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData10planetNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Gravitational body name, this is used as the Spice name if spiceInterface is used </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData11displayNameE">
+<span id="_CPPv3N12GravBodyData11displayNameE"></span><span id="_CPPv2N12GravBodyData11displayNameE"></span><span id="GravBodyData::displayName__ss"></span><span class="target" id="class_grav_body_data_1a36e0137e4624aedeec4c9e33b7961adc"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">displayName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData11displayNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the name that is displayed in Vizard. If not set, Vizard shows planetName </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData18modelDictionaryKeyE">
+<span id="_CPPv3N12GravBodyData18modelDictionaryKeyE"></span><span id="_CPPv2N12GravBodyData18modelDictionaryKeyE"></span><span id="GravBodyData::modelDictionaryKey__ss"></span><span class="target" id="class_grav_body_data_1a45814ec5bdaf168a062c0d54738f210d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">modelDictionaryKey</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData18modelDictionaryKeyE" title="Link to this definition"></a><br /></dt>
+<dd><p>“” will result in using the current default for the celestial body’s given name, otherwise key will be matched if possible to available model in internal model dictionary </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData15planetBodyInMsgE">
+<span id="_CPPv3N12GravBodyData15planetBodyInMsgE"></span><span id="_CPPv2N12GravBodyData15planetBodyInMsgE"></span><span id="GravBodyData::planetBodyInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_grav_body_data_1a0a0fdac8ca9ec9f5b7bf2a1764ec853c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData15planetBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>planet spice ephemeris input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData11localPlanetE">
+<span id="_CPPv3N12GravBodyData11localPlanetE"></span><span id="_CPPv2N12GravBodyData11localPlanetE"></span><span id="GravBodyData::localPlanet__SpicePlanetStateMsgPayload"></span><span class="target" id="class_grav_body_data_1ad3af2d7231162bd600d41e836c2024c6"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">localPlanet</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData11localPlanetE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Class storage of ephemeris info from scheduled portion </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData9bskLoggerE">
+<span id="_CPPv3N12GravBodyData9bskLoggerE"></span><span id="_CPPv2N12GravBodyData9bskLoggerE"></span><span id="GravBodyData::bskLogger__BSKLogger"></span><span class="target" id="class_grav_body_data_1a68565632839f08cb0f1c5df4848cace3"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData6r_PN_NE">
+<span id="_CPPv3N12GravBodyData6r_PN_NE"></span><span id="_CPPv2N12GravBodyData6r_PN_NE"></span><span id="GravBodyData::r_PN_N__Eigen::MatrixXdP"></span><span class="target" id="class_grav_body_data_1a67f767b8cdecdbfa01e423f6856a7888"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">r_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData6r_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] (state engine property) planet inertial position vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData6v_PN_NE">
+<span id="_CPPv3N12GravBodyData6v_PN_NE"></span><span id="_CPPv2N12GravBodyData6v_PN_NE"></span><span id="GravBodyData::v_PN_N__Eigen::MatrixXdP"></span><span class="target" id="class_grav_body_data_1af61d0d12dce17aac681050bd7a22cdbc"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">v_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData6v_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] (state engine property) planet inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData8muPlanetE">
+<span id="_CPPv3N12GravBodyData8muPlanetE"></span><span id="_CPPv2N12GravBodyData8muPlanetE"></span><span id="GravBodyData::muPlanet__Eigen::MatrixXdP"></span><span class="target" id="class_grav_body_data_1abd97f263dc6889f0cd3d01faaf9ab8e5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">muPlanet</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData8muPlanetE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] (state engine property) planet inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData10J20002PfixE">
+<span id="_CPPv3N12GravBodyData10J20002PfixE"></span><span id="_CPPv2N12GravBodyData10J20002PfixE"></span><span id="GravBodyData::J20002Pfix__Eigen::MatrixXdP"></span><span class="target" id="class_grav_body_data_1a1810784eaef1403b628e992839d44ae9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">J20002Pfix</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData10J20002PfixE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] (state engine property) planet attitude [PN] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData14J20002Pfix_dotE">
+<span id="_CPPv3N12GravBodyData14J20002Pfix_dotE"></span><span id="_CPPv2N12GravBodyData14J20002Pfix_dotE"></span><span id="GravBodyData::J20002Pfix_dot__Eigen::MatrixXdP"></span><span class="target" id="class_grav_body_data_1a20bcef1f123c2aad5acd799a1f9b9847"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">J20002Pfix_dot</span></span></span><a class="headerlink" href="#_CPPv4N12GravBodyData14J20002Pfix_dotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] (state engine property) planet attitude rate [PN_dot] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12GravBodyData11timeWrittenE">
+<span id="_CPPv3N12GravBodyData11timeWrittenE"></span><span id="_CPPv2N12GravBodyData11timeWrittenE"></span><span id="GravBodyData::timeWritten__uint64_t"></span><span class="target" id="class_grav_body_data_1a8c2d78d120f9c14a01e5a63f9df19f69"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeWritten</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12GravBodyData11timeWrittenE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] time the input planet state message was written </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
+<dl>
+<dt class="sig sig-object cpp">
+<em class="property"><span class="pre">friend</span> <span class="pre">class</span></em> <span class="pre">GravityEffector</span></dt>
+</dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415GravityEffector">
+<span id="_CPPv315GravityEffector"></span><span id="_CPPv215GravityEffector"></span><span id="GravityEffector"></span><span class="target" id="class_gravity_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GravityEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv415GravityEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;gravityEffector.h&gt;</em></div>
+<p>gravity effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector5ResetE8uint64_t">
+<span id="_CPPv3N15GravityEffector5ResetE8uint64_t"></span><span id="_CPPv2N15GravityEffector5ResetE8uint64_t"></span><span id="GravityEffector::Reset__uint64_t"></span><span class="target" id="class_gravity_effector_1a5ed441555b345114fcce573e69400c00"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Initializes every <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data"><span class="std std-ref"><span class="pre">GravBodyData</span></span></a></code> associated with this <code class="docutils literal notranslate"><a class="reference internal" href="#class_gravity_effector"><span class="std std-ref"><span class="pre">GravityEffector</span></span></a></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N15GravityEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N15GravityEffector11UpdateStateE8uint64_t"></span><span id="GravityEffector::UpdateState__uint64_t"></span><span class="target" id="class_gravity_effector_1ade2b72c97d731bb705e447a6c07be912"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the central body, loads the ephemeris data for every <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data"><span class="std std-ref"><span class="pre">GravBodyData</span></span></a></code>, and writes the output messages. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N15GravityEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N15GravityEffector12linkInStatesER15DynParamManager"></span><span id="GravityEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_gravity_effector_1ac71c6b184cd5b7362bb5f7e822e21789"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Links the correlation between times property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector18registerPropertiesER15DynParamManager">
+<span id="_CPPv3N15GravityEffector18registerPropertiesER15DynParamManager"></span><span id="_CPPv2N15GravityEffector18registerPropertiesER15DynParamManager"></span><span id="GravityEffector::registerProperties__DynParamManagerR"></span><span class="target" id="class_gravity_effector_1a69c1f240e2fab0f1ae5b9eba8eb56f1c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector18registerPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>Registers the gravity, inertial position, and inertial velocity properties. It also calls <code class="docutils literal notranslate"><a class="reference internal" href="#class_gravity_effector_1a69c1f240e2fab0f1ae5b9eba8eb56f1c"><span class="std std-ref"><span class="pre">registerProperties</span></span></a></code> for every associated <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data"><span class="std std-ref"><span class="pre">GravBodyData</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector19computeGravityFieldEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N15GravityEffector19computeGravityFieldEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N15GravityEffector19computeGravityFieldEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="GravityEffector::computeGravityField__Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_gravity_effector_1a5a3cd377c22b3a35ed334f4dbcbb00fd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeGravityField</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_cF_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDot_cF_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector19computeGravityFieldEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r_cF_N</strong> – is position of center of mass of s/c wrt frame </p></li>
+<li><p><strong>rDot_cF_N</strong> – is the derivative of above </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector23updateInertialPosAndVelEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N15GravityEffector23updateInertialPosAndVelEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N15GravityEffector23updateInertialPosAndVelEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="GravityEffector::updateInertialPosAndVel__Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_gravity_effector_1a692989f7c408d907d5e98e7effa34a3c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateInertialPosAndVel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_BF_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDot_BF_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector23updateInertialPosAndVelEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the inertial position and velocity properties </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector25updateEnergyContributionsEN5Eigen8Vector3dERd">
+<span id="_CPPv3N15GravityEffector25updateEnergyContributionsEN5Eigen8Vector3dERd"></span><span id="_CPPv2N15GravityEffector25updateEnergyContributionsEN5Eigen8Vector3dERd"></span><span id="GravityEffector::updateEnergyContributions__Eigen::Vector3d.doubleR"></span><span class="target" id="class_gravity_effector_1a67bbce54251a2afd7d9c0b640bd062ea"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyContributions</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_CN_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">orbPotEnergyContr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector25updateEnergyContributionsEN5Eigen8Vector3dERd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the Potential Energy Contributions from every associated <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data"><span class="std std-ref"><span class="pre">GravBodyData</span></span></a></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector13setGravBodiesENSt6vectorINSt10shared_ptrI12GravBodyDataEEEE">
+<span id="_CPPv3N15GravityEffector13setGravBodiesENSt6vectorINSt10shared_ptrI12GravBodyDataEEEE"></span><span id="_CPPv2N15GravityEffector13setGravBodiesENSt6vectorINSt10shared_ptrI12GravBodyDataEEEE"></span><span id="GravityEffector::setGravBodies__std::vector:std::shared_ptr:GravBodyData::"></span><span class="target" id="class_gravity_effector_1adb45e8d70c5fab8de7f6f346211cfff6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setGravBodies</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412GravBodyData" title="GravBodyData"><span class="n"><span class="pre">GravBodyData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">gravBodies</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector13setGravBodiesENSt6vectorINSt10shared_ptrI12GravBodyDataEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data"><span class="std std-ref"><span class="pre">GravBodyData</span></span></a></code> associated with this effector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector11addGravBodyENSt10shared_ptrI12GravBodyDataEE">
+<span id="_CPPv3N15GravityEffector11addGravBodyENSt10shared_ptrI12GravBodyDataEE"></span><span id="_CPPv2N15GravityEffector11addGravBodyENSt10shared_ptrI12GravBodyDataEE"></span><span id="GravityEffector::addGravBody__std::shared_ptr:GravBodyData:"></span><span class="target" id="class_gravity_effector_1a170b7833b60ba796c5197c2e72bc891f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addGravBody</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412GravBodyData" title="GravBodyData"><span class="n"><span class="pre">GravBodyData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">gravBody</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector11addGravBodyENSt10shared_ptrI12GravBodyDataEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a <code class="docutils literal notranslate"><a class="reference internal" href="#class_grav_body_data"><span class="std std-ref"><span class="pre">GravBodyData</span></span></a></code> associated with this effector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector29prependSpacecraftNameToStatesEv">
+<span id="_CPPv3N15GravityEffector29prependSpacecraftNameToStatesEv"></span><span id="_CPPv2N15GravityEffector29prependSpacecraftNameToStatesEv"></span><span id="GravityEffector::prependSpacecraftNameToStates"></span><span class="target" id="class_gravity_effector_1ad258758e4bba73dfe009d277966bf1b2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prependSpacecraftNameToStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector29prependSpacecraftNameToStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Called to modify property names to prepend them by the string stored in nameOfSpacecraftAttachedTo</p>
+<p>This can be used to make property names unique between different <code class="docutils literal notranslate"><a class="reference internal" href="#class_gravity_effector"><span class="std std-ref"><span class="pre">GravityEffector</span></span></a></code> in a simulation with multiple dynamic objects. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector10gravBodiesE">
+<span id="_CPPv3N15GravityEffector10gravBodiesE"></span><span id="_CPPv2N15GravityEffector10gravBodiesE"></span><span id="GravityEffector::gravBodies__std::vector:std::shared_ptr:GravBodyData::"></span><span class="target" id="class_gravity_effector_1aabb111db50e596b42dbd5e855ee574b8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412GravBodyData" title="GravBodyData"><span class="n"><span class="pre">GravBodyData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gravBodies</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector10gravBodiesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Vector of bodies we feel gravity from </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector11centralBodyE">
+<span id="_CPPv3N15GravityEffector11centralBodyE"></span><span id="_CPPv2N15GravityEffector11centralBodyE"></span><span id="GravityEffector::centralBody__std::shared_ptr:GravBodyData:"></span><span class="target" id="class_gravity_effector_1aae21e8a11719c69cf33add98f94f7db0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412GravBodyData" title="GravBodyData"><span class="n"><span class="pre">GravBodyData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">centralBody</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector11centralBodyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Central body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector22vehicleGravityPropNameE">
+<span id="_CPPv3N15GravityEffector22vehicleGravityPropNameE"></span><span id="_CPPv2N15GravityEffector22vehicleGravityPropNameE"></span><span id="GravityEffector::vehicleGravityPropName__ss"></span><span class="target" id="class_gravity_effector_1a334662437ccac61ba7785d8acdec4103"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehicleGravityPropName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;g_N&quot;</span></span><a class="headerlink" href="#_CPPv4N15GravityEffector22vehicleGravityPropNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the vehicle gravity acceleration property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector22systemTimeCorrPropNameE">
+<span id="_CPPv3N15GravityEffector22systemTimeCorrPropNameE"></span><span id="_CPPv2N15GravityEffector22systemTimeCorrPropNameE"></span><span id="GravityEffector::systemTimeCorrPropName__ss"></span><span class="target" id="class_gravity_effector_1aa82d8872f6f0fc868f979ac6c050bdad"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">systemTimeCorrPropName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;systemTime&quot;</span></span><a class="headerlink" href="#_CPPv4N15GravityEffector22systemTimeCorrPropNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the correlation between times </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector24inertialPositionPropNameE">
+<span id="_CPPv3N15GravityEffector24inertialPositionPropNameE"></span><span id="_CPPv2N15GravityEffector24inertialPositionPropNameE"></span><span id="GravityEffector::inertialPositionPropName__ss"></span><span class="target" id="class_gravity_effector_1a272375615f4d1b2c4e9c29ae6a4997ed"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionPropName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;r_BN_N&quot;</span></span><a class="headerlink" href="#_CPPv4N15GravityEffector24inertialPositionPropNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the inertial position property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector24inertialVelocityPropNameE">
+<span id="_CPPv3N15GravityEffector24inertialVelocityPropNameE"></span><span id="_CPPv2N15GravityEffector24inertialVelocityPropNameE"></span><span id="GravityEffector::inertialVelocityPropName__ss"></span><span class="target" id="class_gravity_effector_1a609ab3a0b45c6582a3bed2eff84a204e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityPropName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;v_BN_N&quot;</span></span><a class="headerlink" href="#_CPPv4N15GravityEffector24inertialVelocityPropNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the inertial velocity property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector26nameOfSpacecraftAttachedToE">
+<span id="_CPPv3N15GravityEffector26nameOfSpacecraftAttachedToE"></span><span id="_CPPv2N15GravityEffector26nameOfSpacecraftAttachedToE"></span><span id="GravityEffector::nameOfSpacecraftAttachedTo__ss"></span><span class="target" id="class_gravity_effector_1a2023637740c7d84bbc0907d4a9cd2d74"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfSpacecraftAttachedTo</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N15GravityEffector26nameOfSpacecraftAttachedToE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Name of the s/c this gravity model is attached to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector17centralBodyOutMsgE">
+<span id="_CPPv3N15GravityEffector17centralBodyOutMsgE"></span><span id="_CPPv2N15GravityEffector17centralBodyOutMsgE"></span><span id="GravityEffector::centralBodyOutMsg__Message:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_gravity_effector_1ae41d86e0344825bc448638d741270db2"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">centralBodyOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector17centralBodyOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>central planet body state output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector9bskLoggerE">
+<span id="_CPPv3N15GravityEffector9bskLoggerE"></span><span id="_CPPv2N15GravityEffector9bskLoggerE"></span><span id="GravityEffector::bskLogger__BSKLogger"></span><span class="target" id="class_gravity_effector_1a6aeb07926ef110a668f08b851dcc4438"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector31getEulerSteppedGravBodyPositionENSt10shared_ptrI12GravBodyDataEE">
+<span id="_CPPv3N15GravityEffector31getEulerSteppedGravBodyPositionENSt10shared_ptrI12GravBodyDataEE"></span><span id="_CPPv2N15GravityEffector31getEulerSteppedGravBodyPositionENSt10shared_ptrI12GravBodyDataEE"></span><span id="GravityEffector::getEulerSteppedGravBodyPosition__std::shared_ptr:GravBodyData:"></span><span class="target" id="class_gravity_effector_1ace7b2a2f8d0641b12ff5499e650b3a66"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getEulerSteppedGravBodyPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412GravBodyData" title="GravBodyData"><span class="n"><span class="pre">GravBodyData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bodyData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector31getEulerSteppedGravBodyPositionENSt10shared_ptrI12GravBodyDataEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute planet position with Euler integration </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bodyData</strong> – planet data </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N15GravityEffector19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N15GravityEffector19writeOutputMessagesE8uint64_t"></span><span id="GravityEffector::writeOutputMessages__uint64_t"></span><span class="target" id="class_gravity_effector_1a8744a384c9a530615caccd2ecca89de7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15GravityEffector19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes to centralBodyOutMsg if it is linked and there is a central body </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector12gravPropertyE">
+<span id="_CPPv3N15GravityEffector12gravPropertyE"></span><span id="_CPPv2N15GravityEffector12gravPropertyE"></span><span id="GravityEffector::gravProperty__Eigen::MatrixXdP"></span><span class="target" id="class_gravity_effector_1a4d0e259a752c4b090fc736f0d7ca827f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">gravProperty</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector12gravPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] g_N property for output </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector8timeCorrE">
+<span id="_CPPv3N15GravityEffector8timeCorrE"></span><span id="_CPPv2N15GravityEffector8timeCorrE"></span><span id="GravityEffector::timeCorr__Eigen::MatrixXdP"></span><span class="target" id="class_gravity_effector_1af48f101bda7ab35e8ab2e50362a2f951"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">timeCorr</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector8timeCorrE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time correlation property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector24inertialPositionPropertyE">
+<span id="_CPPv3N15GravityEffector24inertialPositionPropertyE"></span><span id="_CPPv2N15GravityEffector24inertialPositionPropertyE"></span><span id="GravityEffector::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_gravity_effector_1a345a658f0ecde84d083647c8a4876c09"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15GravityEffector24inertialVelocityPropertyE">
+<span id="_CPPv3N15GravityEffector24inertialVelocityPropertyE"></span><span id="_CPPv2N15GravityEffector24inertialVelocityPropertyE"></span><span id="GravityEffector::inertialVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_gravity_effector_1a68c14d48f647156355fc005e59408999"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N15GravityEffector24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fuelSlosh.html" class="btn btn-neutral float-left" title="Module: fuelSlosh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gravityModel.html" class="btn btn-neutral float-right" title="Module: gravityModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

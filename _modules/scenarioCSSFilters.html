@@ -1,0 +1,795 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCSSFilters &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioCSSFilters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioCSSFilters</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script sets up a 6-DOF spacecraft in deep space without any gravitational</span>
+<span class="sd">bodies. Only rotational motion is simulated.  The script illustrates how to</span>
+<span class="sd">setup attitude filters that use measurements from the Coarse Sun Sensors (CSS).</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioCSSFilters.py</span>
+
+<span class="sd">When the simulation completes several plots are written summarizing the filter performances.</span>
+
+<span class="sd">The simulation reads the Sun&#39;s position from :ref:`SpiceInterface`. By creating this</span>
+<span class="sd">spice object and adding it to the task, the spice object automatically writes out</span>
+<span class="sd">the ephemeris messages.</span>
+
+<span class="sd">The dynamics simulation is setup using a :ref:`Spacecraft` module where a specific</span>
+<span class="sd">spacecraft location is specified.  Note that both the rotational and translational</span>
+<span class="sd">degrees of freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.</span>
+<span class="sd">The position vector is required when computing the relative heading between the sun</span>
+<span class="sd">and the spacecraft locations.  The spacecraft position is held fixed, while the</span>
+<span class="sd">orientation rotates constantly about the 3rd body axis.</span>
+
+<span class="sd">The CSS modules must first be individual created and configured. This simulation</span>
+<span class="sd">uses 8 sun sensors, in 2 pyramids of 4 units. The code that sets up a constellation</span>
+<span class="sd">displays another method that is used in :ref:`scenarioCSS`.  In this</span>
+<span class="sd">case instead of creating a list of CSS and adding the list to the constellation,</span>
+<span class="sd">the ``appendCSS`` command is used.</span>
+
+<span class="sd">The constellation characteristics are summarized in the following table.</span>
+<span class="sd">This table shows the individual unit vectors for each sensor, named ``nHat_B`` in the code.</span>
+
+<span class="sd">========  ============================</span>
+<span class="sd">  CSS     normal vector</span>
+<span class="sd">========  ============================</span>
+<span class="sd">  1       [:math:`\sqrt{2}`/2, -0.5, 0.5]</span>
+<span class="sd">  2       [:math:`\sqrt{2}`/2, -0.5, -0.5]</span>
+<span class="sd">  3       [:math:`\sqrt{2}`/2, 0.5, -0.5]</span>
+<span class="sd">  4       [:math:`\sqrt{2}`/2,  0.5, 0.5]</span>
+<span class="sd">  5       [-:math:`\sqrt{2}`/2, 0, :math:`\sqrt{2}`/2]</span>
+<span class="sd">  6       [-:math:`\sqrt{2}`/2, :math:`\sqrt{2}`/2, 0]</span>
+<span class="sd">  7       [-:math:`\sqrt{2}`/2, 0, -:math:`\sqrt{2}`/2]</span>
+<span class="sd">  8       [-:math:`\sqrt{2}`/2, -:math:`\sqrt{2}`/2, 0]</span>
+<span class="sd">========  ============================</span>
+
+<span class="sd">An additional message must be written for the configuration of the CSS for the</span>
+<span class="sd">Flight Software modules. This is done with ``vehicleConfigData``, a message that is</span>
+<span class="sd">read once at the start of a simulation. This message also allows the user to set</span>
+<span class="sd">different values between the  simulation and the flight software parameters,</span>
+<span class="sd">which could corrupt the simulation, and reproduce an imperfect spacecraft</span>
+<span class="sd">construction process.</span>
+
+<span class="sd">The filters can now be initialized.  These are configured very similarly, but</span>
+<span class="sd">the nature of the filters lead to slight differences. All of the filters output</span>
+<span class="sd">a Navigation message which outputs the sun heading for other modules to use,</span>
+<span class="sd">but they also output a filtering message (:ref:`sunlineFilterMsgPayload`), containing</span>
+<span class="sd">observations, post-fit residuals, covariances, and full states. This allows users</span>
+<span class="sd">to check in on filter performances efficiently, and is used in this tutorial.</span>
+<span class="sd">This first allows us to see when observations occur throughout the scenario</span>
+<span class="sd">over which we are comparing performance:</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_ObsOEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Setup 1 - ukF</span>
+<span class="sd">-------------</span>
+
+<span class="sd">In the first run, we use an square root unscented Kalman Filter (:ref:`sunlineUKF`).</span>
+<span class="sd">This filter has the following states:</span>
+
+<span class="sd">================  =============</span>
+<span class="sd">States            notation</span>
+<span class="sd">================  =============</span>
+<span class="sd">Sunheading        ``d``</span>
+<span class="sd">Sunheading Rate|  ``d_dot``</span>
+<span class="sd">================  =============</span>
+
+
+<span class="sd">This filter estimates sunheading, and the sunheading&#39;s rate of change.</span>
+<span class="sd">As a unscented filter, it also has the the following parameters:</span>
+
+<span class="sd">=============  =============</span>
+<span class="sd">  Name         Value</span>
+<span class="sd">=============  =============</span>
+<span class="sd">  ``alpha``     0.02</span>
+<span class="sd">  ``beta``      2</span>
+<span class="sd">  ``kappa``     0</span>
+<span class="sd">=============  =============</span>
+
+<span class="sd">The covariance is then set, as well as the measurement noise:</span>
+
+<span class="sd">=============================================  ==================</span>
+<span class="sd">  Parameter                                         Value</span>
+<span class="sd">=============================================  ==================</span>
+<span class="sd">  covariance on  heading vector  components         0.2</span>
+<span class="sd">  covariance on heading rate  components            0.02</span>
+<span class="sd">  noise on heading measurements                     0.017 ** 2</span>
+<span class="sd">  noise on heading measurements                     0.0017 ** 2</span>
+<span class="sd">=============================================  ==================</span>
+
+<span class="sd">The resulting plots of the states, their covariance envelopes, as compared</span>
+<span class="sd">to the true state are plotted. Further documentation can be found in :ref:`sunlineUKF`.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesPlotuKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesExpecteduKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">These plots show good state estimation throughout the simulation.</span>
+<span class="sd">The mean stays close to the truth, the states do appear slightly noisy at times.</span>
+
+<span class="sd">The post fit residuals, show a fully functional filter, with no issues of observability:</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_PostFituKF.svg</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">Setup 2 - EKF</span>
+<span class="sd">-------------</span>
+
+<span class="sd">The following filter tested is an Extended Kalman filter (:ref:`sunlineEKF`).</span>
+<span class="sd">This filter uses all the same values for initialization as the uKF (aside</span>
+<span class="sd">from the uKF specific alpha, beta, kappa variables). A couple variables are added:</span>
+
+<span class="sd">===============  ===============</span>
+<span class="sd">  Name            Value</span>
+<span class="sd">===============  ===============</span>
+<span class="sd">  Process noise      0.001**2</span>
+<span class="sd">  CKF switch           5</span>
+<span class="sd">===============  ===============</span>
+
+<span class="sd">The process noise is the noise added on the dynamics. This allows to account</span>
+<span class="sd">for dynamical uncertainties, and avoid filter saturation.</span>
+
+<span class="sd">The CKF switch is the number of measurements that are processed using a classical,</span>
+<span class="sd">linear Kalman filter when the filter is first run. This allows for the covariance</span>
+<span class="sd">to shrink before employing the EKF, increasing the robustness.</span>
+
+<span class="sd">The states vs expected states are plotted, as well as the state error plots along with the covariance</span>
+<span class="sd">envelopes. Further documentation can be found in :ref:`sunlineEKF`</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesPlotEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesExpectedEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">These plots show good state estimation throughout the simulation and despite the patches of time with</span>
+<span class="sd">fewer measurements. The covariance stays close to the mean, without exesive noise.</span>
+
+<span class="sd">The post fit residuals, give further confirmation of a working filter:</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_PostFitEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">Setup 3 - OEKF</span>
+<span class="sd">--------------</span>
+
+<span class="sd">The 3rd scenario uses a second type of Extended Kalman Filter (:ref:`okeefeEKF`).</span>
+<span class="sd">This filter takes in fewer states as it only estimates the sun heading. In order to</span>
+<span class="sd">propagate it, it estimates the omega vector from the two last measurements.</span>
+
+<span class="sd">The set up is nearly identical to the EKF, with the exception of the size of the</span>
+<span class="sd">vectors and matrices (only 3 states are estimated now). Furthermore, the</span>
+<span class="sd">rotation rate of the spacecraft, omega, is initialized. More in-depth documentation on the filter</span>
+<span class="sd">specifics are found in :ref:`okeefeEKF`.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesPlotOEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesExpectedOEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">These plots show poorer state estimation throughout the simulation. As measurements stop,</span>
+<span class="sd">the filter doesn&#39;t propagate the states sufficiently well. This is due to the absence of</span>
+<span class="sd">rate in the states, and the compensation  with the computation of omega can lead to</span>
+<span class="sd">noisy estimates.</span>
+
+<span class="sd">The post fit residuals, do show that the filter is working, just with difficulties</span>
+<span class="sd">when measurements become sparse:</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_PostFitOEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">Setup 4 -Switch-EKF</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">The 4th scenario uses a Switch formulation to extract the observable rates as</span>
+<span class="sd">well as estimate the sun heading (:ref:`sunlineSEKF`).</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesPlotSEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesExpectedSEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">These plots show poorer state estimation throughout the simulation.</span>
+
+<span class="sd">The post fit residuals show that the filter is working, just with difficulties</span>
+<span class="sd">when measurements become sparse.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_PostFitSEKF.svg</span>
+<span class="sd">   :align: center</span>
+
+
+
+<span class="sd">Setup 5 -Switch-uKF</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">The 5th scenario uses the same Switch formulation but in a square-root uKF (:ref:`sunlineSuKF`).</span>
+<span class="sd">This one has an additional state: the sun intensity (equal to 1 at 1AU). This state</span>
+<span class="sd">has low process noise and low initial covariance given it&#39;s well determined nature generally.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesPlotSuKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_StatesExpectedSuKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">These plots show good state estimation throughout the simulation.</span>
+<span class="sd">The mean stays close to the truth.</span>
+
+<span class="sd">The post fit residuals, show a fully functional filter, with no issues of observabilty:</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_Filters_PostFitSuKF.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Demonstrates how to setup and use sun heading filters</span>
+<span class="c1"># Author:   Thibaud Teil</span>
+<span class="c1"># Creation Date:  November 20, 2017</span>
+<span class="c1">#</span>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">macros</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">coarseSunSensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">sunlineUKF</span><span class="p">,</span> <span class="n">sunlineEKF</span><span class="p">,</span> <span class="n">okeefeEKF</span><span class="p">,</span> <span class="n">sunlineSEKF</span><span class="p">,</span> <span class="n">sunlineSuKF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">SunLineKF_test_utilities</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Fplot</span>
+
+
+<div class="viewcode-block" id="setupUKFData">
+<a class="viewcode-back" href="../examples/scenarioCSSFilters.html#scenarioCSSFilters.setupUKFData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupUKFData</span><span class="p">(</span><span class="n">filterObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup UKF Filter Data&quot;&quot;&quot;</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.02</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">kappa</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">covar</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">]</span>
+    <span class="n">qNoiseIn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">0.017</span><span class="o">*</span><span class="mf">0.017</span>
+    <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="mf">0.0017</span><span class="o">*</span><span class="mf">0.0017</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qNoise</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">36</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span> <span class="o">=</span> <span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">sensorUseThresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span></div>
+
+
+
+<div class="viewcode-block" id="setupEKFData">
+<a class="viewcode-back" href="../examples/scenarioCSSFilters.html#scenarioCSSFilters.setupEKFData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupEKFData</span><span class="p">(</span><span class="n">filterObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup EKF Filter Data&quot;&quot;&quot;</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">covar</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">]</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qProcVal</span> <span class="o">=</span> <span class="mf">0.001</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span> <span class="o">=</span> <span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">sensorUseThresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">eKFSwitch</span> <span class="o">=</span> <span class="mf">5.</span> <span class="c1">#If low (0-5), the CKF kicks in easily, if high (&gt;10) it&#39;s mostly only EKF</span></div>
+
+
+<div class="viewcode-block" id="setupOEKFData">
+<a class="viewcode-back" href="../examples/scenarioCSSFilters.html#scenarioCSSFilters.setupOEKFData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupOEKFData</span><span class="p">(</span><span class="n">filterObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup OEKF Filter Data&quot;&quot;&quot;</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">covar</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qProcVal</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span> <span class="o">=</span> <span class="mf">0.017</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">sensorUseThresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">eKFSwitch</span> <span class="o">=</span> <span class="mf">5.</span> <span class="c1">#If low (0-5), the CKF kicks in easily, if high (&gt;10) it&#39;s mostly only EKF</span></div>
+
+
+<div class="viewcode-block" id="setupSEKFData">
+<a class="viewcode-back" href="../examples/scenarioCSSFilters.html#scenarioCSSFilters.setupSEKFData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupSEKFData</span><span class="p">(</span><span class="n">filterObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup SEKF Filter Data&quot;&quot;&quot;</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">covar</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qProcVal</span> <span class="o">=</span> <span class="mf">0.001</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span> <span class="o">=</span> <span class="mf">0.017</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">sensorUseThresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">eKFSwitch</span> <span class="o">=</span> <span class="mf">5.</span> <span class="c1">#If low (0-5), the CKF kicks in easily, if high (&gt;10) it&#39;s mostly only EKF</span></div>
+
+
+
+<div class="viewcode-block" id="setupSuKFData">
+<a class="viewcode-back" href="../examples/scenarioCSSFilters.html#scenarioCSSFilters.setupSuKFData">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setupSuKFData</span><span class="p">(</span><span class="n">filterObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup SuKF Filter Data&quot;&quot;&quot;</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.02</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">kappa</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">stateInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">covarInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                          <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">]</span>
+
+    <span class="n">qNoiseIn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">0.001</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="mf">0.0001</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="mf">0.000001</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qNoise</span> <span class="o">=</span> <span class="n">qNoiseIn</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">36</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span> <span class="o">=</span> <span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">filterObject</span><span class="o">.</span><span class="n">sensorUseThresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">filterObject</span><span class="o">.</span><span class="n">qObsVal</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioCSSFilters.html#scenarioCSSFilters.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">saveFigures</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">FilterType</span><span class="p">,</span> <span class="n">simTime</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    At the end of the python script you can specify the following example parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        saveFigures (bool): flag to save off the figures</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        FilterType (str): {&#39;uKF&#39;, &#39;EKF&#39;, &#39;OEKF&#39;, &#39;SEKF&#39;, &#39;SuKF&#39;}</span>
+<span class="sd">        simTime (float): The length of the simulation time</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># set the simulation time variable used later on</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+    <span class="c1"># create sun position message at origin</span>
+    <span class="n">sunMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMsgData</span><span class="p">)</span>
+    <span class="n">sunLog</span> <span class="o">=</span> <span class="n">sunMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sunLog</span><span class="p">)</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bsk-Sat&quot;</span>
+    <span class="c1"># define the simulation inertia</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">600.</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>                   <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span> <span class="c1"># m - position vector of body-fixed point B relative to CM</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># set initial spacecraft states</span>
+    <span class="c1">#</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mf">1000.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>              <span class="c1"># m   - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>                 <span class="c1"># m/s - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]]</span>               <span class="c1"># sigma_BN_B</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.1</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">]]</span>   <span class="c1"># rad/s - omega_BN_B</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+
+    <span class="c1"># Make a CSS constelation</span>
+    <span class="n">cssConstelation</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSConstellation</span><span class="p">()</span>
+    <span class="n">CSSOrientationList</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.70710678118654757</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="mf">0.70710678118654757</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.70710678118654757</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.70710678118654746</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.70710678118654757</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupCSS</span><span class="p">(</span><span class="n">CSS</span><span class="p">):</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">minOutput</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="mf">0.017</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+        <span class="c1"># Store CSS in registry to prevent garbage collection</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">setupCSS</span><span class="p">,</span> <span class="s1">&#39;_css_registry&#39;</span><span class="p">):</span>
+            <span class="n">setupCSS</span><span class="o">.</span><span class="n">_css_registry</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">setupCSS</span><span class="o">.</span><span class="n">_css_registry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CSS</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">CSSHat</span> <span class="ow">in</span> <span class="n">CSSOrientationList</span><span class="p">:</span>
+        <span class="n">newCSS</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">newCSS</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;CSS&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">newCSS</span><span class="p">)</span>
+        <span class="n">newCSS</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="n">CSSHat</span>
+        <span class="n">cssConstelation</span><span class="o">.</span><span class="n">appendCSS</span><span class="p">(</span><span class="n">newCSS</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">cssConstelation</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   add the FSW CSS information</span>
+    <span class="c1">#</span>
+    <span class="n">cssConstVehicle</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigMsgPayload</span><span class="p">(</span>
+        <span class="n">nCSS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CSSOrientationList</span><span class="p">),</span>
+        <span class="n">cssVals</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">messaging</span><span class="o">.</span><span class="n">CSSUnitConfigMsgPayload</span><span class="p">(</span>
+                <span class="n">nHat_B</span><span class="o">=</span><span class="n">CSSHat</span><span class="p">,</span>
+                <span class="n">CBias</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">CSSHat</span> <span class="ow">in</span> <span class="n">CSSOrientationList</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">cssConstMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cssConstVehicle</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Setup filter</span>
+    <span class="c1">#</span>
+    <span class="n">numStates</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">bVecLogger</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;EKF&#39;</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sunlineEKF</span><span class="o">.</span><span class="n">sunlineEKF</span><span class="p">()</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SunlineEKF&quot;</span>
+        <span class="n">setupEKFData</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;OEKF&#39;</span><span class="p">:</span>
+        <span class="n">numStates</span> <span class="o">=</span> <span class="mi">3</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">okeefeEKF</span><span class="o">.</span><span class="n">okeefeEKF</span><span class="p">()</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;okeefeEKF&quot;</span>
+        <span class="n">setupOEKFData</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;uKF&#39;</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sunlineUKF</span><span class="o">.</span><span class="n">sunlineUKF</span><span class="p">()</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SunlineUKF&quot;</span>
+        <span class="n">setupUKFData</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;SEKF&#39;</span><span class="p">:</span>
+        <span class="n">numStates</span> <span class="o">=</span> <span class="mi">5</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sunlineSEKF</span><span class="o">.</span><span class="n">sunlineSEKF</span><span class="p">()</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SunlineSEKF&quot;</span>
+        <span class="n">setupSEKFData</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+        <span class="n">bVecLogger</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s1">&#39;bVec_B&#39;</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">bVecLogger</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;SuKF&#39;</span><span class="p">:</span>
+        <span class="n">numStates</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">sunlineSuKF</span><span class="o">.</span><span class="n">sunlineSuKF</span><span class="p">()</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SunlineSuKF&quot;</span>
+        <span class="n">setupSuKFData</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+        <span class="n">bVecLogger</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s1">&#39;bVec_B&#39;</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">bVecLogger</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">cssDataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cssConstelation</span><span class="o">.</span><span class="n">constellationOutMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">cssConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cssConstMsg</span><span class="p">)</span>
+
+    <span class="n">navLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">navStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">filtLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">filtDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">navLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">filtLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+
+    <span class="c1"># Time the runs for performance comparisons</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addTimeColumn</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([[</span><span class="n">time</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">)]))</span>
+
+    <span class="c1"># Get messages that will make true data</span>
+    <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">OutSunPos</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">sunLog</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">)</span>
+    <span class="n">Outr_BN_N</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">OutSigma_BN</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">Outomega_BN</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>
+
+    <span class="c1"># Get the filter outputs through the messages</span>
+    <span class="n">stateLog</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">filtLog</span><span class="o">.</span><span class="n">state</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">numStates</span><span class="p">)])</span>
+    <span class="n">postFitLog</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">filtLog</span><span class="o">.</span><span class="n">postFitRes</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">8</span><span class="p">])</span>
+    <span class="n">covarLog</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">filtLog</span><span class="o">.</span><span class="n">covar</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">numStates</span><span class="o">*</span><span class="n">numStates</span><span class="p">)])</span>
+    <span class="n">obsLog</span> <span class="o">=</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">filtLog</span><span class="o">.</span><span class="n">numObs</span><span class="p">)</span>
+
+    <span class="c1"># Get bVec_B through the variable logger</span>
+    <span class="n">bVecLog</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">bVecLogger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">addTimeColumn</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">bVecLogger</span><span class="o">.</span><span class="n">bVec_B</span><span class="p">)</span>
+
+    <span class="n">dcmLog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">omegaExp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;SEKF&#39;</span><span class="p">:</span>
+        <span class="n">dcm</span> <span class="o">=</span> <span class="n">sunlineSEKF</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+            <span class="n">sunlineSEKF</span><span class="o">.</span><span class="n">doubleArray_setitem</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">sunlineSEKF</span><span class="o">.</span><span class="n">sunlineSEKFComputeDCM_BS</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">bVecLog</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">dcm</span><span class="p">)</span>
+            <span class="n">dcmOut</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+                <span class="n">dcmOut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sunlineSEKF</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="n">dcmLog</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dcmOut</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">omegaExp</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcmLog</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">stateLog</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="n">stateLog</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">5</span><span class="p">]]))</span>
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;SuKF&#39;</span><span class="p">:</span>
+        <span class="n">dcm</span> <span class="o">=</span> <span class="n">sunlineSuKF</span><span class="o">.</span><span class="n">new_doubleArray</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+            <span class="n">sunlineSuKF</span><span class="o">.</span><span class="n">doubleArray_setitem</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">sunlineSuKF</span><span class="o">.</span><span class="n">sunlineSuKFComputeDCM_BS</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">bVecLog</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">dcm</span><span class="p">)</span>
+            <span class="n">dcmOut</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+                <span class="n">dcmOut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sunlineSuKF</span><span class="o">.</span><span class="n">doubleArray_getitem</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="n">dcmLog</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dcmOut</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">omegaExp</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcmLog</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">Outomega_BN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span>
+
+
+    <span class="n">sHat_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">OutSunPos</span><span class="p">))</span>
+    <span class="n">sHatDot_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">OutSunPos</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">OutSunPos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="n">sHat_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">OutSunPos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">Outr_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">OutSunPos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">Outr_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">dcm_BN</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">OutSigma_BN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">sHat_B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sHatDot_B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span> <span class="n">OutSunPos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sHat_B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_BN</span><span class="p">,</span> <span class="n">sHat_N</span><span class="p">)</span>
+        <span class="n">sHatDot_B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Outomega_BN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">sHat_B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="p">)</span>
+
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">stateLog</span><span class="p">))</span>
+    <span class="n">expected</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">sHat_B</span>
+    <span class="c1"># The OEKF has fewer states</span>
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">!=</span> <span class="s1">&#39;OEKF&#39;</span> <span class="ow">and</span> <span class="n">FilterType</span> <span class="o">!=</span> <span class="s1">&#39;SEKF&#39;</span> <span class="ow">and</span> <span class="n">FilterType</span> <span class="o">!=</span> <span class="s1">&#39;SuKF&#39;</span><span class="p">:</span>
+        <span class="n">expected</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span> <span class="o">=</span> <span class="n">sHatDot_B</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;SEKF&#39;</span> <span class="ow">or</span> <span class="n">FilterType</span> <span class="o">==</span> <span class="s1">&#39;SuKF&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stateLog</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])):</span>
+            <span class="n">expected</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">omegaExp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">expected</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">omegaExp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="n">errorVsTruth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">stateLog</span><span class="p">)</span>
+    <span class="n">errorVsTruth</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-=</span> <span class="n">expected</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">Fplot</span><span class="o">.</span><span class="n">StateErrorCovarPlot</span><span class="p">(</span><span class="n">errorVsTruth</span><span class="p">,</span> <span class="n">covarLog</span><span class="p">,</span> <span class="n">FilterType</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">saveFigures</span><span class="p">)</span>
+    <span class="n">Fplot</span><span class="o">.</span><span class="n">StatesVsExpected</span><span class="p">(</span><span class="n">stateLog</span><span class="p">,</span> <span class="n">covarLog</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">FilterType</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">saveFigures</span><span class="p">)</span>
+    <span class="n">Fplot</span><span class="o">.</span><span class="n">PostFitResiduals</span><span class="p">(</span><span class="n">postFitLog</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">qObsVal</span><span class="p">),</span> <span class="n">FilterType</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">saveFigures</span><span class="p">)</span>
+    <span class="n">Fplot</span><span class="o">.</span><span class="n">numMeasurements</span><span class="p">(</span><span class="n">obsLog</span><span class="p">,</span> <span class="n">FilterType</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">saveFigures</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># save figures to file</span>
+        <span class="kc">True</span><span class="p">,</span>      <span class="c1"># show_plots</span>
+        <span class="s1">&#39;SuKF&#39;</span><span class="p">,</span>
+         <span class="mi">400</span>
+       <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

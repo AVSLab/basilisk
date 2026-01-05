@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioConstrainedDynamicsManeuverAnalysis &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioConstrainedDynamicsManeuverAnalysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioConstrainedDynamicsManeuverAnalysis</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. raw:: html</span>
+
+<span class="sd">    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/vil0QEt_zk4?si=nyoDEPPmgdrb1lhJ&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario further demonstrates the capabilities of :ref:`constraintDynamicEffector` in simulating a dynamic coupling</span>
+<span class="sd">between two spacecraft. The constraint effector allows the simulation of two spacecraft rigid hubs attached</span>
+<span class="sd">through an arm of variable rigidity and is agnostic to the parameters of either vehicle. The scenario analyzes the</span>
+<span class="sd">impact of different gains on the motion of two spacecraft while one spacecraft is performing a maneuver towing the</span>
+<span class="sd">other. This scenario demonstrates a required analysis for any mission simulation utilizing the constraint effector, as</span>
+<span class="sd">the gains must be tuned to achieve a desired fidelity and runtime dependent on how &quot;dynamic&quot; the scenario is stressing</span>
+<span class="sd">the constraint. Aspects affecting this include:</span>
+
+<span class="sd">* the vehicle mass and inertia</span>
+<span class="sd">* vehicle spin rate</span>
+<span class="sd">* the moment arm between spacecraft (connection point distance from COM and length of arm)</span>
+<span class="sd">* accelerations acting on each spacecraft (gravity, thrust, disturbances)</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioConstrainedDynamicsManeuverAnalysis.py</span>
+
+<span class="sd">The scenario outputs three plots. The first one shows the direction constraint violations vs. time for different</span>
+<span class="sd">gains to show how they change for different arm stiffness values. The second plots shows the same time history but</span>
+<span class="sd">for attitude constraint violations. The third plot shows the overall simulation performance, plotting both the</span>
+<span class="sd">average constraint violations and simulation runtime vs. gain.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, gain_list = [1E1, 1E2, 1E3], relpos_config = &#39;alongtrackahead&#39;, orbit_config = &#39;LEO&#39;, maneuver_config = &#39;attitude&#39;, sc_model = &#39;MEV2&#39;</span>
+
+<span class="sd">The time history for the direction and attitude constraint violations during an attitude maneuver is shown</span>
+<span class="sd">below for different values of the gains. The attitude maneuver controls the chaser to turn 180 degrees,</span>
+<span class="sd">rotating the target along with it.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioConstrainedDynamicsManeuverAnalysisattitudemaneuver_DirectionConstraint.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioConstrainedDynamicsManeuverAnalysisattitudemaneuver_AttitudeConstraint.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The figure below shows the performance of the simulation for different gain values. The left axis shows the</span>
+<span class="sd">constraint violations averaged over the entire simulation, while the right axis shows the total runtime of</span>
+<span class="sd">the simulation. The dashed line is the attitude average and the solid line is the direction average.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioConstrainedDynamicsManeuverAnalysisattitudemaneuver_GainPerformance.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Performing the same analysis for an orbital maneuver produces the following results. The orbital maneuver</span>
+<span class="sd">controls the chaser to push the stack with the target ahead.</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, gain_list = [1E1, 1E2, 1E3], relpos_config = &#39;alongtrackahead&#39;, orbit_config = &#39;LEO&#39;, maneuver_config = &#39;orbit&#39;, sc_model = &#39;MEV2&#39;</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioConstrainedDynamicsManeuverAnalysisorbitmaneuver_DirectionConstraint.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioConstrainedDynamicsManeuverAnalysisorbitmaneuver_AttitudeConstraint.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioConstrainedDynamicsManeuverAnalysisorbitmaneuver_GainPerformance.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Basilisk Scenario Script</span>
+<span class="c1">#</span>
+<span class="c1">#   Purpose:            Illustrates coupled spacecraft maneuvering.</span>
+<span class="c1">#   Author:             Andrew Morell</span>
+<span class="c1">#   Creation Date:      Oct 4, 2025</span>
+<span class="c1">#</span>
+
+<span class="c1"># Basilisk imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span><span class="p">,</span> <span class="n">vizSupport</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">spacecraft</span><span class="p">,</span> <span class="n">constraintDynamicEffector</span><span class="p">,</span> <span class="n">gravityEffector</span><span class="p">,</span> <span class="n">svIntegrators</span><span class="p">,</span> <span class="n">extForceTorque</span><span class="p">,</span> <span class="n">simpleNav</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">mrpFeedback</span><span class="p">,</span> <span class="n">attTrackingError</span><span class="p">)</span>
+<span class="c1"># plotting imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="c1"># utility imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="SimBaseClass">
+<a class="viewcode-back" href="../examples/scenarioConstrainedDynamicsManeuverAnalysis.html#scenarioConstrainedDynamicsManeuverAnalysis.SimBaseClass">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimBaseClass</span><span class="p">(</span><span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dynRate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynRateSec</span> <span class="o">=</span> <span class="n">dynRate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynRateNanos</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dynRate</span><span class="p">)</span>
+        <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Create simulation variable names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+        <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+        <span class="c1"># Create the dynamics task and set the integration update time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynProcess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynRateNanos</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioConstrainedDynamicsManeuverAnalysis.html#scenarioConstrainedDynamicsManeuverAnalysis.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">gain_list</span><span class="p">,</span> <span class="n">relpos_config</span><span class="p">,</span> <span class="n">orbit_config</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">,</span> <span class="n">sc_model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        gain_list (float list): Choose which gain values to test (how stiff the arm is, ideally 1E1 to 1E4)</span>
+<span class="sd">        relpos_config (str): Choose where the servicer spacecraft starts w.r.t. the target ``alongtrackahead``,</span>
+<span class="sd">            ``alongtrackbehind``, ``radial``, or ``antiradial``</span>
+<span class="sd">        orbit_config (str): Choose which orbit configuration to use between ``LEO`` or ``no orbit``</span>
+<span class="sd">        maneuver_config (str): Choose which maneuver configuration to use between ``orbit`` or ``attitude``</span>
+<span class="sd">        sc_model (str): Choose which spacecraft models to use, determines mass/inertia properties  ``bskSat``, ``MEV1``, or ``MEV2``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">scSim_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">gain</span> <span class="ow">in</span> <span class="n">gain_list</span><span class="p">:</span> <span class="c1"># loop through gain</span>
+        <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimBaseClass</span><span class="p">()</span>
+        <span class="n">create_spacecraft</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">sc_model</span><span class="p">)</span>
+        <span class="n">define_initial_conditions</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">orbit_config</span><span class="p">,</span> <span class="n">relpos_config</span><span class="p">)</span>
+        <span class="n">set_up_constraint_effector</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">gain</span><span class="p">)</span>
+        <span class="n">set_up_maneuver</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">)</span>
+        <span class="n">log_data</span><span class="p">(</span><span class="n">scSim</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+            <span class="n">set_up_vizard</span><span class="p">(</span><span class="n">scSim</span><span class="p">)</span>
+        <span class="n">run_simulation</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">)</span>
+        <span class="n">process_data</span><span class="p">(</span><span class="n">scSim</span><span class="p">)</span>
+
+        <span class="n">scSim_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scSim</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">plotting</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">,</span> <span class="n">gain_list</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_spacecraft</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">sc_model</span><span class="p">):</span>
+    <span class="c1"># Create spacecraft</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>  <span class="c1"># chaser spacecraft</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;chaser&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>  <span class="c1"># target spacecraft</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span>
+
+    <span class="c1"># Add test modules to runtime call list</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="p">)</span>
+
+    <span class="c1"># Set the servicer spacecraft integrator to RKF45</span>
+    <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="n">integratorObject</span><span class="o">.</span><span class="n">this</span><span class="o">.</span><span class="n">disown</span><span class="p">()</span>
+
+    <span class="c1"># Sync dynamics integration of target spacecraft to dynamics integration of servicer spacecraft</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">syncDynamicsIntegration</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="p">)</span>
+
+    <span class="c1"># Define mass properties of the rigid hub of both spacecraft</span>
+    <span class="k">if</span> <span class="n">sc_model</span> <span class="o">==</span> <span class="s1">&#39;bskSat&#39;</span><span class="p">:</span>  <span class="c1"># uses two identical &quot;bskSats&quot; which can be found in other Basilisk example scripts</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg] chaser spacecraft mass</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m] position vector of body-fixed point B1 relative to chaser COM</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg-m^2] chaser spacecraft inertia</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg] target spacecraft mass</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m] position vector of body-fixed point B2 relative to target COM</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg-m^2] chaser spacecraft inertia</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_mag</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [m] position vector magnitude from chaser COM to connection point</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_mag</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [m] position vector magnitude from target COM to connection point</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_mag</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [m] arm_length |r_P2P1|</span>
+
+    <span class="k">elif</span> <span class="n">sc_model</span> <span class="o">==</span> <span class="s1">&#39;MEV1&#39;</span><span class="p">:</span>  <span class="c1"># chaser is MEV-1 and target is Intelsat-901</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">2330.0</span>  <span class="c1"># [kg] chaser spacecraft mass</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m] position vector of body-fixed point B1 relative to chaser COM</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg-m^2] chaser spacecraft inertia</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">4723.0</span>  <span class="c1"># [kg] target spacecraft mass</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m] position vector of body-fixed point B2 relative to target COM</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg-m^2] chaser spacecraft inertia</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_mag</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m] position vector magnitude from chaser COM to connection point</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_mag</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m] position vector magnitude from target COM to connection point</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_mag</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m] arm_length |r_P2P1|</span>
+
+    <span class="k">elif</span> <span class="n">sc_model</span> <span class="o">==</span> <span class="s1">&#39;MEV2&#39;</span><span class="p">:</span>  <span class="c1"># chaser is MEV-2 and target is Galaxy-30</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">2875.0</span>  <span class="c1"># [kg] chaser spacecraft mass</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m] position vector of body-fixed point B1 relative to chaser COM</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg-m^2] chaser spacecraft inertia</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">3298.0</span>  <span class="c1"># [kg] target spacecraft mass</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m] position vector of body-fixed point B2 relative to target COM</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg-m^2] chaser spacecraft inertia</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_mag</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m] position vector magnitude from chaser COM to connection point</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_mag</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m] position vector magnitude from target COM to connection point</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_mag</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m] arm_length |r_P2P1|</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;sc_model must be &#39;bskSat&#39;, &#39;MEV1&#39;, or &#39;MEV2&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">define_initial_conditions</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">orbit_config</span><span class="p">,</span> <span class="n">relpos_config</span><span class="p">):</span>
+    <span class="c1"># Note: here we assume that the N, B1 and B2 frames are identical, therefore no frame is defined</span>
+    <span class="k">if</span> <span class="n">orbit_config</span> <span class="o">==</span> <span class="s1">&#39;LEO&#39;</span><span class="p">:</span>  <span class="c1"># low Earth orbit</span>
+        <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>  <span class="c1"># [meters^3/s^2]</span>
+        <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">earthGravBody</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">+</span> <span class="mf">7500e3</span>  <span class="c1"># meters</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">30.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">60.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">90.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">r_CN</span><span class="p">,</span> <span class="n">rDot_CN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">orbit_config</span> <span class="o">==</span> <span class="s1">&#39;no orbit&#39;</span><span class="p">:</span>  <span class="c1"># spacecraft taken out of orbit, ex. floating in deep space</span>
+        <span class="n">r_CN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">rDot_CN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>  <span class="c1"># [m/s]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;orbit_config must be &#39;LEO&#39; or &#39;no orbit&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set chaser spacecraft translational states relative to target</span>
+    <span class="k">if</span> <span class="n">relpos_config</span> <span class="o">==</span> <span class="s2">&quot;alongtrackahead&quot;</span><span class="p">:</span>
+        <span class="n">rHat</span> <span class="o">=</span> <span class="n">rDot_CN</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rDot_CN</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">relpos_config</span> <span class="o">==</span> <span class="s2">&quot;alongtrackbehind&quot;</span><span class="p">:</span>
+        <span class="n">rHat</span> <span class="o">=</span> <span class="o">-</span> <span class="n">rDot_CN</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rDot_CN</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">relpos_config</span> <span class="o">==</span> <span class="s2">&quot;radial&quot;</span><span class="p">:</span>
+        <span class="n">rHat</span> <span class="o">=</span> <span class="n">r_CN</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_CN</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">relpos_config</span> <span class="o">==</span> <span class="s2">&quot;antiradial&quot;</span><span class="p">:</span>
+        <span class="n">rHat</span> <span class="o">=</span> <span class="o">-</span> <span class="n">r_CN</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_CN</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;relpos_config must be &#39;alongtrackahead&#39;, &#39;alongtrackbehind&#39;, &#39;radial&#39;, or &#39;antiradial&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_B1</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_mag</span> <span class="o">*</span> <span class="n">rHat</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_B2</span> <span class="o">=</span> <span class="o">-</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_mag</span> <span class="o">*</span> <span class="n">rHat</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_B1Init</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_mag</span> <span class="o">*</span> <span class="n">rHat</span>
+    <span class="n">r_B2B1</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_B1</span> <span class="o">+</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_B1Init</span> <span class="o">-</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_B2</span>
+
+    <span class="c1"># Center of mass calculation</span>
+    <span class="n">total_mass_1</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span>
+    <span class="n">total_mass_2</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">r_B1C</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">total_mass_1</span><span class="o">+</span> <span class="n">total_mass_2</span> <span class="o">*</span> <span class="n">r_B2B1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_mass_1</span> <span class="o">+</span> <span class="n">total_mass_2</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">r_B2C</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_B1C</span> <span class="o">+</span> <span class="n">r_B2B1</span>
+
+    <span class="c1"># Compute rotational states</span>
+    <span class="n">sigma_B1N</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">sigma_B2N</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">omega_CN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">omega_B1N_B1</span> <span class="o">=</span> <span class="n">omega_CN</span>
+    <span class="n">omega_B2N_B2</span> <span class="o">=</span> <span class="n">omega_CN</span>
+    <span class="n">rDot_B1N_N</span> <span class="o">=</span> <span class="n">rDot_CN</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_CN</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_B1C</span><span class="p">)</span>
+    <span class="n">rDot_B2N_N</span> <span class="o">=</span> <span class="n">rDot_CN</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">omega_CN</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_B2C</span><span class="p">)</span>
+
+    <span class="c1"># Set the initial values for all spacecraft states</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_B1C</span> <span class="o">+</span> <span class="n">r_CN</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">rDot_B1N_N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sigma_B1N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="n">omega_B1N_B1</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_B2C</span> <span class="o">+</span> <span class="n">r_CN</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">rDot_B2N_N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sigma_B2N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="n">omega_B2N_B2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">set_up_constraint_effector</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">gain</span><span class="p">):</span>
+    <span class="c1"># Set up the constraint effector</span>
+    <span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P1B1_B1</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_B1</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2B2_B2</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_B2</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2P1_B1Init</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_B1Init</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="n">gain</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="n">constraintEffector</span><span class="o">.</span><span class="n">getAlpha</span><span class="p">())</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constraintEffector&quot;</span>
+
+    <span class="c1"># Add constraints to both spacecraft</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">constraintEffector</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">set_up_maneuver</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">):</span>
+    <span class="c1"># Create an external force/torque module</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+
+    <span class="c1"># Set up an orbital maneuver translating the chaser</span>
+    <span class="k">if</span> <span class="n">maneuver_config</span> <span class="o">==</span> <span class="s2">&quot;orbit&quot;</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;appliedForce&quot;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set up an attitude maneuver rotating the chaser</span>
+    <span class="k">elif</span> <span class="n">maneuver_config</span> <span class="o">==</span> <span class="s2">&quot;attitude&quot;</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;appliedTorque&quot;</span>
+
+        <span class="c1"># create the FSW vehicle configuration message</span>
+        <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="n">element</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+        <span class="c1"># add the simple Navigation sensor module</span>
+        <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+        <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+        <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+        <span class="n">RefStateInData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsgPayload</span><span class="p">()</span>  <span class="c1"># Create a structure for the input message</span>
+        <span class="n">sigma_R0N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)])</span>
+        <span class="n">RefStateInData</span><span class="o">.</span><span class="n">sigma_RN</span> <span class="o">=</span> <span class="n">sigma_R0N</span>
+        <span class="n">omega_R0N_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">RefStateInData</span><span class="o">.</span><span class="n">omega_RN_N</span> <span class="o">=</span> <span class="n">omega_R0N_N</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">attRefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">RefStateInData</span><span class="p">)</span>
+
+        <span class="c1"># Set up the attitude tracking error evaluation module</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;scSim.attErrorHillPoint&quot;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span><span class="c1">#rotationRef.attRefOutMsg)#attGuidance.attRefOutMsg)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># setup the MRP Feedback control module</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">50.0</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">vcMsg</span><span class="p">)</span>
+
+        <span class="c1"># Log control torque commands</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">torqueData</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">torqueData</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;maneuver_config must be &#39;orbit&#39; or &#39;attitude&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_data</span><span class="p">(</span><span class="n">scSim</span><span class="p">):</span>
+    <span class="c1"># Log the spacecraft state message</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">datLog1</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">datLog2</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog2</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">set_up_vizard</span><span class="p">(</span><span class="n">scSim</span><span class="p">):</span>
+    <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">simTaskName</span><span class="p">,</span>
+                                              <span class="p">[</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="p">,</span> <span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="p">],</span>
+                                            <span class="c1">#   saveFile=__file__</span>
+                                              <span class="p">)</span>
+    <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                 <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject1</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">],</span>
+                                 <span class="n">modelPath</span><span class="o">=</span><span class="s1">&#39;bskSat&#39;</span><span class="p">,</span>
+                                 <span class="n">rotation</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                 <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="n">scSim</span><span class="o">.</span><span class="n">scObject2</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">],</span>
+                                 <span class="n">modelPath</span><span class="o">=</span><span class="s1">&#39;bskSat&#39;</span><span class="p">,</span>
+                                 <span class="n">rotation</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+                                 <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">))</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">orbitLinesOn</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">showSpacecraftLabels</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_simulation</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">maneuver_config</span> <span class="o">==</span> <span class="s2">&quot;orbit&quot;</span><span class="p">:</span>
+        <span class="c1"># low thrust aligned to push target</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_B1Init</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_B1Init</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="o">*</span><span class="nb">dir</span>
+    <span class="k">elif</span> <span class="n">maneuver_config</span> <span class="o">==</span> <span class="s2">&quot;attitude&quot;</span><span class="p">:</span>
+        <span class="c1"># connect command torque message</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># turn off the low thrust</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">extFT</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+
+    <span class="c1"># Run the simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Print Runtime</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Elapsed Time = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">runtime</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; seconds&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process_data</span><span class="p">(</span><span class="n">scSim</span><span class="p">):</span>
+    <span class="c1"># Grab the time vector</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">time_data</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog1</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">time_data</span><span class="p">)</span>
+
+    <span class="c1"># Collect the logged spacecraft states</span>
+    <span class="n">r_B1N_N_hist</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog1</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B1N_hist</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog1</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">r_B2N_N_hist</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog2</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B2N_hist</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">datLog2</span><span class="o">.</span><span class="n">sigma_BN</span>
+
+    <span class="c1"># Compute constraint violations</span>
+    <span class="n">r_B1N_B1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">r_B1N_N_hist</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">r_B2N_B1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">r_B2N_N_hist</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">r_P2B2_B1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">r_B1N_N_hist</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B2B1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B1N_hist</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+        <span class="n">dcm_B1N</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B1N_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">r_B1N_B1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dcm_B1N</span> <span class="o">@</span> <span class="n">r_B1N_N_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">r_B2N_B1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dcm_B1N</span> <span class="o">@</span> <span class="n">r_B2N_N_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">dcm_NB2</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B2N_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">r_P2B2_B1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">dcm_B1N</span> <span class="o">@</span> <span class="n">dcm_NB2</span> <span class="o">@</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2B2_B2</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B2B1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">subMRP</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B2N_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">scSim</span><span class="o">.</span><span class="n">sigma_B1N_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">psi_B1</span> <span class="o">=</span> <span class="n">r_B1N_B1</span> <span class="o">+</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P1B1_B1</span> <span class="o">+</span> <span class="n">scSim</span><span class="o">.</span><span class="n">r_P2P1_B1Init</span> <span class="o">-</span> <span class="p">(</span><span class="n">r_B2N_B1</span> <span class="o">+</span> <span class="n">r_P2B2_B1</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotting</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">,</span> <span class="n">gain_list</span><span class="p">,</span> <span class="n">maneuver_config</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">):</span>
+    <span class="n">larger_size</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">smaller_size</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">fontdict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;family&#39;</span><span class="p">:</span> <span class="s1">&#39;serif&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="s1">&#39;normal&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">larger_size</span><span class="p">}</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">fontdict</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;axes&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">larger_size</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">smaller_size</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">smaller_size</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;legend&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">smaller_size</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Collect plotting utilities</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gain_list</span><span class="p">)</span> <span class="c1"># number of data sets</span>
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">scSim_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time_data</span><span class="o">/</span><span class="mi">60</span> <span class="c1"># Convert time data to minutes</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\alpha = $&#39;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gain_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot direction constraint violations</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">psi_B1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Direction Constraint Violation &#39;</span> <span class="sa">r</span><span class="s1">&#39;$\psi$ [m]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="n">maneuver_config</span> <span class="o">+</span> <span class="s2">&quot;maneuver_&quot;</span> <span class="o">+</span> <span class="s2">&quot;DirectionConstraint&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Plot attitude constraint violations</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_B2B1</span><span class="p">)</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Attitude Constraint Violation &#39;</span> <span class="sa">r</span><span class="s1">&#39;$\phi$ [deg]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="n">maneuver_config</span> <span class="o">+</span> <span class="s2">&quot;maneuver_&quot;</span> <span class="o">+</span> <span class="s2">&quot;AttitudeConstraint&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Plot gain performance</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">trans_cnst</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rot_cnst</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">runtimes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">runtimes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">runtime</span><span class="p">)</span>
+        <span class="n">trans_cnst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">psi_B1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">rot_cnst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">scSim_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_B2B1</span><span class="p">)</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+
+    <span class="n">cnst_color</span> <span class="o">=</span> <span class="s1">&#39;tab:blue&#39;</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">gain_list</span><span class="p">,</span><span class="n">trans_cnst</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cnst_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">gain_list</span><span class="p">,</span> <span class="n">rot_cnst</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cnst_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;gain&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average constraint violation [m, deg]&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cnst_color</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="n">cnst_color</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;direction&#39;</span><span class="p">,</span> <span class="s1">&#39;attitude&#39;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper center&#39;</span><span class="p">)</span>
+
+    <span class="n">runtime_color</span> <span class="o">=</span> <span class="s1">&#39;tab:orange&#39;</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">gain_list</span><span class="p">,</span> <span class="n">runtimes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">runtime_color</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;runtime [sec]&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">runtime_color</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="n">runtime_color</span><span class="p">)</span>
+
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="n">maneuver_config</span> <span class="o">+</span> <span class="s2">&quot;maneuver_&quot;</span> <span class="o">+</span> <span class="s2">&quot;GainPerformance&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>  <span class="c1"># gain_list</span>
+        <span class="n">relpos_config</span><span class="o">=</span><span class="s2">&quot;alongtrackahead&quot;</span><span class="p">,</span>  <span class="c1"># relative position [&quot;alongtrackahead&quot;, &quot;alongtrackbehind&quot;, &quot;radial&quot;, or &quot;antiradial&quot;]</span>
+        <span class="n">orbit_config</span><span class="o">=</span><span class="s2">&quot;LEO&quot;</span><span class="p">,</span>  <span class="c1"># in orbit or freefloating [&quot;LEO&quot;, &quot;no orbit&quot;]</span>
+        <span class="n">maneuver_config</span><span class="o">=</span><span class="s2">&quot;attitude&quot;</span><span class="p">,</span>  <span class="c1"># maneuver type [&quot;orbit&quot;, &quot;attitude&quot;]</span>
+        <span class="n">sc_model</span><span class="o">=</span><span class="s1">&#39;MEV2&#39;</span><span class="p">,</span>  <span class="c1"># spacecraft model [&#39;bskSat&#39;, &#39;MEV1&#39;, &#39;MEV2&#39;]</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

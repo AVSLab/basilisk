@@ -1,0 +1,1197 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: prescribedLinearTranslation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="prescribedLinearTranslation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">deviceInterface</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../encoder/index.html">encoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedBodyLinearProfiler/index.html">hingedBodyLinearProfiler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../motorVoltageInterface/index.html">motorVoltageInterface</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">prescribedLinearTranslation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRotation1DOF/index.html">prescribedRotation1DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stepperMotor/index.html">stepperMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tempMeasurement/index.html">tempMeasurement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">deviceInterface</a></li>
+          <li class="breadcrumb-item"><a href="index.html">prescribedLinearTranslation</a></li>
+      <li class="breadcrumb-item active">Module: prescribedLinearTranslation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/deviceInterface/prescribedLinearTranslation/prescribedLinearTranslation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-prescribedlineartranslation">
+<span id="prescribedlineartranslation"></span><h1>Module: prescribedLinearTranslation<a class="headerlink" href="#module-prescribedlineartranslation" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module profiles linear translational motion for a rigid body connected to a rigid spacecraft hub. The body frame of
+the translating body is designated by the frame <span class="math notranslate nohighlight">\(\mathcal{P}\)</span>. The states of the translating body are profiled
+relative to a hub-fixed frame <span class="math notranslate nohighlight">\(\mathcal{M}\)</span>. The <a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a> message is used to output
+the prescribed translational states from the module. The prescribed states profiled in this module are: <code class="docutils literal notranslate"><span class="pre">r_PM_M</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rPrime_PM_M</span></code>, and <code class="docutils literal notranslate"><span class="pre">rPrimePrime_PM_M</span></code>. This module has four options to profile the linear translation.
+The first option is a bang-bang acceleration profile that minimizes the time required to complete the translation.
+The second option is a bang-coast-bang acceleration profile that adds a coast period of zero acceleration between the
+acceleration ramp segments. The third option is a smoothed bang-bang acceleration profile that uses cubic splines to
+construct a continuous acceleration profile across the entire translation. The fourth option is a smoothed
+bang-coast-bang acceleration profile.</p>
+<p>The module defaults to the non-smoothed bang-bang option with no coast period. If the coast option is desired, the
+user must set the module variable <code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> to a nonzero value. If smoothing is desired,
+the module variable <code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> must be set to a nonzero value.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Note that this module assumes the initial and final hub-relative translational rates of the translating body are zero.</p>
+</div>
+<p>The general inputs to this module that must be set by the user are the translational axis expressed as a
+unit vector in mount frame components <code class="docutils literal notranslate"><span class="pre">transHat_M</span></code>, the initial translational body position relative to the hub-fixed
+mount frame <code class="docutils literal notranslate"><span class="pre">transPosInit</span></code>, the reference position relative to the mount frame <code class="docutils literal notranslate"><span class="pre">transPosRef</span></code>, and the maximum scalar
+linear acceleration for the translation <code class="docutils literal notranslate"><span class="pre">transAccelMax</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> and
+<code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> can be set by the user to select the specific type of profiler that is desired. If these variables
+are not set by the user, the module defaults to the non-smoothed bang-bang profiler. If only the variable
+<code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> is set to a nonzero value, the bang-coast-bang profiler is selected. If only the variable
+<code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> is set to a nonzero value, the smoothed bang-bang profiler is selected. If both variables are
+set to nonzero values, the smoothed bang-coast-bang profiler is selected.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To use this module for prescribed motion, it must be connected to the <a class="reference internal" href="../../dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">Module: prescribedMotionStateEffector</span></a>
+dynamics module. This ensures the translational body’s states are correctly incorporated into the spacecraft
+dynamics.</p>
+</div>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>linearTranslationRigidBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#lineartranslationrigidbodymsgpayload"><span class="std std-ref">LinearTranslationRigidBodyMsgPayload</span></a></p></td>
+<td><p>input msg with the prescribed body reference translational states</p></td>
+</tr>
+<tr class="row-odd"><td><p>prescribedTranslationOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a></p></td>
+<td><p>output message with the prescribed body translational states</p></td>
+</tr>
+<tr class="row-even"><td><p>prescribedTranslationOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a></p></td>
+<td><p>C-wrapped output message with the prescribed body translational states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="non-smoothed-bang-bang-profiler">
+<h3>Non-Smoothed Bang-Bang Profiler<a class="headerlink" href="#non-smoothed-bang-bang-profiler" title="Link to this heading"></a></h3>
+<p>The first option to profile the linear translation is a pure bang-bang acceleration profile. If the given reference
+position is greater than the given initial position, the user-specified maximum acceleration value
+is applied positively to the first half of the translation and negatively to the second half of the translation.
+However, if the reference position is less than the initial position, the acceleration is instead applied
+negatively during the first half of the translation and positively during the second half of the translation. As a
+result of this acceleration profile, the translational body’s hub-relative velocity changes linearly with time and
+reaches a maximum in magnitude halfway through the translation. Note that the velocity is assumed to both start and
+end at zero in this module. The resulting translational position profile is parabolic in time.</p>
+<p>To profile this motion, the translational body’s hub-relative scalar states <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(\dot{\rho}\)</span>, and
+<span class="math notranslate nohighlight">\(\ddot{\rho}\)</span> are prescribed as a function of time. During the first half of the translation the states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \ddot{\rho} (t - t_0) + \dot{\rho}_0\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = a (t - t_0)^2 + \rho_0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[a = \frac{ \rho_{\text{ref}} - \rho_0}{2 (t_{b1} - t_0)^2}\]</div>
+<p>During the second half of the translation the states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \ddot{\rho} (t - t_f) + \dot{\rho}_0\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = b (t - t_f)^2 + \rho_{\text{ref}}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[b = - \frac{ \rho_{\text{ref}} - \rho_0}{2 (t_{b1} - t_f)^2}\]</div>
+<p>The switch time <span class="math notranslate nohighlight">\(t_{b1}\)</span> is the simulation time at the end of the first bang segment:</p>
+<div class="math notranslate nohighlight">
+\[t_{b1} = t_0 + \frac{\Delta t_{\text{tot}}}{2}\]</div>
+<p>The total time required to complete the translation <span class="math notranslate nohighlight">\(\Delta t_{\text{tot}}\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\Delta t_{\text{tot}} = 2 \sqrt{ \frac{| \rho_{\text{ref}} - \rho_0 | }{\ddot{\rho}_{\text{max}}}} = t_f - t_0\]</div>
+</section>
+<section id="non-smoothed-bang-coast-bang-profiler">
+<h3>Non-Smoothed Bang-Coast-Bang Profiler<a class="headerlink" href="#non-smoothed-bang-coast-bang-profiler" title="Link to this heading"></a></h3>
+<p>The second option to profile the linear translation is a bang-coast-bang acceleration profile with an added coast
+period between the acceleration segments where the acceleration is zero. Similar to the previous profiler, if the
+reference position is greater than the given initial position, the maximum acceleration value is applied
+positively for the specified ramp time <code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> to the first segment of the translation and negatively
+to the third segment of the translation. The second segment of the translation is the coast period. However, if the
+reference position is less than the initial position, the acceleration is instead applied negatively during the first
+segment of the translation and positively during the third segment of the translation. As a result of this acceleration
+profile, the translational body’s hub-relative velocity changes linearly with time and reaches a maximum in magnitude
+at the end of the first segment and is constant during the coast segment. The velocity returns to zero during the
+third segment. The resulting position profiled is parabolic during the first and third segments and linear during the
+coast segment.</p>
+<p>To profile this linear motion, the scalar translating body’s hub-relative states <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(\dot{\rho}\)</span>, and
+<span class="math notranslate nohighlight">\(\ddot{\rho}\)</span> are prescribed as a function of time. During the first segment of the translation the states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \ddot{\rho} (t - t_0) + \dot{\rho}_0\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = a (t - t_0)^2 + \rho_0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[a = \frac{ \rho(t_{b1}) - \rho_0}{2 (t_{b1} - t_0)^2}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\rho(t_{b1})\)</span> is the hub-relative position at the end of the first bang segment:</p>
+<div class="math notranslate nohighlight">
+\[\rho(t_{b1}) = \pm \frac{1}{2} \ddot{\rho}_{\text{max}} t_{\text{bang}}^2 + \dot{\rho}_0 t_{\text{bang}} + \rho_0\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Note the distinction between <span class="math notranslate nohighlight">\(t_{b1}\)</span> and <span class="math notranslate nohighlight">\(t_{\text{bang}}\)</span>. <span class="math notranslate nohighlight">\(t_{\text{bang}}\)</span> is the time
+duration of the acceleration segment and <span class="math notranslate nohighlight">\(t_{b1}\)</span> is the simulation time at the end of the first acceleration
+segment. <span class="math notranslate nohighlight">\(t_{b1} = t_0 + t_{\text{bang}}\)</span></p>
+</div>
+<p>During the coast segment, the translational states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = 0\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \dot{\rho}(t_{b1}) = \ddot{\rho}_{\text{max}} t_{\text{bang}} + \dot{\rho}_0\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \dot{\rho}(t_{b1}) (t - t_{b1}) + \rho(t_{b1})\]</div>
+<p>During the third segment, the translational states are</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \ddot{\rho} (t - t_f) + \dot{\rho}_0\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = b (t - t_f)^2 + \rho_{\text{ref}}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[b = - \frac{ \rho_{\text{ref}} - \rho(t_c) }{(t_c - t_f)^2}\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\rho(t_c)\)</span> is the hub-relative position at the end of the coast segment:</p>
+<div class="math notranslate nohighlight">
+\[\rho(t_c) = \rho(t_{b1}) + \Delta \rho_{\text{coast}}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\Delta \rho_{\text{coast}}\)</span> is the distance traveled during the coast segment:</p>
+<div class="math notranslate nohighlight">
+\[\Delta \rho_{\text{coast}} = (\rho_{\text{ref}} - \rho_0) - 2 (\rho(t_{b1}) - \rho_0)\]</div>
+<p><span class="math notranslate nohighlight">\(t_c\)</span> is the simulation time at the end of the coast segment:</p>
+<div class="math notranslate nohighlight">
+\[t_c = t_{b1} + \frac{\Delta \rho_{\text{coast}}}{\dot{\rho}(t_{b1})}\]</div>
+<p>Using the given translation axis <code class="docutils literal notranslate"><span class="pre">transHat_M</span></code>, the scalar states are then transformed to the prescribed translational
+states <code class="docutils literal notranslate"><span class="pre">r_PM_M</span></code>, <code class="docutils literal notranslate"><span class="pre">rPrime_PM_M</span></code>, and <code class="docutils literal notranslate"><span class="pre">rPrimePrime_PM_M</span></code>. The states are then written to the
+<a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#prescribedtranslationmsgpayload"><span class="std std-ref">PrescribedTranslationMsgPayload</span></a> module output message.</p>
+</section>
+<section id="smoothed-bang-bang-profiler">
+<h3>Smoothed Bang-Bang Profiler<a class="headerlink" href="#smoothed-bang-bang-profiler" title="Link to this heading"></a></h3>
+<p>The third option to profile the linear translation is a smoothed bang-bang acceleration profile. This option is selected
+by setting the module variable <code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> to a nonzero value. This profiler uses cubic splines to construct
+a continuous acceleration profiler across the entire translation. Similar to the non-smoothed bang-bang profiler,
+this option smooths the acceleration between the given maximum acceleration values.
+To profile this motion, the translational body’s hub-relative scalar states <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(\dot{\rho}\)</span>, and
+<span class="math notranslate nohighlight">\(\ddot{\rho}\)</span> are prescribed as a function of time and the translational motion is split into five different
+segments.</p>
+<p>The first segment smooths the acceleration from zero to the user-specified maximum acceleration value in the given
+time <code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code>. If the given reference position is greater than the given initial position, the
+acceleration is smoothed positively to the given maximum acceleration value. If the given reference position is less
+than the given initial position, the acceleration is smoothed from zero to the negative maximum acceleration value.
+During this phase, the scalar hub-relative states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{3 (t - t_0)^2}{t_{\text{smooth}}^2} - \frac{2 (t - t_0)^3}{t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{(t - t_0)^3}{t_{\text{smooth}}^2} - \frac{(t - t_0)^4}{2 t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{(t - t_0)^4}{4 t_{\text{smooth}}^2} - \frac{(t - t_0)^5}{10 t_{\text{smooth}}^3} \right)\]</div>
+<p>The second segment is the first bang segment where the maximum acceleration value is applied either positively or
+negatively as discussed previously. The scalar hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} (t - t_{s1}) + \dot{\rho}(t_{s1})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \pm \frac{\ddot{\rho}_{\text{max}} (t - t_{s1})^2}{2} + \dot{\rho}(t_{s1})(t - t_{s1}) + \rho(t_{s1})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{s1}\)</span> is the time at the end of the first smoothing segment:</p>
+<div class="math notranslate nohighlight">
+\[t_{s1} = t_0 + t_{\text{smooth}}\]</div>
+<p>The third segment smooths the acceleration from the current maximum acceleration value to the opposite magnitude maximum
+acceleration value. The scalar hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( 1 - \frac{3 (t - t_{b1})^2}{2 t_{\text{smooth}}^2} + \frac{(t - t_{b1})^3}{2 t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( (t - t_{b1}) - \frac{(t - t_{b1})^3}{2 t_{\text{smooth}}^2} + \frac{(t - t_{b1})^4}{8 t_{\text{smooth}}^3} \right) + \dot{\rho}(t_{b1})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{(t - t_{b1})^2}{2} - \frac{(t - t_{b1})^4}{8 t_{\text{smooth}}^2} + \frac{(t - t_{b1})^5}{40 t_{\text{smooth}}^3} \right) + \dot{\rho}(t_{b1})(t - t_{b1}) + \rho(t_{b1})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{b1}\)</span> is the time at the end of the first bang segment:</p>
+<div class="math notranslate nohighlight">
+\[t_{b1} = t_{s1} + t_{\text{bang}}\]</div>
+<p>The fourth segment is the second bang segment where the maximum acceleration value is applied either positively or
+negatively as discussed previously. The scalar hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} (t - t_{s2}) + \dot{\rho}(t_{s2})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \mp \frac{\ddot{\rho}_{\text{max}} (t - t_{s2})^2}{2} + \dot{\rho}(t_{s2})(t - t_{s2}) + \rho(t_{s2})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{s2}\)</span> is the time at the end of the second smoothing segment:</p>
+<div class="math notranslate nohighlight">
+\[t_{s2} = t_{b1} + t_{\text{smooth}}\]</div>
+<p>The fifth segment is the third and final smoothing segment where the acceleration returns to zero. The scalar
+hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} \left ( -1 + \frac{3(t - t_{b2})^2}{t_{\text{smooth}}^2} - \frac{2 (t - t_{b2})^3}{t_{\text{smooth}}^3} \right )\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} \left ( -(t - t_{b2}) + \frac{(t - t_{b2})^3}{t_{\text{smooth}}^2} - \frac{(t - t_{b2})^4}{2 t_{\text{smooth}}^3} \right ) + \dot{\rho}(t_{b2})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \mp \ddot{\rho}_{\text{max}} \left ( \frac{(t - t_{b2})^2}{2} + \frac{(t - t_{b2})^4}{4 t_{\text{smooth}}^2} - \frac{(t - t_{b2})^5}{10 t_{\text{smooth}}^3} \right ) + \dot{\rho}(t_{b2})(t - t_{b2}) + \rho(t_{b2})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{b2}\)</span> is the time at the end of the second bang segment:</p>
+<div class="math notranslate nohighlight">
+\[t_{b2} = t_{s2} + t_{\text{bang}}\]</div>
+</section>
+<section id="smoothed-bang-coast-bang-profiler">
+<h3>Smoothed Bang-Coast-Bang Profiler<a class="headerlink" href="#smoothed-bang-coast-bang-profiler" title="Link to this heading"></a></h3>
+<p>The fourth option to profile the linear translation is a smoothed bang-coast-bang acceleration profile. This option is
+selected by setting the module variables <code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> and <code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> to nonzero values.
+This profiler uses cubic splines to construct a continuous acceleration profiler across the entire translation.
+To profile this motion, the translational body’s hub-relative scalar states <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(\dot{\rho}\)</span>, and
+<span class="math notranslate nohighlight">\(\ddot{\rho}\)</span> are prescribed as a function of time and the translational motion is split into seven different
+segments.</p>
+<p>The first segment smooths the acceleration from zero to the user-specified maximum acceleration value in the given
+time <code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code>. If the given reference position is greater than the given initial position, the
+acceleration is smoothed positively to the given maximum acceleration value. If the given reference position is less
+than the given initial position, the acceleration is smoothed from zero to the negative maximum acceleration value.
+During this phase, the scalar hub-relative states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{3 (t - t_0)^2}{t_{\text{smooth}}^2} - \frac{2 (t - t_0)^3}{t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{(t - t_0)^3}{t_{\text{smooth}}^2} - \frac{(t - t_0)^4}{2 t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{(t - t_0)^4}{4 t_{\text{smooth}}^2} - \frac{(t - t_0)^5}{10 t_{\text{smooth}}^3} \right)\]</div>
+<p>The second segment is the first bang segment where the maximum acceleration value is applied either positively or
+negatively as discussed previously. The scalar hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} (t - t_{s1}) + \dot{\rho}(t_{s1})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \pm \frac{\ddot{\rho}_{\text{max}} (t - t_{s1})^2}{2} + \dot{\rho}(t_{s1})(t - t_{s1}) + \rho(t_{s1})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{s1}\)</span> is the time at the end of the first smoothing segment.</p>
+<p>The third segment prior to the coast phase smooths the acceleration from the current maximum acceleration value to zero.
+The scalar hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( 1 - \frac{3 (t - t_{b1})^2}{t_{\text{smooth}}^2} - \frac{2 (t - t_{b1})^3}{t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left( (t - t_{b1}) - \frac{(t - t_{b1})^3}{t_{\text{smooth}}^2} - \frac{(t - t_{b1})^4}{2 t_{\text{smooth}}^3} \right) + \dot{\rho}(t_{b1})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \pm \ddot{\rho}_{\text{max}} \left( \frac{(t - t_{b1})^2}{2} - \frac{(t - t_{b1})^4}{4 t_{\text{smooth}}^2} - \frac{(t - t_{b1})^5}{10 t_{\text{smooth}}^3} \right) + \dot{\rho}(t_{b1})(t - t_{b1}) + \rho(t_{b1})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{b1}\)</span> is the time at the end of the first bang segment.</p>
+<p>The fourth segment is the coast segment where the translational states are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = 0\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \dot{\rho}(t_{s2})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \dot{\rho}(t_{s2}) (t - t_{s2}) + \rho(t_{s2})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{s2}\)</span> is the time at the end of the second smoothing segment.</p>
+<p>The fifth segment smooths the acceleration from zero to the maximum acceleration value prior to the second bang segment.
+The translational states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} \left( \frac{3 (t - t_c)^2}{t_{\text{smooth}}^2} - \frac{2 (t - t_c)^3}{t_{\text{smooth}}^3} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} \left( \frac{(t - t_c)^3}{t_{\text{smooth}}^2} - \frac{(t - t_c)^4}{2 t_{\text{smooth}}^3} \right) + \dot{\rho}(t_c)\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \mp \ddot{\rho}_{\text{max}} \left( \frac{(t - t_c)^4}{4 t_{\text{smooth}}^2} - \frac{(t - t_c)^5}{10 t_{\text{smooth}}^3} \right) + \dot{\rho}(t_c) (t - t_c) + \rho(t_c)\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_c\)</span> is the time at the end of the coast segment.</p>
+<p>The sixth segment is the second bang segment where the maximum acceleration value is applied either positively or
+negatively as discussed previously. The scalar hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} (t - t_{s3}) + \dot{\rho}(t_{s3})\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \mp \frac{\ddot{\rho}_{\text{max}} (t - t_{s3})^2}{2} + \dot{\rho}(t_{s3})(t - t_{s3}) + \rho(t_{s3})\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{s3}\)</span> is the time at the end of the third smoothing segment.</p>
+<p>The seventh segment is the fourth and final smoothing segment where the acceleration returns to zero. The scalar
+hub-relative states during this phase are:</p>
+<div class="math notranslate nohighlight">
+\[\ddot{\rho}(t) = \mp \ddot{\rho}_{\text{max}} \left (\frac{3(t_f - t)^2}{t_{\text{smooth}}^2} - \frac{2 (t_f - t)^3}{t_{\text{smooth}}^3} \right )\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{\rho}(t) = \pm \ddot{\rho}_{\text{max}} \left (\frac{(t_f - t)^3}{t_{\text{smooth}}^2} - \frac{(t_f - t)^4}{2 t_{\text{smooth}}^3} \right )\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \mp \ddot{\rho}_{\text{max}} \left (\frac{(t_f - t)^4}{4 t_{\text{smooth}}^2} - \frac{(t_f - t)^5}{10 t_{\text{smooth}}^3} \right ) + \rho_{\text{ref}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_f\)</span> is the time at the end of the translation:</p>
+</section>
+<section id="module-testing">
+<h3>Module Testing<a class="headerlink" href="#module-testing" title="Link to this heading"></a></h3>
+<p>The unit test for this module ensures that the profiled linear translation for a secondary rigid body relative to
+the spacecraft hub is properly computed for several different simulation configurations. The unit test profiles
+two successive translations to ensure the module is correctly configured. The secondary body’s initial scalar
+translational position relative to the spacecraft hub is varied, along with the two final reference positions
+and the maximum translational acceleration.</p>
+<p>The unit test also tests four different methods of profiling the translation. Two profilers prescribe a pure
+bang-bang or bang-coast-bang linear acceleration profile for the translation. The bang-bang option results in
+the fastest possible translation; while the bang-coast-bang option includes a coast period with zero acceleration
+between the acceleration segments. The other two profilers apply smoothing to the bang-bang and bang-coast-bang
+acceleration profiles so that the secondary body hub-relative rates start and end at zero.</p>
+<p>To verify the module functionality, the final position at the end of each translation segment is checked to match
+the specified reference positions. Additionally, for the smoothed profiler options, the numerical derivative of the
+profiled displacements and velocities is determined across the entire simulation. These numerical derivatives are
+checked with the module’s acceleration and velocity profiles to ensure the profiled acceleration is correctly
+integrated in the module to obtain the displacements and velocities.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The general inputs to this module that must be set by the user are the translational axis expressed as a
+unit vector in mount frame components <code class="docutils literal notranslate"><span class="pre">transHat_M</span></code>, the initial translational body position relative to the hub-fixed
+mount frame <code class="docutils literal notranslate"><span class="pre">transPosInit</span></code>, the reference position relative to the mount frame <code class="docutils literal notranslate"><span class="pre">transPosRef</span></code>, and the maximum scalar
+linear acceleration for the translation <code class="docutils literal notranslate"><span class="pre">transAccelMax</span></code>. The optional inputs <code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> and
+<code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> can be set by the user to select the specific type of profiler that is desired. If these variables
+are not set by the user, the module defaults to the non-smoothed bang-bang profiler. If only the variable
+<code class="docutils literal notranslate"><span class="pre">coastOptionBangDuration</span></code> is set to a nonzero value, the bang-coast-bang profiler is selected. If only the variable
+<code class="docutils literal notranslate"><span class="pre">smoothingDuration</span></code> is set to a nonzero value, the smoothed bang-bang profiler is selected. If both variables are
+set to nonzero values, the smoothed bang-coast-bang profiler is selected.</p>
+<p>This section is to outline the steps needed to setup the prescribed linear translational module in python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the prescribedLinearTranslation class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">prescribedLinearTranslation</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instantiation of the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prescribedLinearTrans</span> <span class="o">=</span> <span class="n">prescribedLinearTranslation</span><span class="o">.</span><span class="n">PrescribedLinearTranslation</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define all of the configuration data associated with the module. For example, to configure the smoothed bang-coast-bang option:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;prescribedLinearTranslation&quot;</span>
+<span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">setTransHat_M</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)]))</span>
+<span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">setTransAccelMax</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># [m/s^2]</span>
+<span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">setTransPosInit</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># [m]</span>
+<span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">setCoastRampDuration</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+<span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">setSmoothingDuration</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Connect a <a class="reference internal" href="../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#lineartranslationrigidbodymsgpayload"><span class="std std-ref">LinearTranslationRigidBodyMsgPayload</span></a> message for the translating body reference position to the module. For example, the user can create a stand-alone message to specify the reference position:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">linearTranslationRigidBodyMessageData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsgPayload</span><span class="p">()</span>
+<span class="n">linearTranslationRigidBodyMessageData</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+<span class="n">linearTranslationRigidBodyMessageData</span><span class="o">.</span><span class="n">rhoDot</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m/s]</span>
+<span class="n">linearTranslationRigidBodyMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">linearTranslationRigidBodyMessageData</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Subscribe the reference message to the prescribedTranslation module input message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prescribedLinearTrans</span><span class="o">.</span><span class="n">linearTranslationRigidBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">linearTranslationRigidBodyMessage</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">prescribedLinearTrans</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv427PrescribedLinearTranslation">
+<span id="_CPPv327PrescribedLinearTranslation"></span><span id="_CPPv227PrescribedLinearTranslation"></span><span id="PrescribedLinearTranslation"></span><span class="target" id="class_prescribed_linear_translation"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PrescribedLinearTranslation</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv427PrescribedLinearTranslation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;prescribedLinearTranslation.h&gt;</em></div>
+<p>Prescribed Linear Translation Profiler Class. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation27PrescribedLinearTranslationEv">
+<span id="_CPPv3N27PrescribedLinearTranslation27PrescribedLinearTranslationEv"></span><span id="_CPPv2N27PrescribedLinearTranslation27PrescribedLinearTranslationEv"></span><span id="PrescribedLinearTranslation::PrescribedLinearTranslation"></span><span class="target" id="class_prescribed_linear_translation_1a93f12314fe6c43de23a433e512211ff3"></span><span class="sig-name descname"><span class="n"><span class="pre">PrescribedLinearTranslation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation27PrescribedLinearTranslationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslationD0Ev">
+<span id="_CPPv3N27PrescribedLinearTranslationD0Ev"></span><span id="_CPPv2N27PrescribedLinearTranslationD0Ev"></span><span id="PrescribedLinearTranslation::~PrescribedLinearTranslation"></span><span class="target" id="class_prescribed_linear_translation_1a747a76e846e716833a29fc46ce5233f9"></span><span class="sig-name descname"><span class="n"><span class="pre">~PrescribedLinearTranslation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslationD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation8SelfInitEv">
+<span id="_CPPv3N27PrescribedLinearTranslation8SelfInitEv"></span><span id="_CPPv2N27PrescribedLinearTranslation8SelfInitEv"></span><span id="PrescribedLinearTranslation::SelfInit"></span><span class="target" id="class_prescribed_linear_translation_1aa14f762988685c8e9aaab3ea314c033c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Member function to initialize the C-wrapped output message. </p>
+<p>This method self initializes the C-wrapped output message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation5ResetE8uint64_t">
+<span id="_CPPv3N27PrescribedLinearTranslation5ResetE8uint64_t"></span><span id="_CPPv2N27PrescribedLinearTranslation5ResetE8uint64_t"></span><span id="PrescribedLinearTranslation::Reset__uint64_t"></span><span class="target" id="class_prescribed_linear_translation_1aec2bb19a52971c459547d22dd81fd51f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset member function. </p>
+<p>This method resets required module variables and checks the input messages to ensure they are linked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTime</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation11UpdateStateE8uint64_t">
+<span id="_CPPv3N27PrescribedLinearTranslation11UpdateStateE8uint64_t"></span><span id="_CPPv2N27PrescribedLinearTranslation11UpdateStateE8uint64_t"></span><span id="PrescribedLinearTranslation::UpdateState__uint64_t"></span><span class="target" id="class_prescribed_linear_translation_1a9dc3b9b40ff89c412ce02ee547cc4fd2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Update member function. </p>
+<p>This method profiles the translation and updates the prescribed translational states as a function of time. The prescribed translational states are then written to the output message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTime</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation26setCoastOptionBangDurationEKd">
+<span id="_CPPv3N27PrescribedLinearTranslation26setCoastOptionBangDurationEKd"></span><span id="_CPPv2N27PrescribedLinearTranslation26setCoastOptionBangDurationEKd"></span><span id="PrescribedLinearTranslation::setCoastOptionBangDuration__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a5fdca8baa9f45b20b374ca7064cefd08"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setCoastOptionBangDuration</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bangDuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation26setCoastOptionBangDurationEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the coast option bang duration. </p>
+<p>Setter method for the coast option bang duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coastOptionBangDuration</strong> – [s] Bang segment time duration </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation20setSmoothingDurationEKd">
+<span id="_CPPv3N27PrescribedLinearTranslation20setSmoothingDurationEKd"></span><span id="_CPPv2N27PrescribedLinearTranslation20setSmoothingDurationEKd"></span><span id="PrescribedLinearTranslation::setSmoothingDuration__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a315c946430d9bb6b8d79711ca7dd492b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSmoothingDuration</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">smoothingDuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation20setSmoothingDurationEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value. </p>
+<p>Setter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smoothingDuration</strong> – [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation16setTransAccelMaxEKd">
+<span id="_CPPv3N27PrescribedLinearTranslation16setTransAccelMaxEKd"></span><span id="_CPPv2N27PrescribedLinearTranslation16setTransAccelMaxEKd"></span><span id="PrescribedLinearTranslation::setTransAccelMax__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1ad610fb450934b53b85f26f1d960c2690"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTransAccelMax</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">transAccelMax</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation16setTransAccelMaxEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the bang segment scalar linear acceleration. </p>
+<p>Setter method for the bang segment scalar linear acceleration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transAccelMax</strong> – [m/s^2] Bang segment linear angular acceleration </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation13setTransHat_MERKN5Eigen8Vector3dE">
+<span id="_CPPv3N27PrescribedLinearTranslation13setTransHat_MERKN5Eigen8Vector3dE"></span><span id="_CPPv2N27PrescribedLinearTranslation13setTransHat_MERKN5Eigen8Vector3dE"></span><span id="PrescribedLinearTranslation::setTransHat_M__Eigen::Vector3dCR"></span><span class="target" id="class_prescribed_linear_translation_1aa30e9071348619c74d354fee045c344c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTransHat_M</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">transHat_M</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation13setTransHat_MERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the translating body axis of translation. </p>
+<p>Setter method for the translating body axis of translation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transHat_M</strong> – Translating body axis of translation (unit vector) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation15setTransPosInitEKd">
+<span id="_CPPv3N27PrescribedLinearTranslation15setTransPosInitEKd"></span><span id="_CPPv2N27PrescribedLinearTranslation15setTransPosInitEKd"></span><span id="PrescribedLinearTranslation::setTransPosInit__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1afe244cb503ef6ea1418129a1134e7f9d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTransPosInit</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">transPosInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation15setTransPosInitEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the initial translating body hub-relative position. </p>
+<p>Setter method for the initial translating body hub-relative position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transPosInit</strong> – [m] Initial translating body position relative to the hub </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation26getCoastOptionBangDurationEv">
+<span id="_CPPv3NK27PrescribedLinearTranslation26getCoastOptionBangDurationEv"></span><span id="_CPPv2NK27PrescribedLinearTranslation26getCoastOptionBangDurationEv"></span><span id="PrescribedLinearTranslation::getCoastOptionBangDurationC"></span><span class="target" id="class_prescribed_linear_translation_1a6547aedd40b34c4c0007b5fd8e16eb5d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCoastOptionBangDuration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation26getCoastOptionBangDurationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the coast option bang duration. </p>
+<p>Getter method for the coast option bang duration. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation20getSmoothingDurationEv">
+<span id="_CPPv3NK27PrescribedLinearTranslation20getSmoothingDurationEv"></span><span id="_CPPv2NK27PrescribedLinearTranslation20getSmoothingDurationEv"></span><span id="PrescribedLinearTranslation::getSmoothingDurationC"></span><span class="target" id="class_prescribed_linear_translation_1aea605601fae01f8cfb1768f659c3f553"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSmoothingDuration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation20getSmoothingDurationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value. </p>
+<p>Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation16getTransAccelMaxEv">
+<span id="_CPPv3NK27PrescribedLinearTranslation16getTransAccelMaxEv"></span><span id="_CPPv2NK27PrescribedLinearTranslation16getTransAccelMaxEv"></span><span id="PrescribedLinearTranslation::getTransAccelMaxC"></span><span class="target" id="class_prescribed_linear_translation_1a2fd64965328bacda69912307565a13fa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTransAccelMax</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation16getTransAccelMaxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the bang segment scalar linear acceleration. </p>
+<p>Getter method for the bang segment scalar linear acceleration. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation13getTransHat_MEv">
+<span id="_CPPv3NK27PrescribedLinearTranslation13getTransHat_MEv"></span><span id="_CPPv2NK27PrescribedLinearTranslation13getTransHat_MEv"></span><span id="PrescribedLinearTranslation::getTransHat_MC"></span><span class="target" id="class_prescribed_linear_translation_1ae9c53aa09e2a35cfa562f398af15f457"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getTransHat_M</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation13getTransHat_MEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the translating body axis of translation. </p>
+<p>Getter method for the translating body axis of translation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>const Eigen::Vector3d </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation15getTransPosInitEv">
+<span id="_CPPv3NK27PrescribedLinearTranslation15getTransPosInitEv"></span><span id="_CPPv2NK27PrescribedLinearTranslation15getTransPosInitEv"></span><span id="PrescribedLinearTranslation::getTransPosInitC"></span><span class="target" id="class_prescribed_linear_translation_1a1438f8f3289229cc8ce434271b1dbe8d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTransPosInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation15getTransPosInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the initial translating body position. </p>
+<p>Getter method for the initial translating body position. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation31linearTranslationRigidBodyInMsgE">
+<span id="_CPPv3N27PrescribedLinearTranslation31linearTranslationRigidBodyInMsgE"></span><span id="_CPPv2N27PrescribedLinearTranslation31linearTranslationRigidBodyInMsgE"></span><span id="PrescribedLinearTranslation::linearTranslationRigidBodyInMsg__ReadFunctor:LinearTranslationRigidBodyMsgPayload:"></span><span class="target" id="class_prescribed_linear_translation_1a16618edbe6490bfc132c8db2d842071d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#_CPPv436LinearTranslationRigidBodyMsgPayload" title="LinearTranslationRigidBodyMsgPayload"><span class="n"><span class="pre">LinearTranslationRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linearTranslationRigidBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation31linearTranslationRigidBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input msg for the translational reference position and velocity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation32linearTranslationRigidBodyOutMsgE">
+<span id="_CPPv3N27PrescribedLinearTranslation32linearTranslationRigidBodyOutMsgE"></span><span id="_CPPv2N27PrescribedLinearTranslation32linearTranslationRigidBodyOutMsgE"></span><span id="PrescribedLinearTranslation::linearTranslationRigidBodyOutMsg__Message:LinearTranslationRigidBodyMsgPayload:"></span><span class="target" id="class_prescribed_linear_translation_1a854b18ba09b72b1cbd55c529d8192c6e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LinearTranslationRigidBodyMsgPayload.html#_CPPv436LinearTranslationRigidBodyMsgPayload" title="LinearTranslationRigidBodyMsgPayload"><span class="n"><span class="pre">LinearTranslationRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linearTranslationRigidBodyOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation32linearTranslationRigidBodyOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output msg for the translational reference position and velocity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation27prescribedTranslationOutMsgE">
+<span id="_CPPv3N27PrescribedLinearTranslation27prescribedTranslationOutMsgE"></span><span id="_CPPv2N27PrescribedLinearTranslation27prescribedTranslationOutMsgE"></span><span id="PrescribedLinearTranslation::prescribedTranslationOutMsg__Message:PrescribedTranslationMsgPayload:"></span><span class="target" id="class_prescribed_linear_translation_1a8a4d5b2fc867a556f0744cc5f935cac1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/PrescribedTranslationMsgPayload.html#_CPPv431PrescribedTranslationMsgPayload" title="PrescribedTranslationMsgPayload"><span class="n"><span class="pre">PrescribedTranslationMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedTranslationOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation27prescribedTranslationOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output msg for the translational body prescribed states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation28prescribedTranslationOutMsgCE">
+<span id="_CPPv3N27PrescribedLinearTranslation28prescribedTranslationOutMsgCE"></span><span id="_CPPv2N27PrescribedLinearTranslation28prescribedTranslationOutMsgCE"></span><span id="PrescribedLinearTranslation::prescribedTranslationOutMsgC__PrescribedTranslationMsg_C"></span><span class="target" id="class_prescribed_linear_translation_1ad77618f740472f29d0a255578c3cf495"></span><span class="n"><span class="pre">PrescribedTranslationMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prescribedTranslationOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation28prescribedTranslationOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped Output msg for the translational body prescribed states. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation9bskLoggerE">
+<span id="_CPPv3N27PrescribedLinearTranslation9bskLoggerE"></span><span id="_CPPv2N27PrescribedLinearTranslation9bskLoggerE"></span><span id="PrescribedLinearTranslation::bskLogger__BSKLoggerP"></span><span class="target" id="class_prescribed_linear_translation_1a62b8435a4b984a6f3ba0fd04db96aaa1"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation28computeTranslationParametersEv">
+<span id="_CPPv3N27PrescribedLinearTranslation28computeTranslationParametersEv"></span><span id="_CPPv2N27PrescribedLinearTranslation28computeTranslationParametersEv"></span><span id="PrescribedLinearTranslation::computeTranslationParameters"></span><span class="target" id="class_prescribed_linear_translation_1a7ed7e8dbdf347a0ccd2c9c69e1181b0f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTranslationParameters</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation28computeTranslationParametersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Intermediate method to group the calculation of translation parameters into a single method. </p>
+<p>This intermediate method groups the calculation of translation parameters into a single method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation36computeBangBangParametersNoSmoothingEv">
+<span id="_CPPv3N27PrescribedLinearTranslation36computeBangBangParametersNoSmoothingEv"></span><span id="_CPPv2N27PrescribedLinearTranslation36computeBangBangParametersNoSmoothingEv"></span><span id="PrescribedLinearTranslation::computeBangBangParametersNoSmoothing"></span><span class="target" id="class_prescribed_linear_translation_1af7b04090960240557097aaec5f5b7614"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBangBangParametersNoSmoothing</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation36computeBangBangParametersNoSmoothingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the required parameters for the non-smoothed bang-bang profiler option. </p>
+<p>This method computes the required parameters for the translation with a non-smoothed bang-bang acceleration profile. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation41computeBangCoastBangParametersNoSmoothingEv">
+<span id="_CPPv3N27PrescribedLinearTranslation41computeBangCoastBangParametersNoSmoothingEv"></span><span id="_CPPv2N27PrescribedLinearTranslation41computeBangCoastBangParametersNoSmoothingEv"></span><span id="PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing"></span><span class="target" id="class_prescribed_linear_translation_1a5b8cf07893b3a35cec8da392770ea9f0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBangCoastBangParametersNoSmoothing</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation41computeBangCoastBangParametersNoSmoothingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the required parameters for the non-smoothed bang-coast-bang profiler option. </p>
+<p>This method computes the required parameters for the translation with a non-smoothed bang-coast-bang acceleration profile. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation33computeSmoothedBangBangParametersEv">
+<span id="_CPPv3N27PrescribedLinearTranslation33computeSmoothedBangBangParametersEv"></span><span id="_CPPv2N27PrescribedLinearTranslation33computeSmoothedBangBangParametersEv"></span><span id="PrescribedLinearTranslation::computeSmoothedBangBangParameters"></span><span class="target" id="class_prescribed_linear_translation_1a21e67f119a9b50e3d914946a103d975b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSmoothedBangBangParameters</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation33computeSmoothedBangBangParametersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the required parameters for the translation with a smoothed bang-bang acceleration profile. </p>
+<p>This method computes the required parameters for the translation with a smoothed bang-bang acceleration profile. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation38computeSmoothedBangCoastBangParametersEv">
+<span id="_CPPv3N27PrescribedLinearTranslation38computeSmoothedBangCoastBangParametersEv"></span><span id="_CPPv2N27PrescribedLinearTranslation38computeSmoothedBangCoastBangParametersEv"></span><span id="PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters"></span><span class="target" id="class_prescribed_linear_translation_1afc44f95d0ed8ea707ca2c04604e5766f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSmoothedBangCoastBangParameters</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation38computeSmoothedBangCoastBangParametersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the required parameters for the smoothed bang-coast-bang option. </p>
+<p>This method computes the required parameters for the translation with a smoothed bang-coast-bang acceleration profile. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation19computeCurrentStateEd">
+<span id="_CPPv3N27PrescribedLinearTranslation19computeCurrentStateEd"></span><span id="_CPPv2N27PrescribedLinearTranslation19computeCurrentStateEd"></span><span id="PrescribedLinearTranslation::computeCurrentState__double"></span><span class="target" id="class_prescribed_linear_translation_1ae4b614846c0df16ae079b7e3e0027ab2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeCurrentState</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation19computeCurrentStateEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Intermediate method used to group the calculation of the current translational states into a single method. </p>
+<p>This intermediate method groups the calculation of the current translational states into a single method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation20isInFirstBangSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation20isInFirstBangSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation20isInFirstBangSegmentEd"></span><span id="PrescribedLinearTranslation::isInFirstBangSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a7c74fa0e00b1d29bdd5135acc4b5a9a5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInFirstBangSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation20isInFirstBangSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the first bang segment. </p>
+<p>This method determines if the current time is within the first bang segment. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation21isInSecondBangSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation21isInSecondBangSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation21isInSecondBangSegmentEd"></span><span id="PrescribedLinearTranslation::isInSecondBangSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a3bbaa5e3e52bc09c2060badc7568e2ae"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInSecondBangSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation21isInSecondBangSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the second bang segment. </p>
+<p>This method determines if the current time is within the second bang segment. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation24isInFirstSmoothedSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation24isInFirstSmoothedSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation24isInFirstSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::isInFirstSmoothedSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a83728020a1b107465998ea104ef72d4b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInFirstSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation24isInFirstSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the first smoothing segment for the smoothed profiler options. </p>
+<p>This method determines if the current time is within the first smoothing segment for the smoothed profiler options. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation25isInSecondSmoothedSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation25isInSecondSmoothedSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation25isInSecondSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::isInSecondSmoothedSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a56b6fe9316d44fda07103cc3e81682e6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInSecondSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation25isInSecondSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the second smoothing segment for the smoothed profiler options. </p>
+<p>This method determines if the current time is within the second smoothing segment for the smoothed profiler options.. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation24isInThirdSmoothedSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation24isInThirdSmoothedSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation24isInThirdSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::isInThirdSmoothedSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a0885c35c41b9d764fd8cb022c1aa7c63"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInThirdSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation24isInThirdSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the third smoothing segment for the smoothed profiler options. </p>
+<p>This method determines if the current time is within the third smoothing segment for the smoothed profiler options. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation25isInFourthSmoothedSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation25isInFourthSmoothedSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation25isInFourthSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::isInFourthSmoothedSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a20c8768704d10759608ed8415a58bac3"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInFourthSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation25isInFourthSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the fourth smoothing segment for the smoothed bang-coast-bang option. </p>
+<p>This method determines if the current time is within the fourth smoothing segment for the smoothed bang-coast-bang option. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK27PrescribedLinearTranslation16isInCoastSegmentEd">
+<span id="_CPPv3NK27PrescribedLinearTranslation16isInCoastSegmentEd"></span><span id="_CPPv2NK27PrescribedLinearTranslation16isInCoastSegmentEd"></span><span id="PrescribedLinearTranslation::isInCoastSegment__doubleC"></span><span class="target" id="class_prescribed_linear_translation_1a51dcce6a7f05135c327b4686f8f64d1f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInCoastSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK27PrescribedLinearTranslation16isInCoastSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for determining if the current time is within the coast segment. </p>
+<p>This method determines if the current time is within the coast segment. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation23computeFirstBangSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation23computeFirstBangSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation23computeFirstBangSegmentEd"></span><span id="PrescribedLinearTranslation::computeFirstBangSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1a3c69301879291f1353c1d352dd8dcbf5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeFirstBangSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation23computeFirstBangSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the first bang segment scalar translational states. </p>
+<p>This method computes the first bang segment scalar translational states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation24computeSecondBangSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation24computeSecondBangSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation24computeSecondBangSegmentEd"></span><span id="PrescribedLinearTranslation::computeSecondBangSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1a1b3a9e637618e565f717a0e0f5b8ce9f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSecondBangSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation24computeSecondBangSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the second bang segment scalar translational states. </p>
+<p>This method computes the second bang segment scalar translational states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation27computeFirstSmoothedSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation27computeFirstSmoothedSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation27computeFirstSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::computeFirstSmoothedSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1a9023a7301af0e3aee6b23fb19f885a7c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeFirstSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation27computeFirstSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the first smoothing segment scalar translational states for the smoothed profiler options. </p>
+<p>This method computes the first smoothing segment scalar translational states for the smoothed profiler options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation28computeSecondSmoothedSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation28computeSecondSmoothedSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation28computeSecondSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::computeSecondSmoothedSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1a1924266a4f3528ad7df9fd4cde91bc07"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSecondSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation28computeSecondSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the second smoothing segment scalar translational states for the smoothed profiler options. </p>
+<p>This method computes the second smoothing segment scalar translational states for the smoothed profiler options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation27computeThirdSmoothedSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation27computeThirdSmoothedSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation27computeThirdSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::computeThirdSmoothedSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1a03128fbb79744f2c0b80ebbfa5e54b41"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeThirdSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation27computeThirdSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the third smoothing segment scalar translational states for the smoothed profiler options. </p>
+<p>This method computes the third smoothing segment scalar translational states for the smoothed profiler options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation28computeFourthSmoothedSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation28computeFourthSmoothedSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation28computeFourthSmoothedSegmentEd"></span><span id="PrescribedLinearTranslation::computeFourthSmoothedSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1aba09d267c098b21ed55db67e75530e56"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeFourthSmoothedSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation28computeFourthSmoothedSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the fourth smoothing segment scalar translational states for the smoothed bang-coast-bang option. </p>
+<p>This method computes the fourth smoothing segment scalar translational states for the smoothed bang-coast-bang option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation19computeCoastSegmentEd">
+<span id="_CPPv3N27PrescribedLinearTranslation19computeCoastSegmentEd"></span><span id="_CPPv2N27PrescribedLinearTranslation19computeCoastSegmentEd"></span><span id="PrescribedLinearTranslation::computeCoastSegment__double"></span><span class="target" id="class_prescribed_linear_translation_1a335f965bb58b82044c4a85b09857ee85"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeCoastSegment</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation19computeCoastSegmentEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the coast segment scalar translational states. </p>
+<p>This method computes the coast segment scalar translational states</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation26computeTranslationCompleteEv">
+<span id="_CPPv3N27PrescribedLinearTranslation26computeTranslationCompleteEv"></span><span id="_CPPv2N27PrescribedLinearTranslation26computeTranslationCompleteEv"></span><span id="PrescribedLinearTranslation::computeTranslationComplete"></span><span class="target" id="class_prescribed_linear_translation_1aae0bfaabf4975b77ee1ad83c60db7efd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTranslationComplete</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation26computeTranslationCompleteEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for computing the scalar translational states when the translation is complete. </p>
+<p>This method computes the scalar translational states when the translation is complete. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N27PrescribedLinearTranslation19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N27PrescribedLinearTranslation19writeOutputMessagesE8uint64_t"></span><span id="PrescribedLinearTranslation::writeOutputMessages__uint64_t"></span><span class="target" id="class_prescribed_linear_translation_1a4a280aa63aa79103ffd537d0d5316436"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for writing the module output messages and computing the output message data. </p>
+<p>This method writes the module output messages and computes the output message data. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation23coastOptionBangDurationE">
+<span id="_CPPv3N27PrescribedLinearTranslation23coastOptionBangDurationE"></span><span id="_CPPv2N27PrescribedLinearTranslation23coastOptionBangDurationE"></span><span id="PrescribedLinearTranslation::coastOptionBangDuration__double"></span><span class="target" id="class_prescribed_linear_translation_1a3dc15b92031d017e6214ac5e05e038af"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">coastOptionBangDuration</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation23coastOptionBangDurationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time used for the coast option bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation17smoothingDurationE">
+<span id="_CPPv3N27PrescribedLinearTranslation17smoothingDurationE"></span><span id="_CPPv2N27PrescribedLinearTranslation17smoothingDurationE"></span><span id="PrescribedLinearTranslation::smoothingDuration__double"></span><span class="target" id="class_prescribed_linear_translation_1ae5be08b53d0629791d416ca4379abdab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">smoothingDuration</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation17smoothingDurationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time the acceleration is smoothed to the given maximum acceleration value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation13transAccelMaxE">
+<span id="_CPPv3N27PrescribedLinearTranslation13transAccelMaxE"></span><span id="_CPPv2N27PrescribedLinearTranslation13transAccelMaxE"></span><span id="PrescribedLinearTranslation::transAccelMax__double"></span><span class="target" id="class_prescribed_linear_translation_1a0e45ee80e8f6b03506c96f19bdfd75e3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transAccelMax</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation13transAccelMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] Maximum acceleration magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation10transHat_ME">
+<span id="_CPPv3N27PrescribedLinearTranslation10transHat_ME"></span><span id="_CPPv2N27PrescribedLinearTranslation10transHat_ME"></span><span id="PrescribedLinearTranslation::transHat_M__Eigen::Vector3d"></span><span class="target" id="class_prescribed_linear_translation_1a2c8854320370ef82450686e6ab6d5c77"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transHat_M</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation10transHat_ME" title="Link to this definition"></a><br /></dt>
+<dd><p>Axis along the direction of translation expressed in M frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transPosInitE">
+<span id="_CPPv3N27PrescribedLinearTranslation12transPosInitE"></span><span id="_CPPv2N27PrescribedLinearTranslation12transPosInitE"></span><span id="PrescribedLinearTranslation::transPosInit__double"></span><span class="target" id="class_prescribed_linear_translation_1a1a886d824cf6e4f7760933f1b3a30c3b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPosInit</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transPosInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial translational body position from M to P frame origin along transHat_M </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation11transPosRefE">
+<span id="_CPPv3N27PrescribedLinearTranslation11transPosRefE"></span><span id="_CPPv2N27PrescribedLinearTranslation11transPosRefE"></span><span id="PrescribedLinearTranslation::transPosRef__double"></span><span class="target" id="class_prescribed_linear_translation_1aad038b86bd5e9366fe2bb87c0c7fae9b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPosRef</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation11transPosRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Reference translational body position from M to P frame origin along transHat_M </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation8transPosE">
+<span id="_CPPv3N27PrescribedLinearTranslation8transPosE"></span><span id="_CPPv2N27PrescribedLinearTranslation8transPosE"></span><span id="PrescribedLinearTranslation::transPos__double"></span><span class="target" id="class_prescribed_linear_translation_1ac0b371557f27c732764d3d52cfa3607e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation8transPosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Current translational body position along transHat_M </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation8transVelE">
+<span id="_CPPv3N27PrescribedLinearTranslation8transVelE"></span><span id="_CPPv2N27PrescribedLinearTranslation8transVelE"></span><span id="PrescribedLinearTranslation::transVel__double"></span><span class="target" id="class_prescribed_linear_translation_1a8de7a50e22d9d6534375f47b7104a95e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation8transVelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Current translational body velocity along transHat_M </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation10transAccelE">
+<span id="_CPPv3N27PrescribedLinearTranslation10transAccelE"></span><span id="_CPPv2N27PrescribedLinearTranslation10transAccelE"></span><span id="PrescribedLinearTranslation::transAccel__double"></span><span class="target" id="class_prescribed_linear_translation_1add49272f3fc586855a1d06e75e12a707"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transAccel</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation10transAccelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Current translational body acceleration along transHat_M </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transPos_tb1E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transPos_tb1E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transPos_tb1E"></span><span id="PrescribedLinearTranslation::transPos_tb1__double"></span><span class="target" id="class_prescribed_linear_translation_1ade569de2599aa5f72a924f6bc5042ae2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos_tb1</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transPos_tb1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position at the end of the first bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transVel_tb1E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transVel_tb1E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transVel_tb1E"></span><span id="PrescribedLinearTranslation::transVel_tb1__double"></span><span class="target" id="class_prescribed_linear_translation_1a443af0111cb15a360deb698abfc9ffc3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel_tb1</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transVel_tb1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Velocity at the end of the first bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transPos_tb2E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transPos_tb2E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transPos_tb2E"></span><span id="PrescribedLinearTranslation::transPos_tb2__double"></span><span class="target" id="class_prescribed_linear_translation_1a569e21e1417e8cd3d3ebf9276dac8291"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos_tb2</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transPos_tb2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position at the end of the second bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transVel_tb2E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transVel_tb2E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transVel_tb2E"></span><span id="PrescribedLinearTranslation::transVel_tb2__double"></span><span class="target" id="class_prescribed_linear_translation_1a2b58cabf747b58aa874d6a6092c29aa8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel_tb2</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transVel_tb2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Velocity at the end of the second bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transPos_ts1E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transPos_ts1E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transPos_ts1E"></span><span id="PrescribedLinearTranslation::transPos_ts1__double"></span><span class="target" id="class_prescribed_linear_translation_1a82c5d3817e5daa686cd3b821fb019ed1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos_ts1</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transPos_ts1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position at the end of the first smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transVel_ts1E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transVel_ts1E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transVel_ts1E"></span><span id="PrescribedLinearTranslation::transVel_ts1__double"></span><span class="target" id="class_prescribed_linear_translation_1a0a015cf7a1db7fe51203a1e04122f870"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel_ts1</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transVel_ts1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Velocity at the end of the first smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transPos_ts2E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transPos_ts2E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transPos_ts2E"></span><span id="PrescribedLinearTranslation::transPos_ts2__double"></span><span class="target" id="class_prescribed_linear_translation_1a8114b12f4fb7bcab8400d9c5c4614474"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos_ts2</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transPos_ts2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position at the end of the second smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transVel_ts2E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transVel_ts2E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transVel_ts2E"></span><span id="PrescribedLinearTranslation::transVel_ts2__double"></span><span class="target" id="class_prescribed_linear_translation_1a9dbab3af5af85f134045e1c1db142404"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel_ts2</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transVel_ts2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Velocity at the end of the second smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transPos_ts3E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transPos_ts3E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transPos_ts3E"></span><span id="PrescribedLinearTranslation::transPos_ts3__double"></span><span class="target" id="class_prescribed_linear_translation_1af8d9d604879f67d369c6a7b929620125"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos_ts3</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transPos_ts3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position at the end of the third smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation12transVel_ts3E">
+<span id="_CPPv3N27PrescribedLinearTranslation12transVel_ts3E"></span><span id="_CPPv2N27PrescribedLinearTranslation12transVel_ts3E"></span><span id="PrescribedLinearTranslation::transVel_ts3__double"></span><span class="target" id="class_prescribed_linear_translation_1a066832e5dcc86deccf7b304576f825a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel_ts3</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation12transVel_ts3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Velocity at the end of the third smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation11transPos_tcE">
+<span id="_CPPv3N27PrescribedLinearTranslation11transPos_tcE"></span><span id="_CPPv2N27PrescribedLinearTranslation11transPos_tcE"></span><span id="PrescribedLinearTranslation::transPos_tc__double"></span><span class="target" id="class_prescribed_linear_translation_1af8095b8af31d71dcf3d0c66c539c277f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transPos_tc</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation11transPos_tcE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Position at the end of the coast segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation11transVel_tcE">
+<span id="_CPPv3N27PrescribedLinearTranslation11transVel_tcE"></span><span id="_CPPv2N27PrescribedLinearTranslation11transVel_tcE"></span><span id="PrescribedLinearTranslation::transVel_tc__double"></span><span class="target" id="class_prescribed_linear_translation_1ada7dbd6ed323cc9a1162c072bf4dfde0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transVel_tc</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation11transVel_tcE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Velocity at the end of the coast segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation5tInitE">
+<span id="_CPPv3N27PrescribedLinearTranslation5tInitE"></span><span id="_CPPv2N27PrescribedLinearTranslation5tInitE"></span><span id="PrescribedLinearTranslation::tInit__double"></span><span class="target" id="class_prescribed_linear_translation_1adda9f27f8e44d20d640b07f591322469"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tInit</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation5tInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the beginning of the translation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation4t_b1E">
+<span id="_CPPv3N27PrescribedLinearTranslation4t_b1E"></span><span id="_CPPv2N27PrescribedLinearTranslation4t_b1E"></span><span id="PrescribedLinearTranslation::t_b1__double"></span><span class="target" id="class_prescribed_linear_translation_1ae72e72962104f134fe57c26337f39c11"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_b1</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation4t_b1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the end of the first bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation4t_b2E">
+<span id="_CPPv3N27PrescribedLinearTranslation4t_b2E"></span><span id="_CPPv2N27PrescribedLinearTranslation4t_b2E"></span><span id="PrescribedLinearTranslation::t_b2__double"></span><span class="target" id="class_prescribed_linear_translation_1a8a8ea96fa218b80bd76c40216a914555"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_b2</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation4t_b2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the end of the second bang segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation4t_s1E">
+<span id="_CPPv3N27PrescribedLinearTranslation4t_s1E"></span><span id="_CPPv2N27PrescribedLinearTranslation4t_s1E"></span><span id="PrescribedLinearTranslation::t_s1__double"></span><span class="target" id="class_prescribed_linear_translation_1abbc6ac9678f810ab2dc89f75498f63a4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_s1</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation4t_s1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the end of the first smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation4t_s2E">
+<span id="_CPPv3N27PrescribedLinearTranslation4t_s2E"></span><span id="_CPPv2N27PrescribedLinearTranslation4t_s2E"></span><span id="PrescribedLinearTranslation::t_s2__double"></span><span class="target" id="class_prescribed_linear_translation_1ae51ba64ddeac4a158f2c66e9c7f8965c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_s2</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation4t_s2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the end of the second smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation4t_s3E">
+<span id="_CPPv3N27PrescribedLinearTranslation4t_s3E"></span><span id="_CPPv2N27PrescribedLinearTranslation4t_s3E"></span><span id="PrescribedLinearTranslation::t_s3__double"></span><span class="target" id="class_prescribed_linear_translation_1a911a0de09783341b76a0696b8416c99e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_s3</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation4t_s3E" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the end of the third smoothed segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation3t_cE">
+<span id="_CPPv3N27PrescribedLinearTranslation3t_cE"></span><span id="_CPPv2N27PrescribedLinearTranslation3t_cE"></span><span id="PrescribedLinearTranslation::t_c__double"></span><span class="target" id="class_prescribed_linear_translation_1a0d29fcac18a0e5d271dbb6e39291fcb8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_c</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation3t_cE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the end of the coast segment </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation3t_fE">
+<span id="_CPPv3N27PrescribedLinearTranslation3t_fE"></span><span id="_CPPv2N27PrescribedLinearTranslation3t_fE"></span><span id="PrescribedLinearTranslation::t_f__double"></span><span class="target" id="class_prescribed_linear_translation_1aad2e73fb5f4fdd07d9d52277d2923b81"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">t_f</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation3t_fE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time when the translation is complete </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation11convergenceE">
+<span id="_CPPv3N27PrescribedLinearTranslation11convergenceE"></span><span id="_CPPv2N27PrescribedLinearTranslation11convergenceE"></span><span id="PrescribedLinearTranslation::convergence__b"></span><span class="target" id="class_prescribed_linear_translation_1abeaec89c2035c7df01a8c59239d2df05"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">convergence</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation11convergenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean variable is true when the translation is complete. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation1aE">
+<span id="_CPPv3N27PrescribedLinearTranslation1aE"></span><span id="_CPPv2N27PrescribedLinearTranslation1aE"></span><span id="PrescribedLinearTranslation::a__double"></span><span class="target" id="class_prescribed_linear_translation_1ad6a000f8783c5bcfb4e4db8cc6367b10"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation1aE" title="Link to this definition"></a><br /></dt>
+<dd><p>Parabolic constant for the first half of the bang-bang non-smoothed translation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27PrescribedLinearTranslation1bE">
+<span id="_CPPv3N27PrescribedLinearTranslation1bE"></span><span id="_CPPv2N27PrescribedLinearTranslation1bE"></span><span id="PrescribedLinearTranslation::b__double"></span><span class="target" id="class_prescribed_linear_translation_1ad09641aedae8102661d481d0d102423e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">b</span></span></span><a class="headerlink" href="#_CPPv4N27PrescribedLinearTranslation1bE" title="Link to this definition"></a><br /></dt>
+<dd><p>Parabolic constant for the second half of the bang-bang non-smoothed translation. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="prescribedLinearTranslation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

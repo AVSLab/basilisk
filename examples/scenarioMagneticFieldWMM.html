@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMagneticFieldWMM &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioAttitudeGG" href="scenarioAttitudeGG.html" />
+    <link rel="prev" title="scenarioMagneticFieldCenteredDipole" href="scenarioMagneticFieldCenteredDipole.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#magnetic-field-models">Magnetic Field Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#gravity-gradient-torque">Gravity Gradient Torque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#atmospheric-drag">Atmospheric Drag</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#access-to-communication-locations">Access to Communication Locations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#planet-albedo">Planet Albedo</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioMagneticFieldWMM</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioMagneticFieldWMM.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariomagneticfieldwmm">
+<span id="id1"></span><h1>scenarioMagneticFieldWMM<a class="headerlink" href="#scenariomagneticfieldwmm" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioMagneticFieldWMM"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This script sets up a 3-DOF spacecraft which is orbiting the with a
+magnetic field model.  This scenario is similar to the centered dipole model
+<a class="reference internal" href="scenarioMagneticFieldCenteredDipole.html#scenariomagneticfieldcentereddipole"><span class="std std-ref">scenarioMagneticFieldCenteredDipole</span></a>, but here
+the World Magnetic Model (WMM) is employed.  This model is specific
+to Earth and not suitable for other planets. The purpose
+is to illustrate how to create and setup the WMM magnetic field,
+as well as determine the
+magnetic field at a spacecraft location.  The orbit setup is similar to that used in
+<a class="reference internal" href="scenarioBasicOrbit.html#scenariobasicorbit"><span class="std std-ref">scenarioBasicOrbit</span></a>.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioMagneticFieldWMM</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="simulation-scenario-setup-details">
+<h2>Simulation Scenario Setup Details<a class="headerlink" href="#simulation-scenario-setup-details" title="Link to this heading"></a></h2>
+<p>The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains the spacecraft object.  The spacecraft state message is connected to the magnetic field
+module which outputs the local magnetic field in inertial frame components.</p>
+<img alt="../_images/test_scenario_MagneticFieldWMM.svg" class="align-center" src="../_images/test_scenario_MagneticFieldWMM.svg" />
+<p>When the simulation completes 2 plots are shown for each case.  One plot always shows
+the inertial position vector components, while the second plot
+shows the local magnetic field
+vector components with respect to the inertial frame.</p>
+<p>As this <a class="reference internal" href="../Documentation/simulation/environment/magneticFieldWMM/magneticFieldWMM.html#magneticfieldwmm"><span class="std std-ref">Module: magneticFieldWMM</span></a> model is specific to Earth, there are
+no parameters to set of tune.  Rather, the <code class="docutils literal notranslate"><span class="pre">WMM.COF</span></code> WMM coefficient
+file is set via the <code class="docutils literal notranslate"><span class="pre">configureWMMFile()</span></code> method and loaded on reset.</p>
+<p>The default planet’s position vector is assumed to be the inertial
+frame origin and an identity orientation matrix.
+If a different planet state message is required this can be
+specified through the optional input message <code class="docutils literal notranslate"><span class="pre">planetPosInMsg</span></code>.</p>
+<p>As with <a class="reference internal" href="scenarioMagneticFieldCenteredDipole.html#scenariomagneticfieldcentereddipole"><span class="std std-ref">scenarioMagneticFieldCenteredDipole</span></a>, the magnetic
+field module can produce the magnetic field for a vector of spacecraft
+locations, not just for a single spacecraft.</p>
+<p>The WMM module requires an epoch time to determine the magnetic field.
+If this is not set, then the BSK
+default epoch time is used.  To set a general epoch time, the module
+can read in an epoch message with a
+gregorian UTC date.  This is set using the support method
+<code class="docutils literal notranslate"><span class="pre">timeStringToGregorianUTCMsg</span></code>.</p>
+<p>The WMM model is driven of a time variable that is a decimal year value.
+The module can set this as well by specifying the module parameter
+<code class="docutils literal notranslate"><span class="pre">epochDateFractionalYear</span></code>.  However, note that if the epoch message is
+specified, the message information is used instead of the
+<code class="docutils literal notranslate"><span class="pre">epochDateFractionalYear</span></code> variable.</p>
+<p>Every time a spacecraft is added to the magnetic field module, an
+extra output message is autmatically created. For <cite>magModule</cite> is “WMM_0_data”
+as the ModelTag string is <code class="docutils literal notranslate"><span class="pre">WMM</span></code> and the spacecraft number is 0.
+This output name is created in the  <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code>
+function.  However, if the default output name is used for the second
+planetary magnetic field model, then both module share  the same
+output name and one will overwrite the others output.</p>
+<p>The reach of the magnetic field model is specified through the
+module variables <code class="docutils literal notranslate"><span class="pre">envMinReach</span></code> and <code class="docutils literal notranslate"><span class="pre">envMaxReach</span></code>. Their
+default values are -1 which turns off this feature, giving
+the magnetic field evaluation infinite reach.</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<p>The following images illustrate the expected simulation run returns for a range of script configurations.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">orbitCase</span><span class="o">=</span><span class="s1">&#39;circular&#39;</span>
+</pre></div>
+</div>
+<img alt="../_images/scenarioMagneticFieldWMM1circular.svg" class="align-center" src="../_images/scenarioMagneticFieldWMM1circular.svg" />
+<img alt="../_images/scenarioMagneticFieldWMM2circular.svg" class="align-center" src="../_images/scenarioMagneticFieldWMM2circular.svg" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">orbitCase</span><span class="o">=</span><span class="s1">&#39;elliptical&#39;</span>
+</pre></div>
+</div>
+<img alt="../_images/scenarioMagneticFieldWMM1elliptical.svg" class="align-center" src="../_images/scenarioMagneticFieldWMM1elliptical.svg" />
+<img alt="../_images/scenarioMagneticFieldWMM2elliptical.svg" class="align-center" src="../_images/scenarioMagneticFieldWMM2elliptical.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMagneticFieldWMM.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioMagneticFieldWMM.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbitCase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMagneticFieldWMM.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMagneticFieldWMM.run" title="Link to this definition"></a></dt>
+<dd><p>At the end of the python script you can specify the following example parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots</p></li>
+<li><p><strong>orbitCase</strong> (<em>str</em>) – {‘circular’, ‘elliptical’}</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioMagneticFieldCenteredDipole.html" class="btn btn-neutral float-left" title="scenarioMagneticFieldCenteredDipole" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioAttitudeGG.html" class="btn btn-neutral float-right" title="scenarioAttitudeGG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

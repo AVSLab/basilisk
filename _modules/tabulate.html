@@ -1,0 +1,1214 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tabulate &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tabulate</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tabulate</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;Pretty-print tabular data.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">unicode_literals</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">platform</span><span class="w"> </span><span class="kn">import</span> <span class="n">python_version_tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="k">if</span> <span class="n">python_version_tuple</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">izip_longest</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+    <span class="n">_none_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_int_type</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">_long_type</span> <span class="o">=</span> <span class="n">long</span>
+    <span class="n">_float_type</span> <span class="o">=</span> <span class="nb">float</span>
+    <span class="n">_text_type</span> <span class="o">=</span> <span class="n">unicode</span>
+    <span class="n">_binary_type</span> <span class="o">=</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_file</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">zip_longest</span> <span class="k">as</span> <span class="n">izip_longest</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="n">partial</span>
+    <span class="n">_none_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_int_type</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">_long_type</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">_float_type</span> <span class="o">=</span> <span class="nb">float</span>
+    <span class="n">_text_type</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">_binary_type</span> <span class="o">=</span> <span class="nb">bytes</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_file</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tabulate&quot;</span><span class="p">,</span> <span class="s2">&quot;tabulate_formats&quot;</span><span class="p">,</span> <span class="s2">&quot;simple_separated_format&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.7.5&quot;</span>
+
+
+<span class="n">MIN_PADDING</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<span class="n">Line</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Line&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="s2">&quot;hline&quot;</span><span class="p">,</span> <span class="s2">&quot;sep&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">])</span>
+
+
+<span class="n">DataRow</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;DataRow&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;begin&quot;</span><span class="p">,</span> <span class="s2">&quot;sep&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">])</span>
+
+
+<span class="c1"># A table structure is suppposed to be:</span>
+<span class="c1">#</span>
+<span class="c1">#     --- lineabove ---------</span>
+<span class="c1">#         headerrow</span>
+<span class="c1">#     --- linebelowheader ---</span>
+<span class="c1">#         datarow</span>
+<span class="c1">#     --- linebewteenrows ---</span>
+<span class="c1">#     ... (more datarows) ...</span>
+<span class="c1">#     --- linebewteenrows ---</span>
+<span class="c1">#         last datarow</span>
+<span class="c1">#     --- linebelow ---------</span>
+<span class="c1">#</span>
+<span class="c1"># TableFormat&#39;s line* elements can be</span>
+<span class="c1">#</span>
+<span class="c1">#   - either None, if the element is not used,</span>
+<span class="c1">#   - or a Line tuple,</span>
+<span class="c1">#   - or a function: [col_widths], [col_alignments] -&gt; string.</span>
+<span class="c1">#</span>
+<span class="c1"># TableFormat&#39;s *row elements can be</span>
+<span class="c1">#</span>
+<span class="c1">#   - either None, if the element is not used,</span>
+<span class="c1">#   - or a DataRow tuple,</span>
+<span class="c1">#   - or a function: [cell_values], [col_widths], [col_alignments] -&gt; string.</span>
+<span class="c1">#</span>
+<span class="c1"># padding (an integer) is the amount of white space around data values.</span>
+<span class="c1">#</span>
+<span class="c1"># with_header_hide:</span>
+<span class="c1">#</span>
+<span class="c1">#   - either None, to display all table elements unconditionally,</span>
+<span class="c1">#   - or a list of elements not to be displayed if the table has column headers.</span>
+<span class="c1">#</span>
+<span class="n">TableFormat</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;TableFormat&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;lineabove&quot;</span><span class="p">,</span> <span class="s2">&quot;linebelowheader&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;linebetweenrows&quot;</span><span class="p">,</span> <span class="s2">&quot;linebelow&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;headerrow&quot;</span><span class="p">,</span> <span class="s2">&quot;datarow&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;padding&quot;</span><span class="p">,</span> <span class="s2">&quot;with_header_hide&quot;</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pipe_segment_with_colons</span><span class="p">(</span><span class="n">align</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a segment of a horizontal line with optional colons which</span>
+<span class="sd">    indicate column&#39;s alignment (as in `pipe` output format).&quot;&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">colwidth</span>
+    <span class="k">if</span> <span class="n">align</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;decimal&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+    <span class="k">elif</span> <span class="n">align</span> <span class="o">==</span> <span class="s2">&quot;center&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+    <span class="k">elif</span> <span class="n">align</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="n">w</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pipe_line_with_colons</span><span class="p">(</span><span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a horizontal line with optional colons to indicate column&#39;s</span>
+<span class="sd">    alignment (as in `pipe` output format).&quot;&quot;&quot;</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="p">[</span><span class="n">_pipe_segment_with_colons</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">colaligns</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mediawiki_row_with_attrs</span><span class="p">(</span><span class="n">separator</span><span class="p">,</span> <span class="n">cell_values</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">):</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>    <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;right&quot;</span><span class="p">:</span>   <span class="s1">&#39;align=&quot;right&quot;| &#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;center&quot;</span><span class="p">:</span>  <span class="s1">&#39;align=&quot;center&quot;| &#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;decimal&quot;</span><span class="p">:</span> <span class="s1">&#39;align=&quot;right&quot;| &#39;</span> <span class="p">}</span>
+    <span class="c1"># hard-coded padding _around_ align attribute and value together</span>
+    <span class="c1"># rather than padding parameter which affects only the value</span>
+    <span class="n">values_with_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">alignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+                         <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cell_values</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">)]</span>
+    <span class="n">colsep</span> <span class="o">=</span> <span class="n">separator</span><span class="o">*</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">separator</span> <span class="o">+</span> <span class="n">colsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values_with_attrs</span><span class="p">))</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_html_row_with_attrs</span><span class="p">(</span><span class="n">celltag</span><span class="p">,</span> <span class="n">cell_values</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">):</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>    <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;right&quot;</span><span class="p">:</span>   <span class="s1">&#39; style=&quot;text-align: right;&quot;&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;center&quot;</span><span class="p">:</span>  <span class="s1">&#39; style=&quot;text-align: center;&quot;&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;decimal&quot;</span><span class="p">:</span> <span class="s1">&#39; style=&quot;text-align: right;&quot;&#39;</span> <span class="p">}</span>
+    <span class="n">values_with_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;</span><span class="si">{0}{1}</span><span class="s2">&gt;</span><span class="si">{2}</span><span class="s2">&lt;/</span><span class="si">{0}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">celltag</span><span class="p">,</span> <span class="n">alignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cell_values</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="s2">&quot;&lt;tr&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values_with_attrs</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;&lt;/tr&gt;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_latex_line_begin_tabular</span><span class="p">(</span><span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">booktabs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;decimal&quot;</span><span class="p">:</span> <span class="s2">&quot;r&quot;</span> <span class="p">}</span>
+    <span class="n">tabular_columns_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">alignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">colaligns</span><span class="p">])</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">r</span><span class="s2">&quot;\begin</span><span class="si">{tabular}</span><span class="s2">{&quot;</span> <span class="o">+</span> <span class="n">tabular_columns_fmt</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span>
+                      <span class="sa">r</span><span class="s2">&quot;\toprule&quot;</span> <span class="k">if</span> <span class="n">booktabs</span> <span class="k">else</span> <span class="sa">r</span><span class="s2">&quot;\hline&quot;</span><span class="p">])</span>
+
+<span class="n">LATEX_ESCAPE_RULES</span> <span class="o">=</span> <span class="p">{</span><span class="sa">r</span><span class="s2">&quot;&amp;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\&amp;&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;%&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\%&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;#&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\#&quot;</span><span class="p">,</span>
+                      <span class="sa">r</span><span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\_&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;^&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\^</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\{&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;}&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\}&quot;</span><span class="p">,</span>
+                      <span class="sa">r</span><span class="s2">&quot;~&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textasciitilde</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textbackslash</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+                      <span class="sa">r</span><span class="s2">&quot;&lt;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\ensuremath{&lt;}&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;&gt;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\ensuremath{&gt;}&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_latex_row</span><span class="p">(</span><span class="n">cell_values</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">escape_char</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LATEX_ESCAPE_RULES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">escaped_values</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">escape_char</span><span class="p">,</span> <span class="n">cell</span><span class="p">))</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cell_values</span><span class="p">]</span>
+    <span class="n">rowfmt</span> <span class="o">=</span> <span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_build_simple_row</span><span class="p">(</span><span class="n">escaped_values</span><span class="p">,</span> <span class="n">rowfmt</span><span class="p">)</span>
+
+
+<span class="n">_table_formats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;simple&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                              <span class="n">with_header_hide</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lineabove&quot;</span><span class="p">,</span> <span class="s2">&quot;linebelow&quot;</span><span class="p">]),</span>
+                  <span class="s2">&quot;plain&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linebelowheader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linebelow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;grid&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;fancy_grid&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;╒&quot;</span><span class="p">,</span> <span class="s2">&quot;═&quot;</span><span class="p">,</span> <span class="s2">&quot;╤&quot;</span><span class="p">,</span> <span class="s2">&quot;╕&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;╞&quot;</span><span class="p">,</span> <span class="s2">&quot;═&quot;</span><span class="p">,</span> <span class="s2">&quot;╪&quot;</span><span class="p">,</span> <span class="s2">&quot;╡&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;├&quot;</span><span class="p">,</span> <span class="s2">&quot;─&quot;</span><span class="p">,</span> <span class="s2">&quot;┼&quot;</span><span class="p">,</span> <span class="s2">&quot;┤&quot;</span><span class="p">),</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;╘&quot;</span><span class="p">,</span> <span class="s2">&quot;═&quot;</span><span class="p">,</span> <span class="s2">&quot;╧&quot;</span><span class="p">,</span> <span class="s2">&quot;╛&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;│&quot;</span><span class="p">,</span> <span class="s2">&quot;│&quot;</span><span class="p">,</span> <span class="s2">&quot;│&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;│&quot;</span><span class="p">,</span> <span class="s2">&quot;│&quot;</span><span class="p">,</span> <span class="s2">&quot;│&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;pipe&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">_pipe_line_with_colons</span><span class="p">,</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">_pipe_line_with_colons</span><span class="p">,</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                              <span class="n">with_header_hide</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lineabove&quot;</span><span class="p">]),</span>
+                  <span class="s2">&quot;orgtbl&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;psql&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;rst&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;mediawiki&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;{| class=</span><span class="se">\&quot;</span><span class="s2">wikitable</span><span class="se">\&quot;</span><span class="s2"> style=</span><span class="se">\&quot;</span><span class="s2">text-align: left;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">|+ &lt;!-- caption --&gt;</span><span class="se">\n</span><span class="s2">|-&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;|-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;|-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;|}&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_mediawiki_row_with_attrs</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_mediawiki_row_with_attrs</span><span class="p">,</span> <span class="s2">&quot;|&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;html&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&lt;table&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="s2">&quot;&lt;/table&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_html_row_with_attrs</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_html_row_with_attrs</span><span class="p">,</span> <span class="s2">&quot;td&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">_latex_line_begin_tabular</span><span class="p">,</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\hline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\hline\end</span><span class="si">{tabular}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">_latex_row</span><span class="p">,</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">_latex_row</span><span class="p">,</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;latex_booktabs&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_latex_line_begin_tabular</span><span class="p">,</span> <span class="n">booktabs</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                              <span class="n">linebelowheader</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\midrule&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebelow</span><span class="o">=</span><span class="n">Line</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\bottomrule\end</span><span class="si">{tabular}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">_latex_row</span><span class="p">,</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">_latex_row</span><span class="p">,</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                  <span class="s2">&quot;tsv&quot;</span><span class="p">:</span>
+                  <span class="n">TableFormat</span><span class="p">(</span><span class="n">lineabove</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linebelowheader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">linebetweenrows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linebelow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                              <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">)}</span>
+
+
+<span class="n">tabulate_formats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_table_formats</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+
+<span class="n">_invisible_codes</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\x1b\[\d*m|\x1b\[\d*\;\d*\;\d*m&quot;</span><span class="p">)</span>  <span class="c1"># ANSI color codes</span>
+<span class="n">_invisible_codes_bytes</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\x1b\[\d*m|\x1b\[\d*\;\d*\;\d*m&quot;</span><span class="p">)</span>  <span class="c1"># ANSI color codes</span>
+
+
+<div class="viewcode-block" id="simple_separated_format">
+<a class="viewcode-back" href="../Documentation/utilities/tabulate.html#tabulate.simple_separated_format">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simple_separated_format</span><span class="p">(</span><span class="n">separator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a simple TableFormat with columns separated by a separator.</span>
+
+<span class="sd">    &gt;&gt;&gt; tsv = simple_separated_format(&quot;\\t&quot;) ; \</span>
+<span class="sd">        tabulate([[&quot;foo&quot;, 1], [&quot;spam&quot;, 23]], tablefmt=tsv) == &#39;foo \\t 1\\nspam\\t23&#39;</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TableFormat</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">headerrow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                       <span class="n">datarow</span><span class="o">=</span><span class="n">DataRow</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                       <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_header_hide</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_isconvertible</span><span class="p">(</span><span class="n">conv</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_isnumber</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; _isnumber(&quot;123.45&quot;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _isnumber(&quot;123&quot;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _isnumber(&quot;spam&quot;)</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_isconvertible</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_isint</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">inttype</span><span class="o">=</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; _isint(&quot;123&quot;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _isint(&quot;123.45&quot;)</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="n">inttype</span> <span class="ow">or</span>\
+           <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_binary_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_text_type</span><span class="p">))</span>\
+            <span class="ow">and</span>\
+            <span class="n">_isconvertible</span><span class="p">(</span><span class="n">inttype</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_type</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The least generic type (type(None), int, float, str, unicode).</span>
+
+<span class="sd">    &gt;&gt;&gt; _type(None) is type(None)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _type(&quot;foo&quot;) is type(&quot;&quot;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _type(&quot;1&quot;) is type(1)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _type(&#39;\x1b[31m42\x1b[0m&#39;) is type(42)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _type(&#39;\x1b[31m42\x1b[0m&#39;) is type(42)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">has_invisible</span> <span class="ow">and</span> \
+       <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_text_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_binary_type</span><span class="p">)):</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">_strip_invisible</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_none_type</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="s2">&quot;isoformat&quot;</span><span class="p">):</span>  <span class="c1"># datetime.datetime, date, and time</span>
+        <span class="k">return</span> <span class="n">_text_type</span>
+    <span class="k">elif</span> <span class="n">_isint</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span>
+    <span class="k">elif</span> <span class="n">_isint</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_long_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_long_type</span>
+    <span class="k">elif</span> <span class="n">_isnumber</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">_binary_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_binary_type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_text_type</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_afterpoint</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Symbols after a decimal point, -1 if the string lacks the decimal point.</span>
+
+<span class="sd">    &gt;&gt;&gt; _afterpoint(&quot;123.45&quot;)</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; _afterpoint(&quot;1001&quot;)</span>
+<span class="sd">    -1</span>
+<span class="sd">    &gt;&gt;&gt; _afterpoint(&quot;eggs&quot;)</span>
+<span class="sd">    -1</span>
+<span class="sd">    &gt;&gt;&gt; _afterpoint(&quot;123e45&quot;)</span>
+<span class="sd">    2</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_isnumber</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_isint</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">pos</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">-</span> <span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># no point</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># not a number</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_padleft</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flush right.</span>
+
+<span class="sd">    &gt;&gt;&gt; _padleft(6, &#39;\u044f\u0439\u0446\u0430&#39;) == &#39;  \u044f\u0439\u0446\u0430&#39;</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iwidth</span> <span class="o">=</span> <span class="n">width</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">_strip_invisible</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">if</span> <span class="n">has_invisible</span> <span class="k">else</span> <span class="n">width</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;{0:&gt;</span><span class="si">%d</span><span class="s2">s}&quot;</span> <span class="o">%</span> <span class="n">iwidth</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_padright</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flush left.</span>
+
+<span class="sd">    &gt;&gt;&gt; _padright(6, &#39;\u044f\u0439\u0446\u0430&#39;) == &#39;\u044f\u0439\u0446\u0430  &#39;</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iwidth</span> <span class="o">=</span> <span class="n">width</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">_strip_invisible</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">if</span> <span class="n">has_invisible</span> <span class="k">else</span> <span class="n">width</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;{0:&lt;</span><span class="si">%d</span><span class="s2">s}&quot;</span> <span class="o">%</span> <span class="n">iwidth</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_padboth</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Center string.</span>
+
+<span class="sd">    &gt;&gt;&gt; _padboth(6, &#39;\u044f\u0439\u0446\u0430&#39;) == &#39; \u044f\u0439\u0446\u0430 &#39;</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iwidth</span> <span class="o">=</span> <span class="n">width</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">_strip_invisible</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">if</span> <span class="n">has_invisible</span> <span class="k">else</span> <span class="n">width</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;{0:^</span><span class="si">%d</span><span class="s2">s}&quot;</span> <span class="o">%</span> <span class="n">iwidth</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_strip_invisible</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="s2">&quot;Remove invisible ANSI color codes.&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">_text_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_invisible_codes</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># a bytestring</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_invisible_codes_bytes</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_visible_width</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Visible width of a printed string. ANSI color codes are removed.</span>
+
+<span class="sd">    &gt;&gt;&gt; _visible_width(&#39;\x1b[31mhello\x1b[0m&#39;), _visible_width(&quot;world&quot;)</span>
+<span class="sd">    (5, 5)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">_text_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">_binary_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">_strip_invisible</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">_text_type</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_align_column</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">alignment</span><span class="p">,</span> <span class="n">minwidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;[string] -&gt; [padded_string]</span>
+
+<span class="sd">    &gt;&gt;&gt; list(map(str,_align_column([&quot;12.345&quot;, &quot;-1234.5&quot;, &quot;1.23&quot;, &quot;1234.5&quot;, &quot;1e+234&quot;, &quot;1.0e234&quot;], &quot;decimal&quot;)))</span>
+<span class="sd">    [&#39;   12.345  &#39;, &#39;-1234.5    &#39;, &#39;    1.23   &#39;, &#39; 1234.5    &#39;, &#39;    1e+234 &#39;, &#39;    1.0e234&#39;]</span>
+
+<span class="sd">    &gt;&gt;&gt; list(map(str,_align_column([&#39;123.4&#39;, &#39;56.7890&#39;], None)))</span>
+<span class="sd">    [&#39;123.4&#39;, &#39;56.7890&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">alignment</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">]</span>
+        <span class="n">padfn</span> <span class="o">=</span> <span class="n">_padleft</span>
+    <span class="k">elif</span> <span class="n">alignment</span> <span class="o">==</span> <span class="s2">&quot;center&quot;</span><span class="p">:</span>
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">]</span>
+        <span class="n">padfn</span> <span class="o">=</span> <span class="n">_padboth</span>
+    <span class="k">elif</span> <span class="n">alignment</span> <span class="o">==</span> <span class="s2">&quot;decimal&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">has_invisible</span><span class="p">:</span>
+            <span class="n">decimals</span> <span class="o">=</span> <span class="p">[</span><span class="n">_afterpoint</span><span class="p">(</span><span class="n">_strip_invisible</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decimals</span> <span class="o">=</span> <span class="p">[</span><span class="n">_afterpoint</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">]</span>
+        <span class="n">maxdecimals</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span>
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="n">maxdecimals</span> <span class="o">-</span> <span class="n">decs</span><span class="p">)</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
+                   <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">decs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">decimals</span><span class="p">)]</span>
+        <span class="n">padfn</span> <span class="o">=</span> <span class="n">_padleft</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">alignment</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">strings</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">]</span>
+        <span class="n">padfn</span> <span class="o">=</span> <span class="n">_padright</span>
+
+    <span class="k">if</span> <span class="n">has_invisible</span><span class="p">:</span>
+        <span class="n">width_fn</span> <span class="o">=</span> <span class="n">_visible_width</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">width_fn</span> <span class="o">=</span> <span class="nb">len</span>
+
+    <span class="n">maxwidth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">width_fn</span><span class="p">,</span> <span class="n">strings</span><span class="p">))),</span> <span class="n">minwidth</span><span class="p">)</span>
+    <span class="n">padded_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">padfn</span><span class="p">(</span><span class="n">maxwidth</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">has_invisible</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">padded_strings</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_more_generic</span><span class="p">(</span><span class="n">type1</span><span class="p">,</span> <span class="n">type2</span><span class="p">):</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_none_type</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="n">_binary_type</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="n">_text_type</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+    <span class="n">invtypes</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">4</span><span class="p">:</span> <span class="n">_text_type</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">_binary_type</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="n">_none_type</span> <span class="p">}</span>
+    <span class="n">moregeneric</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">invtypes</span><span class="p">[</span><span class="n">moregeneric</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_column_type</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The least generic type all column values are convertible to.</span>
+
+<span class="sd">    &gt;&gt;&gt; _column_type([&quot;1&quot;, &quot;2&quot;]) is _int_type</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _column_type([&quot;1&quot;, &quot;2.3&quot;]) is _float_type</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _column_type([&quot;1&quot;, &quot;2.3&quot;, &quot;four&quot;]) is _text_type</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _column_type([&quot;four&quot;, &#39;\u043f\u044f\u0442\u044c&#39;]) is _text_type</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _column_type([None, &quot;brux&quot;]) is _text_type</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; _column_type([1, 2, None]) is _int_type</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; import datetime as dt</span>
+<span class="sd">    &gt;&gt;&gt; _column_type([dt.datetime(1991,2,19), dt.time(17,35)]) is _text_type</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">has_invisible</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strings</span> <span class="p">]</span>
+    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">_more_generic</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_format</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">valtype</span><span class="p">,</span> <span class="n">floatfmt</span><span class="p">,</span> <span class="n">missingval</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">has_invisible</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a value accoding to its type.</span>
+
+<span class="sd">    Unicode is supported:</span>
+
+<span class="sd">    &gt;&gt;&gt; hrow = [&#39;\u0431\u0443\u043a\u0432\u0430&#39;, &#39;\u0446\u0438\u0444\u0440\u0430&#39;] ; \</span>
+<span class="sd">        tbl = [[&#39;\u0430\u0437&#39;, 2], [&#39;\u0431\u0443\u043a\u0438&#39;, 4]] ; \</span>
+<span class="sd">        good_result = &#39;\\u0431\\u0443\\u043a\\u0432\\u0430      \\u0446\\u0438\\u0444\\u0440\\u0430\\n-------  -------\\n\\u0430\\u0437             2\\n\\u0431\\u0443\\u043a\\u0438           4&#39; ; \</span>
+<span class="sd">        tabulate(tbl, headers=hrow) == good_result</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">missingval</span>
+
+    <span class="k">if</span> <span class="n">valtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_long_type</span><span class="p">,</span> <span class="n">_text_type</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">valtype</span> <span class="ow">is</span> <span class="n">_binary_type</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_text_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_text_type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">valtype</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">is_a_colored_number</span> <span class="o">=</span> <span class="n">has_invisible</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">_binary_type</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">is_a_colored_number</span><span class="p">:</span>
+            <span class="n">raw_val</span> <span class="o">=</span> <span class="n">_strip_invisible</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">formatted_val</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">raw_val</span><span class="p">),</span> <span class="n">floatfmt</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">raw_val</span><span class="p">,</span> <span class="n">formatted_val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">floatfmt</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_align_header</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">alignment</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">alignment</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_padright</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">alignment</span> <span class="o">==</span> <span class="s2">&quot;center&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_padboth</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">alignment</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_padleft</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_tabular_data</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform a supported data type to a list of lists, and a list of headers.</span>
+
+<span class="sd">    Supported tabular data types:</span>
+
+<span class="sd">    * list-of-lists or another iterable of iterables</span>
+
+<span class="sd">    * list of named tuples (usually used with headers=&quot;keys&quot;)</span>
+
+<span class="sd">    * list of dicts (usually used with headers=&quot;keys&quot;)</span>
+
+<span class="sd">    * list of OrderedDicts (usually used with headers=&quot;keys&quot;)</span>
+
+<span class="sd">    * 2D NumPy arrays</span>
+
+<span class="sd">    * NumPy record arrays (usually used with headers=&quot;keys&quot;)</span>
+
+<span class="sd">    * dict of iterables (usually used with headers=&quot;keys&quot;)</span>
+
+<span class="sd">    * pandas.DataFrame (usually used with headers=&quot;keys&quot;)</span>
+
+<span class="sd">    The first row can be used as headers if headers=&quot;firstrow&quot;,</span>
+<span class="sd">    column indices can be used as headers if headers=&quot;keys&quot;.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="s2">&quot;keys&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
+        <span class="c1"># dict-like and pandas.DataFrame?</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tabular_data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;__call__&quot;</span><span class="p">):</span>
+            <span class="c1"># likely a conventional dict</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tabular_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">zip_longest</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">tabular_data</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>  <span class="c1"># columns have to be transposed</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">):</span>
+            <span class="c1"># values is a property, has .index =&gt; it&#39;s likely a pandas.DataFrame (pandas 0.11.0)</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tabular_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">tabular_data</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># values matrix doesn&#39;t need to be transposed</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="n">tabular_data</span><span class="o">.</span><span class="n">index</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="p">[[</span><span class="n">v</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">vals</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tabular data doesn&#39;t appear to be a dict or a DataFrame&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;keys&quot;</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span><span class="n">keys</span><span class="p">))</span>  <span class="c1"># headers should be strings</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># it&#39;s a usual an iterable of iterables, or a NumPy array</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;keys&quot;</span> <span class="ow">and</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="s2">&quot;dtype&quot;</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">tabular_data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">&quot;names&quot;</span><span class="p">)):</span>
+            <span class="c1"># numpy record array</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="n">tabular_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;keys&quot;</span>
+              <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+              <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span>
+              <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;_fields&quot;</span><span class="p">)):</span>
+            <span class="c1"># namedtuple</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_fields</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+              <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)):</span>
+            <span class="c1"># dict or OrderedDict</span>
+            <span class="n">uniq_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># implements hashed lookup</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># storage for set</span>
+            <span class="k">if</span> <span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;firstrow&quot;</span><span class="p">:</span>
+                <span class="n">firstdict</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">{}</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">firstdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="n">uniq_keys</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+                <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="c1">#Save unique items in input order</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uniq_keys</span><span class="p">:</span>
+                        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                        <span class="n">uniq_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">headers</span> <span class="o">==</span> <span class="s1">&#39;keys&#39;</span><span class="p">:</span>
+                <span class="n">headers</span> <span class="o">=</span> <span class="n">keys</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># a dict of headers for a list of dicts</span>
+                <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+                <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">headers</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;firstrow&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">firstdict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+                    <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">headers</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">headers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">elif</span> <span class="n">headers</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;headers for a list of dicts is not a dict or a keyword&#39;</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="p">[[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;keys&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># keys are column indices</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">])))))</span>
+
+    <span class="c1"># take headers from the first row if necessary</span>
+    <span class="k">if</span> <span class="n">headers</span> <span class="o">==</span> <span class="s2">&quot;firstrow&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="c1"># headers should be strings</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span><span class="n">headers</span><span class="p">))</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">rows</span><span class="p">))</span>
+
+    <span class="c1"># pad with empty headers for initial columns if necessary</span>
+    <span class="k">if</span> <span class="n">headers</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+       <span class="n">nhs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+       <span class="n">ncols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+       <span class="k">if</span> <span class="n">nhs</span> <span class="o">&lt;</span> <span class="n">ncols</span><span class="p">:</span>
+           <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">ncols</span> <span class="o">-</span> <span class="n">nhs</span><span class="p">)</span> <span class="o">+</span> <span class="n">headers</span>
+
+    <span class="k">return</span> <span class="n">rows</span><span class="p">,</span> <span class="n">headers</span>
+
+
+<div class="viewcode-block" id="tabulate">
+<a class="viewcode-back" href="../Documentation/utilities/tabulate.html#tabulate.tabulate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tabulate</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">(),</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span>
+             <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;decimal&quot;</span><span class="p">,</span> <span class="n">stralign</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+             <span class="n">missingval</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a fixed width table for pretty printing.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[1, 2.34], [-56, &quot;8.999&quot;], [&quot;2&quot;, &quot;10001&quot;]]))</span>
+<span class="sd">    ---  ---------</span>
+<span class="sd">      1      2.34</span>
+<span class="sd">    -56      8.999</span>
+<span class="sd">      2  10001</span>
+<span class="sd">    ---  ---------</span>
+
+<span class="sd">    The first required argument (`tabular_data`) can be a</span>
+<span class="sd">    list-of-lists (or another iterable of iterables), a list of named</span>
+<span class="sd">    tuples, a dictionary of iterables, an iterable of dictionaries,</span>
+<span class="sd">    a two-dimensional NumPy array, NumPy record array, or a Pandas&#39;</span>
+<span class="sd">    dataframe.</span>
+
+
+<span class="sd">    **Table headers**</span>
+
+<span class="sd">    To print nice column headers, supply the second argument (`headers`):</span>
+
+<span class="sd">      - `headers` can be an explicit list of column headers</span>
+<span class="sd">      - if `headers=&quot;firstrow&quot;`, then the first row of data is used</span>
+<span class="sd">      - if `headers=&quot;keys&quot;`, then dictionary keys or column indices are used</span>
+
+<span class="sd">    Otherwise a headerless table is produced.</span>
+
+<span class="sd">    If the number of headers is less than the number of columns, they</span>
+<span class="sd">    are supposed to be names of the last columns. This is consistent</span>
+<span class="sd">    with the plain-text format of R and Pandas&#39; dataframes.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;sex&quot;,&quot;age&quot;],[&quot;Alice&quot;,&quot;F&quot;,24],[&quot;Bob&quot;,&quot;M&quot;,19]],</span>
+<span class="sd">    ...       headers=&quot;firstrow&quot;))</span>
+<span class="sd">           sex      age</span>
+<span class="sd">    -----  -----  -----</span>
+<span class="sd">    Alice  F         24</span>
+<span class="sd">    Bob    M         19</span>
+
+
+<span class="sd">    **Column alignment**</span>
+
+<span class="sd">    `tabulate` tries to detect column types automatically, and aligns</span>
+<span class="sd">    the values properly. By default it aligns decimal points of the</span>
+<span class="sd">    numbers (or flushes integer numbers to the right), and flushes</span>
+<span class="sd">    everything else to the left. Possible column alignments</span>
+<span class="sd">    (`numalign`, `stralign`) are: &quot;right&quot;, &quot;center&quot;, &quot;left&quot;, &quot;decimal&quot;</span>
+<span class="sd">    (only for `numalign`), and None (to disable alignment).</span>
+
+
+<span class="sd">    **Table formats**</span>
+
+<span class="sd">    `floatfmt` is a format specification used for columns which</span>
+<span class="sd">    contain numeric data with a decimal point.</span>
+
+<span class="sd">    `None` values are replaced with a `missingval` string:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 1, None],</span>
+<span class="sd">    ...                 [&quot;eggs&quot;, 42, 3.14],</span>
+<span class="sd">    ...                 [&quot;other&quot;, None, 2.7]], missingval=&quot;?&quot;))</span>
+<span class="sd">    -----  --  ----</span>
+<span class="sd">    spam    1  ?</span>
+<span class="sd">    eggs   42  3.14</span>
+<span class="sd">    other   ?  2.7</span>
+<span class="sd">    -----  --  ----</span>
+
+<span class="sd">    Various plain-text table formats (`tablefmt`) are supported:</span>
+<span class="sd">    &#39;plain&#39;, &#39;simple&#39;, &#39;grid&#39;, &#39;pipe&#39;, &#39;orgtbl&#39;, &#39;rst&#39;, &#39;mediawiki&#39;,</span>
+<span class="sd">    &#39;latex&#39;, and &#39;latex_booktabs&#39;. Variable `tabulate_formats` contains the list of</span>
+<span class="sd">    currently supported formats.</span>
+
+<span class="sd">    &quot;plain&quot; format doesn&#39;t use any pseudographics to draw tables,</span>
+<span class="sd">    it separates columns with a double space:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                 [&quot;strings&quot;, &quot;numbers&quot;], &quot;plain&quot;))</span>
+<span class="sd">    strings      numbers</span>
+<span class="sd">    spam         41.9999</span>
+<span class="sd">    eggs        451</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;plain&quot;))</span>
+<span class="sd">    spam   41.9999</span>
+<span class="sd">    eggs  451</span>
+
+<span class="sd">    &quot;simple&quot; format is like Pandoc simple_tables:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                 [&quot;strings&quot;, &quot;numbers&quot;], &quot;simple&quot;))</span>
+<span class="sd">    strings      numbers</span>
+<span class="sd">    ---------  ---------</span>
+<span class="sd">    spam         41.9999</span>
+<span class="sd">    eggs        451</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;simple&quot;))</span>
+<span class="sd">    ----  --------</span>
+<span class="sd">    spam   41.9999</span>
+<span class="sd">    eggs  451</span>
+<span class="sd">    ----  --------</span>
+
+<span class="sd">    &quot;grid&quot; is similar to tables produced by Emacs table.el package or</span>
+<span class="sd">    Pandoc grid_tables:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                [&quot;strings&quot;, &quot;numbers&quot;], &quot;grid&quot;))</span>
+<span class="sd">    +-----------+-----------+</span>
+<span class="sd">    | strings   |   numbers |</span>
+<span class="sd">    +===========+===========+</span>
+<span class="sd">    | spam      |   41.9999 |</span>
+<span class="sd">    +-----------+-----------+</span>
+<span class="sd">    | eggs      |  451      |</span>
+<span class="sd">    +-----------+-----------+</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;grid&quot;))</span>
+<span class="sd">    +------+----------+</span>
+<span class="sd">    | spam |  41.9999 |</span>
+<span class="sd">    +------+----------+</span>
+<span class="sd">    | eggs | 451      |</span>
+<span class="sd">    +------+----------+</span>
+
+<span class="sd">    &quot;fancy_grid&quot; draws a grid using box-drawing characters:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                [&quot;strings&quot;, &quot;numbers&quot;], &quot;fancy_grid&quot;))</span>
+<span class="sd">    ╒═══════════╤═══════════╕</span>
+<span class="sd">    │ strings   │   numbers │</span>
+<span class="sd">    ╞═══════════╪═══════════╡</span>
+<span class="sd">    │ spam      │   41.9999 │</span>
+<span class="sd">    ├───────────┼───────────┤</span>
+<span class="sd">    │ eggs      │  451      │</span>
+<span class="sd">    ╘═══════════╧═══════════╛</span>
+
+<span class="sd">    &quot;pipe&quot; is like tables in PHP Markdown Extra extension or Pandoc</span>
+<span class="sd">    pipe_tables:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                [&quot;strings&quot;, &quot;numbers&quot;], &quot;pipe&quot;))</span>
+<span class="sd">    | strings   |   numbers |</span>
+<span class="sd">    |:----------|----------:|</span>
+<span class="sd">    | spam      |   41.9999 |</span>
+<span class="sd">    | eggs      |  451      |</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;pipe&quot;))</span>
+<span class="sd">    |:-----|---------:|</span>
+<span class="sd">    | spam |  41.9999 |</span>
+<span class="sd">    | eggs | 451      |</span>
+
+<span class="sd">    &quot;orgtbl&quot; is like tables in Emacs org-mode and orgtbl-mode. They</span>
+<span class="sd">    are slightly different from &quot;pipe&quot; format by not using colons to</span>
+<span class="sd">    define column alignment, and using a &quot;+&quot; sign to indicate line</span>
+<span class="sd">    intersections:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                [&quot;strings&quot;, &quot;numbers&quot;], &quot;orgtbl&quot;))</span>
+<span class="sd">    | strings   |   numbers |</span>
+<span class="sd">    |-----------+-----------|</span>
+<span class="sd">    | spam      |   41.9999 |</span>
+<span class="sd">    | eggs      |  451      |</span>
+
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;orgtbl&quot;))</span>
+<span class="sd">    | spam |  41.9999 |</span>
+<span class="sd">    | eggs | 451      |</span>
+
+<span class="sd">    &quot;rst&quot; is like a simple table format from reStructuredText; please</span>
+<span class="sd">    note that reStructuredText accepts also &quot;grid&quot; tables:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                [&quot;strings&quot;, &quot;numbers&quot;], &quot;rst&quot;))</span>
+<span class="sd">    =========  =========</span>
+<span class="sd">    strings      numbers</span>
+<span class="sd">    =========  =========</span>
+<span class="sd">    spam         41.9999</span>
+<span class="sd">    eggs        451</span>
+<span class="sd">    =========  =========</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;rst&quot;))</span>
+<span class="sd">    ====  ========</span>
+<span class="sd">    spam   41.9999</span>
+<span class="sd">    eggs  451</span>
+<span class="sd">    ====  ========</span>
+
+<span class="sd">    &quot;mediawiki&quot; produces a table markup used in Wikipedia and on other</span>
+<span class="sd">    MediaWiki-based sites:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;strings&quot;, &quot;numbers&quot;], [&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                headers=&quot;firstrow&quot;, tablefmt=&quot;mediawiki&quot;))</span>
+<span class="sd">    {| class=&quot;wikitable&quot; style=&quot;text-align: left;&quot;</span>
+<span class="sd">    |+ &lt;!-- caption --&gt;</span>
+<span class="sd">    |-</span>
+<span class="sd">    ! strings   !! align=&quot;right&quot;|   numbers</span>
+<span class="sd">    |-</span>
+<span class="sd">    | spam      || align=&quot;right&quot;|   41.9999</span>
+<span class="sd">    |-</span>
+<span class="sd">    | eggs      || align=&quot;right&quot;|  451</span>
+<span class="sd">    |}</span>
+
+<span class="sd">    &quot;html&quot; produces HTML markup:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;strings&quot;, &quot;numbers&quot;], [&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]],</span>
+<span class="sd">    ...                headers=&quot;firstrow&quot;, tablefmt=&quot;html&quot;))</span>
+<span class="sd">    &lt;table&gt;</span>
+<span class="sd">    &lt;tr&gt;&lt;th&gt;strings  &lt;/th&gt;&lt;th style=&quot;text-align: right;&quot;&gt;  numbers&lt;/th&gt;&lt;/tr&gt;</span>
+<span class="sd">    &lt;tr&gt;&lt;td&gt;spam     &lt;/td&gt;&lt;td style=&quot;text-align: right;&quot;&gt;  41.9999&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="sd">    &lt;tr&gt;&lt;td&gt;eggs     &lt;/td&gt;&lt;td style=&quot;text-align: right;&quot;&gt; 451     &lt;/td&gt;&lt;/tr&gt;</span>
+<span class="sd">    &lt;/table&gt;</span>
+
+<span class="sd">    &quot;latex&quot; produces a tabular environment of LaTeX document markup:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;latex&quot;))</span>
+<span class="sd">    \\begin{tabular}{lr}</span>
+<span class="sd">    \\hline</span>
+<span class="sd">     spam &amp;  41.9999 \\\\</span>
+<span class="sd">     eggs &amp; 451      \\\\</span>
+<span class="sd">    \\hline</span>
+<span class="sd">    \\end{tabular}</span>
+
+<span class="sd">    &quot;latex_booktabs&quot; produces a tabular environment of LaTeX document markup</span>
+<span class="sd">    using the booktabs.sty package:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(tabulate([[&quot;spam&quot;, 41.9999], [&quot;eggs&quot;, &quot;451.0&quot;]], tablefmt=&quot;latex_booktabs&quot;))</span>
+<span class="sd">    \\begin{tabular}{lr}</span>
+<span class="sd">    \\toprule</span>
+<span class="sd">     spam &amp;  41.9999 \\\\</span>
+<span class="sd">     eggs &amp; 451      \\\\</span>
+<span class="sd">    \\bottomrule</span>
+<span class="sd">    \\end{tabular}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tabular_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tabular_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">list_of_lists</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">_normalize_tabular_data</span><span class="p">(</span><span class="n">tabular_data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+    <span class="c1"># optimization: look for ANSI control codes once,</span>
+    <span class="c1"># enable smart width functions only if a control code is found</span>
+    <span class="n">plain_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">headers</span><span class="p">))]</span> <span class="o">+</span> \
+                            <span class="p">[</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_text_type</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">list_of_lists</span><span class="p">])</span>
+    <span class="n">has_invisible</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_invisible_codes</span><span class="p">,</span> <span class="n">plain_text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_invisible</span><span class="p">:</span>
+        <span class="n">width_fn</span> <span class="o">=</span> <span class="n">_visible_width</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">width_fn</span> <span class="o">=</span> <span class="nb">len</span>
+
+    <span class="c1"># format rows and columns, convert numeric values to strings</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">list_of_lists</span><span class="p">))</span>
+    <span class="n">coltypes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_column_type</span><span class="p">,</span> <span class="n">cols</span><span class="p">))</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[[</span><span class="n">_format</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ct</span><span class="p">,</span> <span class="n">floatfmt</span><span class="p">,</span> <span class="n">missingval</span><span class="p">,</span> <span class="n">has_invisible</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="p">]</span>
+             <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">ct</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">coltypes</span><span class="p">)]</span>
+
+    <span class="c1"># align columns</span>
+    <span class="n">aligns</span> <span class="o">=</span> <span class="p">[</span><span class="n">numalign</span> <span class="k">if</span> <span class="n">ct</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">]</span> <span class="k">else</span> <span class="n">stralign</span> <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">coltypes</span><span class="p">]</span>
+    <span class="n">minwidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">width_fn</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">+</span> <span class="n">MIN_PADDING</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">]</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">_align_column</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">minw</span><span class="p">,</span> <span class="n">has_invisible</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">minw</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">aligns</span><span class="p">,</span> <span class="n">minwidths</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">headers</span><span class="p">:</span>
+        <span class="c1"># align headers and add headers</span>
+        <span class="n">t_cols</span> <span class="o">=</span> <span class="n">cols</span> <span class="ow">or</span> <span class="p">[[</span><span class="s1">&#39;&#39;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">t_aligns</span> <span class="o">=</span> <span class="n">aligns</span> <span class="ow">or</span> <span class="p">[</span><span class="n">stralign</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">minwidths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">minw</span><span class="p">,</span> <span class="n">width_fn</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">minw</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">minwidths</span><span class="p">,</span> <span class="n">t_cols</span><span class="p">)]</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">_align_header</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">minw</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">minw</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">t_aligns</span><span class="p">,</span> <span class="n">minwidths</span><span class="p">)]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">cols</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">minwidths</span> <span class="o">=</span> <span class="p">[</span><span class="n">width_fn</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">cols</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tablefmt</span><span class="p">,</span> <span class="n">TableFormat</span><span class="p">):</span>
+        <span class="n">tablefmt</span> <span class="o">=</span> <span class="n">_table_formats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tablefmt</span><span class="p">,</span> <span class="n">_table_formats</span><span class="p">[</span><span class="s2">&quot;simple&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">_format_table</span><span class="p">(</span><span class="n">tablefmt</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">minwidths</span><span class="p">,</span> <span class="n">aligns</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_simple_row</span><span class="p">(</span><span class="n">padded_cells</span><span class="p">,</span> <span class="n">rowfmt</span><span class="p">):</span>
+    <span class="s2">&quot;Format row according to DataRow format without padding.&quot;</span>
+    <span class="n">begin</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">rowfmt</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">begin</span> <span class="o">+</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">padded_cells</span><span class="p">)</span> <span class="o">+</span> <span class="n">end</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_row</span><span class="p">(</span><span class="n">padded_cells</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">rowfmt</span><span class="p">):</span>
+    <span class="s2">&quot;Return a string which represents a row of data cells.&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rowfmt</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rowfmt</span><span class="p">,</span> <span class="s2">&quot;__call__&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rowfmt</span><span class="p">(</span><span class="n">padded_cells</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_build_simple_row</span><span class="p">(</span><span class="n">padded_cells</span><span class="p">,</span> <span class="n">rowfmt</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_line</span><span class="p">(</span><span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">linefmt</span><span class="p">):</span>
+    <span class="s2">&quot;Return a string which represents a horizontal line.&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">linefmt</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">linefmt</span><span class="p">,</span> <span class="s2">&quot;__call__&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">linefmt</span><span class="p">(</span><span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">begin</span><span class="p">,</span> <span class="n">fill</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span>  <span class="n">end</span> <span class="o">=</span> <span class="n">linefmt</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">fill</span><span class="o">*</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">colwidths</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">_build_simple_row</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pad_row</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">padding</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cells</span><span class="p">:</span>
+        <span class="n">pad</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">*</span><span class="n">padding</span>
+        <span class="n">padded_cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">pad</span> <span class="o">+</span> <span class="n">cell</span> <span class="o">+</span> <span class="n">pad</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">padded_cells</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cells</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_table</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">colwidths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce a plain-text representation of the table.&quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">with_header_hide</span> <span class="k">if</span> <span class="p">(</span><span class="n">headers</span> <span class="ow">and</span> <span class="n">fmt</span><span class="o">.</span><span class="n">with_header_hide</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">pad</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">padding</span>
+    <span class="n">headerrow</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">headerrow</span>
+
+    <span class="n">padded_widths</span> <span class="o">=</span> <span class="p">[(</span><span class="n">w</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">pad</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">colwidths</span><span class="p">]</span>
+    <span class="n">padded_headers</span> <span class="o">=</span> <span class="n">_pad_row</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">pad</span><span class="p">)</span>
+    <span class="n">padded_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">_pad_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">pad</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">fmt</span><span class="o">.</span><span class="n">lineabove</span> <span class="ow">and</span> <span class="s2">&quot;lineabove&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_line</span><span class="p">(</span><span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">lineabove</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">padded_headers</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_row</span><span class="p">(</span><span class="n">padded_headers</span><span class="p">,</span> <span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">headerrow</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">fmt</span><span class="o">.</span><span class="n">linebelowheader</span> <span class="ow">and</span> <span class="s2">&quot;linebelowheader&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_line</span><span class="p">(</span><span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">linebelowheader</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">padded_rows</span> <span class="ow">and</span> <span class="n">fmt</span><span class="o">.</span><span class="n">linebetweenrows</span> <span class="ow">and</span> <span class="s2">&quot;linebetweenrows&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+        <span class="c1"># initial rows with a line below</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">padded_rows</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">datarow</span><span class="p">))</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_line</span><span class="p">(</span><span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">linebetweenrows</span><span class="p">))</span>
+        <span class="c1"># the last row without a line below</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_row</span><span class="p">(</span><span class="n">padded_rows</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">datarow</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">padded_rows</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">datarow</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">fmt</span><span class="o">.</span><span class="n">linebelow</span> <span class="ow">and</span> <span class="s2">&quot;linebelow&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_build_line</span><span class="p">(</span><span class="n">padded_widths</span><span class="p">,</span> <span class="n">colaligns</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">linebelow</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;\</span>
+<span class="sd">    Usage: tabulate [options] [FILE ...]</span>
+
+<span class="sd">    Pretty-print tabular data.</span>
+<span class="sd">    See also https://bitbucket.org/astanin/python-tabulate</span>
+
+<span class="sd">    FILE                      a filename of the file with tabular data;</span>
+<span class="sd">                              if &quot;-&quot; or missing, read data from stdin.</span>
+
+<span class="sd">    Options:</span>
+
+<span class="sd">    -h, --help                show this message</span>
+<span class="sd">    -1, --header              use the first row of data as a table header</span>
+<span class="sd">    -o FILE, --output FILE    print table to FILE (default: stdout)</span>
+<span class="sd">    -s REGEXP, --sep REGEXP   use a custom column separator (default: whitespace)</span>
+<span class="sd">    -F FPFMT, --float FPFMT   floating point number format (default: g)</span>
+<span class="sd">    -f FMT, --format FMT      set output table format; supported formats:</span>
+<span class="sd">                              plain, simple, grid, fancy_grid, pipe, orgtbl,</span>
+<span class="sd">                              rst, mediawiki, html, latex, latex_booktabs, tsv</span>
+<span class="sd">                              (default: simple)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">getopt</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">_main</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                     <span class="s2">&quot;h1o:s:F:f:&quot;</span><span class="p">,</span>
+                     <span class="p">[</span><span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;sep=&quot;</span><span class="p">,</span> <span class="s2">&quot;float=&quot;</span><span class="p">,</span> <span class="s2">&quot;format=&quot;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="n">getopt</span><span class="o">.</span><span class="n">GetoptError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">floatfmt</span> <span class="o">=</span> <span class="s2">&quot;g&quot;</span>
+    <span class="n">tablefmt</span> <span class="o">=</span> <span class="s2">&quot;simple&quot;</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\s+&quot;</span>
+    <span class="n">outfile</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-1&quot;</span><span class="p">,</span> <span class="s2">&quot;--header&quot;</span><span class="p">]:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="s2">&quot;firstrow&quot;</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--output&quot;</span><span class="p">]:</span>
+            <span class="n">outfile</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-F&quot;</span><span class="p">,</span> <span class="s2">&quot;--float&quot;</span><span class="p">]:</span>
+            <span class="n">floatfmt</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tabulate_formats</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a supported table format&quot;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">tablefmt</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--sep&quot;</span><span class="p">]:</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="k">else</span> <span class="n">args</span>
+    <span class="k">with</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="k">if</span> <span class="n">outfile</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span>
+            <span class="k">if</span> <span class="n">_is_file</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">_pprint_file</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="n">tablefmt</span><span class="p">,</span>
+                             <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">as</span> <span class="n">fobj</span><span class="p">:</span>
+                    <span class="n">_pprint_file</span><span class="p">(</span><span class="n">fobj</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="n">tablefmt</span><span class="p">,</span>
+                                 <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pprint_file</span><span class="p">(</span><span class="n">fobject</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">floatfmt</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">fobject</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">_main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

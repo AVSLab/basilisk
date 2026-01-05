@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coding Guidelines &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Accessing the Debugger for C/C++ Basilisk Modules" href="Debugging.html" />
+    <link rel="prev" title="Developer Information" href="../Developer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Coding Guidelines</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-about-non-conforming-code">What about non-conforming code?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#naming">Naming</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#general-guidelines">General Guidelines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modules">Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#c-c-exceptions">C/C++ Exceptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-exceptions">Python Exceptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-unit-and-integrated-tests">Running Unit and Integrated Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#formatting-code-files-using-pre-commit-and-clang-format">Formatting Code Files using <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and <code class="docutils literal notranslate"><span class="pre">clang-format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">Coding Guidelines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/CodingGuidlines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="coding-guidelines">
+<span id="codingguidelines"></span><h1>Coding Guidelines<a class="headerlink" href="#coding-guidelines" title="Link to this heading"></a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h2>
+<p>Coding style is important. A clean, consistent style leads to code that
+is more readable, debuggable, and maintainable. To this end, we
+prescribe (and proscribe) a variety of practices. Our goal is to
+encourage agile but reasoned development of code that can be easily
+understood by others.</p>
+<p><strong>C/C++ foundational guidelines</strong>: this document uses as its foundation
+the coding guidelines developed by Stroustrup and Sutter.</p>
+<p><strong>Python foundational guidelines</strong>: the <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP
+8</a> guidelines are to be
+followed for python code development.</p>
+<p>The both of these foundational sets of guidelines are extensive and
+where the Basilisk document is silent these guidelines will prevail.</p>
+<p>These are guidelines, not rules. With very few exceptions, this document
+does not completely ban any particular C/C++ or Python pattern or
+feature, but rather describes best practice, to be used in the large
+majority of cases. When deviating from the guidelines given here, just
+be sure to consider your options carefully, and to document your
+reasoning, in the code.</p>
+<p>Above all else, be consistent. Follow this guide whenever possible, but
+if you are editing a package written by someone else, follow the
+existing stylistic conventions in that package (unless you are
+retrofitting the whole package to follow this guide, for which you
+deserve an award).</p>
+<p><strong>Contribution Guidelines</strong>: see the file <a class="reference external" href="https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md">CONTRIBUTING.md</a>
+for additional information on making code to contribute back to
+the Basilisk repository.</p>
+</section>
+<section id="what-about-non-conforming-code">
+<h2>What about non-conforming code?<a class="headerlink" href="#what-about-non-conforming-code" title="Link to this heading"></a></h2>
+<p>Some Basilisk code was written prior to the release (and updates) of
+this style guide. Thus, the codebase may contain code that doesn’t
+conform to this guide. The following advice is intended for the
+developer working with non-conforming code:</p>
+<ol class="arabic simple">
+<li><p>All new code should conform to this guide.</p></li>
+<li><p>Unless you have copious free time, don’t undertake converting the
+existing codebase to conform to this guide.</p></li>
+<li><p>If you are the author of a non-conforming package, try to find time
+to update the code to conform.</p></li>
+<li><p>If you are doing minor edits to non-conforming code, follow the
+existing stylistic conventions in that code (if any). Don’t mix
+styles.</p></li>
+<li><p>If you are doing major work on non-conforming code, take the
+opportunity to re-style it to conform to this guide.</p></li>
+</ol>
+</section>
+<section id="naming">
+<h2>Naming<a class="headerlink" href="#naming" title="Link to this heading"></a></h2>
+<p>The following shortcuts are used in this document to denote naming
+schemes:</p>
+<ul class="simple">
+<li><p>CamelCased: The name starts with a capital letter, and has a capital
+letter for each new word, with no underscores.</p></li>
+<li><p>camelCased: Like CamelCase, but with a lower-case first letter</p></li>
+<li><p>under_scored: The name uses only lower-case letters, with words
+separated by underscores.</p></li>
+<li><p>ALL_CAPITALS: All capital letters, with words separated by
+underscores.</p></li>
+</ul>
+</section>
+<section id="general-guidelines">
+<h2>General Guidelines<a class="headerlink" href="#general-guidelines" title="Link to this heading"></a></h2>
+<section id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Link to this heading"></a></h3>
+<p>No single letter variables. The only exceptions are ‘i’ as an iteration
+index and a select list of mathematical symbols.</p>
+</section>
+<section id="naming-variable-for-mathematics">
+<h3>Naming Variable for Mathematics<a class="headerlink" href="#naming-variable-for-mathematics" title="Link to this heading"></a></h3>
+<p>The following section specifies general guidelines for the naming of
+variable to be used in code which implements mathematical operations.
+The naming convention is heavily influenced by the textbook <a class="reference external" href="https://arc.aiaa.org/doi/book/10.2514/4.105210">Analytical
+Mechanics of Space
+Systems</a> by Schaub and
+Junkins.</p>
+</section>
+<section id="indicating-reference-frames">
+<h3>Indicating Reference Frames<a class="headerlink" href="#indicating-reference-frames" title="Link to this heading"></a></h3>
+<p>A vector variable expressed with components in a reference frame <span class="math notranslate nohighlight">\(\cal B\)</span>, is represented with the variable name followed by
+an underscore and a capital letter denoting the frame <span class="math notranslate nohighlight">\({}^{\cal B}\bf v\)</span> as <code class="docutils literal notranslate"><span class="pre">vector_B</span></code>.</p>
+<p>An angular rate variable expressed in one frame <span class="math notranslate nohighlight">\(\cal B\)</span>
+with respect to a second  <span class="math notranslate nohighlight">\(\cal R\)</span>, where components are
+expressed in the frame  <span class="math notranslate nohighlight">\(\cal B\)</span>, <span class="math notranslate nohighlight">\({}^{\cal B}\pmb\omega_{\mathcal{B}/\mathcal{R}}\)</span>, is given
+as  <code class="docutils literal notranslate"><span class="pre">omega_BR_B</span></code>.</p>
+</section>
+<section id="mrps-and-dcms">
+<h3>MRP’s and DCM’s<a class="headerlink" href="#mrps-and-dcms" title="Link to this heading"></a></h3>
+<p>A direction cosine matrix is expressed as  <span class="math notranslate nohighlight">\([BN]\)</span>, a mapping
+of an  <span class="math notranslate nohighlight">\(\cal N\)</span> frame vector into a  <span class="math notranslate nohighlight">\(\cal B\)</span>
+frame vector, is written <code class="docutils literal notranslate"><span class="pre">dcm_BN</span></code>. Similarly for the Modified
+Rodrigues Parameters (MRP) attitude parameterization the <span class="math notranslate nohighlight">\(\pmb\sigma_{\mathcal{B}/\mathcal{N}}\)</span> is written <code class="docutils literal notranslate"><span class="pre">sigma_BN</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you are using the <a class="reference external" href="http://eigen.tuxfamily.org">Intel Eigen library</a> library to do linear algebra, the
+mapping from an attitude description such as quaternions or MRPs to a direction cosine matrix (DCM)
+using <code class="docutils literal notranslate"><span class="pre">.toRotationMatrix()</span></code> will return <span class="math notranslate nohighlight">\([NB]\)</span>, not <span class="math notranslate nohighlight">\([BN]\)</span>.</p>
+</div>
+</section>
+<section id="inertia-tensor">
+<h3>Inertia Tensor<a class="headerlink" href="#inertia-tensor" title="Link to this heading"></a></h3>
+<p>The Inertia tensor <span class="math notranslate nohighlight">\([I_C]\)</span> of the hub about the point  <span class="math notranslate nohighlight">\(C\)</span> is defined in the body frame <span class="math notranslate nohighlight">\(\cal B\)</span> components using the variable <code class="docutils literal notranslate"><span class="pre">IHubPntC_B</span></code>.</p>
+</section>
+<section id="derivatives">
+<h3>Derivatives<a class="headerlink" href="#derivatives" title="Link to this heading"></a></h3>
+<p>The first and second time derivatives of scalar (<span class="math notranslate nohighlight">\(\dot{x}\)</span>, <span class="math notranslate nohighlight">\(\ddot{x}\)</span>) or vector (<span class="math notranslate nohighlight">\(\dot{\bf{x}}\)</span>, <span class="math notranslate nohighlight">\(\ddot{\bf{x}}\)</span>) quantities, respectively are written as <code class="docutils literal notranslate"><span class="pre">xDot</span></code> and <code class="docutils literal notranslate"><span class="pre">xDDot</span></code>.</p>
+<p>The first and second time derivatives with respect to a variable other than time should use the same pattern as time derivatives but with a different modifier. For example,  <span class="math notranslate nohighlight">\(f '(x)\)</span> and <span class="math notranslate nohighlight">\(f ''(x)\)</span> are written as <code class="docutils literal notranslate"><span class="pre">xPrime</span></code> and <code class="docutils literal notranslate"><span class="pre">xDPrime</span></code> respectively.</p>
+</section>
+<section id="common-usage-examples">
+<h3>Common Usage Examples<a class="headerlink" href="#common-usage-examples" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Position vector from <span class="math notranslate nohighlight">\(\cal N\)</span> to <span class="math notranslate nohighlight">\(\cal B\)</span>
+in inertial frame components
+<span class="math notranslate nohighlight">\({}^{\cal N} \bf r_{\mathcal{B/N}}\)</span>: <code class="docutils literal notranslate"><span class="pre">r_BN_N</span></code></p></li>
+<li><p>Inertial time derivative of position vector from
+<span class="math notranslate nohighlight">\(\cal N\)</span> to <span class="math notranslate nohighlight">\(\cal B\)</span> in inertial frame
+components <span class="math notranslate nohighlight">\({}^{\cal N} \dot{\bf r}_{\cal B/N}\)</span>:
+<code class="docutils literal notranslate"><span class="pre">rDot_BN_N</span></code></p></li>
+<li><p>Time derivative with respect to the body of position vector from <span class="math notranslate nohighlight">\(B\)</span> to <span class="math notranslate nohighlight">\(H\)</span> in body frame components <span class="math notranslate nohighlight">\({}^{\cal B} \bf r'_{H/B}\)</span>: <code class="docutils literal notranslate"><span class="pre">rPrime_HB_B</span></code></p></li>
+<li><p>Unit direction vector from <span class="math notranslate nohighlight">\(B\)</span> to <span class="math notranslate nohighlight">\(S\)</span> in
+body frame components <span class="math notranslate nohighlight">\({}^{\cal B} \hat{\bf s}_{S/B}\)</span>:
+<code class="docutils literal notranslate"><span class="pre">sHat_SB_B</span></code></p></li>
+<li><p>Inertial time derivative of body angular rate with respect to the
+inertial frame in body frame components
+<span class="math notranslate nohighlight">\({}^{\cal B} \dot{\pmb\omega}_{\mathcal{B}/\mathcal{N}}\)</span>:
+<code class="docutils literal notranslate"><span class="pre">omegaDot_BN_B</span></code></p></li>
+<li><p>DCM of the body frame with respect to the inertial frame
+<span class="math notranslate nohighlight">\([BN]\)</span>: <code class="docutils literal notranslate"><span class="pre">dcm_BN</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Link to this heading"></a></h2>
+<section id="messages">
+<h3>Messages<a class="headerlink" href="#messages" title="Link to this heading"></a></h3>
+<p>Variables holding message names are to be composed in the following
+manner.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SomeMsg_C</span><span class="w"> </span><span class="n">descriptionInMsg</span><span class="p">;</span><span class="w">                      </span><span class="c1">// C interface to input msg</span>
+<span class="n">SomeMsg_C</span><span class="w"> </span><span class="n">descriptionOutMsg</span><span class="p">;</span><span class="w">                     </span><span class="c1">// C interface to output msg</span>
+<span class="n">ReadFunctor</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;</span><span class="w"> </span><span class="n">descriptionInMsg</span><span class="p">;</span><span class="w">    </span><span class="c1">// C++ interface to input message</span>
+<span class="n">Message</span><span class="o">&lt;</span><span class="n">SomeMsgPayload</span><span class="o">&gt;</span><span class="w"> </span><span class="n">descriptionOutMsg</span><span class="p">;</span><span class="w">       </span><span class="c1">// C++ interface to output message</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SomeMsgPayload</span></code>: message structure definition</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">In</span></code> (<code class="docutils literal notranslate"><span class="pre">Out</span></code>): indicates the direction of the message with respect to the module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Msg</span></code>: explicitly identifies the variable as a message.</p></li>
+</ul>
+<p>Variables holding data from a read message are to be composed in the following manner.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SomeMsgPayload</span><span class="w"> </span><span class="n">descriptionInBuffer</span><span class="p">;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">description</span></code>: description of the data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">In</span></code> (<code class="docutils literal notranslate"><span class="pre">Out</span></code>): indicates the direction of the data being written
+to the buffer with respect to the module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Buffer</span></code>: explicitly identifies the variable as having a data
+buffer functionality.</p></li>
+</ul>
+</section>
+<section id="message-definitions">
+<span id="bsk2messagedefinition"></span><h3>Message Definitions<a class="headerlink" href="#message-definitions" title="Link to this heading"></a></h3>
+<p>The C based messages are stored in <code class="docutils literal notranslate"><span class="pre">src/architecture/msgPayloadDefC</span></code> as a <code class="docutils literal notranslate"><span class="pre">*.h</span></code> file.
+The C++  messages are stored in <code class="docutils literal notranslate"><span class="pre">src/architecture/msgPayloadDefCpp</span></code> as a <code class="docutils literal notranslate"><span class="pre">*.h</span></code> file.
+The file name uses Upper Camel Case and should be identical to the message name within the file.
+The last  letters should be <code class="docutils literal notranslate"><span class="pre">MsgPayload</span></code>.
+For example, a particular spacecraft sensor message could be named <code class="docutils literal notranslate"><span class="pre">SpecialSensorMsgPayload.h</span></code>.  The contents
+could be</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef SPECIAL_SENSOR_MESSAGE2_H</span>
+<span class="cp">#define SPECIAL_SENSOR_MESSAGE2_H</span>
+
+<span class="cm">/*! @brief Describe the purpose of the message */</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sensorOutput_B</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w">   </span><span class="c1">//!&lt;        sensor vector in B frame components */</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sensorSignal</span><span class="p">;</span><span class="w">        </span><span class="c1">//!&lt;        raw sensor signal</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="p">;</span><span class="w">                 </span><span class="c1">//!&lt;        sensor status flag</span>
+<span class="p">}</span><span class="n">SpecialSensorMsgPayload</span><span class="p">;</span>
+
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<p>When running the Basilisk setup command <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">conanfile.py</span></code> the related message interface files
+are then automatially created and included in the project.</p>
+</section>
+</section>
+<section id="c-c-exceptions">
+<h2>C/C++ Exceptions<a class="headerlink" href="#c-c-exceptions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Currently no language specific exceptions</p></li>
+</ul>
+</section>
+<section id="python-exceptions">
+<h2>Python Exceptions<a class="headerlink" href="#python-exceptions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Variables are to be lower camelCase. This is done to maintain consistency across the C/C++ and Python code bases which are interfaced via SWIG.</p></li>
+<li><p>Inline comments are accepted so long as they are kept brief.</p></li>
+<li><p>Binary operator spaces will be adhered to as specified in PEP 8, however, not for math symbols operations. E.g. no spaces are included around *, /, +, -, etc</p></li>
+</ul>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># Yes</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="mi">9</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+<span class="c1"># No</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="running-unit-and-integrated-tests">
+<h2>Running Unit and Integrated Tests<a class="headerlink" href="#running-unit-and-integrated-tests" title="Link to this heading"></a></h2>
+<p>Prior to any code being pushed back to the Basilisk repo all unit and integrated tests must pass.
+The default packages include <code class="docutils literal notranslate"><span class="pre">pytest</span></code> which is a program that can run a series of tests on
+python scripts that begin with <code class="docutils literal notranslate"><span class="pre">test_</span></code>.  The package <code class="docutils literal notranslate"><span class="pre">pytest-xdist</span></code> is also installed by default
+and allows these tests to be run in a multi-threaded manner using the argument <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">auto</span></code>.</p>
+<p>Further, Basilisk uses the Google <code class="docutils literal notranslate"><span class="pre">gtest</span></code> suite to run unit tests on C or C++ support libraries.
+To run all the unit and integrated test open a terminal window and change your working directory
+to the root <code class="docutils literal notranslate"><span class="pre">basilisk</span></code> directory.  Activate the python virtual environment if needed.
+Next, run the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python run_all_test.py
+</pre></div>
+</div>
+<p>This will execute <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and <code class="docutils literal notranslate"><span class="pre">gtest</span></code> checks.  All tests should pass.  If not all
+Basilisk modules are built (i.e. the build process turned off <code class="docutils literal notranslate"><span class="pre">opNav</span></code> option), then
+some tests will show up as skipped.</p>
+<p>If you want to use <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to generate a validation HTML report,
+then the <code class="docutils literal notranslate"><span class="pre">pytest-html</span></code> package is used. In a terminal window, make your
+working directory <code class="docutils literal notranslate"><span class="pre">basilisk/src</span></code>.  Next, run <code class="docutils literal notranslate"><span class="pre">pytest</span></code> by adding the <code class="docutils literal notranslate"><span class="pre">--html</span></code> argument
+followed by the path to where to generate the report html folder.  It is recommended to put
+this inside a folder as HTML support folder will be created:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pytest --html report/report.html
+</pre></div>
+</div>
+</section>
+<section id="formatting-code-files-using-pre-commit-and-clang-format">
+<h2>Formatting Code Files using <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and <code class="docutils literal notranslate"><span class="pre">clang-format</span></code><a class="headerlink" href="#formatting-code-files-using-pre-commit-and-clang-format" title="Link to this heading"></a></h2>
+<p>If you are developing new code to contribute back to Basilisk it must follow the
+<a class="reference internal" href="#codingguidelines"><span class="std std-ref">Coding Guidelines</span></a>.  This requires using the <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> and  <code class="docutils literal notranslate"><span class="pre">clang-format</span></code>
+packages. The file <a class="reference external" href="https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md">CONTRIBUTING.md</a>
+explains how to setup and use these code formating tools.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../Developer.html" class="btn btn-neutral float-left" title="Developer Information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Debugging.html" class="btn btn-neutral float-right" title="Accessing the Debugger for C/C++ Basilisk Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

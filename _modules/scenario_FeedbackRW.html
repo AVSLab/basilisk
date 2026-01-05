@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenario_FeedbackRW &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenario_FeedbackRW</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenario_FeedbackRW</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. raw:: html</span>
+
+<span class="sd">    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/34JXysCB77g&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script sets up a 6-DOF spacecraft orbiting Earth. The goal of the scenario is to</span>
+
+<span class="sd">#. add reaction wheels to :ref:`BSK_Dynamics`, and</span>
+<span class="sd">#. establish a inertial pointing FSW mode in :ref:`BSK_FSW`.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/BskSim/scenarios`` and executed by using::</span>
+
+<span class="sd">      python3 scenario_FeedbackRW.py</span>
+
+
+<span class="sd">The simulation mimics the basic simulation in the earlier tutorial in</span>
+<span class="sd">:ref:`scenarioAttitudeFeedbackRW`.</span>
+<span class="sd">The simulation layout is shown in the following illustration.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenario_FeedbackRW.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Two simulation processes are created: one</span>
+<span class="sd">which contains dynamics modules, and one that contains the FSW</span>
+<span class="sd">modules. The initial setup for the simulation closely models that of :ref:`scenario_BasicOrbit`.</span>
+
+
+
+<span class="sd">Custom Dynamics Configurations Instructions</span>
+<span class="sd">-------------------------------------------</span>
+
+<span class="sd">In addition to the modules used in :ref:`scenario_BasicOrbit`, the user must configure the RW module</span>
+<span class="sd">in :ref:`BSK_Dynamics`</span>
+<span class="sd">to stabilize the tumbling. This is accomplished by first creating the RW state effector.</span>
+<span class="sd">The RW object is then configured through ``InitAllDynObjects(SimBase)`` which</span>
+<span class="sd">includes the ``SetReactionWheelDynEffector()``</span>
+<span class="sd">function which configures the RW pyramid&#39;s properties and messages.</span>
+
+
+<span class="sd">Custom FSW Configurations Instructions</span>
+<span class="sd">--------------------------------------</span>
+
+<span class="sd">To configure the desired :ref:`inertial3D` FSW mode the user must declare the following modules</span>
+<span class="sd">within the ``__init__()`` function in :ref:`BSK_FSW`.</span>
+<span class="sd">These provide the initial setup for an attitude guidance system that makes use of an inertial pointing model, a module</span>
+<span class="sd">that tracks the error of the spacecraft&#39;s MRP parameters against the pointing model, and a module that takes that</span>
+<span class="sd">information to provide a torque to correct for the error.</span>
+
+<span class="sd">Following the initial declaration of these configuration modules, :ref:`BSK_FSW`</span>
+<span class="sd">calls a ``InitAllFSWObjects()`` command,</span>
+<span class="sd">which, like :ref:`BSK_Dynamics`&#39;s ``InitAllDynObjects()``, calls additional setter functions that configure each</span>
+<span class="sd">of the FSW modules with the appropriate information and message names.</span>
+
+<span class="sd">In addition to the modules used for attitude guidance, there are also two setter functions that send vehicle and RW</span>
+<span class="sd">configuration messages that are linked into the attitude guidance modules called ``SetVehicleConfiguration()`` and</span>
+<span class="sd">``SetRWConfigMsg()``.</span>
+
+<span class="sd">After each configuration module has been properly initialized with various message names, FSW tasks are generated.</span>
+<span class="sd">The two tasks required for the :ref:`inertial3D` mode are ``inertial3DPointTask`` and ``mrpFeedbackRWsTask``.</span>
+<span class="sd">Note how the tasks are divided between the pointing model and control loop. These modular tasks allow</span>
+<span class="sd">for simple FSW reconfigurations should the user want to use a different pointing model, but to use the same feedback</span>
+<span class="sd">control loop. This will be seen and discussed in later scenarios.</span>
+
+<span class="sd">Because the FSW guidance and control are broken up into separate tasks to be enabled, they must share a common</span>
+<span class="sd">stand-along (gateway) message to connect these tasks.  These are setup with the method ``setupGatewayMsgs()``.</span>
+<span class="sd">Note that if a C FSW module re-directs its message writing to such a stand-alone message, when recording</span>
+<span class="sd">the message this stand-alone message should be recorded.  The output message payload within the module itself</span>
+<span class="sd">remain zero in such a case.</span>
+
+<span class="sd">Finally, the :ref:`inertial3D` mode call in :ref:`scenario_FeedbackRW` needs to be triggered by::</span>
+
+<span class="sd">     SimBase.createNewEvent(&quot;initiateInertial3D&quot;, self.processTasksTimeStep, True,</span>
+<span class="sd">                   conditionFunction=lambda self: self.modeRequest == &quot;inertial3D&quot;,</span>
+<span class="sd">                   actionFunction=lambda self: (</span>
+<span class="sd">                       self.fswProc.disableAllTasks(),</span>
+<span class="sd">                       self.FSWModels.zeroGateWayMsgs(),</span>
+<span class="sd">                       self.enableTask(&quot;inertial3DPointTask&quot;),</span>
+<span class="sd">                       self.enableTask(&quot;mrpFeedbackRWsTask&quot;),</span>
+<span class="sd">                   )</span>
+<span class="sd">     )</span>
+
+<span class="sd">which disables any existing tasks, zero&#39;s all the stand-alone gateway messages</span>
+<span class="sd">and enables the inertial pointing task and RW feedback task.</span>
+<span class="sd">This concludes how to construct a preconfigured FSW mode that will be available for any future scenario</span>
+<span class="sd">that uses the BSK_Sim architecture.</span>
+
+<span class="sd">This simulation runs for 10 minutes and then switches the FSW mode to ``directInertial3D``.  The difference here</span>
+<span class="sd">is that the requested command torque from the ``mrpFeedback`` module in this mode is directly sent to the</span>
+<span class="sd">spacecraft object as an external torque.  Also, not that while in ``inertial3D`` mode the ``mrpFeedback`` module</span>
+<span class="sd">receives the RW speeds to feed-forward compensate for them, in the ``directInertial3D`` mode this is not the case.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    showPlots = True</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_FeedbackRW_attitudeErrorNorm.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_FeedbackRW_rwMotorTorque.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_FeedbackRW_rateError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenario_FeedbackRW_rwSpeed.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Get current file path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Import utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">vizSupport</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+<span class="c1"># Import master classes: simulation base class and scenario base class</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../models&#39;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/../plotting&#39;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_Dynamics</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_Fsw</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BSK_Plotting</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">BSK_plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BSK_masters</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSKScenario</span><span class="p">,</span> <span class="n">BSKSim</span>
+
+
+<span class="c1"># Create your own scenario child class</span>
+<div class="viewcode-block" id="scenario_AttitudeFeedbackRW">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_FeedbackRW.html#scenario_FeedbackRW.scenario_AttitudeFeedbackRW">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">scenario_AttitudeFeedbackRW</span><span class="p">(</span><span class="n">BSKSim</span><span class="p">,</span> <span class="n">BSKScenario</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">scenario_AttitudeFeedbackRW</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;scenario_AttitudeFeedbackRW&#39;</span>
+
+        <span class="c1"># declare additional class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_DynModel</span><span class="p">(</span><span class="n">BSK_Dynamics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_FswModel</span><span class="p">(</span><span class="n">BSK_Fsw</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">configure_initial_conditions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_outputs</span><span class="p">()</span>
+
+        <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following line</span>
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span>
+                                            <span class="c1"># , saveFile=__file__</span>
+                                            <span class="p">,</span> <span class="n">rwEffectorList</span><span class="o">=</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector</span>
+                                            <span class="p">)</span>
+
+<div class="viewcode-block" id="scenario_AttitudeFeedbackRW.configure_initial_conditions">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_FeedbackRW.html#scenario_FeedbackRW.scenario_AttitudeFeedbackRW.configure_initial_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Configure Dynamics initial conditions</span>
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">10000000.0</span>  <span class="c1"># meters</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+        <span class="n">DynModels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">DynModels</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;earth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+        <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+        <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+        <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+        <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+        <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+        <span class="n">DynModels</span><span class="o">.</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span></div>
+
+
+<div class="viewcode-block" id="scenario_AttitudeFeedbackRW.log_outputs">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_FeedbackRW.html#scenario_FeedbackRW.scenario_AttitudeFeedbackRW.log_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">FswModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_FswModel</span><span class="p">()</span>
+        <span class="n">DynModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_DynModel</span><span class="p">()</span>
+        <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">processTasksTimeStep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span> <span class="o">=</span> <span class="n">DynModel</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span> <span class="o">=</span> <span class="n">FswModel</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DynModel</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwOutMsgs</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">DynModel</span><span class="o">.</span><span class="n">taskName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="scenario_AttitudeFeedbackRW.pull_outputs">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_FeedbackRW.html#scenario_FeedbackRW.scenario_AttitudeFeedbackRW.pull_outputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pull_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">showPlots</span><span class="p">):</span>
+        <span class="n">num_RW</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># number of wheels used in the scenario</span>
+
+        <span class="c1"># FSW process outputs, remove first data point as it is before FSW is called</span>
+        <span class="n">dataUsReq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="o">.</span><span class="n">motorTorque</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_RW</span><span class="p">)],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sigma_BR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">omega_BR_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attErrRec</span><span class="o">.</span><span class="n">omega_BR_B</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">RW_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwSpeedRec</span><span class="o">.</span><span class="n">wheelSpeeds</span><span class="p">[:,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_RW</span><span class="p">)],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">dataRW</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_RW</span><span class="p">):</span>
+            <span class="n">dataRW</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwLogs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">u_current</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># Plot results</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">clear_all_plots</span><span class="p">()</span>
+        <span class="n">timeData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwMotorRec</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">sigma_BR</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rw_cmd_actual_torque</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">,</span> <span class="n">dataRW</span><span class="p">,</span> <span class="n">num_RW</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">omega_BR_B</span><span class="p">)</span>
+        <span class="n">BSK_plt</span><span class="o">.</span><span class="n">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">RW_speeds</span><span class="p">,</span> <span class="n">num_RW</span><span class="p">)</span>
+        <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+            <span class="n">BSK_plt</span><span class="o">.</span><span class="n">show_all_plots</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">figureNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attitudeErrorNorm&quot;</span><span class="p">,</span> <span class="s2">&quot;rwMotorTorque&quot;</span><span class="p">,</span> <span class="s2">&quot;rateError&quot;</span><span class="p">,</span> <span class="s2">&quot;rwSpeed&quot;</span><span class="p">]</span>
+            <span class="n">figureList</span> <span class="o">=</span> <span class="n">BSK_plt</span><span class="o">.</span><span class="n">save_all_plots</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">figureNames</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figureList</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runScenario</span><span class="p">(</span><span class="n">scenario</span><span class="p">):</span>
+    <span class="c1"># Initialize simulation</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Configure run time and execute simulation</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s1">&#39;inertial3D&#39;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">30.</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">=</span> <span class="s1">&#39;directInertial3D&#39;</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/BskSim/scenarios/scenario_FeedbackRW.html#scenario_FeedbackRW.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            showPlots (bool): Determines if the script should display plots</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TheScenario</span> <span class="o">=</span> <span class="n">scenario_AttitudeFeedbackRW</span><span class="p">()</span>
+    <span class="n">runScenario</span><span class="p">(</span><span class="n">TheScenario</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">TheScenario</span><span class="o">.</span><span class="n">pull_outputs</span><span class="p">(</span><span class="n">showPlots</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

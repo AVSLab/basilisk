@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: sunlineSEKF &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="sunlineSEKF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attDetermination</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../CSSEst/index.html">CSSEst</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../InertialUKF/index.html">InertialUKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../headingSuKF/index.html">headingSuKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../okeefeEKF/index.html">okeefeEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineEKF/index.html">sunlineEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineEphem/index.html">sunlineEphem</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">sunlineSEKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineSuKF/index.html">sunlineSuKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunlineUKF/index.html">sunlineUKF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attDetermination</a></li>
+          <li class="breadcrumb-item"><a href="index.html">sunlineSEKF</a></li>
+      <li class="breadcrumb-item active">Module: sunlineSEKF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sunlinesekf">
+<span id="sunlinesekf"></span><h1>Module: sunlineSEKF<a class="headerlink" href="#module-sunlinesekf" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module implements and tests a Switch Extended Kalman Filter in order to estimate the sunline direction.</p>
+<p>More information can be found in the
+<a class="reference download internal" download="" href="../../../../_downloads/23db230e59db63008fbb0e669d93d014/Sunline_SEKF.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a></p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>name of the navigation output message containing the estimated states</p></td>
+</tr>
+<tr class="row-odd"><td><p>filtDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SunlineFilterMsgPayload.html#sunlinefiltermsgpayload"><span class="std std-ref">SunlineFilterMsgPayload</span></a></p></td>
+<td><p>name of the output filter data message</p></td>
+</tr>
+<tr class="row-even"><td><p>cssDataInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.html#cssarraysensormsgpayload"><span class="std std-ref">CSSArraySensorMsgPayload</span></a></p></td>
+<td><p>name of the CSS sensor input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>cssConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSConfigMsgPayload.html#cssconfigmsgpayload"><span class="std std-ref">CSSConfigMsgPayload</span></a></p></td>
+<td><p>name of the CSS configuration input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420SelfInit_sunlineSEKFP17sunlineSEKFConfig7int64_t">
+<span id="_CPPv320SelfInit_sunlineSEKFP17sunlineSEKFConfig7int64_t"></span><span id="_CPPv220SelfInit_sunlineSEKFP17sunlineSEKFConfig7int64_t"></span><span id="SelfInit_sunlineSEKF__sunlineSEKFConfigP.int64_t"></span><span class="target" id="sunline_s_e_k_f_8h_1ad39ba6fef73afe61922bda2bbf325d9a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_sunlineSEKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417sunlineSEKFConfig" title="sunlineSEKFConfig"><span class="n"><span class="pre">sunlineSEKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420SelfInit_sunlineSEKFP17sunlineSEKFConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the configData for theCSS WLS estimator. It checks to ensure that the inputs are sane and then creates the output message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS WLS estimator </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417Reset_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t">
+<span id="_CPPv317Reset_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t"></span><span id="_CPPv217Reset_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t"></span><span id="Reset_sunlineSEKF__sunlineSEKFConfigP.uint64_t.int64_t"></span><span class="target" id="sunline_s_e_k_f_8h_1af520a853157c94dc15df4901bb1be371"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_sunlineSEKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417sunlineSEKFConfig" title="sunlineSEKFConfig"><span class="n"><span class="pre">sunlineSEKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417Reset_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the sunline attitude filter to an initial state and initializes the internal estimation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418Update_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t">
+<span id="_CPPv318Update_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t"></span><span id="_CPPv218Update_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t"></span><span id="Update_sunlineSEKF__sunlineSEKFConfigP.uint64_t.int64_t"></span><span class="target" id="sunline_s_e_k_f_8h_1a21e37022aadbf18778a033a7aba674f8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_sunlineSEKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417sunlineSEKFConfig" title="sunlineSEKFConfig"><span class="n"><span class="pre">sunlineSEKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418Update_sunlineSEKFP17sunlineSEKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the parsed CSS sensor data and outputs an estimate of the sun vector in the ADCS body frame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sunlineTimeUpdateP17sunlineSEKFConfigd">
+<span id="_CPPv317sunlineTimeUpdateP17sunlineSEKFConfigd"></span><span id="_CPPv217sunlineTimeUpdateP17sunlineSEKFConfigd"></span><span id="sunlineTimeUpdate__sunlineSEKFConfigP.double"></span><span class="target" id="sunline_s_e_k_f_8h_1a9efef775173b5ef3afad3ea04492787e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineTimeUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417sunlineSEKFConfig" title="sunlineSEKFConfig"><span class="n"><span class="pre">sunlineSEKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">updateTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sunlineTimeUpdateP17sunlineSEKFConfigd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the time update for the sunline kalman filter. It calls for the updated Dynamics Matrix, as well as the new states and STM. It then updates the covariance, with process noise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>updateTime</strong> – The time that we need to fix the filter to (seconds) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sunlineMeasUpdateP17sunlineSEKFConfigd">
+<span id="_CPPv317sunlineMeasUpdateP17sunlineSEKFConfigd"></span><span id="_CPPv217sunlineMeasUpdateP17sunlineSEKFConfigd"></span><span id="sunlineMeasUpdate__sunlineSEKFConfigP.double"></span><span class="target" id="sunline_s_e_k_f_8h_1a196e5f0fff72bea7ae93bdf2af076288"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineMeasUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv417sunlineSEKFConfig" title="sunlineSEKFConfig"><span class="n"><span class="pre">sunlineSEKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">updateTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sunlineMeasUpdateP17sunlineSEKFConfigd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the measurement update for the sunline kalman filter. It applies the observations in the obs vectors to the current state estimate and updates the state/covariance with that information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the CSS estimator </p></li>
+<li><p><strong>updateTime</strong> – The time that we need to fix the filter to (seconds) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sunlineStateSTMPropAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dA12SKF_N_STATES_ddPdPd">
+<span id="_CPPv319sunlineStateSTMPropAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dA12SKF_N_STATES_ddPdPd"></span><span id="_CPPv219sunlineStateSTMPropAEKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH_dASKF_N_STATES_ddPdPd"></span><span id="sunlineStateSTMProp__doubleA.doubleA.double.doubleP.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1adad010f9bd18faee100989ec90139b38"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineStateSTMProp</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dynMat</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bVec</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">SKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateInOut</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateTransition</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sunlineStateSTMPropAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dA12SKF_N_STATES_ddPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method propagates a sunline state vector forward in time. Note that the calling parameter is updated in place to save on data copies. This also updates the STM using the dynamics matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stateInOut</strong> – </p></li>
+<li><p><strong>dynMat</strong> – </p></li>
+<li><p><strong>bVec</strong> – </p></li>
+<li><p><strong>dt</strong> – time step </p></li>
+<li><p><strong>stateTransition</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419sunlineHMatrixYMeasA19EKF_N_STATES_SWITCH_d6size_tA14MAX_N_CSS_MEAS_ddAml19MAX_NUM_CSS_SENSORSL3E_dPdPdPiPd">
+<span id="_CPPv319sunlineHMatrixYMeasA19EKF_N_STATES_SWITCH_d6size_tA14MAX_N_CSS_MEAS_ddAml19MAX_NUM_CSS_SENSORSL3E_dPdPdPiPd"></span><span id="_CPPv219sunlineHMatrixYMeasAEKF_N_STATES_SWITCH_d6size_tAMAX_N_CSS_MEAS_ddAMAX_NUM_CSS_SENSORS * 3_dPdPdPiPd"></span><span id="sunlineHMatrixYMeas__doubleA.s.doubleA.double.doubleA.doubleP.doubleP.iP.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1a1773a3f264874c7906eb000fd1745a4a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineHMatrixYMeas</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">states</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numCSS</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cssSensorCos</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sensorUseThresh</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cssNHat_B</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_NUM_CSS_SENSORS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">obs</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">yMeas</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">numObs</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">measMat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419sunlineHMatrixYMeasA19EKF_N_STATES_SWITCH_d6size_tA14MAX_N_CSS_MEAS_ddAml19MAX_NUM_CSS_SENSORSL3E_dPdPdPiPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the H matrix, defined by dGdX. As well as computing the innovation, difference between the measurements and the expected measurements. This methods modifies the numObs, measMat, and yMeas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> – </p></li>
+<li><p><strong>numCSS</strong> – The total number of CSS </p></li>
+<li><p><strong>cssSensorCos</strong> – The list of the measurements from the CSSs </p></li>
+<li><p><strong>sensorUseThresh</strong> – Thresh The Threshold below which the measuremnts are not read </p></li>
+<li><p><strong>cssNHat_B</strong> – The normals vector for each of the CSSs </p></li>
+<li><p><strong>obs</strong> – Pointer to the observations </p></li>
+<li><p><strong>yMeas</strong> – Pointer to the innovation </p></li>
+<li><p><strong>numObs</strong> – Pointer to the number of observations </p></li>
+<li><p><strong>measMat</strong> – Point to the H measurement matrix </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sunlineKalmanGainAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dd6size_tPd">
+<span id="_CPPv317sunlineKalmanGainAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dd6size_tPd"></span><span id="_CPPv217sunlineKalmanGainAEKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH_dAMAX_N_CSS_MEAS * EKF_N_STATES_SWITCH_dd6size_tPd"></span><span id="sunlineKalmanGain__doubleA.doubleA.double.s.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1a6bf6f04396471cd5042d8c8b45e6d353"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineKalmanGain</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">covarBar</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">hObs</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">qObsVal</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numObs</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">kalmanGain</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sunlineKalmanGainAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dd6size_tPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the Kalman gain given the measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>covarBar</strong> – The time updated covariance </p></li>
+<li><p><strong>hObs</strong> – The H matrix filled with the observations </p></li>
+<li><p><strong>qObsVal</strong> – The observation noise </p></li>
+<li><p><strong>numObs</strong> – The number of observations </p></li>
+<li><p><strong>kalmanGain</strong> – Pointer to the Kalman Gain </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416sunlineDynMatrixA19EKF_N_STATES_SWITCH_dA12SKF_N_STATES_ddPd">
+<span id="_CPPv316sunlineDynMatrixA19EKF_N_STATES_SWITCH_dA12SKF_N_STATES_ddPd"></span><span id="_CPPv216sunlineDynMatrixAEKF_N_STATES_SWITCH_dASKF_N_STATES_ddPd"></span><span id="sunlineDynMatrix__doubleA.doubleA.double.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1abe335c34ff98f610b073225d1af0748e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineDynMatrix</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">states</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bVec</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">SKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynMat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416sunlineDynMatrixA19EKF_N_STATES_SWITCH_dA12SKF_N_STATES_ddPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the dynamics matrix, which is the derivative of the dynamics F by the state X, evaluated at the reference state. It takes in the configure data and updates this A matrix pointer called dynMat</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> – Updated states </p></li>
+<li><p><strong>bVec</strong> – b vector </p></li>
+<li><p><strong>dt</strong> – Time step </p></li>
+<li><p><strong>dynMat</strong> – Pointer to the Dynamic Matrix </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416sunlineCKFUpdateA19EKF_N_STATES_SWITCH_dAml19EKF_N_STATES_SWITCH14MAX_N_CSS_MEAS_dAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dd6size_tA14MAX_N_CSS_MEAS_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dPdPd">
+<span id="_CPPv316sunlineCKFUpdateA19EKF_N_STATES_SWITCH_dAml19EKF_N_STATES_SWITCH14MAX_N_CSS_MEAS_dAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dd6size_tA14MAX_N_CSS_MEAS_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dPdPd"></span><span id="_CPPv216sunlineCKFUpdateAEKF_N_STATES_SWITCH_dAEKF_N_STATES_SWITCH * MAX_N_CSS_MEAS_dAEKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH_dd6size_tAMAX_N_CSS_MEAS_dAMAX_N_CSS_MEAS * EKF_N_STATES_SWITCH_dPdPd"></span><span id="sunlineCKFUpdate__doubleA.doubleA.doubleA.double.s.doubleA.doubleA.doubleP.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1a7726d14447909292a9c29335b9e44e82"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineCKFUpdate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">xBar</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">kalmanGain</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">covarBar</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">qObsVal</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numObs</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">yObs</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">hObs</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">x</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">covar</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416sunlineCKFUpdateA19EKF_N_STATES_SWITCH_dAml19EKF_N_STATES_SWITCH14MAX_N_CSS_MEAS_dAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dd6size_tA14MAX_N_CSS_MEAS_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the updated with a Classical Kalman Filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xBar</strong> – The state after a time update </p></li>
+<li><p><strong>kalmanGain</strong> – The computed Kalman Gain </p></li>
+<li><p><strong>covarBar</strong> – The time updated covariance </p></li>
+<li><p><strong>qObsVal</strong> – The observation noise </p></li>
+<li><p><strong>numObs</strong> – The amount of CSSs that get measurements </p></li>
+<li><p><strong>yObs</strong> – The y vector after receiving the measurements </p></li>
+<li><p><strong>hObs</strong> – The H matrix filled with the observations </p></li>
+<li><p><strong>x</strong> – Pointer to the state error for modification </p></li>
+<li><p><strong>covar</strong> – Pointer to the covariance after update </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sunlineSEKFUpdateAml19EKF_N_STATES_SWITCH14MAX_N_CSS_MEAS_dAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dd6size_tA14MAX_N_CSS_MEAS_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dPdPdPd">
+<span id="_CPPv317sunlineSEKFUpdateAml19EKF_N_STATES_SWITCH14MAX_N_CSS_MEAS_dAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dd6size_tA14MAX_N_CSS_MEAS_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dPdPdPd"></span><span id="_CPPv217sunlineSEKFUpdateAEKF_N_STATES_SWITCH * MAX_N_CSS_MEAS_dAEKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH_dd6size_tAMAX_N_CSS_MEAS_dAMAX_N_CSS_MEAS * EKF_N_STATES_SWITCH_dPdPdPd"></span><span id="sunlineSEKFUpdate__doubleA.doubleA.double.s.doubleA.doubleA.doubleP.doubleP.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1a4db42456566eae29a4f72a567c045bf8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineSEKFUpdate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">kalmanGain</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">covarBar</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">qObsVal</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numObs</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">yObs</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">hObs</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">states</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">x</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">covar</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sunlineSEKFUpdateAml19EKF_N_STATES_SWITCH14MAX_N_CSS_MEAS_dAml19EKF_N_STATES_SWITCH19EKF_N_STATES_SWITCH_dd6size_tA14MAX_N_CSS_MEAS_dAml14MAX_N_CSS_MEAS19EKF_N_STATES_SWITCH_dPdPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the updated with a Extended Kalman Filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kalmanGain</strong> – The computed Kalman Gain </p></li>
+<li><p><strong>covarBar</strong> – The time updated covariance </p></li>
+<li><p><strong>qObsVal</strong> – The observation noise </p></li>
+<li><p><strong>numObs</strong> – The amount of CSSs that get measurements </p></li>
+<li><p><strong>yObs</strong> – The y vector after receiving the measurements </p></li>
+<li><p><strong>hObs</strong> – The H matrix filled with the observations </p></li>
+<li><p><strong>states</strong> – Pointer to the states </p></li>
+<li><p><strong>x</strong> – Pointer to the state error for modification </p></li>
+<li><p><strong>covar</strong> – Pointer to the covariance after update </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417sunlineSEKFSwitchPdPdPd">
+<span id="_CPPv317sunlineSEKFSwitchPdPdPd"></span><span id="_CPPv217sunlineSEKFSwitchPdPdPd"></span><span id="sunlineSEKFSwitch__doubleP.doubleP.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1a08749a52c87d5a073310f23d8c88649c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineSEKFSwitch</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">bVec_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">states</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">covar</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417sunlineSEKFSwitchPdPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the dcms necessary for the switch between the two frames. It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bVec_B</strong> – Pointer to b vector </p></li>
+<li><p><strong>states</strong> – Pointer to the states </p></li>
+<li><p><strong>covar</strong> – Pointer to the covariance </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424sunlineSEKFComputeDCM_BSA17SKF_N_STATES_HALF_dA17SKF_N_STATES_HALF_dPd">
+<span id="_CPPv324sunlineSEKFComputeDCM_BSA17SKF_N_STATES_HALF_dA17SKF_N_STATES_HALF_dPd"></span><span id="_CPPv224sunlineSEKFComputeDCM_BSASKF_N_STATES_HALF_dASKF_N_STATES_HALF_dPd"></span><span id="sunlineSEKFComputeDCM_BS__doubleA.doubleA.doubleP"></span><span class="target" id="sunline_s_e_k_f_8h_1a4c2793156dd8e4aa95b9414dfe6786b6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineSEKFComputeDCM_BS</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sunheading</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">SKF_N_STATES_HALF</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bVec</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">SKF_N_STATES_HALF</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dcm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424sunlineSEKFComputeDCM_BSA17SKF_N_STATES_HALF_dA17SKF_N_STATES_HALF_dPd" title="Link to this definition"></a><br /></dt>
+<dd><p>compute the DCM </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sunheading</strong> – array of sun heading measurement states </p></li>
+<li><p><strong>bVec</strong> – array of bVec values </p></li>
+<li><p><strong>dcm</strong> – DCM pointer to be returned </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417sunlineSEKFConfig">
+<span id="_CPPv317sunlineSEKFConfig"></span><span id="_CPPv217sunlineSEKFConfig"></span><span id="sunlineSEKFConfig"></span><span class="target" id="structsunline_s_e_k_f_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunlineSEKFConfig</span></span></span><a class="headerlink" href="#_CPPv417sunlineSEKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sunlineSEKF.h&gt;</em></div>
+<p>Top level structure for the CSS-based Switch Extended Kalman Filter. Used to estimate the sun state in the vehicle body frame. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig14navStateOutMsgE">
+<span id="_CPPv3N17sunlineSEKFConfig14navStateOutMsgE"></span><span id="_CPPv2N17sunlineSEKFConfig14navStateOutMsgE"></span><span id="sunlineSEKFConfig::navStateOutMsg__NavAttMsg_C"></span><span class="target" id="structsunline_s_e_k_f_config_1a38fb5f3f6c60ef12caa153c82d87d0e6"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig14navStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig14filtDataOutMsgE">
+<span id="_CPPv3N17sunlineSEKFConfig14filtDataOutMsgE"></span><span id="_CPPv2N17sunlineSEKFConfig14filtDataOutMsgE"></span><span id="sunlineSEKFConfig::filtDataOutMsg__SunlineFilterMsg_C"></span><span class="target" id="structsunline_s_e_k_f_config_1aa188d70b8be879875eec64261547d5d6"></span><span class="n"><span class="pre">SunlineFilterMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filtDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig14filtDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the output filter data message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig12cssDataInMsgE">
+<span id="_CPPv3N17sunlineSEKFConfig12cssDataInMsgE"></span><span id="_CPPv2N17sunlineSEKFConfig12cssDataInMsgE"></span><span id="sunlineSEKFConfig::cssDataInMsg__CSSArraySensorMsg_C"></span><span class="target" id="structsunline_s_e_k_f_config_1a835ffc74352223c43f4a3691072f2cd8"></span><span class="n"><span class="pre">CSSArraySensorMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cssDataInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig12cssDataInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the Input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig14cssConfigInMsgE">
+<span id="_CPPv3N17sunlineSEKFConfig14cssConfigInMsgE"></span><span id="_CPPv2N17sunlineSEKFConfig14cssConfigInMsgE"></span><span id="sunlineSEKFConfig::cssConfigInMsg__CSSConfigMsg_C"></span><span class="target" id="structsunline_s_e_k_f_config_1acb9a5f5c9bc0b5e57b7465c48bbd3821"></span><span class="n"><span class="pre">CSSConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cssConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig14cssConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The name of the CSS configuration message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig7qObsValE">
+<span id="_CPPv3N17sunlineSEKFConfig7qObsValE"></span><span id="_CPPv2N17sunlineSEKFConfig7qObsValE"></span><span id="sunlineSEKFConfig::qObsVal__double"></span><span class="target" id="structsunline_s_e_k_f_config_1a200f8a5f2df2bdbe7b56369384d43b81"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qObsVal</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig7qObsValE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] CSS instrument noise parameter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig8qProcValE">
+<span id="_CPPv3N17sunlineSEKFConfig8qProcValE"></span><span id="_CPPv2N17sunlineSEKFConfig8qProcValE"></span><span id="sunlineSEKFConfig::qProcVal__double"></span><span class="target" id="structsunline_s_e_k_f_config_1a6e132c5575affd0f98922d3feef139a6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qProcVal</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig8qProcValE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Process noise parameter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig2dtE">
+<span id="_CPPv3N17sunlineSEKFConfig2dtE"></span><span id="_CPPv2N17sunlineSEKFConfig2dtE"></span><span id="sunlineSEKFConfig::dt__double"></span><span class="target" id="structsunline_s_e_k_f_config_1a35e3e12c67a323e80975265f7018cd1d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dt</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig2dtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] seconds since last data epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig7timeTagE">
+<span id="_CPPv3N17sunlineSEKFConfig7timeTagE"></span><span id="_CPPv2N17sunlineSEKFConfig7timeTagE"></span><span id="sunlineSEKFConfig::timeTag__double"></span><span class="target" id="structsunline_s_e_k_f_config_1a0c7065cbed5835b003347f43b39902f9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTag</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig7timeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time tag for statecovar/etc </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig6bVec_BE">
+<span id="_CPPv3N17sunlineSEKFConfig6bVec_BE"></span><span id="_CPPv2N17sunlineSEKFConfig6bVec_BE"></span><span id="sunlineSEKFConfig::bVec_B__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1aee985313221d15264e761a9bb7f9b4d7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bVec_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">SKF_N_STATES_HALF</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig6bVec_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] current vector of the b frame used to make Switch frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig11switchTreshE">
+<span id="_CPPv3N17sunlineSEKFConfig11switchTreshE"></span><span id="_CPPv2N17sunlineSEKFConfig11switchTreshE"></span><span id="sunlineSEKFConfig::switchTresh__double"></span><span class="target" id="structsunline_s_e_k_f_config_1a8f294cc2604b47b9cbbae4d1b0e215be"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">switchTresh</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig11switchTreshE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Cosine of angle between singularity and S-frame. If close to 1, the threshold for switching frames is lower. If closer to 0.5 singularity is more largely avoided but switching is more frequent </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig5stateE">
+<span id="_CPPv3N17sunlineSEKFConfig5stateE"></span><span id="_CPPv2N17sunlineSEKFConfig5stateE"></span><span id="sunlineSEKFConfig::state__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a202118957c4866868dd6ba61d28ce0dc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig1xE">
+<span id="_CPPv3N17sunlineSEKFConfig1xE"></span><span id="_CPPv2N17sunlineSEKFConfig1xE"></span><span id="sunlineSEKFConfig::x__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1af52ba5d01bde2a14939589fea35db466"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">x</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig1xE" title="Link to this definition"></a><br /></dt>
+<dd><p>State errors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig4xBarE">
+<span id="_CPPv3N17sunlineSEKFConfig4xBarE"></span><span id="_CPPv2N17sunlineSEKFConfig4xBarE"></span><span id="sunlineSEKFConfig::xBar__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1af5ea8234ad63b7e0c6897f824c3d9fad"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig4xBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current mean state estimate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig8covarBarE">
+<span id="_CPPv3N17sunlineSEKFConfig8covarBarE"></span><span id="_CPPv2N17sunlineSEKFConfig8covarBarE"></span><span id="sunlineSEKFConfig::covarBar__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1aa871caa9e69bbd81644c58b0df6524d3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig8covarBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig5covarE">
+<span id="_CPPv3N17sunlineSEKFConfig5covarE"></span><span id="_CPPv2N17sunlineSEKFConfig5covarE"></span><span id="sunlineSEKFConfig::covar__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a67be2695f9f1e5ef5b8f29b253ca6038"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig5covarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig15stateTransitionE">
+<span id="_CPPv3N17sunlineSEKFConfig15stateTransitionE"></span><span id="_CPPv2N17sunlineSEKFConfig15stateTransitionE"></span><span id="sunlineSEKFConfig::stateTransition__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a0aa35456544eeba8eef97a9073647601"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateTransition</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig15stateTransitionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State transition Matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig10kalmanGainE">
+<span id="_CPPv3N17sunlineSEKFConfig10kalmanGainE"></span><span id="_CPPv2N17sunlineSEKFConfig10kalmanGainE"></span><span id="sunlineSEKFConfig::kalmanGain__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1aaa9096539cc92c9019084c7f7b68ba7f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kalmanGain</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig10kalmanGainE" title="Link to this definition"></a><br /></dt>
+<dd><p>Kalman Gain </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig6dynMatE">
+<span id="_CPPv3N17sunlineSEKFConfig6dynMatE"></span><span id="_CPPv2N17sunlineSEKFConfig6dynMatE"></span><span id="sunlineSEKFConfig::dynMat__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1add13eed1898ddbdb154ec2a4c4834275"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dynMat</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig6dynMatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Dynamics Matrix, A </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig7measMatE">
+<span id="_CPPv3N17sunlineSEKFConfig7measMatE"></span><span id="_CPPv2N17sunlineSEKFConfig7measMatE"></span><span id="sunlineSEKFConfig::measMat__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a0b5a8070e80f6001ca53abea99de4d0d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">measMat</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig7measMatE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement Matrix, H </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig4W_BSE">
+<span id="_CPPv3N17sunlineSEKFConfig4W_BSE"></span><span id="_CPPv2N17sunlineSEKFConfig4W_BSE"></span><span id="sunlineSEKFConfig::W_BS__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a4f8c299ed5f6fb09201236efef8235a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">W_BS</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig4W_BSE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Switch Matrix to bring states and covariance to new S-frame when switch occurs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig3obsE">
+<span id="_CPPv3N17sunlineSEKFConfig3obsE"></span><span id="_CPPv2N17sunlineSEKFConfig3obsE"></span><span id="sunlineSEKFConfig::obs__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a37c884a6bbfe0796b44be63066880234"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">obs</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig3obsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Observation vector for frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig5yMeasE">
+<span id="_CPPv3N17sunlineSEKFConfig5yMeasE"></span><span id="_CPPv2N17sunlineSEKFConfig5yMeasE"></span><span id="sunlineSEKFConfig::yMeas__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1ab915b35b7d707bb90504dd24a277c381"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yMeas</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig5yMeasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Linearized measurement model data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig8postFitsE">
+<span id="_CPPv3N17sunlineSEKFConfig8postFitsE"></span><span id="_CPPv2N17sunlineSEKFConfig8postFitsE"></span><span id="sunlineSEKFConfig::postFits__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a3977f56752e38ef1d585ae0adb74679e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postFits</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig8postFitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] PostFit residuals </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig9procNoiseE">
+<span id="_CPPv3N17sunlineSEKFConfig9procNoiseE"></span><span id="_CPPv2N17sunlineSEKFConfig9procNoiseE"></span><span id="sunlineSEKFConfig::procNoise__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1ac8bc036bd4718eedee097df78112a432"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">procNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">)</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">EKF_N_STATES_SWITCH</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig9procNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] process noise matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig9measNoiseE">
+<span id="_CPPv3N17sunlineSEKFConfig9measNoiseE"></span><span id="_CPPv2N17sunlineSEKFConfig9measNoiseE"></span><span id="sunlineSEKFConfig::measNoise__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1a8ac46728980bc5fdff85735f57bcc7a0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">measNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">MAX_N_CSS_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig9measNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Maximally sized obs noise matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig9cssNHat_BE">
+<span id="_CPPv3N17sunlineSEKFConfig9cssNHat_BE"></span><span id="_CPPv2N17sunlineSEKFConfig9cssNHat_BE"></span><span id="sunlineSEKFConfig::cssNHat_B__doubleA"></span><span class="target" id="structsunline_s_e_k_f_config_1ae25c497a6a0ad06310e309e22ca707e9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cssNHat_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_NUM_CSS_SENSORS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig9cssNHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] CSS normal vectors converted over to body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig9numStatesE">
+<span id="_CPPv3N17sunlineSEKFConfig9numStatesE"></span><span id="_CPPv2N17sunlineSEKFConfig9numStatesE"></span><span id="sunlineSEKFConfig::numStates__uint32_t"></span><span class="target" id="structsunline_s_e_k_f_config_1a40eb0261fcff4af5811c04011d8231f2"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStates</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig9numStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of states for this filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig6numObsE">
+<span id="_CPPv3N17sunlineSEKFConfig6numObsE"></span><span id="_CPPv2N17sunlineSEKFConfig6numObsE"></span><span id="sunlineSEKFConfig::numObs__s"></span><span class="target" id="structsunline_s_e_k_f_config_1acd5cf2551272893a88aeb6889a154375"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numObs</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig6numObsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of measurements this cycle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig12numActiveCssE">
+<span id="_CPPv3N17sunlineSEKFConfig12numActiveCssE"></span><span id="_CPPv2N17sunlineSEKFConfig12numActiveCssE"></span><span id="sunlineSEKFConfig::numActiveCss__uint32_t"></span><span class="target" id="structsunline_s_e_k_f_config_1a405d5261f67bbe5217d76559176edd1a"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numActiveCss</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig12numActiveCssE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Number of currently active CSS sensors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig11numCSSTotalE">
+<span id="_CPPv3N17sunlineSEKFConfig11numCSSTotalE"></span><span id="_CPPv2N17sunlineSEKFConfig11numCSSTotalE"></span><span id="sunlineSEKFConfig::numCSSTotal__uint32_t"></span><span class="target" id="structsunline_s_e_k_f_config_1a39ef455db2d7ddd681acea3e2a48055a"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numCSSTotal</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig11numCSSTotalE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Count on the number of CSS we have on the spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig15sensorUseThreshE">
+<span id="_CPPv3N17sunlineSEKFConfig15sensorUseThreshE"></span><span id="_CPPv2N17sunlineSEKFConfig15sensorUseThreshE"></span><span id="sunlineSEKFConfig::sensorUseThresh__double"></span><span class="target" id="structsunline_s_e_k_f_config_1a9505a9a90f313cbeb0f471178b98e8bb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensorUseThresh</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig15sensorUseThreshE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Threshold below which we discount sensors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig9eKFSwitchE">
+<span id="_CPPv3N17sunlineSEKFConfig9eKFSwitchE"></span><span id="_CPPv2N17sunlineSEKFConfig9eKFSwitchE"></span><span id="sunlineSEKFConfig::eKFSwitch__double"></span><span class="target" id="structsunline_s_e_k_f_config_1abe88fb6e4655ca28d045814fcef978a3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eKFSwitch</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig9eKFSwitchE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Max covariance element after which the filter switches to an EKF </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig13outputSunlineE">
+<span id="_CPPv3N17sunlineSEKFConfig13outputSunlineE"></span><span id="_CPPv2N17sunlineSEKFConfig13outputSunlineE"></span><span id="sunlineSEKFConfig::outputSunline__NavAttMsgPayload"></span><span class="target" id="structsunline_s_e_k_f_config_1aa05d76a381432d5978efa17f952c6d93"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">outputSunline</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig13outputSunlineE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Output sunline estimate data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig17cssSensorInBufferE">
+<span id="_CPPv3N17sunlineSEKFConfig17cssSensorInBufferE"></span><span id="_CPPv2N17sunlineSEKFConfig17cssSensorInBufferE"></span><span id="sunlineSEKFConfig::cssSensorInBuffer__CSSArraySensorMsgPayload"></span><span class="target" id="structsunline_s_e_k_f_config_1af32e9b8c81941d47c3f22f7d5aaaa1c8"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.html#_CPPv424CSSArraySensorMsgPayload" title="CSSArraySensorMsgPayload"><span class="n"><span class="pre">CSSArraySensorMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cssSensorInBuffer</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig17cssSensorInBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] CSS sensor data read in from message bus </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17sunlineSEKFConfig9bskLoggerE">
+<span id="_CPPv3N17sunlineSEKFConfig9bskLoggerE"></span><span id="_CPPv2N17sunlineSEKFConfig9bskLoggerE"></span><span id="sunlineSEKFConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structsunline_s_e_k_f_config_1a93d5069429c6e51a75c041403384da54"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N17sunlineSEKFConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="sunlineSEKF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

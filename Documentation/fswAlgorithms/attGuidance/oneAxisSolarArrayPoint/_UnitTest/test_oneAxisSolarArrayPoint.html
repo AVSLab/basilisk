@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_oneAxisSolarArrayPoint &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="opNavPoint" href="../../opNavPoint/index.html" />
+    <link rel="prev" title="_UnitTest" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">attGuidance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../attRefCorrection/index.html">attRefCorrection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../attTrackingError/index.html">attTrackingError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../celestialTwoBodyPoint/index.html">celestialTwoBodyPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constrainedAttitudeManeuver/index.html">constrainedAttitudeManeuver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eulerRotation/index.html">eulerRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hillPoint/index.html">hillPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertial3D/index.html">inertial3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../inertial3DSpin/index.html">inertial3DSpin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../locationPointing/index.html">locationPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mrpRotation/index.html">mrpRotation</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">oneAxisSolarArrayPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../opNavPoint/index.html">opNavPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../rasterManager/index.html">rasterManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../simpleDeadband/index.html">simpleDeadband</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sunSafePoint/index.html">sunSafePoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../velocityPoint/index.html">velocityPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../waypointReference/index.html">waypointReference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">attGuidance</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">oneAxisSolarArrayPoint</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_oneAxisSolarArrayPoint</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/fswAlgorithms/attGuidance/oneAxisSolarArrayPoint/_UnitTest/test_oneAxisSolarArrayPoint.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-oneaxissolararraypoint">
+<span id="id1"></span><h1>test_oneAxisSolarArrayPoint<a class="headerlink" href="#test-oneaxissolararraypoint" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py function" id="module-test_oneAxisSolarArrayPoint">
+<dt class="sig sig-object py" id="test_oneAxisSolarArrayPoint.test_oneAxisSolarArrayPointTestFunction">
+<span class="sig-prename descclassname"><span class="pre">test_oneAxisSolarArrayPoint.</span></span><span class="sig-name descname"><span class="pre">test_oneAxisSolarArrayPointTestFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bodyAxisInput</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inertialAxisInput</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignmentPriority</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_oneAxisSolarArrayPoint.html#test_oneAxisSolarArrayPointTestFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_oneAxisSolarArrayPoint.test_oneAxisSolarArrayPointTestFunction" title="Link to this definition"></a></dt>
+<dd><p><strong>Validation Test Description</strong></p>
+<p>This unit test script tests the correctness of the reference attitude computed by <a class="reference internal" href="../oneAxisSolarArrayPoint.html#oneaxissolararraypoint"><span class="std std-ref">Module: oneAxisSolarArrayPoint</span></a>.
+The correctness of the output is determined based on whether the reference attitude causes the solar array drive
+axis <span class="math notranslate nohighlight">\(\hat{a}_1\)</span> to be at an angle <span class="math notranslate nohighlight">\(\gamma\)</span> from the Sun direction <span class="math notranslate nohighlight">\(\hat{r}_{S/B}\)</span>.</p>
+<p><strong>Test Parameters</strong></p>
+<p>This test generates an array <code class="docutils literal notranslate"><span class="pre">ang</span></code> of linearly-spaced points between 0 and <span class="math notranslate nohighlight">\(\pi\)</span>. Values of
+<span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\delta\)</span> are drawn from all possible combinations of such lineaarly spaced values.
+In the test, values of <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\delta\)</span> are used to set the angular distance between the vectors
+<span class="math notranslate nohighlight">\({}^\mathcal{N}\hat{r}_{S/B}\)</span> and <span class="math notranslate nohighlight">\({}^\mathcal{N}\hat{h}_\text{ref}\)</span>, and <span class="math notranslate nohighlight">\({}^\mathcal{B}\hat{h}_1\)</span>
+and <span class="math notranslate nohighlight">\({}^\mathcal{B}\hat{a}_1\)</span>. All possible inputs are provided to the module, in terms of input parameters
+and input messages, using the same combinations of inertial and body-fixed direction vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>rad</em>) – angle between <span class="math notranslate nohighlight">\({}^\mathcal{N}\hat{r}_{S/B}\)</span> and <span class="math notranslate nohighlight">\({}^\mathcal{N}\hat{h}_\text{ref}\)</span></p></li>
+<li><p><strong>delta</strong> (<em>rad</em>) – angle between <span class="math notranslate nohighlight">\({}^\mathcal{B}\hat{h}_1\)</span> and <span class="math notranslate nohighlight">\({}^\mathcal{B}\hat{a}_1\)</span></p></li>
+<li><p><strong>bodyAxisInput</strong> (<em>int</em>) – passes the body axis input as parameter or as input msg</p></li>
+<li><p><strong>inertialAxisInput</strong> (<em>int</em>) – passes the inertial axis input as parameter, as input msg, or with <a class="reference internal" href="../../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a> and <a class="reference internal" href="../../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></li>
+<li><p><strong>alignmentPriority</strong> (<em>int</em>) – 0 to prioritize body heading alignment, 1 to prioritize solar array power; if 1, correct result is <span class="math notranslate nohighlight">\(\gamma = 0\)</span>.</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Description of Variables Being Tested</strong></p>
+<p>The angle <span class="math notranslate nohighlight">\(\gamma\)</span> is a function of the angles <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\delta\)</span>, where <span class="math notranslate nohighlight">\(\alpha\)</span> is the
+angle between the Sun direction <span class="math notranslate nohighlight">\({}^\mathcal{N}\hat{r}_{S/B}\)</span> and the reference inertial heading
+<span class="math notranslate nohighlight">\({}^\mathcal{N}\hat{h}_\text{ref}\)</span>, whereas <span class="math notranslate nohighlight">\(\delta\)</span> is the angle between the body-frame heading
+<span class="math notranslate nohighlight">\({}^\mathcal{B}\hat{h}_1\)</span> and the solar array axis drive <span class="math notranslate nohighlight">\({}^\mathcal{B}\hat{a}_1\)</span>.
+The angle <span class="math notranslate nohighlight">\(\gamma\)</span> is computed from the output reference attitude and compared with the results of a
+python function that computes the correct output based on the geometry of the problem. For a description of how
+such correct result is obtained, see <a class="reference external" href="https://link.springer.com/article/10.1007/s42064-024-0245-1">R. Calaon, C. Allard and H. Schaub, “Attitude Reference Generation for Spacecraft
+with Rotating Solar Arrays and Pointing Constraints”</a>.</p>
+<p><strong>General Documentation Comments</strong></p>
+<p>This unit test verifies the correctness of the generated reference attitude. It does not test the correctness of the
+reference angular rates and accelerations contained in the <code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code>, because this would require to run the
+module for multiple update calls. To ensure fast execution of the unit test, this is avoided.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_UnitTest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../opNavPoint/index.html" class="btn btn-neutral float-right" title="opNavPoint" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

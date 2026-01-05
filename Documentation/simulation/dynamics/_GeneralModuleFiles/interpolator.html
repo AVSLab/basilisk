@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: interpolator &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: pointMassGravityModel" href="pointMassGravityModel.html" />
+    <link rel="prev" title="Module: hubEffector" href="hubEffector.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: interpolator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/interpolator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-interpolator">
+<span id="interpolator"></span><h1>Module: interpolator<a class="headerlink" href="#module-interpolator" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0_6size_tE12Interpolator">
+<span id="_CPPv3I0_6size_tE12Interpolator"></span><span id="_CPPv2I0_6size_tE12Interpolator"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nArgs</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_interpolator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Interpolator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv4I0_6size_tE12Interpolator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;interpolator.h&gt;</em></div>
+<p>A class that interpolates from a given table of points and outputs the result as a message payload.</p>
+<p>The table is given in <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1a65980a411f74729c3d054c6c2baa7ef3"><span class="std std-ref"><span class="pre">setDataPoints</span></span></a></code> as a matrix, where the first column represents the simulation time (the independent variable), and the rest of columns are the data to be interpolated.</p>
+<p>The result of the interpolation will be a vector of floats. This vector is then taken by the virtual method <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1ab78661591680e1b48c3074e205d0a9c9"><span class="std std-ref"><span class="pre">setPayloadValues</span></span></a></code> to fill in the payload as needed.</p>
+<p>Interpolation through splines of configurable degrees. Zero degrees is piece-wise constant between data points, one degree is linear interpolation, two degrees is quadratic interpolation, three degrees is cubic interpolation… Note that cubic interpolation guarantees continous first and second derivatives, which might be useful for certain applications. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator13setDataPointsERKN5Eigen8MatrixXdE8uint16_t">
+<span id="_CPPv3N12Interpolator13setDataPointsERKN5Eigen8MatrixXdE8uint16_t"></span><span id="_CPPv2N12Interpolator13setDataPointsERKN5Eigen8MatrixXdE8uint16_t"></span><span id="Interpolator::setDataPoints__Eigen::MatrixXdCR.uint16_t"></span><span class="target" id="class_interpolator_1a65980a411f74729c3d054c6c2baa7ef3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDataPoints</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">points</span></span>, <span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">degrees</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Interpolator13setDataPointsERKN5Eigen8MatrixXdE8uint16_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the points to use for interpolation. The first column corresponds to the independent value, the simulation time in nanoseconds, while the rest of columns are the data to use for interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> – A matrix containing data points where the first column represents the independent values and subsequent columns represent the values to interpolate. </p></li>
+<li><p><strong>degrees</strong> – The degree of the spline to fit (default is 1). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator5ResetE8uint64_t">
+<span id="_CPPv3N12Interpolator5ResetE8uint64_t"></span><span id="_CPPv2N12Interpolator5ResetE8uint64_t"></span><span id="Interpolator::Reset__uint64_t"></span><span class="target" id="class_interpolator_1ad7a24fa9b8ef95890198c09ab4082dfa"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Interpolator5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Calls <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1a16da801ae0f099a2c768a2d659d70b25"><span class="std std-ref"><span class="pre">UpdateState</span></span></a></code> with the given time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds used to update the state of the interpolator and generate the output message. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator11UpdateStateE8uint64_t">
+<span id="_CPPv3N12Interpolator11UpdateStateE8uint64_t"></span><span id="_CPPv2N12Interpolator11UpdateStateE8uint64_t"></span><span id="Interpolator::UpdateState__uint64_t"></span><span class="target" id="class_interpolator_1a16da801ae0f099a2c768a2d659d70b25"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Interpolator11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the state of the interpolator based on the current simulation time.</p>
+<p>It then prepares a message payload and sets its values using the current simulation time and the interpolated result from the spline function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds used to update the state of the interpolator and generate the output message. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if the interpolator has not been initialized properly (i.e., if <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1a91858d12d48986806c1e68fdea8159a8"><span class="std std-ref"><span class="pre">xMin</span></span></a></code> and <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1ae54cce654b851e551b48370abd64acc6"><span class="std std-ref"><span class="pre">xMax</span></span></a></code> are both zero). </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator18interpolatedOutMsgE">
+<span id="_CPPv3N12Interpolator18interpolatedOutMsgE"></span><span id="_CPPv2N12Interpolator18interpolatedOutMsgE"></span><span id="Interpolator::interpolatedOutMsg__Message:T:"></span><span class="target" id="class_interpolator_1a79378f873b90a3332b9fc98cff3be821"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6size_tE12Interpolator" title="Interpolator::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">interpolatedOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N12Interpolator18interpolatedOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Result message of the interpolation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator9bskLoggerE">
+<span id="_CPPv3N12Interpolator9bskLoggerE"></span><span id="_CPPv2N12Interpolator9bskLoggerE"></span><span id="Interpolator::bskLogger__BSKLogger"></span><span class="target" id="class_interpolator_1a7b774876cd65d4b303c96aaf4568db12"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12Interpolator9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Logger used to log errors </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator16setPayloadValuesER1T8uint64_tRKN5Eigen5ArrayId5nArgsXL1EEEE">
+<span id="_CPPv3N12Interpolator16setPayloadValuesER1T8uint64_tRKN5Eigen5ArrayId5nArgsXL1EEEE"></span><span id="_CPPv2N12Interpolator16setPayloadValuesER1T8uint64_tRKN5Eigen5ArrayId5nArgsX1EEE"></span><span id="Interpolator::setPayloadValues__TR.uint64_t.Eigen::Array:double.nArgs.1:CR"></span><span class="target" id="class_interpolator_1ab78661591680e1b48c3074e205d0a9c9"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPayloadValues</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0_6size_tE12Interpolator" title="Interpolator::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">payload</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tE12Interpolator" title="Interpolator::nArgs"><span class="n"><span class="pre">nArgs</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">interp</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12Interpolator16setPayloadValuesER1T8uint64_tRKN5Eigen5ArrayId5nArgsXL1EEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Called by <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1a16da801ae0f099a2c768a2d659d70b25"><span class="std std-ref"><span class="pre">UpdateState</span></span></a></code> with the simulation time and the interpolated values.</p>
+<p>This method should modify the given paylod object and fill it with the desired values given the function inputs. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator5scaleEd">
+<span id="_CPPv3N12Interpolator5scaleEd"></span><span id="_CPPv2N12Interpolator5scaleEd"></span><span id="Interpolator::scale__double"></span><span class="target" id="class_interpolator_1a9189e95c99770ac10dd2252050906514"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scale</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Interpolator5scaleEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Scales a single value to the range [0, 1] based on the object’s xMin and xMax.</p>
+<p>This method normalizes the input value <code class="docutils literal notranslate"><span class="pre">val</span></code> by subtracting <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1a91858d12d48986806c1e68fdea8159a8"><span class="std std-ref"><span class="pre">xMin</span></span></a></code> and dividing by the range (<code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1ae54cce654b851e551b48370abd64acc6"><span class="std std-ref"><span class="pre">xMax</span></span></a> <span class="pre">-</span> <a class="reference internal" href="#class_interpolator_1a91858d12d48986806c1e68fdea8159a8"><span class="std std-ref"><span class="pre">xMin</span></span></a></code>). The result is clamped to ensure it remains within the range [0, 1].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – The value to scale. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The scaled value in the range [0, 1]. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator5scaleEN5Eigen8VectorXdE">
+<span id="_CPPv3N12Interpolator5scaleEN5Eigen8VectorXdE"></span><span id="_CPPv2N12Interpolator5scaleEN5Eigen8VectorXdE"></span><span id="Interpolator::scale__Eigen::VectorXd"></span><span class="target" id="class_interpolator_1acaa4b38e8494454e41bc90dfefa23e88"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scale</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Interpolator5scaleEN5Eigen8VectorXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Scales a vector of values to the range [0, 1] based on the object’s xMin and xMax.</p>
+<p>This method normalizes each element in the input vector <code class="docutils literal notranslate"><span class="pre">val</span></code> by subtracting <code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1a91858d12d48986806c1e68fdea8159a8"><span class="std std-ref"><span class="pre">xMin</span></span></a></code> and dividing by the range (<code class="docutils literal notranslate"><a class="reference internal" href="#class_interpolator_1ae54cce654b851e551b48370abd64acc6"><span class="std std-ref"><span class="pre">xMax</span></span></a> <span class="pre">-</span> <a class="reference internal" href="#class_interpolator_1a91858d12d48986806c1e68fdea8159a8"><span class="std std-ref"><span class="pre">xMin</span></span></a></code>), returning a new vector with the scaled values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – The vector of values to scale. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An Eigen::VectorXd containing the scaled values. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator17setDataPointsImplERKN5Eigen8MatrixXdE8uint16_t">
+<span id="_CPPv3N12Interpolator17setDataPointsImplERKN5Eigen8MatrixXdE8uint16_t"></span><span id="_CPPv2N12Interpolator17setDataPointsImplERKN5Eigen8MatrixXdE8uint16_t"></span><span id="Interpolator::setDataPointsImpl__Eigen::MatrixXdCR.uint16_t"></span><span class="target" id="class_interpolator_1a544cc54fde4644bfab5e0110e9b87bf3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDataPointsImpl</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">points</span></span>, <span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">degrees</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Interpolator17setDataPointsImplERKN5Eigen8MatrixXdE8uint16_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the data points for spline fitting based on the given matrix of points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> – A matrix containing data points where the first column represents the independent values and subsequent columns represent the values to interpolate. </p></li>
+<li><p><strong>degrees</strong> – The degree of the spline to fit (default is 1). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – if the first column of points contains only one unique value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator4xMinE">
+<span id="_CPPv3N12Interpolator4xMinE"></span><span id="_CPPv2N12Interpolator4xMinE"></span><span id="Interpolator::xMin__double"></span><span class="target" id="class_interpolator_1a91858d12d48986806c1e68fdea8159a8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xMin</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12Interpolator4xMinE" title="Link to this definition"></a><br /></dt>
+<dd><p>Minimum independent value in the data points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator4xMaxE">
+<span id="_CPPv3N12Interpolator4xMaxE"></span><span id="_CPPv2N12Interpolator4xMaxE"></span><span id="Interpolator::xMax__double"></span><span class="target" id="class_interpolator_1ae54cce654b851e551b48370abd64acc6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xMax</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12Interpolator4xMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>Maximum independent value in the data points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Interpolator6splineE">
+<span id="_CPPv3N12Interpolator6splineE"></span><span id="_CPPv2N12Interpolator6splineE"></span><span id="Interpolator::spline__Eigen::Spline:double.nArgs:"></span><span class="target" id="class_interpolator_1ae0b0849cbf2e32732904ac29d1133ca7"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Spline</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tE12Interpolator" title="Interpolator::nArgs"><span class="n"><span class="pre">nArgs</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spline</span></span></span><a class="headerlink" href="#_CPPv4N12Interpolator6splineE" title="Link to this definition"></a><br /></dt>
+<dd><p>Spline object </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hubEffector.html" class="btn btn-neutral float-left" title="Module: hubEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pointMassGravityModel.html" class="btn btn-neutral float-right" title="Module: pointMassGravityModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

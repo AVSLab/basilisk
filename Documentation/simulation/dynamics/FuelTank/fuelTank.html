@@ -1,0 +1,823 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: fuelTank &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="FuelTank" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">FuelTank</a></li>
+      <li class="breadcrumb-item active">Module: fuelTank</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/FuelTank/fuelTank.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-fueltank">
+<span id="fueltank"></span><h1>Module: fuelTank<a class="headerlink" href="#module-fueltank" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This class is an instantiation of the stateEffector abstract class and implements an effector representing a fuel tank.
+This fuel tank has one state associated with it and is the mass of the fuel inside the tank. The module is a fuel tank
+effector attached to a rigid body hub and has the following functions:</p>
+<ul class="simple">
+<li><p>Compute tank properties depending on the tank model being used</p></li>
+<li><p>Provides its contributions to the mass properties of the spacecraft</p></li>
+<li><p>Provides its contributions to the back-substitution matrices</p></li>
+<li><p>Computes its derivative for its mass flow rate using the vector of attached thrusters</p></li>
+<li><p>Provides its contributions to energy and momentum of the spacecraft</p></li>
+</ul>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/82026bf39c9f45387eeb14abe20de974/Basilisk-FUELTANK-20171203.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s computations.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fuelTankOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/FuelTankMsgPayload.html#fueltankmsgpayload"><span class="std std-ref">FuelTankMsgPayload</span></a></p></td>
+<td><p>fuel tank output message name</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The fuel tank effector module must be passed a tank model</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fuelTankEffector</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTank</span><span class="p">()</span>
+<span class="n">tankModel</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelConstantVolume</span><span class="p">()</span>
+<span class="n">fuelTankEffector</span><span class="o">.</span><span class="n">setTankModel</span><span class="p">(</span><span class="n">tankModel</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A thruster effector can be attached to a tank effector to simulate fuel mass depletion by thruster operation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fuelTankEffector</span><span class="o">.</span><span class="n">addThrusterSet</span><span class="p">(</span><span class="n">thrustersEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413FuelTankModel">
+<span id="_CPPv313FuelTankModel"></span><span id="_CPPv213FuelTankModel"></span><span id="FuelTankModel"></span><span class="target" id="class_fuel_tank_model"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModel</span></span></span><a class="headerlink" href="#_CPPv413FuelTankModel" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Tank model class </p>
+<p>Subclassed by <a class="reference internal" href="#class_fuel_tank_model_centrifugal_burn"><span class="std std-ref">FuelTankModelCentrifugalBurn</span></a>, <a class="reference internal" href="#class_fuel_tank_model_constant_density"><span class="std std-ref">FuelTankModelConstantDensity</span></a>, <a class="reference internal" href="#class_fuel_tank_model_constant_volume"><span class="std std-ref">FuelTankModelConstantVolume</span></a>, <a class="reference internal" href="#class_fuel_tank_model_emptying"><span class="std std-ref">FuelTankModelEmptying</span></a>, <a class="reference internal" href="#class_fuel_tank_model_uniform_burn"><span class="std std-ref">FuelTankModelUniformBurn</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel16computeTankPropsEd">
+<span id="_CPPv3N13FuelTankModel16computeTankPropsEd"></span><span id="_CPPv2N13FuelTankModel16computeTankPropsEd"></span><span id="FuelTankModel::computeTankProps__double"></span><span class="target" id="class_fuel_tank_model_1a4a130500069929d902786cdaf42857ef"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel16computeTankPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel21computeTankPropDerivsEdd">
+<span id="_CPPv3N13FuelTankModel21computeTankPropDerivsEdd"></span><span id="_CPPv2N13FuelTankModel21computeTankPropDerivsEdd"></span><span id="FuelTankModel::computeTankPropDerivs__double.double"></span><span class="target" id="class_fuel_tank_model_1a1cf071ba79dbe70073dcdbe5f414b393"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankPropDerivs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mDotFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel21computeTankPropDerivsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel13FuelTankModelEv">
+<span id="_CPPv3N13FuelTankModel13FuelTankModelEv"></span><span id="_CPPv2N13FuelTankModel13FuelTankModelEv"></span><span id="FuelTankModel::FuelTankModel"></span><span class="target" id="class_fuel_tank_model_1a5c374fe3b8432d510f69fe4c4060d631"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13FuelTankModel13FuelTankModelEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModelD0Ev">
+<span id="_CPPv3N13FuelTankModelD0Ev"></span><span id="_CPPv2N13FuelTankModelD0Ev"></span><span id="FuelTankModel::~FuelTankModel"></span><span class="target" id="class_fuel_tank_model_1ac44eb89e83a34af5bb5fc40d44b29787"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTankModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N13FuelTankModelD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel12propMassInitE">
+<span id="_CPPv3N13FuelTankModel12propMassInitE"></span><span id="_CPPv2N13FuelTankModel12propMassInitE"></span><span id="FuelTankModel::propMassInit__double"></span><span class="target" id="class_fuel_tank_model_1a8818c918b1bbd61ed36f83c0f793e8ef"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propMassInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel12propMassInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] Initial propellant mass in tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel11maxFuelMassE">
+<span id="_CPPv3N13FuelTankModel11maxFuelMassE"></span><span id="_CPPv2N13FuelTankModel11maxFuelMassE"></span><span id="FuelTankModel::maxFuelMass__double"></span><span class="target" id="class_fuel_tank_model_1ad4a05de61e1fb3c006d38b9b6ae7c0ba"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxFuelMass</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel11maxFuelMassE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] maximum tank mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel11r_TcT_TInitE">
+<span id="_CPPv3N13FuelTankModel11r_TcT_TInitE"></span><span id="_CPPv2N13FuelTankModel11r_TcT_TInitE"></span><span id="FuelTankModel::r_TcT_TInit__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_model_1a42d8d25727b4533751f52d5ae7898c13"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_TcT_TInit</span></span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel11r_TcT_TInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial position vector from B to tank point in B frame comp. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel11ITankPntT_TE">
+<span id="_CPPv3N13FuelTankModel11ITankPntT_TE"></span><span id="_CPPv2N13FuelTankModel11ITankPntT_TE"></span><span id="FuelTankModel::ITankPntT_T__Eigen::Matrix3d"></span><span class="target" id="class_fuel_tank_model_1a7a3b3f3e6135be2a8db99b2111500c84"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ITankPntT_T</span></span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel11ITankPntT_TE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2] Inertia of tank about pnt T in B frame comp. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel16IPrimeTankPntT_TE">
+<span id="_CPPv3N13FuelTankModel16IPrimeTankPntT_TE"></span><span id="_CPPv2N13FuelTankModel16IPrimeTankPntT_TE"></span><span id="FuelTankModel::IPrimeTankPntT_T__Eigen::Matrix3d"></span><span class="target" id="class_fuel_tank_model_1aa24ffb1be34a6774b6fdf1281acade51"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPrimeTankPntT_T</span></span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel16IPrimeTankPntT_TE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg m^2/s] Derivative of inertia of tank about pnt T in B frame comp. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel7r_TcT_TE">
+<span id="_CPPv3N13FuelTankModel7r_TcT_TE"></span><span id="_CPPv2N13FuelTankModel7r_TcT_TE"></span><span id="FuelTankModel::r_TcT_T__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_model_1a976f4fc9dec3a887ff7c53a67d8a3c67"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_TcT_T</span></span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel7r_TcT_TE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector from B to tank point in B frame comp. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel12rPrime_TcT_TE">
+<span id="_CPPv3N13FuelTankModel12rPrime_TcT_TE"></span><span id="_CPPv2N13FuelTankModel12rPrime_TcT_TE"></span><span id="FuelTankModel::rPrime_TcT_T__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_model_1a1ba2401f63b26112b76caec1803dbfd5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_TcT_T</span></span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel12rPrime_TcT_TE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Derivative of position vector from B to tank point in B frame comp. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13FuelTankModel13rPPrime_TcT_TE">
+<span id="_CPPv3N13FuelTankModel13rPPrime_TcT_TE"></span><span id="_CPPv2N13FuelTankModel13rPPrime_TcT_TE"></span><span id="FuelTankModel::rPPrime_TcT_T__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_model_1a9fe2268c73ed2350757ac0eff926fd23"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPPrime_TcT_T</span></span></span><a class="headerlink" href="#_CPPv4N13FuelTankModel13rPPrime_TcT_TE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] Second derivative of position vector from B to tank point in B frame comp. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv427FuelTankModelConstantVolume">
+<span id="_CPPv327FuelTankModelConstantVolume"></span><span id="_CPPv227FuelTankModelConstantVolume"></span><span id="FuelTankModelConstantVolume"></span><span class="target" id="class_fuel_tank_model_constant_volume"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelConstantVolume</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><a class="headerlink" href="#_CPPv427FuelTankModelConstantVolume" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Tank constant volume class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27FuelTankModelConstantVolume27FuelTankModelConstantVolumeEv">
+<span id="_CPPv3N27FuelTankModelConstantVolume27FuelTankModelConstantVolumeEv"></span><span id="_CPPv2N27FuelTankModelConstantVolume27FuelTankModelConstantVolumeEv"></span><span id="FuelTankModelConstantVolume::FuelTankModelConstantVolume"></span><span class="target" id="class_fuel_tank_model_constant_volume_1a5d5d58ec58d90625ec62ce021c60c566"></span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelConstantVolume</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N27FuelTankModelConstantVolume27FuelTankModelConstantVolumeEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27FuelTankModelConstantVolumeD0Ev">
+<span id="_CPPv3N27FuelTankModelConstantVolumeD0Ev"></span><span id="_CPPv2N27FuelTankModelConstantVolumeD0Ev"></span><span id="FuelTankModelConstantVolume::~FuelTankModelConstantVolume"></span><span class="target" id="class_fuel_tank_model_constant_volume_1a4497b7d62d9ba50ff06e9180e201bb62"></span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTankModelConstantVolume</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N27FuelTankModelConstantVolumeD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27FuelTankModelConstantVolume16computeTankPropsEd">
+<span id="_CPPv3N27FuelTankModelConstantVolume16computeTankPropsEd"></span><span id="_CPPv2N27FuelTankModelConstantVolume16computeTankPropsEd"></span><span id="FuelTankModelConstantVolume::computeTankProps__double"></span><span class="target" id="class_fuel_tank_model_constant_volume_1ad8c9c091d0f021b9330e403f274f21b7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N27FuelTankModelConstantVolume16computeTankPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N27FuelTankModelConstantVolume21computeTankPropDerivsEdd">
+<span id="_CPPv3N27FuelTankModelConstantVolume21computeTankPropDerivsEdd"></span><span id="_CPPv2N27FuelTankModelConstantVolume21computeTankPropDerivsEdd"></span><span id="FuelTankModelConstantVolume::computeTankPropDerivs__double.double"></span><span class="target" id="class_fuel_tank_model_constant_volume_1ac7fc5e6542ca20a35b6ce74385d652ff"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankPropDerivs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mDotFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N27FuelTankModelConstantVolume21computeTankPropDerivsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N27FuelTankModelConstantVolume14radiusTankInitE">
+<span id="_CPPv3N27FuelTankModelConstantVolume14radiusTankInitE"></span><span id="_CPPv2N27FuelTankModelConstantVolume14radiusTankInitE"></span><span id="FuelTankModelConstantVolume::radiusTankInit__double"></span><span class="target" id="class_fuel_tank_model_constant_volume_1ab347f9158a22fb4ec17d944d6b41d05a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusTankInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N27FuelTankModelConstantVolume14radiusTankInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial radius of the spherical tank </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv428FuelTankModelConstantDensity">
+<span id="_CPPv328FuelTankModelConstantDensity"></span><span id="_CPPv228FuelTankModelConstantDensity"></span><span id="FuelTankModelConstantDensity"></span><span class="target" id="class_fuel_tank_model_constant_density"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelConstantDensity</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><a class="headerlink" href="#_CPPv428FuelTankModelConstantDensity" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Tank constant density class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelConstantDensity28FuelTankModelConstantDensityEv">
+<span id="_CPPv3N28FuelTankModelConstantDensity28FuelTankModelConstantDensityEv"></span><span id="_CPPv2N28FuelTankModelConstantDensity28FuelTankModelConstantDensityEv"></span><span id="FuelTankModelConstantDensity::FuelTankModelConstantDensity"></span><span class="target" id="class_fuel_tank_model_constant_density_1a4f01cf9f4817cd00626c26ad0e229db0"></span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelConstantDensity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelConstantDensity28FuelTankModelConstantDensityEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelConstantDensityD0Ev">
+<span id="_CPPv3N28FuelTankModelConstantDensityD0Ev"></span><span id="_CPPv2N28FuelTankModelConstantDensityD0Ev"></span><span id="FuelTankModelConstantDensity::~FuelTankModelConstantDensity"></span><span class="target" id="class_fuel_tank_model_constant_density_1a10cdd1190078e37aa41a19b5447dfe34"></span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTankModelConstantDensity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelConstantDensityD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelConstantDensity16computeTankPropsEd">
+<span id="_CPPv3N28FuelTankModelConstantDensity16computeTankPropsEd"></span><span id="_CPPv2N28FuelTankModelConstantDensity16computeTankPropsEd"></span><span id="FuelTankModelConstantDensity::computeTankProps__double"></span><span class="target" id="class_fuel_tank_model_constant_density_1af7499e17aa3b79cf02a817e2826b40bf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelConstantDensity16computeTankPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelConstantDensity21computeTankPropDerivsEdd">
+<span id="_CPPv3N28FuelTankModelConstantDensity21computeTankPropDerivsEdd"></span><span id="_CPPv2N28FuelTankModelConstantDensity21computeTankPropDerivsEdd"></span><span id="FuelTankModelConstantDensity::computeTankPropDerivs__double.double"></span><span class="target" id="class_fuel_tank_model_constant_density_1ac7f3abb4263dcd7318bd1067481eda41"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankPropDerivs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mDotFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelConstantDensity21computeTankPropDerivsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelConstantDensity14radiusTankInitE">
+<span id="_CPPv3N28FuelTankModelConstantDensity14radiusTankInitE"></span><span id="_CPPv2N28FuelTankModelConstantDensity14radiusTankInitE"></span><span id="FuelTankModelConstantDensity::radiusTankInit__double"></span><span class="target" id="class_fuel_tank_model_constant_density_1a5735b62ddc90c773aefe6cb922231c3d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusTankInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelConstantDensity14radiusTankInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial radius of the spherical tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelConstantDensity10radiusTankE">
+<span id="_CPPv3N28FuelTankModelConstantDensity10radiusTankE"></span><span id="_CPPv2N28FuelTankModelConstantDensity10radiusTankE"></span><span id="FuelTankModelConstantDensity::radiusTank__double"></span><span class="target" id="class_fuel_tank_model_constant_density_1a7390792b976d21b4e37b2e4e94a6e96c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusTank</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelConstantDensity10radiusTankE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Current radius of the spherical tank </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv421FuelTankModelEmptying">
+<span id="_CPPv321FuelTankModelEmptying"></span><span id="_CPPv221FuelTankModelEmptying"></span><span id="FuelTankModelEmptying"></span><span class="target" id="class_fuel_tank_model_emptying"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelEmptying</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><a class="headerlink" href="#_CPPv421FuelTankModelEmptying" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Tank model emptying class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying21FuelTankModelEmptyingEv">
+<span id="_CPPv3N21FuelTankModelEmptying21FuelTankModelEmptyingEv"></span><span id="_CPPv2N21FuelTankModelEmptying21FuelTankModelEmptyingEv"></span><span id="FuelTankModelEmptying::FuelTankModelEmptying"></span><span class="target" id="class_fuel_tank_model_emptying_1a114dbbeb676925e52bc914b33bb5b222"></span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelEmptying</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying21FuelTankModelEmptyingEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptyingD0Ev">
+<span id="_CPPv3N21FuelTankModelEmptyingD0Ev"></span><span id="_CPPv2N21FuelTankModelEmptyingD0Ev"></span><span id="FuelTankModelEmptying::~FuelTankModelEmptying"></span><span class="target" id="class_fuel_tank_model_emptying_1af8698e3b9780a0b69792767bd22f9221"></span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTankModelEmptying</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptyingD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying16computeTankPropsEd">
+<span id="_CPPv3N21FuelTankModelEmptying16computeTankPropsEd"></span><span id="_CPPv2N21FuelTankModelEmptying16computeTankPropsEd"></span><span id="FuelTankModelEmptying::computeTankProps__double"></span><span class="target" id="class_fuel_tank_model_emptying_1ae42595638025c83b3aa6c33c7c57af0e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying16computeTankPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying21computeTankPropDerivsEdd">
+<span id="_CPPv3N21FuelTankModelEmptying21computeTankPropDerivsEdd"></span><span id="_CPPv2N21FuelTankModelEmptying21computeTankPropDerivsEdd"></span><span id="FuelTankModelEmptying::computeTankPropDerivs__double.double"></span><span class="target" id="class_fuel_tank_model_emptying_1acf3856342c710414c44d72137417366d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankPropDerivs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mDotFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying21computeTankPropDerivsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying14radiusTankInitE">
+<span id="_CPPv3N21FuelTankModelEmptying14radiusTankInitE"></span><span id="_CPPv2N21FuelTankModelEmptying14radiusTankInitE"></span><span id="FuelTankModelEmptying::radiusTankInit__double"></span><span class="target" id="class_fuel_tank_model_emptying_1a7e70c3aeccb455e6e54bf220c4d88eef"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusTankInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying14radiusTankInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial radius of the spherical tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying7rhoFuelE">
+<span id="_CPPv3N21FuelTankModelEmptying7rhoFuelE"></span><span id="_CPPv2N21FuelTankModelEmptying7rhoFuelE"></span><span id="FuelTankModelEmptying::rhoFuel__double"></span><span class="target" id="class_fuel_tank_model_emptying_1a0f9592f5a346960d47fe78869d88a42c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rhoFuel</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying7rhoFuelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg/m^3] density of the fuel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying9thetaStarE">
+<span id="_CPPv3N21FuelTankModelEmptying9thetaStarE"></span><span id="_CPPv2N21FuelTankModelEmptying9thetaStarE"></span><span id="FuelTankModelEmptying::thetaStar__double"></span><span class="target" id="class_fuel_tank_model_emptying_1a346c90a9ee189438a5f5282483b10724"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaStar</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying9thetaStarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] angle from vertical to top of fuel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying12thetaDotStarE">
+<span id="_CPPv3N21FuelTankModelEmptying12thetaDotStarE"></span><span id="_CPPv2N21FuelTankModelEmptying12thetaDotStarE"></span><span id="FuelTankModelEmptying::thetaDotStar__double"></span><span class="target" id="class_fuel_tank_model_emptying_1afda6d8665be2465fd56b4b4befc2aa36"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDotStar</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying12thetaDotStarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] derivative of angle from vertical to top of fuel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying13thetaDDotStarE">
+<span id="_CPPv3N21FuelTankModelEmptying13thetaDDotStarE"></span><span id="_CPPv2N21FuelTankModelEmptying13thetaDDotStarE"></span><span id="FuelTankModelEmptying::thetaDDotStar__double"></span><span class="target" id="class_fuel_tank_model_emptying_1aacd2c259602b4ad920d088545c4ddc20"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDDotStar</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying13thetaDDotStarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] second derivative of angle from vertical to top of fuel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21FuelTankModelEmptying2k3E">
+<span id="_CPPv3N21FuelTankModelEmptying2k3E"></span><span id="_CPPv2N21FuelTankModelEmptying2k3E"></span><span id="FuelTankModelEmptying::k3__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_model_emptying_1ae92306d88ec6994732ab39f6bebd3c8d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k3</span></span></span><a class="headerlink" href="#_CPPv4N21FuelTankModelEmptying2k3E" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Direction of fuel depletion </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv424FuelTankModelUniformBurn">
+<span id="_CPPv324FuelTankModelUniformBurn"></span><span id="_CPPv224FuelTankModelUniformBurn"></span><span id="FuelTankModelUniformBurn"></span><span class="target" id="class_fuel_tank_model_uniform_burn"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelUniformBurn</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><a class="headerlink" href="#_CPPv424FuelTankModelUniformBurn" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Tank model class for a uniform burn </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FuelTankModelUniformBurn24FuelTankModelUniformBurnEv">
+<span id="_CPPv3N24FuelTankModelUniformBurn24FuelTankModelUniformBurnEv"></span><span id="_CPPv2N24FuelTankModelUniformBurn24FuelTankModelUniformBurnEv"></span><span id="FuelTankModelUniformBurn::FuelTankModelUniformBurn"></span><span class="target" id="class_fuel_tank_model_uniform_burn_1ad4df8d1d43c8f2b98a8bd7c474fca7ae"></span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelUniformBurn</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N24FuelTankModelUniformBurn24FuelTankModelUniformBurnEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FuelTankModelUniformBurnD0Ev">
+<span id="_CPPv3N24FuelTankModelUniformBurnD0Ev"></span><span id="_CPPv2N24FuelTankModelUniformBurnD0Ev"></span><span id="FuelTankModelUniformBurn::~FuelTankModelUniformBurn"></span><span class="target" id="class_fuel_tank_model_uniform_burn_1a3bad275dbcbf871dcca2f84bc829f19b"></span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTankModelUniformBurn</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N24FuelTankModelUniformBurnD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FuelTankModelUniformBurn16computeTankPropsEd">
+<span id="_CPPv3N24FuelTankModelUniformBurn16computeTankPropsEd"></span><span id="_CPPv2N24FuelTankModelUniformBurn16computeTankPropsEd"></span><span id="FuelTankModelUniformBurn::computeTankProps__double"></span><span class="target" id="class_fuel_tank_model_uniform_burn_1a19b914c841295b391fc5874760a22441"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N24FuelTankModelUniformBurn16computeTankPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N24FuelTankModelUniformBurn21computeTankPropDerivsEdd">
+<span id="_CPPv3N24FuelTankModelUniformBurn21computeTankPropDerivsEdd"></span><span id="_CPPv2N24FuelTankModelUniformBurn21computeTankPropDerivsEdd"></span><span id="FuelTankModelUniformBurn::computeTankPropDerivs__double.double"></span><span class="target" id="class_fuel_tank_model_uniform_burn_1a8b457ea0b3336ad5feb8c69109d783bb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankPropDerivs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mDotFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N24FuelTankModelUniformBurn21computeTankPropDerivsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FuelTankModelUniformBurn14radiusTankInitE">
+<span id="_CPPv3N24FuelTankModelUniformBurn14radiusTankInitE"></span><span id="_CPPv2N24FuelTankModelUniformBurn14radiusTankInitE"></span><span id="FuelTankModelUniformBurn::radiusTankInit__double"></span><span class="target" id="class_fuel_tank_model_uniform_burn_1a81a7da7335515d5dd9b453a1a57dc982"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusTankInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24FuelTankModelUniformBurn14radiusTankInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial radius of the cylindrical tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24FuelTankModelUniformBurn10lengthTankE">
+<span id="_CPPv3N24FuelTankModelUniformBurn10lengthTankE"></span><span id="_CPPv2N24FuelTankModelUniformBurn10lengthTankE"></span><span id="FuelTankModelUniformBurn::lengthTank__double"></span><span class="target" id="class_fuel_tank_model_uniform_burn_1a4552400c46bb8cf658c49cb6aa5ade1d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lengthTank</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N24FuelTankModelUniformBurn10lengthTankE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Length of the tank </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv428FuelTankModelCentrifugalBurn">
+<span id="_CPPv328FuelTankModelCentrifugalBurn"></span><span id="_CPPv228FuelTankModelCentrifugalBurn"></span><span id="FuelTankModelCentrifugalBurn"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelCentrifugalBurn</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><a class="headerlink" href="#_CPPv428FuelTankModelCentrifugalBurn" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Tank model class for a centrifugal burn </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurn28FuelTankModelCentrifugalBurnEv">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurn28FuelTankModelCentrifugalBurnEv"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurn28FuelTankModelCentrifugalBurnEv"></span><span id="FuelTankModelCentrifugalBurn::FuelTankModelCentrifugalBurn"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1a2428df4b2ae32db9b840cbe66d3e5a6c"></span><span class="sig-name descname"><span class="n"><span class="pre">FuelTankModelCentrifugalBurn</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurn28FuelTankModelCentrifugalBurnEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurnD0Ev">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurnD0Ev"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurnD0Ev"></span><span id="FuelTankModelCentrifugalBurn::~FuelTankModelCentrifugalBurn"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1a7391ef93622a0cb65d17ee9623e7df05"></span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTankModelCentrifugalBurn</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurnD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurn16computeTankPropsEd">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurn16computeTankPropsEd"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurn16computeTankPropsEd"></span><span id="FuelTankModelCentrifugalBurn::computeTankProps__double"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1a6b9dd64665c69880bd630fb6afe882f9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurn16computeTankPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurn21computeTankPropDerivsEdd">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurn21computeTankPropDerivsEdd"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurn21computeTankPropDerivsEdd"></span><span id="FuelTankModelCentrifugalBurn::computeTankPropDerivs__double.double"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1a194c79ffdcf4913dbde56b2e51846f98"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTankPropDerivs</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mFuel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mDotFuel</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurn21computeTankPropDerivsEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurn14radiusTankInitE">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurn14radiusTankInitE"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurn14radiusTankInitE"></span><span id="FuelTankModelCentrifugalBurn::radiusTankInit__double"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1a7a9709277236f47affb27c88324e667a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusTankInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurn14radiusTankInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Initial radius of the cylindrical tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurn10lengthTankE">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurn10lengthTankE"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurn10lengthTankE"></span><span id="FuelTankModelCentrifugalBurn::lengthTank__double"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1a72a0c08386a5d8d8ebc91861deca2377"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lengthTank</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurn10lengthTankE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Length of the tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N28FuelTankModelCentrifugalBurn11radiusInnerE">
+<span id="_CPPv3N28FuelTankModelCentrifugalBurn11radiusInnerE"></span><span id="_CPPv2N28FuelTankModelCentrifugalBurn11radiusInnerE"></span><span id="FuelTankModelCentrifugalBurn::radiusInner__double"></span><span class="target" id="class_fuel_tank_model_centrifugal_burn_1aef8a1f80fa193c04a882e7e1eeea4d13"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radiusInner</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N28FuelTankModelCentrifugalBurn11radiusInnerE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Inner radius of the cylindrical tank </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv48FuelTank">
+<span id="_CPPv38FuelTank"></span><span id="_CPPv28FuelTank"></span><span id="FuelTank"></span><span class="target" id="class_fuel_tank"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FuelTank</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv48FuelTank" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;fuelTank.h&gt;</em></div>
+<p>Fuel tank effector model class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank8FuelTankEv">
+<span id="_CPPv3N8FuelTank8FuelTankEv"></span><span id="_CPPv2N8FuelTank8FuelTankEv"></span><span id="FuelTank::FuelTank"></span><span class="target" id="class_fuel_tank_1a4bfec5f737e567e59a04ac576b6878c9"></span><span class="sig-name descname"><span class="n"><span class="pre">FuelTank</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank8FuelTankEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTankD0Ev">
+<span id="_CPPv3N8FuelTankD0Ev"></span><span id="_CPPv2N8FuelTankD0Ev"></span><span id="FuelTank::~FuelTank"></span><span class="target" id="class_fuel_tank_1a83355206bc3371dd41284355f6f48346"></span><span class="sig-name descname"><span class="n"><span class="pre">~FuelTank</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTankD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N8FuelTank19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N8FuelTank19writeOutputMessagesE8uint64_t"></span><span id="FuelTank::writeOutputMessages__uint64_t"></span><span class="target" id="class_fuel_tank_1aaa85529597af149e22ac4b81e636e778"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute fuel tank mass properties and outputs them as a message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank11UpdateStateE8uint64_t">
+<span id="_CPPv3N8FuelTank11UpdateStateE8uint64_t"></span><span id="_CPPv2N8FuelTank11UpdateStateE8uint64_t"></span><span id="FuelTank::UpdateState__uint64_t"></span><span class="target" id="class_fuel_tank_1adb2f2f7a426b70ce19ed3e3bb2451c13"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Fuel tank writes out its messages</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank12setTankModelEP13FuelTankModel">
+<span id="_CPPv3N8FuelTank12setTankModelEP13FuelTankModel"></span><span id="_CPPv2N8FuelTank12setTankModelEP13FuelTankModel"></span><span id="FuelTank::setTankModel__FuelTankModelP"></span><span class="target" id="class_fuel_tank_1a7f9ea672af8094f5eb01ba8bcf9ff752"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTankModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">model</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank12setTankModelEP13FuelTankModel" title="Link to this definition"></a><br /></dt>
+<dd><p>set fuel tank model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – fuel tank model type </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank21pushFuelSloshParticleEP9FuelSlosh">
+<span id="_CPPv3N8FuelTank21pushFuelSloshParticleEP9FuelSlosh"></span><span id="_CPPv2N8FuelTank21pushFuelSloshParticleEP9FuelSlosh"></span><span id="FuelTank::pushFuelSloshParticle__FuelSloshP"></span><span class="target" id="class_fuel_tank_1abecb586393dd13538c80b9b1a75402f4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pushFuelSloshParticle</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/fuelSlosh.html#_CPPv49FuelSlosh" title="FuelSlosh"><span class="n"><span class="pre">FuelSlosh</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">particle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank21pushFuelSloshParticleEP9FuelSlosh" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Attach fuel slosh particle </p>
+<p>Attach a fuel slosh particle to the tank </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank14registerStatesER15DynParamManager">
+<span id="_CPPv3N8FuelTank14registerStatesER15DynParamManager"></span><span id="_CPPv2N8FuelTank14registerStatesER15DynParamManager"></span><span id="FuelTank::registerStates__DynParamManagerR"></span><span class="target" id="class_fuel_tank_1aef7ef69d5dbd1513f5e0af63180e93fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Register mass state with state manager </p>
+<p>Register states. The fuel tank has one state associated with it: mass, and it also has the responsibility to call register states for the fuel slosh particles </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank12linkInStatesER15DynParamManager">
+<span id="_CPPv3N8FuelTank12linkInStatesER15DynParamManager"></span><span id="_CPPv2N8FuelTank12linkInStatesER15DynParamManager"></span><span id="FuelTank::linkInStates__DynParamManagerR"></span><span class="target" id="class_fuel_tank_1a013fb9a1239bfa6b7a0ea44e8b00486b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Give the tank access to other states </p>
+<p>Link states that the module accesses </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank23updateEffectorMassPropsEd">
+<span id="_CPPv3N8FuelTank23updateEffectorMassPropsEd"></span><span id="_CPPv2N8FuelTank23updateEffectorMassPropsEd"></span><span id="FuelTank::updateEffectorMassProps__double"></span><span class="target" id="class_fuel_tank_1aaa2829cb80850df528aac3bb946f46b1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Add contribution mass props from the tank </p>
+<p>Fuel tank add its contributions the mass of the vehicle. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank18setNameOfMassStateEKNSt6stringE">
+<span id="_CPPv3N8FuelTank18setNameOfMassStateEKNSt6stringE"></span><span id="_CPPv2N8FuelTank18setNameOfMassStateEKNSt6stringE"></span><span id="FuelTank::setNameOfMassState__ssC"></span><span class="target" id="class_fuel_tank_1a6f7b2b1b1512ec538c0ac71521be3809"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNameOfMassState</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nameOfMassState</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank18setNameOfMassStateEKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Setter for fuel tank mass state name </p>
+<p>optionally set the name of the mass state to be used by the state manager </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank14addThrusterSetEP23ThrusterDynamicEffector">
+<span id="_CPPv3N8FuelTank14addThrusterSetEP23ThrusterDynamicEffector"></span><span id="_CPPv2N8FuelTank14addThrusterSetEP23ThrusterDynamicEffector"></span><span id="FuelTank::addThrusterSet__ThrusterDynamicEffectorP"></span><span class="target" id="class_fuel_tank_1a5f6dc62b476c275cf5833563e6c3d08f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addThrusterSet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#_CPPv423ThrusterDynamicEffector" title="ThrusterDynamicEffector"><span class="n"><span class="pre">ThrusterDynamicEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynEff</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank14addThrusterSetEP23ThrusterDynamicEffector" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Add DynamicEffector thruster </p>
+<p>Attach a thruster dynamic effector to the tank </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank14addThrusterSetEP21ThrusterStateEffector">
+<span id="_CPPv3N8FuelTank14addThrusterSetEP21ThrusterStateEffector"></span><span id="_CPPv2N8FuelTank14addThrusterSetEP21ThrusterStateEffector"></span><span id="FuelTank::addThrusterSet__ThrusterStateEffectorP"></span><span class="target" id="class_fuel_tank_1a1fdbb95745ce7389ecd0fd04ad2b209b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addThrusterSet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../Thrusters/thrusterStateEffector/thrusterStateEffector.html#_CPPv421ThrusterStateEffector" title="ThrusterStateEffector"><span class="n"><span class="pre">ThrusterStateEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateEff</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8FuelTank14addThrusterSetEP21ThrusterStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Add StateEffector thruster </p>
+<p>Attach a thruster state effector to the tank </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N8FuelTank19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N8FuelTank19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="FuelTank::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_1ab342966855ea78576ad63399f09e7d87"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Back-sub contributions </p>
+<p>Fuel tank adds its contributions to the matrices for the back-sub method. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N8FuelTank28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N8FuelTank28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="FuelTank::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_1a252e0f5ae3e702e2dba0546f2a03f397"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Energy and momentum calculations </p>
+<p>Fuel tank contributes to the energy and momentum calculations </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N8FuelTank18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N8FuelTank18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="FuelTank::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_1a860c02ac793d4e000ebbcb6511aeecbb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N8FuelTank18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Calculate stateEffector’s derivatives </p>
+<p>Fuel tank computes its derivative </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank15nameOfMassStateE">
+<span id="_CPPv3N8FuelTank15nameOfMassStateE"></span><span id="_CPPv2N8FuelTank15nameOfMassStateE"></span><span id="FuelTank::nameOfMassState__ss"></span><span class="target" id="class_fuel_tank_1a48a0b222262a22c957aa86c6f21218b5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfMassState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank15nameOfMassStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; name of mass state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank18fuelSloshParticlesE">
+<span id="_CPPv3N8FuelTank18fuelSloshParticlesE"></span><span id="_CPPv2N8FuelTank18fuelSloshParticlesE"></span><span id="FuelTank::fuelSloshParticles__std::vector:FuelSloshP:"></span><span class="target" id="class_fuel_tank_1a3dc23ad836f1a47ba21d4e72808eabe0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/fuelSlosh.html#_CPPv49FuelSlosh" title="FuelSlosh"><span class="n"><span class="pre">FuelSlosh</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fuelSloshParticles</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank18fuelSloshParticlesE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; vector of fuel slosh particles </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank15thrDynEffectorsE">
+<span id="_CPPv3N8FuelTank15thrDynEffectorsE"></span><span id="_CPPv2N8FuelTank15thrDynEffectorsE"></span><span id="FuelTank::thrDynEffectors__std::vector:ThrusterDynamicEffectorP:"></span><span class="target" id="class_fuel_tank_1a69c89213978a15889b41674d48a81476"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#_CPPv423ThrusterDynamicEffector" title="ThrusterDynamicEffector"><span class="n"><span class="pre">ThrusterDynamicEffector</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrDynEffectors</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank15thrDynEffectorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Vector of dynamic effectors for thrusters </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank17thrStateEffectorsE">
+<span id="_CPPv3N8FuelTank17thrStateEffectorsE"></span><span id="_CPPv2N8FuelTank17thrStateEffectorsE"></span><span id="FuelTank::thrStateEffectors__std::vector:ThrusterStateEffectorP:"></span><span class="target" id="class_fuel_tank_1a6eb6dcaa221a979f19da7b0f766ffaf9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../Thrusters/thrusterStateEffector/thrusterStateEffector.html#_CPPv421ThrusterStateEffector" title="ThrusterStateEffector"><span class="n"><span class="pre">ThrusterStateEffector</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrStateEffectors</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank17thrStateEffectorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Vector of state effectors for thrusters </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank6dcm_TBE">
+<span id="_CPPv3N8FuelTank6dcm_TBE"></span><span id="_CPPv2N8FuelTank6dcm_TBE"></span><span id="FuelTank::dcm_TB__Eigen::Matrix3d"></span><span class="target" id="class_fuel_tank_1a374f11b1f9f9d56dac898dc561659d0a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_TB</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank6dcm_TBE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; DCM from body frame to tank frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank6r_TB_BE">
+<span id="_CPPv3N8FuelTank6r_TB_BE"></span><span id="_CPPv2N8FuelTank6r_TB_BE"></span><span id="FuelTank::r_TB_B__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_1a92b3cbb3baa7d7bf3e9680fc50b7706e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_TB_B</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank6r_TB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position of tank in B frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank10updateOnlyE">
+<span id="_CPPv3N8FuelTank10updateOnlyE"></span><span id="_CPPv2N8FuelTank10updateOnlyE"></span><span id="FuelTank::updateOnly__b"></span><span class="target" id="class_fuel_tank_1a1e002ef28598119d235f04bfd23393b1"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateOnly</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N8FuelTank10updateOnlyE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Sets whether to use update only mass depletion </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank14fuelTankOutMsgE">
+<span id="_CPPv3N8FuelTank14fuelTankOutMsgE"></span><span id="_CPPv2N8FuelTank14fuelTankOutMsgE"></span><span id="FuelTank::fuelTankOutMsg__Message:FuelTankMsgPayload:"></span><span class="target" id="class_fuel_tank_1a12f6672d8be27ff123582a13538c1bac"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/FuelTankMsgPayload.html#_CPPv418FuelTankMsgPayload" title="FuelTankMsgPayload"><span class="n"><span class="pre">FuelTankMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fuelTankOutMsg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank14fuelTankOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; fuel tank output message name </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank19fuelTankMassPropMsgE">
+<span id="_CPPv3N8FuelTank19fuelTankMassPropMsgE"></span><span id="_CPPv2N8FuelTank19fuelTankMassPropMsgE"></span><span id="FuelTank::fuelTankMassPropMsg__FuelTankMsgPayload"></span><span class="target" id="class_fuel_tank_1a4ba35c6fd7d1d96c00eca65aba13f7c8"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/FuelTankMsgPayload.html#_CPPv418FuelTankMsgPayload" title="FuelTankMsgPayload"><span class="n"><span class="pre">FuelTankMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fuelTankMassPropMsg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank19fuelTankMassPropMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>instance of messaging system message struct </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank10omegaStateE">
+<span id="_CPPv3N8FuelTank10omegaStateE"></span><span id="_CPPv2N8FuelTank10omegaStateE"></span><span id="FuelTank::omegaState__StateDataP"></span><span class="target" id="class_fuel_tank_1a2e7e09d5a5a98a7627af88b5299246a4"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">omegaState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank10omegaStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; state data for omega_BN of the hub </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank9massStateE">
+<span id="_CPPv3N8FuelTank9massStateE"></span><span id="_CPPv2N8FuelTank9massStateE"></span><span id="FuelTank::massState__StateDataP"></span><span class="target" id="class_fuel_tank_1ae51ed21260c3d993abe1f42c94e59a66"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">massState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank9massStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; state data for mass state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank15fuelConsumptionE">
+<span id="_CPPv3N8FuelTank15fuelConsumptionE"></span><span id="_CPPv2N8FuelTank15fuelConsumptionE"></span><span id="FuelTank::fuelConsumption__double"></span><span class="target" id="class_fuel_tank_1ac02d866549c8c93c60a06af302b586e6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fuelConsumption</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank15fuelConsumptionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg/s] rate of fuel being consumed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank19tankFuelConsumptionE">
+<span id="_CPPv3N8FuelTank19tankFuelConsumptionE"></span><span id="_CPPv2N8FuelTank19tankFuelConsumptionE"></span><span id="FuelTank::tankFuelConsumption__double"></span><span class="target" id="class_fuel_tank_1a3856d27e354cb52aa6f306e5f89f0292"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tankFuelConsumption</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank19tankFuelConsumptionE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg/s] rate of fuel being consumed from tank </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank13fuelTankModelE">
+<span id="_CPPv3N8FuelTank13fuelTankModelE"></span><span id="_CPPv2N8FuelTank13fuelTankModelE"></span><span id="FuelTank::fuelTankModel__FuelTankModelP"></span><span class="target" id="class_fuel_tank_1ac9f1d14ef26edba780d74114e570469b"></span><a class="reference internal" href="#_CPPv413FuelTankModel" title="FuelTankModel"><span class="n"><span class="pre">FuelTankModel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">fuelTankModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8FuelTank13fuelTankModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; style of tank to simulate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank11ITankPntT_BE">
+<span id="_CPPv3N8FuelTank11ITankPntT_BE"></span><span id="_CPPv2N8FuelTank11ITankPntT_BE"></span><span id="FuelTank::ITankPntT_B__Eigen::Matrix3d"></span><span class="target" id="class_fuel_tank_1a71a89f435541b4b929e1f7c8ebd75312"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ITankPntT_B</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank11ITankPntT_BE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank7r_TcB_BE">
+<span id="_CPPv3N8FuelTank7r_TcB_BE"></span><span id="_CPPv2N8FuelTank7r_TcB_BE"></span><span id="FuelTank::r_TcB_B__Eigen::Vector3d"></span><span class="target" id="class_fuel_tank_1a628a08c8727059a8851ba5f09e3626d1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_TcB_B</span></span></span><a class="headerlink" href="#_CPPv4N8FuelTank7r_TcB_BE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8FuelTank10effectorIDE">
+<span id="_CPPv3N8FuelTank10effectorIDE"></span><span id="_CPPv2N8FuelTank10effectorIDE"></span><span id="FuelTank::effectorID__uint64_t"></span><span class="target" id="class_fuel_tank_1afadb10fe00a9ec88dd89485b4c8d943a"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N8FuelTank10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] ID number of this fuel tank effector </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="FuelTank" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

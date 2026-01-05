@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: coarseSunSensor &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="coarseSunSensor" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">sensors</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../camera/index.html">camera</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">coarseSunSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotorSensor/index.html">hingedRigidBodyMotorSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../imuSensor/index.html">imuSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magnetometer/index.html">magnetometer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleMassProps/index.html">simpleMassProps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleVoltEstimator/index.html">simpleVoltEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../starTracker/index.html">starTracker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">sensors</a></li>
+          <li class="breadcrumb-item"><a href="index.html">coarseSunSensor</a></li>
+      <li class="breadcrumb-item active">Module: coarseSunSensor</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/sensors/coarseSunSensor/coarseSunSensor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-coarsesunsensor">
+<span id="coarsesunsensor"></span><h1>Module: coarseSunSensor<a class="headerlink" href="#module-coarsesunsensor" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This class is designed to model the state of a single coarse sun sensor
+attached to a spacecraft.  It emulates the “counts” that will typically be
+output by the ADC on board of a spacecraft.</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/5a5aa3cb20faf38a4d8da52afc25a9b6/Basilisk-CoarseSunSensor-20170803.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.
+The corruption types are outlined in this
+<a class="reference download internal" download="" href="../../../../_downloads/204bfc07b7abb616e1ab5b8d9cbd464e/BasiliskCorruptions.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful when generating CSS objects in a loop or using a function! It is often
+convenient to initialize many CSS’ with the same attributes using a loop with a
+function like <code class="docutils literal notranslate"><span class="pre">setupCSS(CSS)</span></code> where <code class="docutils literal notranslate"><span class="pre">setupCSS</span></code> initializes the field of view,
+sensor noise, min / max outputs, etc. To prevent the CSS object from being garbage collected,
+you need to keep a reference to it by storing it on your simulation object. For example:</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and configure CSS</span>
+<span class="n">css</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+<span class="n">setupCSS</span><span class="p">(</span><span class="n">css</span><span class="p">)</span>
+<span class="c1"># Store reference on simulation object to keep it alive</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">css</span> <span class="o">=</span> <span class="n">css</span>  <span class="c1"># This prevents Python from garbage collecting the CSS object</span>
+</pre></div>
+</div>
+<p>The coarse sun sensor module also supports user-enabled faulty behavior by assigning
+a values to the <code class="docutils literal notranslate"><span class="pre">.faultState</span></code> member of a given sensor. An example of such call
+would is <code class="docutils literal notranslate"><span class="pre">cssSensor.faultState</span> <span class="pre">=</span> <span class="pre">coarse_sun_sensor.CSSFAULT_OFF</span></code> where <code class="docutils literal notranslate"><span class="pre">cssSensor</span></code>
+is an instantiated sensor, and <code class="docutils literal notranslate"><span class="pre">coarse_sun_sensor</span></code> is the imported module.</p>
+<p>The module currently supports the following faults:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">CoarseSunSensor</span></code> Fault Types</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 41.2%" />
+<col style="width: 58.8%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Fault Enumeration</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CSSFAULT_OFF</span></code></p></td>
+<td><p>CSS no longer provides a signal (output = 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CSSFAULT_STUCK_CURRENT</span></code></p></td>
+<td><p>CSS signal is stuck on value from past timestep</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CSSFAULT_STUCK_MAX</span></code></p></td>
+<td><p>CSS signal is stuck on the maximum value</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CSSFAULT_STUCK_RAND</span></code></p></td>
+<td><p>CSS signal is stuck on a random value</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CSSFAULT_RAND</span></code></p></td>
+<td><p>CSS produces random values</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id2">
+<span id="moduleio-css"></span><img alt="../../../../_images/moduleDiagramCSS.svg" src="../../../../_images/moduleDiagramCSS.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">CoarseSunSensor()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">CoarseSunSensor</span></code> Module I/O Messages</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>sunInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>input message for sun data</p></td>
+</tr>
+<tr class="row-odd"><td><p>stateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>input message for spacecraft state</p></td>
+</tr>
+<tr class="row-even"><td><p>cssDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSRawDataMsgPayload.html#cssrawdatamsgpayload"><span class="std std-ref">CSSRawDataMsgPayload</span></a></p></td>
+<td><p>output message for CSS output data</p></td>
+</tr>
+<tr class="row-odd"><td><p>cssConfigLogOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.html#cssconfiglogmsgpayload"><span class="std std-ref">CSSConfigLogMsgPayload</span></a></p></td>
+<td><p>output message for CSS configuration log data</p></td>
+</tr>
+<tr class="row-even"><td><p>sunEclipseInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#eclipsemsgpayload"><span class="std std-ref">EclipseMsgPayload</span></a></p></td>
+<td><p>(optional) input message for sun eclipse state message</p></td>
+</tr>
+<tr class="row-odd"><td><p>albedoInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AlbedoMsgPayload.html#albedomsgpayload"><span class="std std-ref">AlbedoMsgPayload</span></a></p></td>
+<td><p>(optional) input message for albedo message</p></td>
+</tr>
+</tbody>
+</table>
+<figure class="align-center" id="id4">
+<span id="moduleio-css-constellation"></span><img alt="../../../../_images/moduleDiagramConstellation.svg" src="../../../../_images/moduleDiagramConstellation.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 2: <code class="docutils literal notranslate"><span class="pre">CSSConstellation()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">CSSConstellation</span></code> Module I/O Messages</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>constellationOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.html#cssarraysensormsgpayload"><span class="std std-ref">CSSArraySensorMsgPayload</span></a></p></td>
+<td><p>CSS constellation output message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv415CSSFaultState_t">
+<span id="_CPPv315CSSFaultState_t"></span><span id="_CPPv215CSSFaultState_t"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bc"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSFaultState_t</span></span></span><a class="headerlink" href="#_CPPv415CSSFaultState_t" title="Link to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15CSSFaultState_t12CSSFAULT_OFFE">
+<span id="_CPPv3N15CSSFaultState_t12CSSFAULT_OFFE"></span><span id="_CPPv2N15CSSFaultState_t12CSSFAULT_OFFE"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bca6843e92286abc7a65a3da79b0001e884"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSFAULT_OFF</span></span></span><a class="headerlink" href="#_CPPv4N15CSSFaultState_t12CSSFAULT_OFFE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSS measurement is set to 0 for all future time </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15CSSFaultState_t22CSSFAULT_STUCK_CURRENTE">
+<span id="_CPPv3N15CSSFaultState_t22CSSFAULT_STUCK_CURRENTE"></span><span id="_CPPv2N15CSSFaultState_t22CSSFAULT_STUCK_CURRENTE"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bcaf02b1ae653fa3c40984b4f2a6271dab1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSFAULT_STUCK_CURRENT</span></span></span><a class="headerlink" href="#_CPPv4N15CSSFaultState_t22CSSFAULT_STUCK_CURRENTE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSS measurement is set to current value for all future time </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15CSSFaultState_t18CSSFAULT_STUCK_MAXE">
+<span id="_CPPv3N15CSSFaultState_t18CSSFAULT_STUCK_MAXE"></span><span id="_CPPv2N15CSSFaultState_t18CSSFAULT_STUCK_MAXE"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bcaed9c81f0d0d4a6249b3ad3fdc77d4ef5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSFAULT_STUCK_MAX</span></span></span><a class="headerlink" href="#_CPPv4N15CSSFaultState_t18CSSFAULT_STUCK_MAXE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSS measurement is set to maximum value for all future time </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15CSSFaultState_t19CSSFAULT_STUCK_RANDE">
+<span id="_CPPv3N15CSSFaultState_t19CSSFAULT_STUCK_RANDE"></span><span id="_CPPv2N15CSSFaultState_t19CSSFAULT_STUCK_RANDE"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bca69c3359ddf4aff338b0500f00b9952aa"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSFAULT_STUCK_RAND</span></span></span><a class="headerlink" href="#_CPPv4N15CSSFaultState_t19CSSFAULT_STUCK_RANDE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSS measurement is set to randomly selected value for all future time </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15CSSFaultState_t13CSSFAULT_RANDE">
+<span id="_CPPv3N15CSSFaultState_t13CSSFAULT_RANDE"></span><span id="_CPPv2N15CSSFaultState_t13CSSFAULT_RANDE"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bca05a2a1f54334b5f51fa3eba70949f6c3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSFAULT_RAND</span></span></span><a class="headerlink" href="#_CPPv4N15CSSFaultState_t13CSSFAULT_RANDE" title="Link to this definition"></a><br /></dt>
+<dd><p>CSS measurement returns uniformly distributed random values between 0 and max </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15CSSFaultState_t7NOMINALE">
+<span id="_CPPv3N15CSSFaultState_t7NOMINALE"></span><span id="_CPPv2N15CSSFaultState_t7NOMINALE"></span><span class="target" id="coarse_sun_sensor_8h_1a519e2429509f538fab1555fc0e7846bcae2bd7b57b3f0bb02e66e42dbacc5c7fc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NOMINAL</span></span></span><a class="headerlink" href="#_CPPv4N15CSSFaultState_t7NOMINALE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415CoarseSunSensor">
+<span id="_CPPv315CoarseSunSensor"></span><span id="_CPPv215CoarseSunSensor"></span><span id="CoarseSunSensor"></span><span class="target" id="class_coarse_sun_sensor"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CoarseSunSensor</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv415CoarseSunSensor" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;coarseSunSensor.h&gt;</em></div>
+<p>Coarse sun sensor model that simulates sun vector measurements with configurable noise. </p>
+<p>The CSS supports noise configuration through:<ul class="simple">
+<li><p>Walk bounds: Maximum allowed deviations from truth [-]</p></li>
+<li><p>Noise std: Standard deviation of measurement noise [-]</p></li>
+<li><p>AMatrix: Propagation matrix for error model (defaults to identity)</p></li>
+<li><p>Fault noise: Additional noise when in fault state [-]</p></li>
+</ul>
+</p>
+<p>Example Python usage: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cssSensor</span> <span class="o">=</span> <span class="n">CoarseSunSensor</span><span class="p">()</span>
+
+<span class="c1"># Configure noise (dimensionless)</span>
+<span class="n">cssSensor</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="mf">0.001</span>      <span class="c1"># Standard deviation</span>
+<span class="n">cssSensor</span><span class="o">.</span><span class="n">walkBounds</span> <span class="o">=</span> <span class="mf">0.01</span>        <span class="c1"># Maximum error bound</span>
+
+<span class="c1"># Optional: Configure error propagation (default is identity)</span>
+<span class="n">cssSensor</span><span class="o">.</span><span class="n">setAMatrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">]])</span>        <span class="c1"># 1x1 matrix for scalar measurement</span>
+
+<span class="c1"># Optional: Configure fault noise</span>
+<span class="n">cssSensor</span><span class="o">.</span><span class="n">faultNoiseStd</span> <span class="o">=</span> <span class="mf">0.5</span>      <span class="c1"># Noise when in fault state</span>
+</pre></div>
+</div>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor15CoarseSunSensorEv">
+<span id="_CPPv3N15CoarseSunSensor15CoarseSunSensorEv"></span><span id="_CPPv2N15CoarseSunSensor15CoarseSunSensorEv"></span><span id="CoarseSunSensor::CoarseSunSensor"></span><span class="target" id="class_coarse_sun_sensor_1a7dc705fba12df6779f516b8b479a1b82"></span><span class="sig-name descname"><span class="n"><span class="pre">CoarseSunSensor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor15CoarseSunSensorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize a bunch of defaults in the constructor. Is this the right thing to do? </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensorD0Ev">
+<span id="_CPPv3N15CoarseSunSensorD0Ev"></span><span id="_CPPv2N15CoarseSunSensorD0Ev"></span><span id="CoarseSunSensor::~CoarseSunSensor"></span><span class="target" id="class_coarse_sun_sensor_1a824562926b91d1b31a0be89994f978c8"></span><span class="sig-name descname"><span class="n"><span class="pre">~CoarseSunSensor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>There is nothing to do in the default destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor5ResetE8uint64_t">
+<span id="_CPPv3N15CoarseSunSensor5ResetE8uint64_t"></span><span id="_CPPv2N15CoarseSunSensor5ResetE8uint64_t"></span><span id="CoarseSunSensor::Reset__uint64_t"></span><span class="target" id="class_coarse_sun_sensor_1ae6e92b31d2a8a46261612a42fe95ab19"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for reseting the module. </p>
+<p>This method is used to reset the module. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time from the architecture </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11UpdateStateE8uint64_t">
+<span id="_CPPv3N15CoarseSunSensor11UpdateStateE8uint64_t"></span><span id="_CPPv2N15CoarseSunSensor11UpdateStateE8uint64_t"></span><span id="CoarseSunSensor::UpdateState__uint64_t"></span><span class="target" id="class_coarse_sun_sensor_1acef21662adfc60bbfea890bfca437f7b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>method to update state for runtime </p>
+<p>This method is called at a specified rate by the architecture. It makes the calls to compute the current sun information and write the output message for the rest of the model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time from the architecture </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor38setUnitDirectionVectorWithPerturbationEdd">
+<span id="_CPPv3N15CoarseSunSensor38setUnitDirectionVectorWithPerturbationEdd"></span><span id="_CPPv2N15CoarseSunSensor38setUnitDirectionVectorWithPerturbationEdd"></span><span id="CoarseSunSensor::setUnitDirectionVectorWithPerturbation__double.double"></span><span class="target" id="class_coarse_sun_sensor_1ad8cc7b63f8bdf3a55d1252b937dcfecc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setUnitDirectionVectorWithPerturbation</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cssThetaPerturb</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cssPhiPerturb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor38setUnitDirectionVectorWithPerturbationEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>utility method to perturb CSS unit vector </p>
+<p>Set the unit direction vector (in the body frame) with applied azimuth and elevation angle perturbations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cssPhiPerturb</strong> – <strong>[in]</strong> [rad] css elevation angle, measured positive toward the body z axis from the x-y plane </p></li>
+<li><p><strong>cssThetaPerturb</strong> – <strong>[in]</strong> [rad] css azimuth angle, measured positive from the body +x axis around the +z axis </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor20setBodyToPlatformDCMEddd">
+<span id="_CPPv3N15CoarseSunSensor20setBodyToPlatformDCMEddd"></span><span id="_CPPv2N15CoarseSunSensor20setBodyToPlatformDCMEddd"></span><span id="CoarseSunSensor::setBodyToPlatformDCM__double.double.double"></span><span class="target" id="class_coarse_sun_sensor_1a799a2260a737ca51abbd97703e39e71a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBodyToPlatformDCM</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">yaw</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pitch</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">roll</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor20setBodyToPlatformDCMEddd" title="Link to this definition"></a><br /></dt>
+<dd><p>utility method to configure the platform DCM </p>
+<p>Set the direction cosine matrix body to css platform tranformation with 3-2-1 angle set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaw</strong> – (radians) third axis rotation about body +z </p></li>
+<li><p><strong>pitch</strong> – (radians) second axis rotation about interim frame +y </p></li>
+<li><p><strong>roll</strong> – (radians) first axis rotation about platform frame +x </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor17readInputMessagesEv">
+<span id="_CPPv3N15CoarseSunSensor17readInputMessagesEv"></span><span id="_CPPv2N15CoarseSunSensor17readInputMessagesEv"></span><span id="CoarseSunSensor::readInputMessages"></span><span class="target" id="class_coarse_sun_sensor_1a503709528249356cca7bb7347e81be91"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method to read the input messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor14computeSunDataEv">
+<span id="_CPPv3N15CoarseSunSensor14computeSunDataEv"></span><span id="_CPPv2N15CoarseSunSensor14computeSunDataEv"></span><span id="CoarseSunSensor::computeSunData"></span><span class="target" id="class_coarse_sun_sensor_1a8f5b31f57a6140a784534446e6747fb7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSunData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor14computeSunDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method to get the sun vector information </p>
+<p>This method computes the sun-vector heading information in the vehicle body frame. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor17computeTrueOutputEv">
+<span id="_CPPv3N15CoarseSunSensor17computeTrueOutputEv"></span><span id="_CPPv2N15CoarseSunSensor17computeTrueOutputEv"></span><span id="CoarseSunSensor::computeTrueOutput"></span><span class="target" id="class_coarse_sun_sensor_1a79b5c8f155631c129123a6e53419e414"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTrueOutput</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor17computeTrueOutputEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method to compute the true sun-fraction of CSS </p>
+<p>This method computes the true sensed values for the sensor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor17applySensorErrorsEv">
+<span id="_CPPv3N15CoarseSunSensor17applySensorErrorsEv"></span><span id="_CPPv2N15CoarseSunSensor17applySensorErrorsEv"></span><span id="CoarseSunSensor::applySensorErrors"></span><span class="target" id="class_coarse_sun_sensor_1a9294bf8f21a9e198a359cc0d445d4559"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applySensorErrors</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor17applySensorErrorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>method to set the actual output of the sensor with scaling/kelly </p>
+<p>This method takes the true observed cosine value and converts it over to an errored value. It applies noise to the truth. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor17scaleSensorValuesEv">
+<span id="_CPPv3N15CoarseSunSensor17scaleSensorValuesEv"></span><span id="_CPPv2N15CoarseSunSensor17scaleSensorValuesEv"></span><span id="CoarseSunSensor::scaleSensorValues"></span><span class="target" id="class_coarse_sun_sensor_1a3fe135887de3a550c7ce344786b53562"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scaleSensorValues</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor17scaleSensorValuesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>scale the sensor values </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor15applySaturationEv">
+<span id="_CPPv3N15CoarseSunSensor15applySaturationEv"></span><span id="_CPPv2N15CoarseSunSensor15applySaturationEv"></span><span id="CoarseSunSensor::applySaturation"></span><span class="target" id="class_coarse_sun_sensor_1a34d036f3041e944e6e1980a57db4a8f4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applySaturation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor15applySaturationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>apply saturation effects to sensed output (floor and ceiling) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N15CoarseSunSensor19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N15CoarseSunSensor19writeOutputMessagesE8uint64_t"></span><span id="CoarseSunSensor::writeOutputMessages__uint64_t"></span><span class="target" id="class_coarse_sun_sensor_1ae1483d24c0a2d8f946486363ee14a3b4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Clock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>method to write the output message to the system </p>
+<p>This method writes the output message. The output message contains the current output of the CSS converted over to some discrete “counts” to emulate ADC conversion of S/C. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Clock</strong> – The current simulation time </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor10setAMatrixERKN5Eigen6MatrixIdXngL1EEXL1EEXL0EEXngL1EEXL1EEEE">
+<span id="_CPPv3N15CoarseSunSensor10setAMatrixERKN5Eigen6MatrixIdXngL1EEXL1EEXL0EEXngL1EEXL1EEEE"></span><span id="_CPPv2N15CoarseSunSensor10setAMatrixERKN5Eigen6MatrixIdX-1EX1EX0EX-1EX1EEE"></span><span id="CoarseSunSensor::setAMatrix__Eigen::Matrix:double.-1.1.0.-1.1:CR"></span><span class="target" id="class_coarse_sun_sensor_1a959432b426d0e5cea961061c4961d837"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">propMatrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor10setAMatrixERKN5Eigen6MatrixIdXngL1EEXL1EEXL0EEXngL1EEXL1EEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for <code class="docutils literal notranslate"><span class="pre">AMatrix</span></code> used for error propagation </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>propMatrix</strong> – Matrix to set </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK15CoarseSunSensor10getAMatrixEv">
+<span id="_CPPv3NK15CoarseSunSensor10getAMatrixEv"></span><span id="_CPPv2NK15CoarseSunSensor10getAMatrixEv"></span><span id="CoarseSunSensor::getAMatrixC"></span><span class="target" id="class_coarse_sun_sensor_1ae628bc2577db19143281f69b704b00fc"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAMatrix</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK15CoarseSunSensor10getAMatrixEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for <code class="docutils literal notranslate"><span class="pre">AMatrix</span></code> used for error propagation </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current matrix </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor8sunInMsgE">
+<span id="_CPPv3N15CoarseSunSensor8sunInMsgE"></span><span id="_CPPv2N15CoarseSunSensor8sunInMsgE"></span><span id="CoarseSunSensor::sunInMsg__ReadFunctor:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_coarse_sun_sensor_1aefb4afc56bffa2e7bec30b1e3a748620"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor8sunInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] input message for sun data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor10stateInMsgE">
+<span id="_CPPv3N15CoarseSunSensor10stateInMsgE"></span><span id="_CPPv2N15CoarseSunSensor10stateInMsgE"></span><span id="CoarseSunSensor::stateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_coarse_sun_sensor_1ae247ac0a318b7fab5907b158c59700f5"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor10stateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] input message for spacecraft state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor13cssDataOutMsgE">
+<span id="_CPPv3N15CoarseSunSensor13cssDataOutMsgE"></span><span id="_CPPv2N15CoarseSunSensor13cssDataOutMsgE"></span><span id="CoarseSunSensor::cssDataOutMsg__Message:CSSRawDataMsgPayload:"></span><span class="target" id="class_coarse_sun_sensor_1aa010a66df8a7be7256c6ce7734c5a4f9"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSRawDataMsgPayload.html#_CPPv420CSSRawDataMsgPayload" title="CSSRawDataMsgPayload"><span class="n"><span class="pre">CSSRawDataMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cssDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor13cssDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] output message for CSS output data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor18cssConfigLogOutMsgE">
+<span id="_CPPv3N15CoarseSunSensor18cssConfigLogOutMsgE"></span><span id="_CPPv2N15CoarseSunSensor18cssConfigLogOutMsgE"></span><span id="CoarseSunSensor::cssConfigLogOutMsg__Message:CSSConfigLogMsgPayload:"></span><span class="target" id="class_coarse_sun_sensor_1a8f3ad7c32560e4328e02bafdc8632d4d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/CSSConfigLogMsgPayload.html#_CPPv422CSSConfigLogMsgPayload" title="CSSConfigLogMsgPayload"><span class="n"><span class="pre">CSSConfigLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cssConfigLogOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor18cssConfigLogOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] output message for CSS configuration log data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor15sunEclipseInMsgE">
+<span id="_CPPv3N15CoarseSunSensor15sunEclipseInMsgE"></span><span id="_CPPv2N15CoarseSunSensor15sunEclipseInMsgE"></span><span id="CoarseSunSensor::sunEclipseInMsg__ReadFunctor:EclipseMsgPayload:"></span><span class="target" id="class_coarse_sun_sensor_1a65c711542f2515b64ccb7f341d43e132"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#_CPPv417EclipseMsgPayload" title="EclipseMsgPayload"><span class="n"><span class="pre">EclipseMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunEclipseInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor15sunEclipseInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] (optional) input message for sun eclipse state message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11albedoInMsgE">
+<span id="_CPPv3N15CoarseSunSensor11albedoInMsgE"></span><span id="_CPPv2N15CoarseSunSensor11albedoInMsgE"></span><span id="CoarseSunSensor::albedoInMsg__ReadFunctor:AlbedoMsgPayload:"></span><span class="target" id="class_coarse_sun_sensor_1a0fcbe37fcfdc0fab3fcbaaa6995092ec"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AlbedoMsgPayload.html#_CPPv416AlbedoMsgPayload" title="AlbedoMsgPayload"><span class="n"><span class="pre">AlbedoMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11albedoInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] (optional) input message for albedo message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor10faultStateE">
+<span id="_CPPv3N15CoarseSunSensor10faultStateE"></span><span id="_CPPv2N15CoarseSunSensor10faultStateE"></span><span id="CoarseSunSensor::faultState__CSSFaultState_t"></span><span class="target" id="class_coarse_sun_sensor_1a6eff8c27eb02cbc84ce754ce73b81a9f"></span><a class="reference internal" href="#_CPPv415CSSFaultState_t" title="CSSFaultState_t"><span class="n"><span class="pre">CSSFaultState_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">faultState</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor10faultStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Specification used if state is set to COMPONENT_FAULT */ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor5thetaE">
+<span id="_CPPv3N15CoarseSunSensor5thetaE"></span><span id="_CPPv2N15CoarseSunSensor5thetaE"></span><span id="CoarseSunSensor::theta__double"></span><span class="target" id="class_coarse_sun_sensor_1aacfc25545eb3d0b1a1817e5b2565234e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] css azimuth angle, measured positive from the body +x axis around the +z axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor3phiE">
+<span id="_CPPv3N15CoarseSunSensor3phiE"></span><span id="_CPPv2N15CoarseSunSensor3phiE"></span><span id="CoarseSunSensor::phi__double"></span><span class="target" id="class_coarse_sun_sensor_1a422ea3cbbdc4e34b3c932d9c5d617e7c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">phi</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor3phiE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] css elevation angle, measured positive toward the body +z axis from the x-y plane </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor12B2P321AnglesE">
+<span id="_CPPv3N15CoarseSunSensor12B2P321AnglesE"></span><span id="_CPPv2N15CoarseSunSensor12B2P321AnglesE"></span><span id="CoarseSunSensor::B2P321Angles__doubleA"></span><span class="target" id="class_coarse_sun_sensor_1aeff9b8bf3e670e67e17a0034d102f4d5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">B2P321Angles</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor12B2P321AnglesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] 321 Euler angles for body to platform </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor6dcm_PBE">
+<span id="_CPPv3N15CoarseSunSensor6dcm_PBE"></span><span id="_CPPv2N15CoarseSunSensor6dcm_PBE"></span><span id="CoarseSunSensor::dcm_PB__Eigen::Matrix3d"></span><span class="target" id="class_coarse_sun_sensor_1a2365352ebf21d7a8734200f5f187059c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PB</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor6dcm_PBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM of platform frame P relative to body frame B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor6nHat_BE">
+<span id="_CPPv3N15CoarseSunSensor6nHat_BE"></span><span id="_CPPv2N15CoarseSunSensor6nHat_BE"></span><span id="CoarseSunSensor::nHat_B__Eigen::Vector3d"></span><span class="target" id="class_coarse_sun_sensor_1aa0df451aab5d300f0c321949a92db2e9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nHat_B</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor6nHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] css unit direction vector in body frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor6sHat_BE">
+<span id="_CPPv3N15CoarseSunSensor6sHat_BE"></span><span id="_CPPv2N15CoarseSunSensor6sHat_BE"></span><span id="CoarseSunSensor::sHat_B__Eigen::Vector3d"></span><span class="target" id="class_coarse_sun_sensor_1a6dc7f64ca1e8b76e4a724403d0cbab95"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat_B</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor6sHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit vector to sun in B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11albedoValueE">
+<span id="_CPPv3N15CoarseSunSensor11albedoValueE"></span><span id="_CPPv2N15CoarseSunSensor11albedoValueE"></span><span id="CoarseSunSensor::albedoValue__double"></span><span class="target" id="class_coarse_sun_sensor_1ab721bac6bd970a9ce0172e91670e65df"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">albedoValue</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11albedoValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] albedo irradiance measurement </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11scaleFactorE">
+<span id="_CPPv3N15CoarseSunSensor11scaleFactorE"></span><span id="_CPPv2N15CoarseSunSensor11scaleFactorE"></span><span id="CoarseSunSensor::scaleFactor__double"></span><span class="target" id="class_coarse_sun_sensor_1a88527c76121a0e11766034f4cdb71ec5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scaleFactor</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11scaleFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] scale factor applied to sensor (common + individual multipliers) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor9pastValueE">
+<span id="_CPPv3N15CoarseSunSensor9pastValueE"></span><span id="_CPPv2N15CoarseSunSensor9pastValueE"></span><span id="CoarseSunSensor::pastValue__double"></span><span class="target" id="class_coarse_sun_sensor_1a5b9c27f69cc412dd69b115cf9f855b47"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pastValue</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor9pastValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] measurement from last update (used only for faults) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor9trueValueE">
+<span id="_CPPv3N15CoarseSunSensor9trueValueE"></span><span id="_CPPv2N15CoarseSunSensor9trueValueE"></span><span id="CoarseSunSensor::trueValue__double"></span><span class="target" id="class_coarse_sun_sensor_1a6a64d8194fefd08fe092c176757633ab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">trueValue</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor9trueValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] solar irradiance measurement without perturbations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11sensedValueE">
+<span id="_CPPv3N15CoarseSunSensor11sensedValueE"></span><span id="_CPPv2N15CoarseSunSensor11sensedValueE"></span><span id="CoarseSunSensor::sensedValue__double"></span><span class="target" id="class_coarse_sun_sensor_1acc3791ab4a6bc4ab1c69a599ac6f3561"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensedValue</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11sensedValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] solar irradiance measurement including perturbations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11kellyFactorE">
+<span id="_CPPv3N15CoarseSunSensor11kellyFactorE"></span><span id="_CPPv2N15CoarseSunSensor11kellyFactorE"></span><span id="CoarseSunSensor::kellyFactor__double"></span><span class="target" id="class_coarse_sun_sensor_1ae7d57ed070a531079b58655ae0170b78"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kellyFactor</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11kellyFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Kelly curve fit for output cosine curve </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor3fovE">
+<span id="_CPPv3N15CoarseSunSensor3fovE"></span><span id="_CPPv2N15CoarseSunSensor3fovE"></span><span id="CoarseSunSensor::fov__double"></span><span class="target" id="class_coarse_sun_sensor_1a1ef6c1b9a5c098119d20526c5a9f7599"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fov</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor3fovE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] rad, field of view half angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor3r_BE">
+<span id="_CPPv3N15CoarseSunSensor3r_BE"></span><span id="_CPPv2N15CoarseSunSensor3r_BE"></span><span id="CoarseSunSensor::r_B__Eigen::Vector3d"></span><span class="target" id="class_coarse_sun_sensor_1a05b290428cb69fac73976ffc059ac5af"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_B</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor3r_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor6r_PB_BE">
+<span id="_CPPv3N15CoarseSunSensor6r_PB_BE"></span><span id="_CPPv2N15CoarseSunSensor6r_PB_BE"></span><span id="CoarseSunSensor::r_PB_B__Eigen::Vector3d"></span><span class="target" id="class_coarse_sun_sensor_1abd50be1d3a634b0a7065f867059bc4e1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_PB_B</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor6r_PB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] misalignment of CSS platform wrt spacecraft body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor7senBiasE">
+<span id="_CPPv3N15CoarseSunSensor7senBiasE"></span><span id="_CPPv2N15CoarseSunSensor7senBiasE"></span><span id="CoarseSunSensor::senBias__double"></span><span class="target" id="class_coarse_sun_sensor_1aa8dddda497987c59e9936aefbe416c31"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">senBias</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor7senBiasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Sensor bias value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor11senNoiseStdE">
+<span id="_CPPv3N15CoarseSunSensor11senNoiseStdE"></span><span id="_CPPv2N15CoarseSunSensor11senNoiseStdE"></span><span id="CoarseSunSensor::senNoiseStd__double"></span><span class="target" id="class_coarse_sun_sensor_1a221717b105ed55bfb659f6e66b602434"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">senNoiseStd</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor11senNoiseStdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Sensor noise value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor13faultNoiseStdE">
+<span id="_CPPv3N15CoarseSunSensor13faultNoiseStdE"></span><span id="_CPPv2N15CoarseSunSensor13faultNoiseStdE"></span><span id="CoarseSunSensor::faultNoiseStd__double"></span><span class="target" id="class_coarse_sun_sensor_1ad63ec2b199d3b64cc8597e8e5cf37702"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">faultNoiseStd</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor13faultNoiseStdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Sensor noise value if CSSFAULT_RAND is triggered </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor9maxOutputE">
+<span id="_CPPv3N15CoarseSunSensor9maxOutputE"></span><span id="_CPPv2N15CoarseSunSensor9maxOutputE"></span><span id="CoarseSunSensor::maxOutput__double"></span><span class="target" id="class_coarse_sun_sensor_1a44067041c1c61871a4a35cb8f3bdc446"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxOutput</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor9maxOutputE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] maximum output (ceiling) for saturation application </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor9minOutputE">
+<span id="_CPPv3N15CoarseSunSensor9minOutputE"></span><span id="_CPPv2N15CoarseSunSensor9minOutputE"></span><span id="CoarseSunSensor::minOutput__double"></span><span class="target" id="class_coarse_sun_sensor_1ad6e16e4e4b5bc88b3157cd44958392bd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minOutput</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor9minOutputE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] minimum output (floor) for saturation application </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor10walkBoundsE">
+<span id="_CPPv3N15CoarseSunSensor10walkBoundsE"></span><span id="_CPPv2N15CoarseSunSensor10walkBoundsE"></span><span id="CoarseSunSensor::walkBounds__double"></span><span class="target" id="class_coarse_sun_sensor_1a978439c01431b1ed15ef3d3b36546421"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walkBounds</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor10walkBoundsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gauss Markov walk bounds </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor6kPowerE">
+<span id="_CPPv3N15CoarseSunSensor6kPowerE"></span><span id="_CPPv2N15CoarseSunSensor6kPowerE"></span><span id="CoarseSunSensor::kPower__double"></span><span class="target" id="class_coarse_sun_sensor_1a28bcae607cbea787e41a9187a65b2e00"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kPower</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor6kPowerE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Power factor for kelly curve </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor10CSSGroupIDE">
+<span id="_CPPv3N15CoarseSunSensor10CSSGroupIDE"></span><span id="_CPPv2N15CoarseSunSensor10CSSGroupIDE"></span><span id="CoarseSunSensor::CSSGroupID__i"></span><span class="target" id="class_coarse_sun_sensor_1a00df64394822d0c0ea1eee2ad92e6b3e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSGroupID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor10CSSGroupIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] (optional) CSS group id identifier, -1 means it is not set and default is used </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor9bskLoggerE">
+<span id="_CPPv3N15CoarseSunSensor9bskLoggerE"></span><span id="_CPPv2N15CoarseSunSensor9bskLoggerE"></span><span id="CoarseSunSensor::bskLogger__BSKLogger"></span><span class="target" id="class_coarse_sun_sensor_1a3389464ee1112d984ee061092bab7233"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor7sunDataE">
+<span id="_CPPv3N15CoarseSunSensor7sunDataE"></span><span id="_CPPv2N15CoarseSunSensor7sunDataE"></span><span id="CoarseSunSensor::sunData__SpicePlanetStateMsgPayload"></span><span class="target" id="class_coarse_sun_sensor_1a8c60e97172f0567a84066ff0b02ddbec"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunData</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor7sunDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Unused for now, but including it for future </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor12stateCurrentE">
+<span id="_CPPv3N15CoarseSunSensor12stateCurrentE"></span><span id="_CPPv2N15CoarseSunSensor12stateCurrentE"></span><span id="CoarseSunSensor::stateCurrent__SCStatesMsgPayload"></span><span class="target" id="class_coarse_sun_sensor_1ae4794919943978552d773a2bc2e3ce20"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCurrent</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor12stateCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current SSBI-relative state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor19sunVisibilityFactorE">
+<span id="_CPPv3N15CoarseSunSensor19sunVisibilityFactorE"></span><span id="_CPPv2N15CoarseSunSensor19sunVisibilityFactorE"></span><span id="CoarseSunSensor::sunVisibilityFactor__EclipseMsgPayload"></span><span class="target" id="class_coarse_sun_sensor_1a995c66c2e9f96878a9ba9528e0d915dd"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EclipseMsgPayload.html#_CPPv417EclipseMsgPayload" title="EclipseMsgPayload"><span class="n"><span class="pre">EclipseMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunVisibilityFactor</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor19sunVisibilityFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] scaling parameter from 0 (fully obscured) to 1 (fully visible) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor17sunDistanceFactorE">
+<span id="_CPPv3N15CoarseSunSensor17sunDistanceFactorE"></span><span id="_CPPv2N15CoarseSunSensor17sunDistanceFactorE"></span><span id="CoarseSunSensor::sunDistanceFactor__double"></span><span class="target" id="class_coarse_sun_sensor_1a7060a9ee8e7e5f3c6367033bec45cb93"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunDistanceFactor</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor17sunDistanceFactorE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor10noiseModelE">
+<span id="_CPPv3N15CoarseSunSensor10noiseModelE"></span><span id="_CPPv2N15CoarseSunSensor10noiseModelE"></span><span id="CoarseSunSensor::noiseModel__GaussMarkov"></span><span class="target" id="class_coarse_sun_sensor_1ab7e3942c87332d02024c94195af6833d"></span><a class="reference internal" href="../../../architecture/utilities/gauss_markov.html#_CPPv411GaussMarkov" title="GaussMarkov"><span class="n"><span class="pre">GaussMarkov</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseModel</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor10noiseModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Factor to scale cosine curve magnitude based on solar flux at location </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor15faultNoiseModelE">
+<span id="_CPPv3N15CoarseSunSensor15faultNoiseModelE"></span><span id="_CPPv2N15CoarseSunSensor15faultNoiseModelE"></span><span id="CoarseSunSensor::faultNoiseModel__GaussMarkov"></span><span class="target" id="class_coarse_sun_sensor_1ab1651d25613b34da80c1aab5931b0427"></span><a class="reference internal" href="../../../architecture/utilities/gauss_markov.html#_CPPv411GaussMarkov" title="GaussMarkov"><span class="n"><span class="pre">GaussMarkov</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">faultNoiseModel</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor15faultNoiseModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gauss Markov noise generation model </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor15saturateUtilityE">
+<span id="_CPPv3N15CoarseSunSensor15saturateUtilityE"></span><span id="_CPPv2N15CoarseSunSensor15saturateUtilityE"></span><span id="CoarseSunSensor::saturateUtility__Saturate"></span><span class="target" id="class_coarse_sun_sensor_1a8438e80cbfab9e5cbdee11f28bb8020d"></span><a class="reference internal" href="../../../architecture/utilities/saturate.html#_CPPv48Saturate" title="Saturate"><span class="n"><span class="pre">Saturate</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saturateUtility</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor15saturateUtilityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gauss Markov noise generation model exclusively for CSS fault </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15CoarseSunSensor17propagationMatrixE">
+<span id="_CPPv3N15CoarseSunSensor17propagationMatrixE"></span><span id="_CPPv2N15CoarseSunSensor17propagationMatrixE"></span><span id="CoarseSunSensor::propagationMatrix__Eigen::Matrix:double.-1.1.0.-1.1:"></span><span class="target" id="class_coarse_sun_sensor_1a5f350168bdc8fe162ba5b570a0890082"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propagationMatrix</span></span></span><a class="headerlink" href="#_CPPv4N15CoarseSunSensor17propagationMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Saturation utility </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416CSSConstellation">
+<span id="_CPPv316CSSConstellation"></span><span id="_CPPv216CSSConstellation"></span><span id="CSSConstellation"></span><span class="target" id="class_c_s_s_constellation"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CSSConstellation</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv416CSSConstellation" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;coarseSunSensor.h&gt;</em></div>
+<p>Constellation of coarse sun sensors for aggregating output information. </p>
+<p>This class is a thin container on top of the above coarse-sun sensor class. It is used to aggregate the output messages of the coarse sun-sensors into a a single output for use by downstream models. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation16CSSConstellationEv">
+<span id="_CPPv3N16CSSConstellation16CSSConstellationEv"></span><span id="_CPPv2N16CSSConstellation16CSSConstellationEv"></span><span id="CSSConstellation::CSSConstellation"></span><span class="target" id="class_c_s_s_constellation_1abb94ba1741443e4708b0558b5a4006d7"></span><span class="sig-name descname"><span class="n"><span class="pre">CSSConstellation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16CSSConstellation16CSSConstellationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Default constructor </p>
+<p>The default constructor for the constellation really just clears the sensor list. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellationD0Ev">
+<span id="_CPPv3N16CSSConstellationD0Ev"></span><span id="_CPPv2N16CSSConstellationD0Ev"></span><span id="CSSConstellation::~CSSConstellation"></span><span class="target" id="class_c_s_s_constellation_1a40f8d6895159d7b8f8b3483204ede212"></span><span class="sig-name descname"><span class="n"><span class="pre">~CSSConstellation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16CSSConstellationD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Default Destructor </p>
+<p>The default destructor for the constellation just clears the sensor list. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation5ResetE8uint64_t">
+<span id="_CPPv3N16CSSConstellation5ResetE8uint64_t"></span><span id="_CPPv2N16CSSConstellation5ResetE8uint64_t"></span><span id="CSSConstellation::Reset__uint64_t"></span><span class="target" id="class_c_s_s_constellation_1a66009ef436c735ba50c4f30eff76398c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16CSSConstellation5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for reseting the module. </p>
+<p>This method is used to reset the module. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time from the architecture </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation11UpdateStateE8uint64_t">
+<span id="_CPPv3N16CSSConstellation11UpdateStateE8uint64_t"></span><span id="_CPPv2N16CSSConstellation11UpdateStateE8uint64_t"></span><span id="CSSConstellation::UpdateState__uint64_t"></span><span class="target" id="class_c_s_s_constellation_1a7127b144d668aadafdfda1b0298380d1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16CSSConstellation11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Main update method for CSS constellation </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation9appendCSSEP15CoarseSunSensor">
+<span id="_CPPv3N16CSSConstellation9appendCSSEP15CoarseSunSensor"></span><span id="_CPPv2N16CSSConstellation9appendCSSEP15CoarseSunSensor"></span><span id="CSSConstellation::appendCSS__CoarseSunSensorP"></span><span class="target" id="class_c_s_s_constellation_1a9742907b9eae1b104c3ed77c3bdcb83b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">appendCSS</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415CoarseSunSensor" title="CoarseSunSensor"><span class="n"><span class="pre">CoarseSunSensor</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newSensor</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16CSSConstellation9appendCSSEP15CoarseSunSensor" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Method for adding sensor to list </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation19constellationOutMsgE">
+<span id="_CPPv3N16CSSConstellation19constellationOutMsgE"></span><span id="_CPPv2N16CSSConstellation19constellationOutMsgE"></span><span id="CSSConstellation::constellationOutMsg__Message:CSSArraySensorMsgPayload:"></span><span class="target" id="class_c_s_s_constellation_1a0feea6dede7d5142d1810c3ceebd4a50"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.html#_CPPv424CSSArraySensorMsgPayload" title="CSSArraySensorMsgPayload"><span class="n"><span class="pre">CSSArraySensorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">constellationOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N16CSSConstellation19constellationOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] CSS constellation output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation10sensorListE">
+<span id="_CPPv3N16CSSConstellation10sensorListE"></span><span id="_CPPv2N16CSSConstellation10sensorListE"></span><span id="CSSConstellation::sensorList__std::vector:CoarseSunSensorP:"></span><span class="target" id="class_c_s_s_constellation_1a531ee92cdbff8fb5f8d6fb172f645259"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv415CoarseSunSensor" title="CoarseSunSensor"><span class="n"><span class="pre">CoarseSunSensor</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensorList</span></span></span><a class="headerlink" href="#_CPPv4N16CSSConstellation10sensorListE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] List of coarse sun sensors in constellation </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16CSSConstellation12outputBufferE">
+<span id="_CPPv3N16CSSConstellation12outputBufferE"></span><span id="_CPPv2N16CSSConstellation12outputBufferE"></span><span id="CSSConstellation::outputBuffer__CSSArraySensorMsgPayload"></span><span class="target" id="class_c_s_s_constellation_1ad7652c940082fa0ddca380d8cf0b7579"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CSSArraySensorMsgPayload.html#_CPPv424CSSArraySensorMsgPayload" title="CSSArraySensorMsgPayload"><span class="n"><span class="pre">CSSArraySensorMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">outputBuffer</span></span></span><a class="headerlink" href="#_CPPv4N16CSSConstellation12outputBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] buffer used to write output message </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="coarseSunSensor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

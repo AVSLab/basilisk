@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioVizPoint &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioVizPoint</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioVizPoint</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. figure:: /_images/static/Vizard1.jpg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">   Illustration of Vizard showing a custom spacecraft camera view.</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates how instantiate a visualization interface. This includes setting camera</span>
+<span class="sd">parameters and capture rates. This stems for an attitude detumble scenario, but focuses on</span>
+<span class="sd">pointing towards a celestial body in order to display the visualization Vizard, and show</span>
+<span class="sd">the camera capabilities.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioVizPoint.py</span>
+
+<span class="sd">When the simulation completes 3 plots are shown for the MRP attitude history, the rate</span>
+<span class="sd">tracking errors, as well as the control torque vector.  The ``run()`` method is setup to write out the</span>
+<span class="sd">Vizard data file to sub-folder ``_VizFiles/scenarioVizPoint_UnityViz.bin``.  By running :ref:`Vizard &lt;vizard&gt;`</span>
+<span class="sd">and playing back this data file you will see the custom camera view that is created as</span>
+<span class="sd">illustrated in the Vizard snapshot above.</span>
+
+<span class="sd">The simulation layout is identical the the :ref:`scenarioAttitudeFeedback` scenario when it comes to FSW modules</span>
+<span class="sd">The spacecraft starts in a tumble and controls it&#39;s rate as well as points to the Earth.</span>
+
+<span class="sd">Two mission scenarios can be simulated.</span>
+<span class="sd">The first one mimics the DSCOVR mission spacecraft and its EPIC camera pointing towards Earth.</span>
+<span class="sd">The second simulates a spacecraft orbiting about Mars. The attitude results are the same as</span>
+<span class="sd">the attitude feedback scenario, and pictured in the following plots. The differences lies in</span>
+<span class="sd">where they are pointing.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioVizPoint1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioVizPoint2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioVizPoint3.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">In each case a spacecraft fixed camera is simulated.</span>
+<span class="sd">This is done by connecting to the :ref:`vizInterface` input message</span>
+<span class="sd">``cameraConfInMsg``  The :ref:`vizInterface` module</span>
+<span class="sd">checks this input message by default.  If it is linked, then the camera information</span>
+<span class="sd">is read in and sent across to Vizard to render out that camera view point image.</span>
+<span class="sd">Open Vizard and play back the resulting simulation binary file to see the camera window.</span>
+
+<span class="sd">DSCOVR Mission Setup</span>
+<span class="sd">--------------------</span>
+
+<span class="sd">The first setup has the spacecraft pointing to Earth, from a distant, L1 vantage point.</span>
+<span class="sd">The scenario controls the spacecraft attitude to Earth pointing mode, and snaps pictures at</span>
+<span class="sd">a defined rate.</span>
+<span class="sd">This camera parameters are taken from NASA&#39;s `EPIC &lt;https://epic.gsfc.nasa.gov&gt;`__ camera website on the date</span>
+<span class="sd">2018 OCT 23 04:35:25.000 (UTC time).</span>
+<span class="sd">In this setup the pointing needs to be set to Earth, given it&#39;s position.</span>
+
+<span class="sd">Mars Orbit Setup</span>
+<span class="sd">----------------</span>
+
+<span class="sd">The second control scenario points the spacecraft towards Mars on a Mars orbit.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the vizInterface, spacecraft, simpleNav, mrpFeedback. and inertial3D modules.</span>
+<span class="c1"># Illustrates a spacecraft pointing with visualization.</span>
+<span class="c1"># Author:   Thibaud Teil</span>
+<span class="c1"># Creation Date:  Nov. 01, 2018</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">fileNamePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+
+
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>  <span class="c1"># general support file with common unit test functions</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span>
+
+<span class="c1"># import FSW Algorithm related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpFeedback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">inertial3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">attTrackingError</span>
+
+<span class="c1"># import message declarations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="c1"># attempt to import vizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioVizPoint.html#scenarioVizPoint.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">missionType</span><span class="p">,</span> <span class="n">saveVizardFile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    At the end of the python script you can specify the following example parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        missionType (str):</span>
+
+<span class="sd">            ===========  ==================================</span>
+<span class="sd">            String       Definition</span>
+<span class="sd">            ===========  ==================================</span>
+<span class="sd">            &#39;dscovr&#39;     Simulates the NASA DSCOVR mission</span>
+<span class="sd">            &#39;marsOrbit&#39;  Simulates an orbit about Mars</span>
+<span class="sd">            ===========  ==================================</span>
+
+<span class="sd">        saveVizardFile (bool): Flag to save off the Vizard data file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">missionOptions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dscovr&#39;</span><span class="p">,</span> <span class="s1">&#39;marsOrbit&#39;</span><span class="p">];</span>
+    <span class="k">if</span> <span class="n">missionType</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">missionOptions</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: scenarioVizPoint received the wrong mission type &quot;</span> <span class="o">+</span> <span class="n">missionType</span>
+              <span class="o">+</span> <span class="s2">&quot;. Options include &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">missionOptions</span><span class="p">))</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># set the simulation time variable used later on</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">.1</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following lines</span>
+    <span class="k">if</span> <span class="n">missionType</span> <span class="o">==</span>  <span class="s1">&#39;dscovr&#39;</span><span class="p">:</span>
+        <span class="c1"># setup Grav Bodies and Spice messages</span>
+        <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+        <span class="n">bodies</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createBodies</span><span class="p">(</span><span class="s1">&#39;earth&#39;</span><span class="p">,</span> <span class="s1">&#39;sun&#39;</span><span class="p">)</span>
+        <span class="n">bodies</span><span class="p">[</span><span class="s1">&#39;earth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+        <span class="n">spiceObject</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s1">&#39;2018 OCT 23 04:35:25.000 (UTC)&#39;</span><span class="p">,</span> <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s1">&#39;earth&#39;</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">)</span>
+        <span class="c1"># Setup Camera.</span>
+        <span class="n">cameraConfig</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraConfigMsgPayload</span><span class="p">(</span>
+            <span class="n">cameraID</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">renderRate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">sigma_CB</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.333333</span><span class="p">,</span> <span class="mf">0.333333</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.333333</span><span class="p">],</span>
+            <span class="n">cameraPos_B</span><span class="o">=</span><span class="p">[</span><span class="mf">5000.</span> <span class="o">*</span> <span class="mf">1E-3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="c1"># m</span>
+            <span class="n">fieldOfView</span><span class="o">=</span><span class="mf">0.62</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="c1"># rad</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">2048</span><span class="p">],</span> <span class="c1"># pixels</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">6.25</span><span class="p">)</span>
+        <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+        <span class="c1"># setup Earth Gravity Body</span>
+        <span class="n">mars</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMarsBarycenter</span><span class="p">()</span>
+        <span class="n">mars</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">mars</span><span class="o">.</span><span class="n">mu</span>
+        <span class="n">cameraConfig</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraConfigMsgPayload</span><span class="p">(</span>
+            <span class="n">cameraID</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">renderRate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">sigma_CB</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.333333</span><span class="p">,</span> <span class="mf">0.333333</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.333333</span><span class="p">],</span>
+            <span class="n">cameraPos_B</span><span class="o">=</span><span class="p">[</span><span class="mf">5000.</span> <span class="o">*</span> <span class="mf">1E-3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="c1"># m</span>
+            <span class="n">fieldOfView</span><span class="o">=</span><span class="mf">50.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span> <span class="c1"># rad</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">],</span> <span class="c1"># pixels</span>
+        <span class="p">)</span>
+    <span class="n">camMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cameraConfig</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="c1"># define the simulation inertia</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">600.</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># m - position vector of body-fixed point B relative to CM</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># setup extForceTorque module</span>
+    <span class="c1"># the control torque is read in through the messaging system</span>
+    <span class="n">extFTObject</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFTObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;externalDisturbance&quot;</span>
+<span class="c1">#    extFTObject.extTorquePntB_B = [[0.25], [-0.25], [0.1]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">extFTObject</span><span class="p">)</span>
+
+    <span class="c1"># add the simple Navigation sensor module.  This sets the SC attitude, rate, position</span>
+    <span class="c1"># velocity navigation message</span>
+    <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the FSW algorithm tasks</span>
+    <span class="c1">#</span>
+
+    <span class="k">if</span> <span class="n">missionType</span> <span class="o">==</span> <span class="s1">&#39;dscovr&#39;</span><span class="p">:</span>
+        <span class="c1"># Set up pointing frame and camera position given the initial conditions on Oct 23rd 2018 4:35 UTC</span>
+        <span class="c1"># and the DDSCOVR data</span>
+        <span class="n">earthVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">129559501208.24178</span><span class="p">,</span> <span class="mf">68180766143.44236</span><span class="p">,</span><span class="mf">29544768114.76163</span><span class="p">])</span>
+        <span class="n">normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">])</span>
+        <span class="n">sunVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">32509693.54023</span><span class="p">,</span> <span class="mf">1002377617.77831</span><span class="p">,</span> <span class="mf">423017670.86700</span><span class="p">])</span>
+        <span class="n">dscovrEarthDistance</span> <span class="o">=</span> <span class="mf">1405708000.</span>
+        <span class="n">SEVangle</span> <span class="o">=</span> <span class="mf">7.28</span>
+
+        <span class="n">r_sc</span> <span class="o">=</span> <span class="n">dscovrEarthDistance</span> <span class="o">*</span> <span class="p">(</span><span class="n">sunVec</span><span class="o">-</span><span class="n">earthVec</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sunVec</span><span class="o">-</span><span class="n">earthVec</span><span class="p">)</span>
+        <span class="n">v_sc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">b1_n</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">sunVec</span><span class="o">-</span><span class="n">earthVec</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sunVec</span><span class="o">-</span><span class="n">earthVec</span><span class="p">)</span>
+        <span class="n">b3_n</span> <span class="o">=</span> <span class="p">(</span><span class="n">normal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">b1_n</span><span class="p">)</span><span class="o">*</span><span class="n">b1_n</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">normal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">b1_n</span><span class="p">)</span><span class="o">*</span><span class="n">b1_n</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b1_n</span><span class="p">,</span> <span class="n">b3_n</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1E-10</span><span class="p">,</span> <span class="s1">&#39;Wrong dcm&#39;</span>
+        <span class="n">b2_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b3_n</span><span class="p">,</span> <span class="n">b1_n</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b3_n</span><span class="p">,</span> <span class="n">b1_n</span><span class="p">))</span>
+        <span class="n">NB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">NB</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">b1_n</span>
+        <span class="n">NB</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b2_n</span>
+        <span class="n">NB</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">b3_n</span>
+
+        <span class="n">earthPoint</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">NB</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">earthPoint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
+
+    <span class="c1"># create the FSW vehicle configuration message</span>
+    <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+    <span class="c1"># setup inertial3D guidance module</span>
+    <span class="n">inertial3DObj</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">inertial3DObj</span><span class="p">)</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="n">earthPoint</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># set the desired inertial orientation</span>
+
+    <span class="c1"># setup the attitude tracking error evaluation module</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># setup the MRP Feedback control module</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">extFTObject</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">cmdRec</span> <span class="o">=</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">attErrRec</span> <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">cmdRec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attErrRec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   set initial Spacecraft States</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="c1"># for orbit around Earth</span>
+    <span class="k">if</span> <span class="n">missionType</span> <span class="o">==</span> <span class="s1">&#39;marsOrbit&#39;</span><span class="p">:</span>
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">16000000</span> <span class="c1"># meters</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">10.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">25.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">10.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">160.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rN</span> <span class="o">=</span> <span class="n">r_sc</span>
+        <span class="n">vN</span> <span class="o">=</span> <span class="n">v_sc</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">saveVizardFile</span><span class="p">:</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span>
+                                                  <span class="n">saveFile</span><span class="o">=</span><span class="n">fileNamePath</span><span class="p">)</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">addCamMsgToModule</span><span class="p">(</span><span class="n">camMsg</span><span class="p">)</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">viewCameraFrustumHUD</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="n">dataLr</span> <span class="o">=</span> <span class="n">cmdRec</span><span class="o">.</span><span class="n">torqueRequestBody</span>
+    <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="n">attErrRec</span><span class="o">.</span><span class="n">sigma_BR</span>
+    <span class="n">dataOmegaBR</span> <span class="o">=</span> <span class="n">attErrRec</span><span class="o">.</span><span class="n">omega_BR_B</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+    <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">cmdRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Attitude Error $\sigma_{B/R}$&#39;</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">dataLr</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$L_{r,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Control Torque $L_r$ [Nm]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_{BR,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate Tracking Error [rad/s] &#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>               <span class="c1"># show_plots</span>
+        <span class="s1">&#39;marsOrbit&#39;</span><span class="p">,</span>           <span class="c1"># missionType: dscovr or marsOrbit</span>
+        <span class="kc">True</span>                <span class="c1"># saveVizardFile: flag to save the Vizard data file</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-body Dynamics with MuJoCo &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Enabling Branching of Basilisk Effectors" href="effectorBranching.html" />
+    <link rel="prev" title="Creating DynamicObject Basilisk Modules" href="creatingDynObject.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../advancedTopics.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="creatingDynObject.html">Creating <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Multi-body Dynamics with MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="effectorBranching.html">Enabling Branching of Basilisk Effectors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+          <li class="breadcrumb-item"><a href="../advancedTopics.html">Advanced Topics</a></li>
+      <li class="breadcrumb-item active">Multi-body Dynamics with MuJoCo</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Learn/makingModules/advancedTopics/mujocoDynObject.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="multi-body-dynamics-with-mujoco">
+<span id="mujocodynobject"></span><h1>Multi-body Dynamics with MuJoCo<a class="headerlink" href="#multi-body-dynamics-with-mujoco" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><span class="beta-label">[BETA] Mujoco Support</span> The following feature is a work in progress! Extensive validation has not been performed.
+Some features might be missing, and APIs are subject to change between releases.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> subclasses are Basilisk modules that require the integration of
+ordinate differential equations (ODEs) to propagate their internal state (see <a class="reference internal" href="../../bskPrinciples/bskPrinciples-9.html#bskprinciples-9"><span class="std std-ref">Advanced: Using DynamicObject Basilisk Modules</span></a>).
+The <a class="reference internal" href="../../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> module is the most commonly used <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> in Basilisk, and is ideal to
+represent simple or hub-centric vehicles. For vehicles or sets of vehicles with a more complex topology,
+<a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> represents an alternative <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> designed to facilitate the analysis of
+multi-body system by leveraging the powerful capabilities of the <a class="reference external" href="https://mujoco.org">MuJoCo</a> library.</p>
+<p>This page covers the necessary installation steps to enable <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>, as well as a quick introduction
+to important concepts in simulations with <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>. Once the user is familiar with these, they should review the examples
+presented in the <em>Multi-Body Dynamics Simulations with MuJoCo</em> section in <a class="reference internal" href="../../../examples/index.html#examples"><span class="std std-ref">Integrated Example Scripts</span></a>. The user is
+also encouraged to read the <a class="reference external" href="https://mujoco.readthedocs.io">MuJoCo Documentation</a>, as the capabilities
+exposed through <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> are heavily based on the mathematical and design principles of MuJoCo.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>By default, Basilisk will not build MuJoCo-related capabilities. To enable these, modify the call to
+<code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> during installation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(venv) $ python conanfile.py --mujoco True --mujocoReplay True
+</pre></div>
+</div>
+<p>Note that you will need SWIG version <code class="docutils literal notranslate"><span class="pre">&gt;=4.2.1</span></code>. Only the <code class="docutils literal notranslate"><span class="pre">--mujoco</span> <span class="pre">True</span></code> option is required. <code class="docutils literal notranslate"><span class="pre">--mujocoReplay</span> <span class="pre">True</span></code> will additionally build an
+independent tool that can be used to visualize the results of <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> simulations. When
+using <code class="docutils literal notranslate"><span class="pre">--mujocoReplay</span> <span class="pre">True</span></code>, you’ll be able to call:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mujoco</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that using <code class="docutils literal notranslate"><span class="pre">--mujocoReplay</span> <span class="pre">True</span></code> might require the installation of other graphic libraries
+in your system.</p>
+</section>
+<section id="the-multi-body-system">
+<h2>The Multi-body System<a class="headerlink" href="#the-multi-body-system" title="Link to this heading"></a></h2>
+<p>In this documentation, we define a “multi-body dynamical system” as a collection of interconnected rigid
+or flexible <strong>bodies</strong> whose motion is governed by <strong>forces</strong>, <strong>constraints</strong>, and kinematic relationships
+(such as <strong>joints</strong>). This generic description reveals the breadth of systems that can be treated as multi-body
+systems. For example:</p>
+<ol class="arabic simple">
+<li><p>A small-sat with deployable solar-panels and reaction wheels.</p></li>
+<li><p>A constellation of satellites with gimballed antennas.</p></li>
+<li><p>A multi-modular space station with a robotic arm.</p></li>
+</ol>
+<p>Our description of multi-body systems also introduces a series of useful concepts, namely <strong>bodies</strong>, <strong>joints</strong>,
+<strong>forces</strong>, and <strong>constraints</strong>.</p>
+<section id="bodies-and-joints">
+<h3>Bodies and Joints<a class="headerlink" href="#bodies-and-joints" title="Link to this heading"></a></h3>
+<p>In a multi-body dynamical system, bodies are rigid or flexible components that move relative to one another, often
+representing physical structures like vehicle parts or robot links. Bodies have inertial properties (mass, center
+of mass, and inertia tensor) and usually a 3D geometry, which impacts their visualization and contact dynamics.
+Only rigid body modeling is supported in Basilisk at this time.</p>
+<p>Joints are the connections between bodies that
+constrain their relative motion, allowing specific types of movement such as rotation (e.g., hinges),
+translation (e.g., sliders), or free rotation (e.g. spherical joint). Alternatively, one may see joints as <em>introducing</em>
+degrees of freedom between bodies which are otherwise fixed with respect to each other.
+For example, if there are no joints between two bodies, then no degrees of freedom
+are allowed, and these bodies are <em>welded</em> to each other. Alternatively, if two perpendicular translational joints
+are defined between two bodies, then these bodies will be able to move freely in a plane with respect to each other.
+When two bodies are joined by a spherical joint and three perpendicular translational joints, then we can say that these
+two bodies move completely freely with respect to each other.</p>
+<p>The first step in simulating a real system through <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> is thus to break it down into individual
+rigid bodies and to determine the degrees of freedom between these bodies. An important aspect of the dynamics
+solver used in <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> (as well as in many multi- body dynamic engines), is that bodies must be “organized” following a
+tree topology. This means that bodies may have at most one parent but any number of child bodies. Moreover, a body may
+only define joints between itself and its parent body.</p>
+<p>Being able to simulate only tree-body topologies might sound unduly restricting,
+but many real-world systems can be accurately modeled as body trees. Think of
+your arm: your upper arm is connected to your torso (its parent body) through your shoulder (a two-degrees-of-freedom rotational joint),
+your lower arm is connected to your upper arm through your elbow, your hand is
+connected to your lower arm through your wrist, and each of the fingers is in itself a chain of links and rotational joints that
+connect to the common hand parent body. Consider another example: a small-sat with three reaction wheels, a gimballed antenna,
+and a robotic arm with 3 links. We might break this vehicle into the bodies and joints seen in the following figure:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../../../_images/sat_body_tree.svg"><img alt="../../../_images/sat_body_tree.svg" class="align-center" src="../../../_images/sat_body_tree.svg" style="width: 528.75px; height: 345.75px;" />
+</a>
+</div></blockquote>
+<p>Nevertheless, if a system has a closed-loop body topology, it can still be modeled in <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>. To do so, one will have
+to “break” these loops to obtain a tree topology, and then model the “broken” joints through <em>constraints</em> (see section below).</p>
+<p>A multi-body system can have multiple bodies without parents, a fact that can be used to simulate independent vehicles.
+Conceptually, we can say that all bodies without parent bodies actually have the “world body” as parent, a fictitious
+body that represents the inertial frame of the simulation. These bodies are joined to the world body through “free”
+joints, which allow full movement (6 degree of freedom joints). In this way, the multi-body system is represented
+by a rooted tree.</p>
+<p>For most designers, it is intuitive to think of the state of a body through its position and attitude with respect
+to some inertial frame. However, in a multi-body system, this description leads to an over-determined state definition.
+Consider, for example, a simple pendulum. This system has a single degree of freedom, the pendulum’s angle. However,
+the cartesian position of the pendulum weight is given by three scalar values. This is the difference between “minimal”
+and “maximal” coordinate systems. MuJoCo, and thus <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>, always uses a minimal coordinate system, where
+the state of the system is given by the state of each joint (remember that we think of joints as introducers of degrees
+of freedom). For convinience, this minimal coordinate state is then transformed into cartesian positions, velocities,
+attitudes, and angular rates at <em>sites</em> of interest through a process known as forward kinematics.</p>
+</section>
+<section id="sites">
+<h3>Sites<a class="headerlink" href="#sites" title="Link to this heading"></a></h3>
+<p>Sites are reference frames of interest for simulation. They are rigidly attached at a body and have a specific position and
+orientation relative to said body. In Basilisk, each body has at least two sites associated with it: its <em>origin</em> and its
+<em>center of mass</em>. The origin defines the reference frame in which other sites, child bodies, and any other body element
+are defined. Its location is arbitrary, but defined by users when they define the multi-body system. The center of mass site
+defines the location of the center of mass, which may change in time. Other sites can be defined by users by
+providing a transformation (translation and orientation) with respect to the origin site.</p>
+<p>Users can query the position, attitude, velocity, and angular rate (with respect to the inertial frame)
+of each site in the multi-body system. This can be used, for example, to easily get the position and pointing direction
+of a sensor located at the end of a robotic arm. Alternatively, the information from multiple sites could be used
+to measure and then control the relative velocity of two spacecraft.</p>
+<p>The second main use of sites is to be the reference frames in which forces and torques are defined. In <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>,
+forces and torques are defined to be acting at a site’s frame center and are given in said reference frame. This generally
+simplifies the implementation of actuators. To model a fixed thruster, for example, we may define a site whose frame is
+positioned at the location of the thruster and its Z-axis is along the thruster direction. Then, during simulation,
+we may simply tell the corresponding actuator to produce a force along the Z-axis of this site, and the dynamics engine
+will compute the correct force and torque vetors to apply to the body.</p>
+</section>
+<section id="actuators">
+<h3>Actuators<a class="headerlink" href="#actuators" title="Link to this heading"></a></h3>
+<p>Actuators are how the simulation framework determines what forces and torques to apply to the multi-body system.
+For <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>, we can divide actuators in two groups: those that apply a force or torque at a joint, and
+those that apply a force or torque at a site.</p>
+<p>Actuators that apply force/torques at joints can be used to model, for example, a motor that applies a torque
+on a hinge or a force on a slider joint. These actuators are always of the type <code class="docutils literal notranslate"><span class="pre">MJSingleActuator</span></code>, where
+the word <code class="docutils literal notranslate"><span class="pre">Single</span></code> refers to the fact that a single scalar value is used to define the magnitude of the
+force or torque to be applied.</p>
+<p>Actuators that apply force/torques at sites can be used to model arbitrary external disturbances on
+the system. For example, gravity is modeled as such a force/torque, and so is solar radiation pressure,
+thrusters, aerodynamic forces, etc. An <code class="docutils literal notranslate"><span class="pre">MJForceTorqueActuator</span></code> can be used to define arbitrary
+force and torque vectors on a site’s reference frame. Alternatively, <code class="docutils literal notranslate"><span class="pre">MJForceActuator</span></code> and
+<code class="docutils literal notranslate"><span class="pre">MJTorqueActuator</span></code> can be used when only a force or torque vectors, respectively, must be modeled.
+Finally, <code class="docutils literal notranslate"><span class="pre">MJSingleActuator</span></code> may also be used to apply a force and/or torque at a site. In this
+case, the force and torque directions are fixed at multi-body-model definition time, while the magnitude
+is allowed to vary during simulation. This restricted actuator model can be surprisingly useful: a fixed thruster, for
+example, or the solar radiation pressure acting on a panel, can both be modeled as forces with a fixed direction
+in a local reference frame.</p>
+</section>
+<section id="constraints">
+<h3>Constraints<a class="headerlink" href="#constraints" title="Link to this heading"></a></h3>
+<p>In MuJoCo (and thus <a class="reference internal" href="../../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>), constraints are mathematical conditions that restrict the movement of
+bodies in a simulation. MuJoCo’s internal solver will effectively compute the required forces and torques to make
+the system comply with these contraints. This means that this is a “soft” constraint system, where
+constraints are not guaranteed to be met at every time step. The MuJoCo constraint system can be applied
+to model a wide array of systems, but in this section we highlight only a few:</p>
+<ol class="arabic simple">
+<li><p>Closed-loop body topologies: In a previous section, we established that only tree body topologies can be expressed through the joint system. <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#equality">Equality constraints</a> must be used to model closed-loop topologies.</p></li>
+<li><p>Attachments between bodies that may be active or inactive during the simulation, for example to model a rendez-vous scenario.</p></li>
+<li><p>“Constrained” joints: These are scalar joints (hinges or sliders) that we want to force to have a specific position. See “Free, Constrained, and Prescribed Joints” section below.</p></li>
+<li><p>Contact dynamics and friction, which are implemented through the constraint system.</p></li>
+<li><p>Joint limits, also implemented as constraints.</p></li>
+</ol>
+</section>
+</section>
+<section id="free-constrained-and-prescribed-joints">
+<h2>Free, Constrained, and Prescribed Joints<a class="headerlink" href="#free-constrained-and-prescribed-joints" title="Link to this heading"></a></h2>
+<p>By default, all joints in the multi-body system are allowed to move freely within their allowed degrees of freedom.
+A hinge joint, for example, allows any rotation between two bodies along an axis. Similarly, a slider
+joint allows any translation between bodies along an axis. Free joints can optionally be “limited”, which enforces
+that the relative position between bodies does not exceed some bounds. For instance, a limited slider may
+only allow between 10 and 20 centimeter tranlsational displacement along an axis.</p>
+<p>“Constrained” joints take these limitations a step further by forcing the joints to be in a specific,
+user-defined position. This is useful when we can assume that a motor
+is nearly perfectly capable of moving the system with the desired motion profile, and we are not interested
+in simulating the specifics of its control system. In this sense, we offload the calculation of the necessary
+forces and torques to move the joint in the desired manner to the dynamic engine’s solver. Because of this,
+constrained joints can cause a significant slow-down of the simulation. However, because these constraints
+are eventually implemented as forces and torques between the bodies, they are physically accurate.</p>
+<p>“Prescribed” joints are those for which we want to force the joint to have a specific position, but
+do not want to bother with the dynamics that would make this possible through forces or torques. Instead,
+we tell the system to ignore the joint position and velocity calculated by the engine and replace it with
+the desired value. This prescription does not come with the high computational cost of a constrained
+joint, and will be even faster to simulate than an explicitelly-controled joint. However, it will not
+be physically accurate. This accuracy loss may be tolerable, howwver, especially if the bodies downstream of the
+prescribed joint have low (relative) mass. For example, it might be acceptable to prescribe the joint
+of an antenna, since we don’t expect the torque that would be applied by its control motor to have a
+significant effect on the satellite’s hubbody.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>“Prescibed” joints are not currently implemented in Basilisk!</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="creatingDynObject.html" class="btn btn-neutral float-left" title="Creating DynamicObject Basilisk Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="effectorBranching.html" class="btn btn-neutral float-right" title="Enabling Branching of Basilisk Effectors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

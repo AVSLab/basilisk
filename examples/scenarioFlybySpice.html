@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioFlybySpice &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioAsteroidArrival" href="scenarioAsteroidArrival.html" />
+    <link rel="prev" title="scenarioHelioTransSpice" href="scenarioHelioTransSpice.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioHelioTransSpice.html">Heliocentric Translation Using Custom Spice Files</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Planetary Flybys Using Custom Spice File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAsteroidArrival.html">Asteroid Arrival</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAerocapture.html">Aerocapture Scenario</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioFlybySpice</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioFlybySpice.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenarioflybyspice">
+<span id="id1"></span><h1>scenarioFlybySpice<a class="headerlink" href="#scenarioflybyspice" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioFlybySpice"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>The purpose of this simulation is to illustrate how to set a spacecraft’s translational motion using a custom
+Spice file for planetary flybys. This allows the user to easily visualize a mission trajectory using Vizard.
+Attitude pointing modes are also implemented in this script to enhance the mission simulation and illustrate
+other capabilities in Basilisk.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioFlybySpice</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="configuring-translational-motion-using-custom-spice-files">
+<h2>Configuring Translational Motion Using Custom Spice Files<a class="headerlink" href="#configuring-translational-motion-using-custom-spice-files" title="Link to this heading"></a></h2>
+<p>This simulation script allows the user to specify a flyby of either Venus, Mars, or Earth. Note that the custom Spice
+file for this scenario incorporates translational information for all three planetary flybys. Therefore, the user must
+first specify the correct flyby date and time to initialize the simulation with the correct Spice information. This is
+done using the <code class="docutils literal notranslate"><span class="pre">timeIntString</span></code> variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;venus&quot;</span><span class="p">:</span>
+    <span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2028 August 13 0:30:30.0&quot;</span>
+<span class="k">elif</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span><span class="p">:</span>
+    <span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2029 June 20 5:30:30.0&quot;</span>
+<span class="k">elif</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;mars&quot;</span><span class="p">:</span>
+    <span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2031 October 3 20:00:00.0&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;flyby target not implemented.&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next the custom Spice file must be loaded. The <code class="docutils literal notranslate"><span class="pre">loadSpiceKernel()</span></code> method of class <code class="docutils literal notranslate"><span class="pre">SpiceInterface</span></code>
+is called to load the file. This method accepts the file name and the path to the desired file to load:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spiceObject</span><span class="o">.</span><span class="n">loadSpiceKernel</span><span class="p">(</span><span class="s2">&quot;max_21T01.bsp&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;dataForExamples&quot;</span><span class="p">,</span> <span class="s2">&quot;Spice/&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Note that setting up the orbital elements and initial conditions using the <code class="docutils literal notranslate"><span class="pre">orbitalMotion</span></code> module is no longer needed.</p>
+<p>After the Spice file is loaded, connect the configured Spice translational output message to the spacecraft object’s
+<code class="docutils literal notranslate"><span class="pre">transRefInMsg</span></code> input message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">transRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">transRefStateOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Finally, add the Spice object to the simulation task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">spiceObject</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="implementing-attitude-pointing-modes">
+<h2>Implementing Attitude Pointing Modes<a class="headerlink" href="#implementing-attitude-pointing-modes" title="Link to this heading"></a></h2>
+<p>Now that the spacecraft’s translational motion is set, the user is free to implement attitude changes to enhance the
+mission visualization. Three attitude pointing modes are incorporated into this script for each planetary flyby case.</p>
+<p>First, an <code class="docutils literal notranslate"><span class="pre">ephemerisConverter</span></code> module must be configured to convert Spice messages of type <code class="docutils literal notranslate"><span class="pre">plantetStateOutMsgs</span></code>
+to ephemeris messages of type <code class="docutils literal notranslate"><span class="pre">ephemOutMsgs</span></code>. This converter is required for all attitude pointing modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ephemObject</span> <span class="o">=</span> <span class="n">ephemerisConverter</span><span class="o">.</span><span class="n">EphemerisConverter</span><span class="p">()</span>
+<span class="n">ephemObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s1">&#39;EphemData&#39;</span>
+<span class="n">ephemObject</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">earthIdx</span><span class="p">])</span>
+<span class="n">ephemObject</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">sunIdx</span><span class="p">])</span>
+<span class="n">ephemObject</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">moonIdx</span><span class="p">])</span>
+<span class="n">ephemObject</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">venusIdx</span><span class="p">])</span>
+<span class="n">ephemObject</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">planetStateOutMsgs</span><span class="p">[</span><span class="n">marsIdx</span><span class="p">])</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">ephemObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, the <code class="docutils literal notranslate"><span class="pre">extForceTorque</span></code> and <code class="docutils literal notranslate"><span class="pre">simpleNav</span></code> modules must be set configured:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extFTObject</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+<span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The torque module object is added to the spacecraft as a dynamics effector and the simple navigation module’s spacecraft
+state input message must be subscribed to the spacecraft object’s state output message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObject</span><span class="p">)</span>
+<span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Both modules are added to the simulation task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">extFTObject</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next the <code class="docutils literal notranslate"><span class="pre">velocityPoint</span></code> module is configured for each planet case. This module fixes the spacecraft attitude in the
+orbit velocity frame. See <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/velocityPoint/velocityPoint.html#velocitypoint"><span class="std std-ref">Module: velocityPoint</span></a> for a more detailed description of this module. The Mars velocity-pointing case is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">velMarsGuidance</span> <span class="o">=</span> <span class="n">velocityPoint</span><span class="o">.</span><span class="n">velocityPoint</span><span class="p">()</span>
+<span class="n">velMarsGuidance</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;velocityPointMars&quot;</span>
+<span class="n">velMarsGuidance</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">marsMu</span>
+</pre></div>
+</div>
+<p>The velocity pointing module has two input messages that must be connected. First, the module’s
+<code class="docutils literal notranslate"><span class="pre">transNavInMsg</span></code> message is subscribed to the simple navigation module’s <code class="docutils literal notranslate"><span class="pre">transOutMsg</span></code> message. The module’s
+<code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code> message must be connected to the flyby planet’s ephemeris output message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">velMarsGuidance</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="n">velMarsGuidance</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="n">marsIdx</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Finally, add the module to the simulation task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">velMarsGuidance</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The other attitude guidance modules used in this simulation are implemented in similar manner. The <code class="docutils literal notranslate"><span class="pre">locationPointing</span></code>
+module points a body-fixed spacecraft axis towards a particular location of interest. Modes for Earth- and Sun-pointing
+are implemented by subscribing the module’s <code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code> input message to the desired planet’s ephemeris output
+message. The module’s <code class="docutils literal notranslate"><span class="pre">pHat_B</span></code> vector is set according to which body-fixed vector should point towards the location
+of interest. See <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">Module: locationPointing</span></a> for a more detailed description of this module.
+The Earth-pointing guidance module setup is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">earthPointGuidance</span> <span class="o">=</span> <span class="n">locationPointing</span><span class="o">.</span><span class="n">locationPointing</span><span class="p">()</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;antennaEarthPoint&quot;</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">scTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="n">earthIdx</span><span class="p">])</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">scTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">scAttInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">pHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="n">earthPointGuidance</span><span class="o">.</span><span class="n">useBoresightRateDamping</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">earthPointGuidance</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, a science-pointing mode is implemented using the <code class="docutils literal notranslate"><span class="pre">hillPoint</span></code> module. This module points a body-fixed location
+on the spacecraft designated as a camera towards the flyby planet of interest. See <a class="reference internal" href="../Documentation/fswAlgorithms/attGuidance/hillPoint/hillPoint.html#hillpoint"><span class="std std-ref">Module: hillPoint</span></a> for a more
+detailed description of this module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cameraLocation</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+<span class="n">sciencePointGuidance</span> <span class="o">=</span> <span class="n">hillPoint</span><span class="o">.</span><span class="n">hillPoint</span><span class="p">()</span>
+<span class="n">sciencePointGuidance</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;sciencePointAsteroid&quot;</span>
+<span class="n">sciencePointGuidance</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+<span class="n">sciencePointGuidance</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="n">planetIdx</span><span class="p">])</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sciencePointGuidance</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, the attitude tracking error module must be configured with the initial flight mode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+<span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+<span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">velEarthGuidance</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>  <span class="c1"># initial flight mode</span>
+<span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, the flight software vehicle configuration message is configured:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+<span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="n">I</span>  <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+<span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The MRP Feedback control module is configured next for attitude control:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+</pre></div>
+</div>
+<p>To complete the feedback loop, the MRP feedback module’s <code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code> output message is connected to the
+external torque module’s <code class="docutils literal notranslate"><span class="pre">cmdTorqueInMsg</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extFTObject</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-visualization-features">
+<h2>Additional Visualization Features<a class="headerlink" href="#additional-visualization-features" title="Link to this heading"></a></h2>
+<p>To add a visualization of antenna transmission back to Earth during the Earth-pointing mode, a transceiver is created
+through the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">transceiverHUD</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">Transceiver</span><span class="p">()</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.38</span><span class="p">]</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="mf">40.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">normalVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;antenna&quot;</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">animationSpeed</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>To add a camera to the science-pointing mode, the <code class="docutils literal notranslate"><span class="pre">createStandardCamera</span></code> method is used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vizSupport</span><span class="o">.</span><span class="n">createStandardCamera</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">setMode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spacecraftName</span><span class="o">=</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span>
+                                <span class="n">fieldOfView</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span>
+                                <span class="n">pointingVector_B</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">position_B</span><span class="o">=</span><span class="n">cameraLocation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After the simulation is initialized, functions are created for each attitude flight mode. Each function accepts the
+desired simulation time and executes the simulation after setting additional flight mode parameters. Note that because
+the velocity pointing mode depends on which planet is specified, this function is generalized to also accept the
+desired guidance configuration module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">runVelocityPointing</span><span class="p">(</span><span class="n">simTime</span><span class="p">,</span> <span class="n">planetMsg</span><span class="p">):</span>
+    <span class="k">nonlocal</span> <span class="n">simulationTime</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+    <span class="n">transceiverHUD</span><span class="o">.</span><span class="n">transceiverState</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># antenna off</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">sigma_R0R</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="mf">90.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="o">/</span><span class="mi">4</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">simulationTime</span> <span class="o">+=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To execute the desired attitude-pointing mode, the <code class="docutils literal notranslate"><span class="pre">run</span></code> function must be called with the desired simulation time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runVelocityPointing</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">hour</span><span class="p">,</span> <span class="n">velPlant</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ensure to unload the Spice kernel at the end of each simulation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spiceObject</span><span class="o">.</span><span class="n">unloadSpiceKernel</span><span class="p">(</span><span class="s2">&quot;max_21T01.bsp&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="s2">&quot;Spice/&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="simulation-visualization-in-vizard">
+<h2>Simulation Visualization In Vizard<a class="headerlink" href="#simulation-visualization-in-vizard" title="Link to this heading"></a></h2>
+<p>The following image illustrates the expected visualization of this simulation script for a flyby of Mars.</p>
+<img alt="../_images/scenarioFlybySpice.jpg" class="align-center" src="../_images/scenarioFlybySpice.jpg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioFlybySpice.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioFlybySpice.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">planetCase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioFlybySpice.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioFlybySpice.run" title="Link to this definition"></a></dt>
+<dd><p>At the end of the python script you can specify the following example parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>planetCase</strong> (<em>str</em>) – {‘venus’, ‘earth’, ‘mars’}</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioHelioTransSpice.html" class="btn btn-neutral float-left" title="scenarioHelioTransSpice" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioAsteroidArrival.html" class="btn btn-neutral float-right" title="scenarioAsteroidArrival" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

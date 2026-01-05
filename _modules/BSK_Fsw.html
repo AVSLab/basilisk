@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK_Fsw &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BSK_Fsw</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BSK_Fsw</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">attTrackingError</span><span class="p">,</span>
+    <span class="n">cssWlsEst</span><span class="p">,</span>
+    <span class="n">hillPoint</span><span class="p">,</span>
+    <span class="n">inertial3D</span><span class="p">,</span>
+    <span class="n">lambertPlanner</span><span class="p">,</span>
+    <span class="n">lambertSecondDV</span><span class="p">,</span>
+    <span class="n">lambertSolver</span><span class="p">,</span>
+    <span class="n">lambertSurfaceRelativeVelocity</span><span class="p">,</span>
+    <span class="n">lambertValidator</span><span class="p">,</span>
+    <span class="n">mrpFeedback</span><span class="p">,</span>
+    <span class="n">mrpSteering</span><span class="p">,</span>
+    <span class="n">rateServoFullNonlinear</span><span class="p">,</span>
+    <span class="n">rwMotorTorque</span><span class="p">,</span>
+    <span class="n">sunSafePoint</span><span class="p">,</span>
+    <span class="n">velocityPoint</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">fswSetupRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span> <span class="k">as</span> <span class="n">mc</span>
+
+
+<div class="viewcode-block" id="BSKFswModels">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BSKFswModels</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the bskSim FSW class&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">,</span> <span class="n">fswRate</span><span class="p">):</span>
+        <span class="c1"># define empty class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dvBurnCmdMsg</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Define process name and default time-step for all FSW tasks defined later on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processName</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">FSWProcessName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">fswRate</span><span class="p">)</span>
+
+        <span class="c1"># Create module data and module wraps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hillPoint</span> <span class="o">=</span> <span class="n">hillPoint</span><span class="o">.</span><span class="n">hillPoint</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hillPoint</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;hillPoint&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span> <span class="o">=</span> <span class="n">sunSafePoint</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;sunSafePoint&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span> <span class="o">=</span> <span class="n">velocityPoint</span><span class="o">.</span><span class="n">velocityPoint</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span><span class="o">.</span><span class="n">ModelTag</span>  <span class="o">=</span> <span class="s2">&quot;velocityPoint&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssWlsEst</span> <span class="o">=</span> <span class="n">cssWlsEst</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssWlsEst&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;trackingError&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedbackControl&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedbackRWs&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span> <span class="o">=</span> <span class="n">mrpSteering</span><span class="o">.</span><span class="n">mrpSteering</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;MRP_Steering&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span> <span class="o">=</span> <span class="n">rateServoFullNonlinear</span><span class="o">.</span><span class="n">rateServoFullNonlinear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rate_servo&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorque&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span> <span class="o">=</span> <span class="n">lambertPlanner</span><span class="o">.</span><span class="n">LambertPlanner</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;LambertPlanner&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span> <span class="o">=</span> <span class="n">lambertSolver</span><span class="o">.</span><span class="n">LambertSolver</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;LambertSolver&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span> <span class="o">=</span> <span class="n">lambertValidator</span><span class="o">.</span><span class="n">LambertValidator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;LambertValidator&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSurfaceRelativeVelocityObject</span> <span class="o">=</span> <span class="n">lambertSurfaceRelativeVelocity</span><span class="o">.</span><span class="n">LambertSurfaceRelativeVelocity</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSurfaceRelativeVelocityObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;LambertSurfaceRelativeVelocity&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSecondDvObject</span> <span class="o">=</span> <span class="n">lambertSecondDV</span><span class="o">.</span><span class="n">LambertSecondDV</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSecondDvObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;LambertSecondDV&quot;</span>
+
+        <span class="c1"># create the FSW module gateway messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupGatewayMsgs</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+
+        <span class="c1"># Initialize all modules</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">InitAllFSWObjects</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+
+        <span class="c1"># Create tasks</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;inertial3DPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;sunSafePointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;velocityPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceFirstDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceSecondDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+
+        <span class="c1"># Assign initialized modules to tasks</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;inertial3DPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;inertial3DPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hillPoint</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;sunSafePointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;sunSafePointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;velocityPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;velocityPointTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceFirstDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceFirstDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceFirstDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceSecondDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambertSurfaceRelativeVelocityObject</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceSecondDV&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambertSecondDvObject</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="c1"># Create events to be called for triggering GN&amp;C maneuvers</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">()</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateStandby&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;standby&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;self.fswProc.disableAllTasks()&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;self.FSWModels.zeroGateWayMsgs()&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;self.setAllButCurrentEventActivity(&#39;initiateStandby&#39;, True)&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateAttitudeGuidance&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;inertial3D&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;inertial3DPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span><span class="s2">&quot;initiateAttitudeGuidance&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateAttitudeGuidanceDirect&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;directInertial3D&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;inertial3DPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="s2">&quot;initiateAttitudeGuidanceDirect&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateHillPoint&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;hillPoint&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span><span class="s2">&quot;initiateHillPoint&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateSunSafePoint&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;sunSafePoint&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;sunSafePointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span><span class="s2">&quot;initiateSunSafePoint&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateVelocityPoint&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;velocityPoint&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;velocityPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span><span class="s2">&quot;initiateVelocityPoint&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateSteeringRW&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;steeringRW&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span><span class="s2">&quot;initiateSteeringRW&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateLambertGuidanceFirstDV&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;lambertFirstDV&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceFirstDV&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="s2">&quot;initiateLambertGuidanceFirstDV&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span>
+            <span class="s2">&quot;initiateLambertGuidanceSecondDV&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;lambertSecondDV&quot;</span><span class="p">,</span>
+            <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;hillPointTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpSteeringRWsTask&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;lambertGuidanceSecondDV&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setAllButCurrentEventActivity</span><span class="p">(</span>
+                    <span class="s2">&quot;initiateLambertGuidanceSecondDV&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------------------------------- #</span>
+    <span class="c1"># These are module-initialization methods</span>
+<div class="viewcode-block" id="BSKFswModels.SetInertial3DPointGuidance">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetInertial3DPointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetInertial3DPointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the inertial 3D guidance module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inertial3D</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetHillPointGuidance">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetHillPointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetHillPointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the Hill pointing guidance module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hillPoint</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hillPoint</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">EarthEphemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># earth</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hillPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetSunSafePointGuidance">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetSunSafePointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetSunSafePointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the sun safe pointing guidance module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="o">.</span><span class="n">imuInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="o">.</span><span class="n">sunDirectionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="o">.</span><span class="n">navStateOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="o">.</span><span class="n">sHatBdyCmd</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sunSafePoint</span><span class="o">.</span><span class="n">attGuidanceOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetVelocityPointGuidance">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetVelocityPointGuidance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetVelocityPointGuidance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the velocity pointing guidance module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">EarthEphemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="p">[</span><span class="s1">&#39;earth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">velocityPoint</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetAttitudeTrackingError">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetAttitudeTrackingError">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetAttitudeTrackingError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the attitude tracking error module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackingError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetCSSWlsEst">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetCSSWlsEst">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetCSSWlsEst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the FSW CSS configuration information &quot;&quot;&quot;</span>
+        <span class="n">nHat_B_vec</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.707107</span><span class="p">,</span> <span class="mf">0.707107</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.707107</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.707107</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.707107</span><span class="p">,</span> <span class="mf">0.707107</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">0.707107</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.707107</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.965926</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.258819</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">0.707107</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.353553</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.612372</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.258819</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.965926</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.707107</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.353553</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.612372</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">cssConfig</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigMsgPayload</span><span class="p">(</span>
+            <span class="n">nCSS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nHat_B_vec</span><span class="p">),</span>
+            <span class="n">cssVals</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">messaging</span><span class="o">.</span><span class="n">CSSUnitConfigMsgPayload</span><span class="p">(</span>
+                    <span class="n">CBias</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                    <span class="n">nHat_B</span><span class="o">=</span><span class="n">CSSHat</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">CSSHat</span> <span class="ow">in</span> <span class="n">nHat_B_vec</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssConfigMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CSSConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cssConfig</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="o">.</span><span class="n">cssDataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">CSSConstellationObject</span><span class="o">.</span><span class="n">constellationOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cssWlsEst</span><span class="o">.</span><span class="n">cssConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cssConfigMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetMRPFeedbackControl">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetMRPFeedbackControl">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetMRPFeedbackControl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the MRP feedback module configuration&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># Note: make value negative to turn off integral feedback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetMRPFeedbackRWA">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetMRPFeedbackRWA">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetMRPFeedbackRWA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the MRP feedback information if RWs are considered&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Note: make value negative to turn off integral feedback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpFeedbackRWs</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetMRPSteering">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetMRPSteering">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetMRPSteering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the MRP Steering module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">K1</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">ignoreOuterLoopFeedforward</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">K3</span> <span class="o">=</span> <span class="mf">0.75</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">omega_max</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetRateServo">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetRateServo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetRateServo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the rate servo module&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">rateSteeringInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mrpSteering</span><span class="o">.</span><span class="n">rateCmdOutMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="mf">5.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">150.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rateServo</span><span class="o">.</span><span class="n">knownTorquePntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetVehicleConfiguration">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetVehicleConfiguration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetVehicleConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the spacecraft configuration information&quot;&quot;&quot;</span>
+        <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+        <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+        <span class="n">vehicleConfigOut</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetRWConfigMsg">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetRWConfigMsg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetRWConfigMsg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the RW device information&quot;&quot;&quot;</span>
+        <span class="c1"># Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)</span>
+        <span class="n">rwElAngle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">])</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">rwAzimuthAngle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">45.0</span><span class="p">,</span> <span class="mf">135.0</span><span class="p">,</span> <span class="mf">225.0</span><span class="p">,</span> <span class="mf">315.0</span><span class="p">])</span> <span class="o">*</span> <span class="n">mc</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">wheelJs</span> <span class="o">=</span> <span class="mf">50.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6000.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span>
+
+        <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">elAngle</span><span class="p">,</span> <span class="n">azAngle</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rwElAngle</span><span class="p">,</span> <span class="n">rwAzimuthAngle</span><span class="p">):</span>
+            <span class="n">gsHat</span> <span class="o">=</span> <span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">Mi</span><span class="p">(</span><span class="o">-</span><span class="n">azAngle</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">Mi</span><span class="p">(</span><span class="n">elAngle</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+            <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">gsHat</span><span class="p">,</span>  <span class="c1"># spin axis</span>
+                              <span class="n">wheelJs</span><span class="p">,</span>  <span class="c1"># kg*m^2</span>
+                              <span class="mf">0.2</span><span class="p">)</span>  <span class="c1"># Nm        uMax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span> <span class="o">=</span> <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetRWMotorTorque">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetRWMotorTorque">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetRWMotorTorque</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the RW motor torque information&quot;&quot;&quot;</span>
+        <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+            <span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span>
+            <span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span><span class="p">)</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsg_C_addAuthor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fswRwConfigMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetLambertPlannerObject">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetLambertPlannerObject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetLambertPlannerObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the lambert planner object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span><span class="o">.</span><span class="n">navTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetLambertSolverObject">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetLambertSolverObject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetLambertSolverObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the lambert solver object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span><span class="o">.</span><span class="n">lambertProblemOutMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetLambertValidatorObject">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetLambertValidatorObject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetLambertValidatorObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the lambert validator object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="o">.</span><span class="n">navTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">simpleNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span><span class="o">.</span><span class="n">lambertProblemOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="o">.</span><span class="n">lambertPerformanceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span><span class="o">.</span><span class="n">lambertPerformanceOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="o">.</span><span class="n">lambertSolutionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertValidatorObject</span><span class="o">.</span><span class="n">dvBurnCmdOutMsg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dvBurnCmdMsg</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetLambertSurfaceRelativeVelocityObject">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetLambertSurfaceRelativeVelocityObject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetLambertSurfaceRelativeVelocityObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the lambert surface relative velocity object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSurfaceRelativeVelocityObject</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lambertPlannerObject</span><span class="o">.</span><span class="n">lambertProblemOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSurfaceRelativeVelocityObject</span><span class="o">.</span><span class="n">ephemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">EarthEphemObject</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.SetLambertSecondDvObject">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.SetLambertSecondDvObject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SetLambertSecondDvObject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the lambert second DV object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSecondDvObject</span><span class="o">.</span><span class="n">lambertSolutionInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambertSolverObject</span><span class="o">.</span><span class="n">lambertSolutionOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSecondDvObject</span><span class="o">.</span><span class="n">desiredVelocityInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lambertSurfaceRelativeVelocityObject</span><span class="o">.</span><span class="n">desiredVelocityOutMsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambertSecondDvObject</span><span class="o">.</span><span class="n">dvBurnCmdOutMsg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dvBurnCmdMsg</span></div>
+
+
+    <span class="c1"># Global call to initialize every module</span>
+<div class="viewcode-block" id="BSKFswModels.InitAllFSWObjects">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.InitAllFSWObjects">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">InitAllFSWObjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize all the FSW objects&quot;&quot;&quot;</span>
+
+        <span class="c1"># note that the order in which these routines are called is important.</span>
+        <span class="c1"># To subscribe to a message that message must already exit.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetVehicleConfiguration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetRWConfigMsg</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetInertial3DPointGuidance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetHillPointGuidance</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetCSSWlsEst</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetSunSafePointGuidance</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetVelocityPointGuidance</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetAttitudeTrackingError</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetMRPFeedbackControl</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetMRPFeedbackRWA</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetMRPSteering</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetRateServo</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetRWMotorTorque</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetLambertPlannerObject</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetLambertSolverObject</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetLambertValidatorObject</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetLambertSurfaceRelativeVelocityObject</span><span class="p">(</span><span class="n">SimBase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetLambertSecondDvObject</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.setupGatewayMsgs">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.setupGatewayMsgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupGatewayMsgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;create C-wrapped gateway messages such that different modules can write to this message</span>
+<span class="sd">        and provide a common input msg for down-stream modules&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg_C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg_C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsg_C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg_C</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsg_C</span><span class="p">()</span>
+
+        <span class="c1"># C++ wrapped gateway messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dvBurnCmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DvBurnCmdMsg</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">()</span>
+
+        <span class="c1"># connect gateway FSW effector command msgs with the dynamics</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">extForceTorqueObject</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span><span class="p">)</span>
+        <span class="n">SimBase</span><span class="o">.</span><span class="n">DynModels</span><span class="o">.</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BSKFswModels.zeroGateWayMsgs">
+<a class="viewcode-back" href="../examples/BskSim/models/BSK_Fsw.html#BSK_Fsw.BSKFswModels.zeroGateWayMsgs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">zeroGateWayMsgs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zero all the FSW gateway message payloads&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTorqueDirectMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attRefMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AttRefMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attGuidMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdRwMotorMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsgPayload</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dvBurnCmdMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">DvBurnCmdMsgPayload</span><span class="p">())</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

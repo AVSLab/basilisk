@@ -1,0 +1,489 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: vscmgVelocitySteering &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="vscmgVelocitySteering" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../errorConversion/index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedJointArrayMotor/index.html">hingedJointArrayMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../jointMotionCompensator/index.html">jointMotionCompensator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrForceMapping/index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformReference/index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torque2Dipole/index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgGimbalRateServo/index.html">vscmgGimbalRateServo</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">vscmgVelocitySteering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">vscmgVelocitySteering</a></li>
+      <li class="breadcrumb-item active">Module: vscmgVelocitySteering</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/vscmgVelocitySteering/vscmgVelocitySteering.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-vscmgvelocitysteering">
+<span id="vscmgvelocitysteering"></span><h1>Module: vscmgVelocitySteering<a class="headerlink" href="#module-vscmgvelocitysteering" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">vscmgVelocitySteering</span></code> module maps the required spacecraft control torque vector (<span class="math notranslate nohighlight">\(\boldsymbol{L}_r\)</span>) to a corresponding reference wheel acceleration and gimbal rate for each VSCMG.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages. The module msg connection is set by the user from python. The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vscmgParamsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGArrayConfigMsgPayload.html#vscmgarrayconfigmsgpayload"><span class="std std-ref">VSCMGArrayConfigMsgPayload</span></a></p></td>
+<td><p>VSCMG array configuration input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>vehControlInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>vehicle control (Lr) input message</p></td>
+</tr>
+<tr class="row-even"><td><p>attNavInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>attitude navigation input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>attGuideInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#attguidmsgpayload"><span class="std std-ref">AttGuidMsgPayload</span></a></p></td>
+<td><p>attitude guidance input message</p></td>
+</tr>
+<tr class="row-even"><td><p>speedsInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.html#vscmgspeedmsgpayload"><span class="std std-ref">VSCMGSpeedMsgPayload</span></a></p></td>
+<td><p>VSCMG speeds input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>vscmgRefStatesOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGRefStatesMsgPayload.html#vscmgrefstatesmsgpayload"><span class="std std-ref">VSCMGRefStatesMsgPayload</span></a></p></td>
+<td><p>reference VSCMG states output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<section id="general-function">
+<h3>General Function<a class="headerlink" href="#general-function" title="Link to this heading"></a></h3>
+<p>the <cite>vscmgVelocitySteering</cite> module creates the VSCMG reference state vector <span class="math notranslate nohighlight">\(\dot{\boldsymbol{\eta}}\)</span> developed in chapter 8 of <a class="reference external" href="http://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>.</p>
+</section>
+<section id="algorithm">
+<h3>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading"></a></h3>
+<p>This module employs the Velocity-Based VSCMG Steering Law of Section (8.8.2) of <a class="reference external" href="http://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>.  Use of the <span class="math notranslate nohighlight">\(2N\times1\)</span> state vector <span class="math notranslate nohighlight">\({\boldsymbol{\eta}}\)</span></p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgeta">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-vscmgeta" title="Link to this equation"></a></span>\[\begin{split}\boldsymbol{\eta} = \begin{bmatrix} \boldsymbol{\Omega} \\ \boldsymbol{\gamma} \end{bmatrix}\end{split}\]</div>
+<p>and <span class="math notranslate nohighlight">\(3\times2N\)</span> matrix <span class="math notranslate nohighlight">\([Q]\)</span></p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgq">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-vscmgq" title="Link to this equation"></a></span>\[[Q] = \begin{bmatrix} D_0 &amp; D \end{bmatrix}\]</div>
+<p>allow for the compact expression</p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgcontrol">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-vscmgcontrol" title="Link to this equation"></a></span>\[[Q]\dot{\boldsymbol{\eta}} = -\boldsymbol{L}_r\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{L}_r\)</span> is the required spacecraft control torque vector, <span class="math notranslate nohighlight">\(N\)</span> is the number of VSCMGs, <span class="math notranslate nohighlight">\(\boldsymbol{\Omega}\)</span> is the vector of RW spin rates, and <span class="math notranslate nohighlight">\(\boldsymbol{\gamma}\)</span> is the vector of gimbal angles. The matrices <span class="math notranslate nohighlight">\([D_0]\)</span> and <span class="math notranslate nohighlight">\([D]\)</span> are defined with all components in the spacecraft body frame <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> as</p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgd0">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-vscmgd0" title="Link to this equation"></a></span>\[[D_0] = \begin{bmatrix} \cdots \hat{\boldsymbol{g}}_{s_{i}}I_{W_{s_{i}}} \cdots \end{bmatrix}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgd1">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-vscmgd1" title="Link to this equation"></a></span>\[[D_1] = \begin{bmatrix} \cdots \left(I_{W_{s_{i}}}\Omega_{i} + \frac{J_{s_{i}}}{2}\omega_{s_{i}} \right)\hat{\boldsymbol{g}}_{t_{i}} + \frac{J_{s_{i}}}{2}\omega_{t_{i}}\hat{\boldsymbol{g}}_{s_{i}} \cdots \end{bmatrix}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgd2">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-vscmgd2" title="Link to this equation"></a></span>\[[D_2] = \begin{bmatrix} \cdots \frac{1}{2}J_{t_{i}}(\omega_{t_{i}}\hat{\boldsymbol{g}}_{s_{i}}+\omega_{s_{i}}\hat{\boldsymbol{g}}_{t_{i}}) \cdots \end{bmatrix}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgd3">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-vscmgd3" title="Link to this equation"></a></span>\[[D_3] = \begin{bmatrix} \cdots J_{g_{i}}(\omega_{t_{i}}\hat{\boldsymbol{g}}_{s_{i}}-\omega_{s_{i}}\hat{\boldsymbol{g}}_{t_{i}}) \cdots \end{bmatrix}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgd4">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-vscmgd4" title="Link to this equation"></a></span>\[[D_4] = \begin{bmatrix} \cdots \frac{1}{2}(J_{s_{i}}-J_{t_{i}})(\hat{\boldsymbol{g}}_{s_{i}}\hat{\boldsymbol{g}}_{t_{i}}^{T}\boldsymbol{\omega}_{r} + \hat{\boldsymbol{g}}_{t_{i}}\hat{\boldsymbol{g}}_{s_{i}}^{T}\boldsymbol{\omega}_{r}) \cdots \end{bmatrix}\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgd">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-vscmgd" title="Link to this equation"></a></span>\[[D] = ([D_1] - [D_2] + [D_3] + [D_4])\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight" id="equation-eq-omegacomponents">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-omegacomponents" title="Link to this equation"></a></span>\[{\boldsymbol{ \omega}} = \omega_{s_{i}}\hat{\boldsymbol{ g}}_{s_{i}} + \omega_{t_{i}}\hat{\boldsymbol{ g}}_{t_{i}} + \omega_{g_{i}}\hat{\boldsymbol{ g}}_{g_{i}}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\hat{\boldsymbol{g}}_{s_{i}}\)</span>, <span class="math notranslate nohighlight">\(\hat{\boldsymbol{g}}_{t_{i}}\)</span>, and <span class="math notranslate nohighlight">\(\hat{\boldsymbol{g}}_{g_{i}}\)</span> are the unit vectors in the direction of the first, second and third axis of the ith gimbal wheel system respectively, <span class="math notranslate nohighlight">\(J_{s_{i}}\)</span>, <span class="math notranslate nohighlight">\(J_{t_{i}}\)</span>, <span class="math notranslate nohighlight">\(J_{g_{i}}\)</span> are the inertias for the ith gimbal wheel system for the first, second and third axis, <span class="math notranslate nohighlight">\(I_{w_{s_{i}}}\)</span> is the ith RW spin axis inertia, and <span class="math notranslate nohighlight">\(\boldsymbol{\omega}_{r}\)</span> is the reference angular velocity for the spacecraft.</p>
+<p>Defining the <span class="math notranslate nohighlight">\(2N\times2N\)</span> diagonal weighting matrix <span class="math notranslate nohighlight">\([W]\)</span></p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgweights">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-vscmgweights" title="Link to this equation"></a></span>\[[W] = \text{diag}\{W_{s_{1}},\cdots,W_{s_{N}},W_{g_{1}},\cdots,W_{g_{N}}\}\]</div>
+<p>where <span class="math notranslate nohighlight">\(W_{s_{i}}\)</span> and <span class="math notranslate nohighlight">\(W_{g_{i}}\)</span> are the weights associated with the ith VSCMG RW and CMG respectively. The desired <span class="math notranslate nohighlight">\(\dot{\boldsymbol{\eta}}\)</span> can be found through</p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgetadot">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-vscmgetadot" title="Link to this equation"></a></span>\[\dot{\boldsymbol{\eta}} = [W][Q]^{T}([Q][W][Q]^{T})^{-1}(-\boldsymbol{L}_{r})\]</div>
+<p>The weights are defined to be dependant on proximity to a CMG singularity through the use of the non-dimensional scalar</p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgdelta">
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-vscmgdelta" title="Link to this equation"></a></span>\[\delta = \text{det}\frac{1}{\overline{h}^{2}}([D_{1}][D_{1}]^{T})\]</div>
+<p>where <span class="math notranslate nohighlight">\(\overline{h}\)</span> is the nominal RW angular momentum found through</p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmghbar">
+<span class="eqno">(14)<a class="headerlink" href="#equation-eq-vscmghbar" title="Link to this equation"></a></span>\[\overline{h} = \frac{1}{N}\sum_{i=1}^{N}I_{w_{s_{i}}}\Omega_{i_{0}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega_{i_{0}}\)</span> is the nominal spin rate of the ith RW. As the CMG approaches a singularity <span class="math notranslate nohighlight">\(\delta\)</span> goes to zero. The weights <span class="math notranslate nohighlight">\(W_{s_{i}}\)</span> can be defined as</p>
+<div class="math notranslate nohighlight" id="equation-eq-vscmgws">
+<span class="eqno">(15)<a class="headerlink" href="#equation-eq-vscmgws" title="Link to this equation"></a></span>\[W_{s_{i}} = W_{s_{i}}^{0}e^{(-\mu\delta)}\]</div>
+<p>with <span class="math notranslate nohighlight">\(W_{s_{i}}^{0}\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> being positive scalars. The weights <span class="math notranslate nohighlight">\(W_{g_{i}}\)</span> are held constant. This allows for the weights on the RW mode to be small when far from the CMG singularity but still allow the control to produce <span class="math notranslate nohighlight">\(\boldsymbol{L}_{r}\)</span> if a singularity is reached.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section is to outline the steps needed to setup the VSCMG velocity steering module in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the vscmgVelocitySteering class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">vscmgVelocitySteering</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instance of the vscmgVelocitySteering class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vscmgSteering</span> <span class="o">=</span> <span class="n">vscmgVelocitySteering</span><span class="o">.</span><span class="n">VscmgVelocitySteering</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the module parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mu</span> <span class="o">=</span> <span class="mf">1e-9</span>
+<span class="n">vscmgSteering</span><span class="o">.</span><span class="n">setMu</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+<span class="n">W0_s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">200.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">numVSCMGs</span>
+<span class="n">W_g</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">numVSCMGs</span>
+<span class="n">vscmgSteering</span><span class="o">.</span><span class="n">setW0_s</span><span class="p">(</span><span class="n">W0_s</span><span class="p">)</span>
+<span class="n">vscmgSteering</span><span class="o">.</span><span class="n">setW_g</span><span class="p">(</span><span class="n">W_g</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The VSCMG reference states output message is <code class="docutils literal notranslate"><span class="pre">vscmgRefStatesOutMsg</span></code>.</p></li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">vscmgSteering</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv421VscmgVelocitySteering">
+<span id="_CPPv321VscmgVelocitySteering"></span><span id="_CPPv221VscmgVelocitySteering"></span><span id="VscmgVelocitySteering"></span><span class="target" id="class_vscmg_velocity_steering"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VscmgVelocitySteering</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv421VscmgVelocitySteering" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;vscmgVelocitySteering.h&gt;</em></div>
+<p>Mapping desired control torque vector to gimbal rates and RW wheel accelerations. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering21VscmgVelocitySteeringEv">
+<span id="_CPPv3N21VscmgVelocitySteering21VscmgVelocitySteeringEv"></span><span id="_CPPv2N21VscmgVelocitySteering21VscmgVelocitySteeringEv"></span><span id="VscmgVelocitySteering::VscmgVelocitySteering"></span><span class="target" id="class_vscmg_velocity_steering_1ac71d1947a9d95d360b0cf5fb8af9f196"></span><span class="sig-name descname"><span class="n"><span class="pre">VscmgVelocitySteering</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering21VscmgVelocitySteeringEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteeringD0Ev">
+<span id="_CPPv3N21VscmgVelocitySteeringD0Ev"></span><span id="_CPPv2N21VscmgVelocitySteeringD0Ev"></span><span id="VscmgVelocitySteering::~VscmgVelocitySteering"></span><span class="target" id="class_vscmg_velocity_steering_1ab50d0bd07640a53f49aa36f8954bceb4"></span><span class="sig-name descname"><span class="n"><span class="pre">~VscmgVelocitySteering</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteeringD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering8SelfInitEv">
+<span id="_CPPv3N21VscmgVelocitySteering8SelfInitEv"></span><span id="_CPPv2N21VscmgVelocitySteering8SelfInitEv"></span><span id="VscmgVelocitySteering::SelfInit"></span><span class="target" id="class_vscmg_velocity_steering_1a004dfacc6867f647288838b937415a53"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize C-wrapped output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering5ResetE8uint64_t">
+<span id="_CPPv3N21VscmgVelocitySteering5ResetE8uint64_t"></span><span id="_CPPv2N21VscmgVelocitySteering5ResetE8uint64_t"></span><span id="VscmgVelocitySteering::Reset__uint64_t"></span><span class="target" id="class_vscmg_velocity_steering_1a62fc1ed7620cd71e1c401e8ffac3fb18"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module, checks that required input messages are connected, and initializes internal states. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering11UpdateStateE8uint64_t">
+<span id="_CPPv3N21VscmgVelocitySteering11UpdateStateE8uint64_t"></span><span id="_CPPv2N21VscmgVelocitySteering11UpdateStateE8uint64_t"></span><span id="VscmgVelocitySteering::UpdateState__uint64_t"></span><span class="target" id="class_vscmg_velocity_steering_1afd09ba9c522916615df104fc2c5761fe"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. Provide an appropriate description. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering5setMuEd">
+<span id="_CPPv3N21VscmgVelocitySteering5setMuEd"></span><span id="_CPPv2N21VscmgVelocitySteering5setMuEd"></span><span id="VscmgVelocitySteering::setMu__double"></span><span class="target" id="class_vscmg_velocity_steering_1abb79d2e83a5eb5fc50c0a21042a74921"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMu</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering5setMuEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">mu</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21VscmgVelocitySteering5getMuEv">
+<span id="_CPPv3NK21VscmgVelocitySteering5getMuEv"></span><span id="_CPPv2NK21VscmgVelocitySteering5getMuEv"></span><span id="VscmgVelocitySteering::getMuC"></span><span class="target" id="class_vscmg_velocity_steering_1acbf8bb82c7723eee5cc644c3fa1e1838"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMu</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21VscmgVelocitySteering5getMuEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">mu</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering7setW0_sENSt6vectorIdEE">
+<span id="_CPPv3N21VscmgVelocitySteering7setW0_sENSt6vectorIdEE"></span><span id="_CPPv2N21VscmgVelocitySteering7setW0_sENSt6vectorIdEE"></span><span id="VscmgVelocitySteering::setW0_s__std::vector:double:"></span><span class="target" id="class_vscmg_velocity_steering_1a6661e5846a15ad03032c89d37571e022"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setW0_s</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering7setW0_sENSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">W0_s</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21VscmgVelocitySteering7getW0_sEv">
+<span id="_CPPv3NK21VscmgVelocitySteering7getW0_sEv"></span><span id="_CPPv2NK21VscmgVelocitySteering7getW0_sEv"></span><span id="VscmgVelocitySteering::getW0_sC"></span><span class="target" id="class_vscmg_velocity_steering_1a36923b295b776cdcb690952a4278755d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getW0_s</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21VscmgVelocitySteering7getW0_sEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">W0_s</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering6setW_gENSt6vectorIdEE">
+<span id="_CPPv3N21VscmgVelocitySteering6setW_gENSt6vectorIdEE"></span><span id="_CPPv2N21VscmgVelocitySteering6setW_gENSt6vectorIdEE"></span><span id="VscmgVelocitySteering::setW_g__std::vector:double:"></span><span class="target" id="class_vscmg_velocity_steering_1ab793629208c352e6fe6ba6dcee93d25f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setW_g</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering6setW_gENSt6vectorIdEE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">W_g</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21VscmgVelocitySteering6getW_gEv">
+<span id="_CPPv3NK21VscmgVelocitySteering6getW_gEv"></span><span id="_CPPv2NK21VscmgVelocitySteering6getW_gEv"></span><span id="VscmgVelocitySteering::getW_gC"></span><span class="target" id="class_vscmg_velocity_steering_1a431a17da40a7492b0fa46f319fd68f02"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getW_g</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21VscmgVelocitySteering6getW_gEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">W_g</span></code> property </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering16vscmgParamsInMsgE">
+<span id="_CPPv3N21VscmgVelocitySteering16vscmgParamsInMsgE"></span><span id="_CPPv2N21VscmgVelocitySteering16vscmgParamsInMsgE"></span><span id="VscmgVelocitySteering::vscmgParamsInMsg__ReadFunctor:VSCMGArrayConfigMsgPayload:"></span><span class="target" id="class_vscmg_velocity_steering_1aa8c29c91050a65f9ec43acb42d2532e8"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGArrayConfigMsgPayload.html#_CPPv426VSCMGArrayConfigMsgPayload" title="VSCMGArrayConfigMsgPayload"><span class="n"><span class="pre">VSCMGArrayConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgParamsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering16vscmgParamsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] VSCMG array configuration input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering15vehControlInMsgE">
+<span id="_CPPv3N21VscmgVelocitySteering15vehControlInMsgE"></span><span id="_CPPv2N21VscmgVelocitySteering15vehControlInMsgE"></span><span id="VscmgVelocitySteering::vehControlInMsg__ReadFunctor:CmdTorqueBodyMsgPayload:"></span><span class="target" id="class_vscmg_velocity_steering_1a72865193d01383ffc13a06f59efeb79e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#_CPPv423CmdTorqueBodyMsgPayload" title="CmdTorqueBodyMsgPayload"><span class="n"><span class="pre">CmdTorqueBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehControlInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering15vehControlInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vehicle control (Lr) input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering11attNavInMsgE">
+<span id="_CPPv3N21VscmgVelocitySteering11attNavInMsgE"></span><span id="_CPPv2N21VscmgVelocitySteering11attNavInMsgE"></span><span id="VscmgVelocitySteering::attNavInMsg__ReadFunctor:NavAttMsgPayload:"></span><span class="target" id="class_vscmg_velocity_steering_1a702ea103e80a175b02067fb978050e2c"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attNavInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering11attNavInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] attitude navigation input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering13attGuideInMsgE">
+<span id="_CPPv3N21VscmgVelocitySteering13attGuideInMsgE"></span><span id="_CPPv2N21VscmgVelocitySteering13attGuideInMsgE"></span><span id="VscmgVelocitySteering::attGuideInMsg__ReadFunctor:AttGuidMsgPayload:"></span><span class="target" id="class_vscmg_velocity_steering_1af616ebc2ab605c79fef49478c0803b8d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#_CPPv417AttGuidMsgPayload" title="AttGuidMsgPayload"><span class="n"><span class="pre">AttGuidMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attGuideInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering13attGuideInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] attitude guidance input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering11speedsInMsgE">
+<span id="_CPPv3N21VscmgVelocitySteering11speedsInMsgE"></span><span id="_CPPv2N21VscmgVelocitySteering11speedsInMsgE"></span><span id="VscmgVelocitySteering::speedsInMsg__ReadFunctor:VSCMGSpeedMsgPayload:"></span><span class="target" id="class_vscmg_velocity_steering_1a22642b97d1e5c400e2916a3cf65b1d0a"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.html#_CPPv420VSCMGSpeedMsgPayload" title="VSCMGSpeedMsgPayload"><span class="n"><span class="pre">VSCMGSpeedMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">speedsInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering11speedsInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] VSCMG speeds input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering20vscmgRefStatesOutMsgE">
+<span id="_CPPv3N21VscmgVelocitySteering20vscmgRefStatesOutMsgE"></span><span id="_CPPv2N21VscmgVelocitySteering20vscmgRefStatesOutMsgE"></span><span id="VscmgVelocitySteering::vscmgRefStatesOutMsg__Message:VSCMGRefStatesMsgPayload:"></span><span class="target" id="class_vscmg_velocity_steering_1aab041bbb31a4da3bc9910077995a2fd5"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGRefStatesMsgPayload.html#_CPPv424VSCMGRefStatesMsgPayload" title="VSCMGRefStatesMsgPayload"><span class="n"><span class="pre">VSCMGRefStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgRefStatesOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering20vscmgRefStatesOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] reference VSCMG states C++ output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering21vscmgRefStatesOutMsgCE">
+<span id="_CPPv3N21VscmgVelocitySteering21vscmgRefStatesOutMsgCE"></span><span id="_CPPv2N21VscmgVelocitySteering21vscmgRefStatesOutMsgCE"></span><span id="VscmgVelocitySteering::vscmgRefStatesOutMsgC__VSCMGRefStatesMsg_C"></span><span class="target" id="class_vscmg_velocity_steering_1ade7de437a60b730b76bea03996d1fbba"></span><span class="n"><span class="pre">VSCMGRefStatesMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgRefStatesOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering21vscmgRefStatesOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] reference VSCMG states C output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering9bskLoggerE">
+<span id="_CPPv3N21VscmgVelocitySteering9bskLoggerE"></span><span id="_CPPv2N21VscmgVelocitySteering9bskLoggerE"></span><span id="VscmgVelocitySteering::bskLogger__BSKLogger"></span><span class="target" id="class_vscmg_velocity_steering_1a79926ff8d3ece8c2fc98b6b8a3645c4f"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering2muE">
+<span id="_CPPv3N21VscmgVelocitySteering2muE"></span><span id="_CPPv2N21VscmgVelocitySteering2muE"></span><span id="VscmgVelocitySteering::mu__double"></span><span class="target" id="class_vscmg_velocity_steering_1ac94c3e02d63fd1a7bee729e561f2bc41"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] control parameter for wheel weights </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering13h_bar_squaredE">
+<span id="_CPPv3N21VscmgVelocitySteering13h_bar_squaredE"></span><span id="_CPPv2N21VscmgVelocitySteering13h_bar_squaredE"></span><span id="VscmgVelocitySteering::h_bar_squared__double"></span><span class="target" id="class_vscmg_velocity_steering_1a4d3da0d1e8806a0a50bf573b32a93b18"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h_bar_squared</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering13h_bar_squaredE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg^2-m^4/s^4] square of nominal RW angular momentums </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering4W0_sE">
+<span id="_CPPv3N21VscmgVelocitySteering4W0_sE"></span><span id="_CPPv2N21VscmgVelocitySteering4W0_sE"></span><span id="VscmgVelocitySteering::W0_s__std::vector:double:"></span><span class="target" id="class_vscmg_velocity_steering_1ad3b037491a7190498fe0a3f2bfffd8c9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">W0_s</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering4W0_sE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vector of static wheel weights </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering3W_gE">
+<span id="_CPPv3N21VscmgVelocitySteering3W_gE"></span><span id="_CPPv2N21VscmgVelocitySteering3W_gE"></span><span id="VscmgVelocitySteering::W_g__std::vector:double:"></span><span class="target" id="class_vscmg_velocity_steering_1a5336284dbe7af6a55188b32be5e5ace7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">W_g</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering3W_gE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] vector of gimbal wheel weights </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering5h_barE">
+<span id="_CPPv3N21VscmgVelocitySteering5h_barE"></span><span id="_CPPv2N21VscmgVelocitySteering5h_barE"></span><span id="VscmgVelocitySteering::h_bar__std::vector:double:"></span><span class="target" id="class_vscmg_velocity_steering_1a59a793d4ad288ff920defcb4dd6f0d53"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h_bar</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering5h_barE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2/s] vector of nominal RW angular momentums </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering15outputRefStatesE">
+<span id="_CPPv3N21VscmgVelocitySteering15outputRefStatesE"></span><span id="_CPPv2N21VscmgVelocitySteering15outputRefStatesE"></span><span id="VscmgVelocitySteering::outputRefStates__VSCMGRefStatesMsgPayload"></span><span class="target" id="class_vscmg_velocity_steering_1a82567f1fe78961e0c1e7950f4a4cd478"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGRefStatesMsgPayload.html#_CPPv424VSCMGRefStatesMsgPayload" title="VSCMGRefStatesMsgPayload"><span class="n"><span class="pre">VSCMGRefStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">outputRefStates</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering15outputRefStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] output reference states for the VSCMGs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21VscmgVelocitySteering17vscmgConfigParamsE">
+<span id="_CPPv3N21VscmgVelocitySteering17vscmgConfigParamsE"></span><span id="_CPPv2N21VscmgVelocitySteering17vscmgConfigParamsE"></span><span id="VscmgVelocitySteering::vscmgConfigParams__VSCMGArrayConfigMsgPayload"></span><span class="target" id="class_vscmg_velocity_steering_1adf7316cbc0cfbfd51fc17680ace00c2f"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VSCMGArrayConfigMsgPayload.html#_CPPv426VSCMGArrayConfigMsgPayload" title="VSCMGArrayConfigMsgPayload"><span class="n"><span class="pre">VSCMGArrayConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vscmgConfigParams</span></span></span><a class="headerlink" href="#_CPPv4N21VscmgVelocitySteering17vscmgConfigParamsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] struct to store message containing VSCMG config parameters in body B frame </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="vscmgVelocitySteering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

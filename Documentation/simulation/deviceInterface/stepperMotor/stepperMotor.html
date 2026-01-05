@@ -1,0 +1,689 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: stepperMotor &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="stepperMotor" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">deviceInterface</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../encoder/index.html">encoder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedBodyLinearProfiler/index.html">hingedBodyLinearProfiler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../motorVoltageInterface/index.html">motorVoltageInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedLinearTranslation/index.html">prescribedLinearTranslation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRotation1DOF/index.html">prescribedRotation1DOF</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">stepperMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tempMeasurement/index.html">tempMeasurement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">deviceInterface</a></li>
+          <li class="breadcrumb-item"><a href="index.html">stepperMotor</a></li>
+      <li class="breadcrumb-item active">Module: stepperMotor</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/deviceInterface/stepperMotor/stepperMotor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-steppermotor">
+<span id="steppermotor"></span><h1>Module: stepperMotor<a class="headerlink" href="#module-steppermotor" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The stepper motor module simulates the actuation of a stepper motor. Given the initial motor angle <span class="math notranslate nohighlight">\(\theta_0\)</span>, a
+fixed motor step angle <span class="math notranslate nohighlight">\(\Delta\theta\)</span>, a fixed motor step time <span class="math notranslate nohighlight">\(\Delta t\)</span>, and an input message containing
+an integer number of steps commanded, the motor states are computed at each time step and output from the module.
+The motor states include the scalar motor angle <span class="math notranslate nohighlight">\(\theta\)</span>, scalar angle rate <span class="math notranslate nohighlight">\(\dot{\theta}\)</span>, scalar angular
+acceleration <span class="math notranslate nohighlight">\(\ddot{\theta}\)</span>, the current motor step count <span class="math notranslate nohighlight">\(c_s\)</span>, and the number of steps commanded to the
+motor <span class="math notranslate nohighlight">\(n_s\)</span>. The motor actuation through each step of the command sequence is profiled using a bang-bang
+acceleration profile. This module also includes logic for handling incoming reference commands that interrupt an
+unfinished motor actuation sequence. Because the stepper motor is unable to stop actuating during a step, it must
+finish actuating through the current step before it can begin following a new reference command.</p>
+</section>
+<section id="message-connection-description">
+<h2>Message Connection Description<a class="headerlink" href="#message-connection-description" title="Link to this heading"></a></h2>
+<p>The following table lists the module input and output messages.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>motorStepCommandInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/MotorStepCommandMsgPayload.html#motorstepcommandmsgpayload"><span class="std std-ref">MotorStepCommandMsgPayload</span></a></p></td>
+<td><p>Input message containing the number of commanded motor steps</p></td>
+</tr>
+<tr class="row-odd"><td><p>stepperMotorOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/StepperMotorMsgPayload.html#steppermotormsgpayload"><span class="std std-ref">StepperMotorMsgPayload</span></a></p></td>
+<td><p>Output message containing the stepper motor states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="motor-step-actuation-profile">
+<h2>Motor Step Actuation Profile<a class="headerlink" href="#motor-step-actuation-profile" title="Link to this heading"></a></h2>
+<p>The motor states are profiled identically for each step in the command sequence. Specifically, a bang-bang acceleration
+profile is used to profile the motor states as a function of time. Given the motor step time <span class="math notranslate nohighlight">\(\Delta t\)</span> and motor
+step angle <span class="math notranslate nohighlight">\(\Delta \theta\)</span> as fixed parameters, the module calculates the required acceleration
+<span class="math notranslate nohighlight">\(\ddot{\theta}_{\text{max}}\)</span> that must be applied during each motor step.</p>
+<div class="math notranslate nohighlight">
+\[| \ddot{\theta}_{\text{max}} | = \frac{4 \Delta \theta}{\Delta t^2}\]</div>
+<p>Note that the motor can take either positive or negative steps. For a forward actuation command (<span class="math notranslate nohighlight">\(n_s &gt; 0\)</span>), the
+calculated acceleration is applied positively for the first half of the step and negatively during the second half of
+the step. For a backward actuation command (<span class="math notranslate nohighlight">\(n_s &lt; 0\)</span>), the acceleration is applied negatively during the first
+half of the step and positively during the second half of the step.</p>
+<p>Given the initial time <span class="math notranslate nohighlight">\(t_0\)</span>, the switch time <span class="math notranslate nohighlight">\(t_s\)</span> where the acceleration is alternated and the final time
+<span class="math notranslate nohighlight">\(t_f\)</span> when the step is complete is determined as</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}t_s = t_0 + \frac{\Delta t}{2}\\t_f = t_0 + \Delta t\end{aligned}\end{align} \]</div>
+<p>The other motor states can be kinematically profiled as a function of time by integrating the applied acceleration
+profile. The equations used to profile each motor step are</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}\ddot{\theta}(t) =
+\begin{cases}
+\pm \ddot{\theta}_{\text{max}}
+&amp; \text{if }
+t_0 \leq t &lt; t_s
+\\
+\mp \ddot{\theta}_{\text{max}}
+&amp; \text{if }
+t_s \leq t \leq t_f
+\\
+0
+&amp; \text{if }
+t &gt; t_f
+\end{cases}\end{split}\\\begin{split}\dot{\theta}(t) =
+\begin{cases}
+\pm \ddot{\theta}_{\text{max}} (t - t_0)
+&amp; \text{if }
+t_0 \leq t &lt; t_s
+\\
+\mp \ddot{\theta}_{\text{max}} (t - t_f)
+&amp; \text{if }
+t_s \leq t \leq t_f
+\\
+0
+&amp; \text{if }
+t &gt; t_f
+\end{cases}\end{split}\\\begin{split}\theta(t) =
+\begin{cases}
+\frac{\pm \Delta \theta (t - t_0)^2}{2 (t_s - t_0)^2} + \theta_0
+&amp; \text{if }
+t_0 \leq t &lt; t_s
+\\
+\frac{\mp \Delta \theta (t - t_f)^2}{2 (t_s - t_f)^2} + \theta_{\text{ref}}
+&amp; \text{if }
+t_s \leq t \leq t_f
+\\
+\theta_{\text{ref}}
+&amp; \text{if }
+t &gt; t_f
+\end{cases}\end{split}\end{aligned}\end{align} \]</div>
+<p>Note that the parameters <span class="math notranslate nohighlight">\(t_0, t_s\)</span> and <span class="math notranslate nohighlight">\(t_f\)</span> must be continually updated after each step is complete to
+reflect the advancement of time. Doing so enables use of the above equations for each motor step.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If the motor actuation is interrupted by a new reference message while actuating through a step,
+the motor must finish actuating through the current step before it can begin following a new reference command.
+If the interrupting message is written when the motor is not in the midst of a step, the module resets the motor
+step count and immediately begins actuating to follow the new reference command.</p>
+</div>
+</section>
+<section id="module-functions">
+<h2>Module Functions<a class="headerlink" href="#module-functions" title="Link to this heading"></a></h2>
+<p>Below is a list of functions that this simulation module performs</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Reads the incoming motor step command message</p></li>
+<li><p>Computes the motor states as a function of time</p></li>
+<li><p>Writes the motor states to the module output message</p></li>
+<li><p>Handles interruptions to motor actuation by resetting the motor actuation after the current step is complete</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>The motor step angle and step time are fixed parameters (Cannot be negative)</p></li>
+<li><p>The motor cannot stop actuating in the middle of a step</p></li>
+<li><p>When the motor actuation is interrupted by a new reference command, the motor must complete its actuation through the current step before following the new command</p></li>
+<li><p>The module update rate must be faster than or equal to the provided motor step time <span class="math notranslate nohighlight">\(\Delta t\)</span></p></li>
+<li><p>The module update rate cannot be slower than the motor step rate, or the motor actuation cannot be resolved</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="test-description-and-success-criteria">
+<h2>Test Description and Success Criteria<a class="headerlink" href="#test-description-and-success-criteria" title="Link to this heading"></a></h2>
+<p>There are two tests for this module. The two tests are described in <a class="reference internal" href="_UnitTest/test_stepperMotor.html#test-steppermotor"><span class="std std-ref">test_stepperMotor</span></a>.
+The first test is a nominal test named <code class="docutils literal notranslate"><span class="pre">test_stepper_motor_nominal</span></code>. The second test named
+<code class="docutils literal notranslate"><span class="pre">test_stepper_motor_interrupt</span></code> tests the module logic for commands interrupting the motor actuation. Both tests
+configure two actuation commands. The nominal test separates the actuation commands by a rest period of 5 seconds. The
+interruption test interrupts the first command sequence after half of the commanded motor steps are completed. The
+time the second command message is written is determined using an interruption factor to specify what fraction of the
+next step is completed before the second command message is written. Both tests add 5 seconds to the end of each
+simulation for clarity when viewing the generated plots.</p>
+<p>The success criteria for all tests is that the motor states converge to the computed reference values in the test at
+the end of each actuation sequence. Specifically, the motor angle, rate, acceleration, and step count are checked to
+converge to the reference values at the end of each simulation chunk. The motor rate and acceleration are checked to
+be zero at the end of each actuation sequence. Note that the motor acceleration is checked at one time step after the
+other motor states are checked because the motor acceleration is nonzero at the completion of each motor step. The motor
+acceleration is not zero until after the motor step is complete. This differs from the motor rate profile, which
+is zero at the completion of each motor step.</p>
+<section id="nominal-test">
+<h3>Nominal Test<a class="headerlink" href="#nominal-test" title="Link to this heading"></a></h3>
+<p>The nominal unit test configures two actuation command segments with a rest period of 5 seconds between the commands.
+A rest period of 5 seconds is also added to the end of the simulation for clarity when viewing the generated plots.
+The initial motor angle, motor step angle, step time, and steps commanded for each actuation sequence are varied so
+that the motor actuates both forwards and backwards during the test. Zero steps commanded are also included in the
+test to check that the module correctly updates the motor states for a zero command message. The motor angle, rate,
+acceleration, and step count are checked to converge to the reference values at the end of each simulation chunk.</p>
+</section>
+<section id="interruption-test">
+<h3>Interruption Test<a class="headerlink" href="#interruption-test" title="Link to this heading"></a></h3>
+<p>The interruption unit test ensures that the module correctly handles reference messages that interrupt an unfinished
+motor actuation sequence. The initial motor angle, motor step angle, and step time are not varied in the interruption
+test because these parameters were already varied in the nominal test. The interruption test interrupts the first
+command sequence after half of the commanded motor steps are completed. The time the second command message is
+written is determined using an interruption factor to specify what fraction of the next step is completed before the
+second command message is written. Interruption factors of 0 and 1 are also included to ensure the module correctly
+resets the motor states when the interruption falls precisely when a step is completed. A rest period of 5 seconds is
+added to the end of the simulation for clarity when viewing the generated plots. The motor angle, rate,
+acceleration, and step count are checked to converge to the reference values at the end of each simulation chunk.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412StepperMotor">
+<span id="_CPPv312StepperMotor"></span><span id="_CPPv212StepperMotor"></span><span id="StepperMotor"></span><span class="target" id="class_stepper_motor"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StepperMotor</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv412StepperMotor" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stepperMotor.h&gt;</em></div>
+<p>Stepper motor class. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12StepperMotorEv">
+<span id="_CPPv3N12StepperMotor12StepperMotorEv"></span><span id="_CPPv2N12StepperMotor12StepperMotorEv"></span><span id="StepperMotor::StepperMotor"></span><span class="target" id="class_stepper_motor_1ae9c6b266aa750cb07d7cc01378f39900"></span><span class="sig-name descname"><span class="n"><span class="pre">StepperMotor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor12StepperMotorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotorD0Ev">
+<span id="_CPPv3N12StepperMotorD0Ev"></span><span id="_CPPv2N12StepperMotorD0Ev"></span><span id="StepperMotor::~StepperMotor"></span><span class="target" id="class_stepper_motor_1aa897eba91202c27c5a3798603a47abb1"></span><span class="sig-name descname"><span class="n"><span class="pre">~StepperMotor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N12StepperMotorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor5ResetE8uint64_t">
+<span id="_CPPv3N12StepperMotor5ResetE8uint64_t"></span><span id="_CPPv2N12StepperMotor5ResetE8uint64_t"></span><span id="StepperMotor::Reset__uint64_t"></span><span class="target" id="class_stepper_motor_1ab461b16a3b284106c11ffb5defd4328b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Module reset method. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTime</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor11UpdateStateE8uint64_t">
+<span id="_CPPv3N12StepperMotor11UpdateStateE8uint64_t"></span><span id="_CPPv2N12StepperMotor11UpdateStateE8uint64_t"></span><span id="StepperMotor::UpdateState__uint64_t"></span><span class="target" id="class_stepper_motor_1a467cb0679287e9672ab0bfc2b05c96e4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Module update method. This method profiles the stepper motor actuation as a function of time. The motor states are then written to the output message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTime</strong> – [ns] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12StepperMotor12getThetaInitEv">
+<span id="_CPPv3NK12StepperMotor12getThetaInitEv"></span><span id="_CPPv2NK12StepperMotor12getThetaInitEv"></span><span id="StepperMotor::getThetaInitC"></span><span class="target" id="class_stepper_motor_1a4eea233077467069660a8289f3458973"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getThetaInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12StepperMotor12getThetaInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the initial motor angle called <code class="docutils literal notranslate"><span class="pre">thetaInit</span></code>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12StepperMotor12getStepAngleEv">
+<span id="_CPPv3NK12StepperMotor12getStepAngleEv"></span><span id="_CPPv2NK12StepperMotor12getStepAngleEv"></span><span id="StepperMotor::getStepAngleC"></span><span class="target" id="class_stepper_motor_1a4047db2a0a7e2be4bd655ef7645e3cd9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStepAngle</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12StepperMotor12getStepAngleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the motor step angle called <code class="docutils literal notranslate"><span class="pre">stepAngle</span></code>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12StepperMotor11getStepTimeEv">
+<span id="_CPPv3NK12StepperMotor11getStepTimeEv"></span><span id="_CPPv2NK12StepperMotor11getStepTimeEv"></span><span id="StepperMotor::getStepTimeC"></span><span class="target" id="class_stepper_motor_1aa07d4ad2912d49c9a1f83559a634a387"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStepTime</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12StepperMotor11getStepTimeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the motor step time called <code class="docutils literal notranslate"><span class="pre">stepTime</span></code>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12StepperMotor15getThetaDDotMaxEv">
+<span id="_CPPv3NK12StepperMotor15getThetaDDotMaxEv"></span><span id="_CPPv2NK12StepperMotor15getThetaDDotMaxEv"></span><span id="StepperMotor::getThetaDDotMaxC"></span><span class="target" id="class_stepper_motor_1ac5159fec59f24b92cf739f5601d96b6d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getThetaDDotMax</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12StepperMotor15getThetaDDotMaxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter method for the maximum motor angular acceleration called <code class="docutils literal notranslate"><span class="pre">thetaDDotMax</span></code>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12setThetaInitEKd">
+<span id="_CPPv3N12StepperMotor12setThetaInitEKd"></span><span id="_CPPv2N12StepperMotor12setThetaInitEKd"></span><span id="StepperMotor::setThetaInit__doubleC"></span><span class="target" id="class_stepper_motor_1a2d68ef64184376eb1db5f87843bb7f92"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setThetaInit</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">thetaInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor12setThetaInitEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the initial motor angle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thetaInit</strong> – [rad] Initial motor angle </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12setStepAngleEKd">
+<span id="_CPPv3N12StepperMotor12setStepAngleEKd"></span><span id="_CPPv2N12StepperMotor12setStepAngleEKd"></span><span id="StepperMotor::setStepAngle__doubleC"></span><span class="target" id="class_stepper_motor_1ac77aa35e526afea97146738424a23c33"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStepAngle</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stepAngle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor12setStepAngleEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the motor step angle. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stepAngle</strong> – [rad] Motor step angle </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor11setStepTimeEKd">
+<span id="_CPPv3N12StepperMotor11setStepTimeEKd"></span><span id="_CPPv2N12StepperMotor11setStepTimeEKd"></span><span id="StepperMotor::setStepTime__doubleC"></span><span class="target" id="class_stepper_motor_1a535f0d576d892bd3459bc9290fbee57e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setStepTime</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stepTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor11setStepTimeEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter method for the motor step time. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stepTime</strong> – [s] Motor step time </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor21motorStepCommandInMsgE">
+<span id="_CPPv3N12StepperMotor21motorStepCommandInMsgE"></span><span id="_CPPv2N12StepperMotor21motorStepCommandInMsgE"></span><span id="StepperMotor::motorStepCommandInMsg__ReadFunctor:MotorStepCommandMsgPayload:"></span><span class="target" id="class_stepper_motor_1af711801e27fdcec25c3eaa05a9551475"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/MotorStepCommandMsgPayload.html#_CPPv426MotorStepCommandMsgPayload" title="MotorStepCommandMsgPayload"><span class="n"><span class="pre">MotorStepCommandMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorStepCommandInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12StepperMotor21motorStepCommandInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Input msg for the number of commanded motor step counts. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor18stepperMotorOutMsgE">
+<span id="_CPPv3N12StepperMotor18stepperMotorOutMsgE"></span><span id="_CPPv2N12StepperMotor18stepperMotorOutMsgE"></span><span id="StepperMotor::stepperMotorOutMsg__Message:StepperMotorMsgPayload:"></span><span class="target" id="class_stepper_motor_1acd4759ffc331e1f3f416629f60aa509f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/StepperMotorMsgPayload.html#_CPPv422StepperMotorMsgPayload" title="StepperMotorMsgPayload"><span class="n"><span class="pre">StepperMotorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stepperMotorOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N12StepperMotor18stepperMotorOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Output msg for the stepper motor state information. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12actuateMotorEd">
+<span id="_CPPv3N12StepperMotor12actuateMotorEd"></span><span id="_CPPv2N12StepperMotor12actuateMotorEd"></span><span id="StepperMotor::actuateMotor__double"></span><span class="target" id="class_stepper_motor_1a0f0475827d5aaba81807a084c251a961"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">actuateMotor</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor12actuateMotorEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to simulate the stepper motor actuation in time. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor10resetMotorEv">
+<span id="_CPPv3N12StepperMotor10resetMotorEv"></span><span id="_CPPv2N12StepperMotor10resetMotorEv"></span><span id="StepperMotor::resetMotor"></span><span class="target" id="class_stepper_motor_1accde92fd1f67b0d7e0b92c624d891495"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetMotor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor10resetMotorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the motor states when the current request is complete and a new request is received. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor20updateStepParametersEv">
+<span id="_CPPv3N12StepperMotor20updateStepParametersEv"></span><span id="_CPPv2N12StepperMotor20updateStepParametersEv"></span><span id="StepperMotor::updateStepParameters"></span><span class="target" id="class_stepper_motor_1ac568954e6e8205f32e364aa0c83a83b3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateStepParameters</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor20updateStepParametersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method updates the step parameters after a step is completed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor17isInStepFirstHalfEd">
+<span id="_CPPv3N12StepperMotor17isInStepFirstHalfEd"></span><span id="_CPPv2N12StepperMotor17isInStepFirstHalfEd"></span><span id="StepperMotor::isInStepFirstHalf__double"></span><span class="target" id="class_stepper_motor_1a11ee5df977163bb0a45289c2a6affa7c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInStepFirstHalf</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor17isInStepFirstHalfEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method determines if the motor is in the first half of a step. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Time the method is called </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor20computeStepFirstHalfEd">
+<span id="_CPPv3N12StepperMotor20computeStepFirstHalfEd"></span><span id="_CPPv2N12StepperMotor20computeStepFirstHalfEd"></span><span id="StepperMotor::computeStepFirstHalf__double"></span><span class="target" id="class_stepper_motor_1a1efda60a5582cfac857f311631b70cb3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeStepFirstHalf</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor20computeStepFirstHalfEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the motor states during the first half of each step. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor18isInStepSecondHalfEd">
+<span id="_CPPv3N12StepperMotor18isInStepSecondHalfEd"></span><span id="_CPPv2N12StepperMotor18isInStepSecondHalfEd"></span><span id="StepperMotor::isInStepSecondHalf__double"></span><span class="target" id="class_stepper_motor_1a2a48330ce091bf66ff0f145e32eb0bff"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isInStepSecondHalf</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor18isInStepSecondHalfEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method determines if the motor is in the second half of a step. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Time the method is called </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor21computeStepSecondHalfEd">
+<span id="_CPPv3N12StepperMotor21computeStepSecondHalfEd"></span><span id="_CPPv2N12StepperMotor21computeStepSecondHalfEd"></span><span id="StepperMotor::computeStepSecondHalf__double"></span><span class="target" id="class_stepper_motor_1aa1d33075b04563908458b4fed4c6f6f7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeStepSecondHalf</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor21computeStepSecondHalfEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the motor states during the second half of each step. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor19computeStepCompleteEd">
+<span id="_CPPv3N12StepperMotor19computeStepCompleteEd"></span><span id="_CPPv2N12StepperMotor19computeStepCompleteEd"></span><span id="StepperMotor::computeStepComplete__double"></span><span class="target" id="class_stepper_motor_1a78840bc95ec6861cc932aafde5c9f915"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeStepComplete</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12StepperMotor19computeStepCompleteEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the motor states when a step is complete. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – [s] Time the method is called </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor9stepAngleE">
+<span id="_CPPv3N12StepperMotor9stepAngleE"></span><span id="_CPPv2N12StepperMotor9stepAngleE"></span><span id="StepperMotor::stepAngle__double"></span><span class="target" id="class_stepper_motor_1a5f1d94b33df764c55f7e1b1b53bfaced"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stepAngle</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor9stepAngleE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Angle the stepper motor moves through for a single step (constant) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor8stepTimeE">
+<span id="_CPPv3N12StepperMotor8stepTimeE"></span><span id="_CPPv2N12StepperMotor8stepTimeE"></span><span id="StepperMotor::stepTime__double"></span><span class="target" id="class_stepper_motor_1a5877385a7e5c3ad142ddf76681db899b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stepTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor8stepTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time required for a single motor step (constant) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor14stepsCommandedE">
+<span id="_CPPv3N12StepperMotor14stepsCommandedE"></span><span id="_CPPv2N12StepperMotor14stepsCommandedE"></span><span id="StepperMotor::stepsCommanded__i"></span><span class="target" id="class_stepper_motor_1a23c8abc1a54e5d06433dd4143bbf261c"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stepsCommanded</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor14stepsCommandedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[steps] Number of commanded steps </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor9stepCountE">
+<span id="_CPPv3N12StepperMotor9stepCountE"></span><span id="_CPPv2N12StepperMotor9stepCountE"></span><span id="StepperMotor::stepCount__i"></span><span class="target" id="class_stepper_motor_1a53f8f599209387cbc8136aaebfe58353"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stepCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor9stepCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>[steps] Current motor step count (number of steps taken) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor9thetaInitE">
+<span id="_CPPv3N12StepperMotor9thetaInitE"></span><span id="_CPPv2N12StepperMotor9thetaInitE"></span><span id="StepperMotor::thetaInit__double"></span><span class="target" id="class_stepper_motor_1a37e12a5b71f5a9b16b62a8ddf1a1303f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor9thetaInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Initial motor angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor21intermediateThetaInitE">
+<span id="_CPPv3N12StepperMotor21intermediateThetaInitE"></span><span id="_CPPv2N12StepperMotor21intermediateThetaInitE"></span><span id="StepperMotor::intermediateThetaInit__double"></span><span class="target" id="class_stepper_motor_1a5a238e3eb1059da77f247471d5329007"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">intermediateThetaInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor21intermediateThetaInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Initial motor angle at the start of each step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor20intermediateThetaRefE">
+<span id="_CPPv3N12StepperMotor20intermediateThetaRefE"></span><span id="_CPPv2N12StepperMotor20intermediateThetaRefE"></span><span id="StepperMotor::intermediateThetaRef__double"></span><span class="target" id="class_stepper_motor_1a6d1983f093e4cf6da0d65f9fcb97bf7c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">intermediateThetaRef</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor20intermediateThetaRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Reference motor angle at the end of each step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor5thetaE">
+<span id="_CPPv3N12StepperMotor5thetaE"></span><span id="_CPPv2N12StepperMotor5thetaE"></span><span id="StepperMotor::theta__double"></span><span class="target" id="class_stepper_motor_1a91ca2c13f970456880a38aa3ebfaf141"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Current motor angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor8thetaDotE">
+<span id="_CPPv3N12StepperMotor8thetaDotE"></span><span id="_CPPv2N12StepperMotor8thetaDotE"></span><span id="StepperMotor::thetaDot__double"></span><span class="target" id="class_stepper_motor_1a54951ad38eecab8fb93d14f1ced1fa83"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDot</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor8thetaDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Current motor angle rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor9thetaDDotE">
+<span id="_CPPv3N12StepperMotor9thetaDDotE"></span><span id="_CPPv2N12StepperMotor9thetaDDotE"></span><span id="StepperMotor::thetaDDot__double"></span><span class="target" id="class_stepper_motor_1ade7355a6ad5a2b41b10c04f64aa5595a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDDot</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor9thetaDDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] Current motor angular acceleration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12thetaDDotMaxE">
+<span id="_CPPv3N12StepperMotor12thetaDDotMaxE"></span><span id="_CPPv2N12StepperMotor12thetaDDotMaxE"></span><span id="StepperMotor::thetaDDotMax__double"></span><span class="target" id="class_stepper_motor_1ae8cf8bba3ab31776d47bdc1d64f67571"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDDotMax</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor12thetaDDotMaxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] Maximum angular acceleration of the stepper motor </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor5tInitE">
+<span id="_CPPv3N12StepperMotor5tInitE"></span><span id="_CPPv2N12StepperMotor5tInitE"></span><span id="StepperMotor::tInit__double"></span><span class="target" id="class_stepper_motor_1a583fe35ba992fd12e2394f13082fb556"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor5tInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time at the beginning of each step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor19previousWrittenTimeE">
+<span id="_CPPv3N12StepperMotor19previousWrittenTimeE"></span><span id="_CPPv2N12StepperMotor19previousWrittenTimeE"></span><span id="StepperMotor::previousWrittenTime__double"></span><span class="target" id="class_stepper_motor_1a2732f04e975212e3748c953ce6dbdadd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">previousWrittenTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor19previousWrittenTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Time the last input message was written </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor2tsE">
+<span id="_CPPv3N12StepperMotor2tsE"></span><span id="_CPPv2N12StepperMotor2tsE"></span><span id="StepperMotor::ts__double"></span><span class="target" id="class_stepper_motor_1a1097bd88769d39ed3923bfad49eeb044"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ts</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor2tsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] The simulation time halfway through each step (switch time for ang accel) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor2tfE">
+<span id="_CPPv3N12StepperMotor2tfE"></span><span id="_CPPv2N12StepperMotor2tfE"></span><span id="StepperMotor::tf__double"></span><span class="target" id="class_stepper_motor_1a7b703bfff225b28dfeb60e9d599e3645"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tf</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor2tfE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Simulation time when the current step will be completed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor17actuationCompleteE">
+<span id="_CPPv3N12StepperMotor17actuationCompleteE"></span><span id="_CPPv2N12StepperMotor17actuationCompleteE"></span><span id="StepperMotor::actuationComplete__b"></span><span class="target" id="class_stepper_motor_1a5d409154e8c168e94a712fdb5eb863cd"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">actuationComplete</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="k"><span class="pre">true</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor17actuationCompleteE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean designating the motor has fully completed the commanded actuation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12stepCompleteE">
+<span id="_CPPv3N12StepperMotor12stepCompleteE"></span><span id="_CPPv2N12StepperMotor12stepCompleteE"></span><span id="StepperMotor::stepComplete__b"></span><span class="target" id="class_stepper_motor_1acebbd55807222fe39ec1ed19b582ad76"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stepComplete</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="k"><span class="pre">true</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor12stepCompleteE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean designating the completion of a step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor6newMsgE">
+<span id="_CPPv3N12StepperMotor6newMsgE"></span><span id="_CPPv2N12StepperMotor6newMsgE"></span><span id="StepperMotor::newMsg__b"></span><span class="target" id="class_stepper_motor_1a7c6e0d703976c0e3eb982f4947b9e12d"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">newMsg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor6newMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean designating a new command message is written. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor12interruptMsgE">
+<span id="_CPPv3N12StepperMotor12interruptMsgE"></span><span id="_CPPv2N12StepperMotor12interruptMsgE"></span><span id="StepperMotor::interruptMsg__b"></span><span class="target" id="class_stepper_motor_1aab70837980f727162d11673b51a011c3"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">interruptMsg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor12interruptMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Boolean designating the new command message is interrupting motor actuation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor1aE">
+<span id="_CPPv3N12StepperMotor1aE"></span><span id="_CPPv2N12StepperMotor1aE"></span><span id="StepperMotor::a__double"></span><span class="target" id="class_stepper_motor_1a5e195a7e566a9a9388c823df0f148e10"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor1aE" title="Link to this definition"></a><br /></dt>
+<dd><p>Parabolic constant for the first half of a step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StepperMotor1bE">
+<span id="_CPPv3N12StepperMotor1bE"></span><span id="_CPPv2N12StepperMotor1bE"></span><span id="StepperMotor::b__double"></span><span class="target" id="class_stepper_motor_1ab2c1e11c8fb4102a83774150f1fda7e8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">b</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12StepperMotor1bE" title="Link to this definition"></a><br /></dt>
+<dd><p>Parabolic constant for the second half of a step. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="stepperMotor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

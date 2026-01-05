@@ -1,0 +1,8 @@
+.. _MJEquality:
+
+Module: MJEquality
+==================
+
+.. autodoxygenfile:: MJEquality.h
+   :project: _GeneralModuleFiles5
+

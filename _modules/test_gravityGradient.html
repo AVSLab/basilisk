@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_gravityGradient &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_gravityGradient</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_gravityGradient</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Copyright (c) 2020, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Test the gravity gradient effector module.</span>
+<span class="c1"># Author:   Hanspeter Schaub</span>
+<span class="c1"># Creation Date:  Jan 12, 2019</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">GravityGradientEffector</span>
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(True, reason=&quot;Previously set sim parameters are not consistent with new formulation\n&quot;)</span>
+
+<span class="c1"># The following &#39;parametrize&#39; function decorator provides the parameters and expected results for each</span>
+<span class="c1">#   of the multiple test runs for this test.</span>
+<div class="viewcode-block" id="test_gravityGradientModule">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/GravityGradientEffector/_UnitTest/test_gravityGradient.html#test_gravityGradient.test_gravityGradientModule">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;planetCase&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;cmOffset&quot;</span><span class="p">,</span> <span class="p">[[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]])</span>
+
+
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gravityGradientModule</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">cmOffset</span><span class="p">,</span> <span class="n">planetCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This test creates a spacecraft in orbit about either Earth or Venus to check if the correct gravity gradient</span>
+<span class="sd">    torque is evaluated.  Multiple test scenario combinations are possible where either a single or multiple</span>
+<span class="sd">    gravity bodies are included, using either zero planet ephemeris for the single planet case, or using SPICE</span>
+<span class="sd">    for the multi-planet scenario.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    The following list discusses in detail the various test parameters used. These are test tested in</span>
+<span class="sd">    all possible permutations (except show_plots of course) which is turned off for ``pytest`` usage.</span>
+
+<span class="sd">    :param show_plots:  flag to show some simulation plots</span>
+<span class="sd">    :param cmOffset:    center of mass offset vector in meters</span>
+<span class="sd">    :param planetCase: integer flag with values (0,1,2,3).  The cases consider the following simulation scenarios:</span>
+
+<span class="sd">                        - Case 0 indicates a simulation with only Earth present at (0,0,0).</span>
+<span class="sd">                        - Case 1 is a simulation with both Earth and Venus present using Spice, but the gravity</span>
+<span class="sd">                          gradient torque is only evaluated using Earth.</span>
+<span class="sd">                        - Case 2 is same as 1 but Venus is also included in the torque evaluation.</span>
+<span class="sd">                        - Case 3 is like 2 but here the spacecraft is orbiting venus.</span>
+<span class="sd">    :return: None</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    The gravity effector torque output message is compared against a python evaluated vector.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span>
+            <span class="n">show_plots</span><span class="p">,</span> <span class="n">cmOffset</span><span class="p">,</span> <span class="n">planetCase</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">truthGravityGradient</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">sigmaBN</span><span class="p">,</span> <span class="n">hub</span><span class="p">):</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">BN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaBN</span><span class="p">)</span>
+    <span class="n">rHatB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">BN</span><span class="p">,</span> <span class="n">rN</span><span class="p">)</span> <span class="o">/</span> <span class="n">r</span>
+
+    <span class="n">ggTorque</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">mu</span><span class="o">/</span><span class="n">r</span><span class="o">/</span><span class="n">r</span><span class="o">/</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">rHatB</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">rHatB</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ggTorque</span>
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/GravityGradientEffector/_UnitTest/test_gravityGradient.html#test_gravityGradient.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">cmOffset</span><span class="p">,</span> <span class="n">planetCase</span><span class="p">,</span> <span class="n">simTime</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call this routine directly to run the unit test.&quot;&quot;&quot;</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>                       <span class="c1"># create empty array to store test log messages</span>
+
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1">#  create the simulation process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTime</span><span class="p">)</span>
+
+    <span class="c1"># create Earth Gravity Body</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="k">if</span> <span class="n">planetCase</span><span class="p">:</span>
+        <span class="c1"># here all planet positions are provided by Spice, and both Earth and Venus are include</span>
+        <span class="c1"># for gravity acceleration calculations</span>
+        <span class="n">venus</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createVenus</span><span class="p">()</span>
+        <span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2012 MAY 1 00:28:30.0&quot;</span>
+        <span class="n">gravFactory</span><span class="o">.</span><span class="n">createSpiceInterface</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">timeInitString</span><span class="p">,</span>
+                                         <span class="n">epochInMsg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># orbit should be defined relative to Venus</span>
+            <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">venus</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">venus</span><span class="o">.</span><span class="n">mu</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s1">&#39;venus&#39;</span>  <span class="c1"># spacecraft states are logged relative to Earth for plotting</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gravFactory</span><span class="o">.</span><span class="n">spiceObject</span><span class="o">.</span><span class="n">zeroBase</span> <span class="o">=</span> <span class="s1">&#39;earth&#39;</span>  <span class="c1"># spacecraft states are logged relative to Earth for plotting</span>
+
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.</span> <span class="o">*</span> <span class="mi">1000</span>      <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0001</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>      <span class="c1"># this stores consistent initial orbit elements</span>
+                                                <span class="c1"># with circular or equatorial orbit, some angles are arbitrary</span>
+
+    <span class="c1"># setup basic spacecraft module</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bskTestSat&quot;</span>
+    <span class="n">IIC</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">500.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+           <span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+           <span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">350.</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="n">cmOffset</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">IIC</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_BN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_BN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_BN_B</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_BN_B</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="c1"># add gravity gradient effector</span>
+    <span class="n">ggEff</span> <span class="o">=</span> <span class="n">GravityGradientEffector</span><span class="o">.</span><span class="n">GravityGradientEffector</span><span class="p">()</span>
+    <span class="n">ggEff</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span>
+    <span class="n">ggEff</span><span class="o">.</span><span class="n">addPlanetName</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">planetName</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">planetCase</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">ggEff</span><span class="o">.</span><span class="n">addPlanetName</span><span class="p">(</span><span class="n">venus</span><span class="o">.</span><span class="n">planetName</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">ggEff</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">ggEff</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">dataLogGG</span> <span class="o">=</span> <span class="n">ggEff</span><span class="o">.</span><span class="n">gravityGradientOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLogGG</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">attData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">ggData</span> <span class="o">=</span> <span class="n">dataLogGG</span><span class="o">.</span><span class="n">gravityGradientTorque_B</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+
+        <span class="c1"># draw the inertial position vector components</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">attData</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                     <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;MRP Attitude $\sigma_{B/N}$&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">posData</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                     <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Inertial Position coordinates [km]&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLogGG</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">ggData</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span> <span class="p">,</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                     <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$r_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;GG Torque [Nm]&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># compare gravity gradient torque vector to the truth</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="k">for</span> <span class="n">rV</span><span class="p">,</span> <span class="n">sV</span><span class="p">,</span> <span class="n">ggV</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">posData</span><span class="p">,</span> <span class="n">attData</span><span class="p">,</span> <span class="n">ggData</span><span class="p">):</span>
+        <span class="n">ggTruth</span> <span class="o">=</span> <span class="n">truthGravityGradient</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rV</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">sV</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="p">)</span>
+        <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareVector</span><span class="p">(</span><span class="n">ggV</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span>
+                                                                    <span class="n">ggTruth</span><span class="p">,</span>
+                                                                    <span class="n">accuracy</span><span class="p">,</span>
+                                                                    <span class="s2">&quot;gravityGradientTorque_B&quot;</span><span class="p">,</span>
+                                                                    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy used: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: Gravity Effector&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed: Gravity Effector&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span>           <span class="c1"># show_plots</span>
+        <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]],</span> <span class="c1"># cmOffset</span>
+        <span class="mi">3</span><span class="p">,</span>              <span class="c1"># planetCase</span>
+        <span class="mi">3600</span><span class="p">)</span>  <span class="c1"># simTime (seconds)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

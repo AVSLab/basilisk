@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_atmoDrag &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_atmoDrag</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_atmoDrag</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Test the validity of a simple exponential atmosphere model.</span>
+<span class="c1"># Author:   Andrew Harris</span>
+<span class="c1"># Creation Date:  Jan 18, 2017</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1"># print dir(exponentialAtmosphere)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dragDynamicEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">exponentialAtmosphere</span><span class="p">,</span> <span class="n">simpleNav</span>
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(True, reason=&quot;Previously set sim parameters are not consistent with new formulation\n&quot;)</span>
+
+<span class="c1"># The following &#39;parametrize&#39; function decorator provides the parameters and expected results for each</span>
+<span class="c1">#   of the multiple test runs for this test.</span>
+
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<div class="viewcode-block" id="test_scenarioDragOrbit">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/dragEffector/_UnitTest/test_atmoDrag.html#test_atmoDrag.test_scenarioDragOrbit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scenarioDragOrbit</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is called by the py.test environment.&quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="n">earthCase</span> <span class="o">=</span> <span class="s2">&quot;Earth&quot;</span>
+    <span class="n">marsCase</span> <span class="o">=</span> <span class="s2">&quot;Mars&quot;</span>
+    <span class="n">orb1</span> <span class="o">=</span> <span class="s2">&quot;LPO&quot;</span>
+    <span class="n">orb2</span> <span class="o">=</span> <span class="s2">&quot;LTO&quot;</span>
+    <span class="n">showVal</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">testResults</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">testMessage</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="p">[</span><span class="n">leoResults</span><span class="p">,</span> <span class="n">leoMessages</span><span class="p">]</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span>
+            <span class="n">showVal</span><span class="p">,</span> <span class="n">orb1</span><span class="p">,</span> <span class="n">earthCase</span><span class="p">)</span>
+    <span class="c1">#[gtoResults, gtoMessages] = run(</span>
+    <span class="c1">#    showVal, orb2, earthCase)</span>
+    <span class="c1">#[lmoResults, lmoMessages] = run(</span>
+        <span class="c1">#showVal, orb1, marsCase)</span>
+    <span class="c1">#[mtoResults, mtoMessages] = run(</span>
+        <span class="c1">#showVal, orb2, marsCase)</span>
+
+    <span class="n">testResults</span> <span class="o">=</span> <span class="n">leoResults</span><span class="c1">#+gtoResults#+lmoResults+mtoResults</span>
+    <span class="n">testMessage</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">leoMessages</span><span class="p">)</span>
+    <span class="c1">#testMessage.append(gtoMessages)</span>
+    <span class="c1">##testMessage.append(lmoMessages)</span>
+    <span class="c1">#testMessage.append(mtoMessages)</span>
+
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">expAtmoComp</span><span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="n">baseDens</span><span class="p">,</span> <span class="n">scaleHeight</span><span class="p">):</span>
+    <span class="n">dens</span> <span class="o">=</span> <span class="n">baseDens</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">alt</span><span class="o">/</span><span class="n">scaleHeight</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dens</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cannonballDragComp</span><span class="p">(</span><span class="n">dragCoeff</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">att</span><span class="p">):</span>
+    <span class="n">dragDir_N</span> <span class="o">=</span> <span class="o">-</span><span class="n">vel</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span>
+    <span class="n">dcm_BN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">att</span><span class="p">)</span>
+    <span class="n">dragDir_B</span> <span class="o">=</span> <span class="n">dcm_BN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dragDir_N</span><span class="p">)</span>
+
+    <span class="n">dragForce</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dragCoeff</span> <span class="o">*</span> <span class="n">dens</span> <span class="o">*</span> <span class="n">area</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">dragDir_B</span>
+    <span class="k">return</span> <span class="n">dragForce</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/dragEffector/_UnitTest/test_atmoDrag.html#test_atmoDrag.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">orbitCase</span><span class="p">,</span> <span class="n">planetCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call this routine directly to run the tutorial scenario.&quot;&quot;&quot;</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>                       <span class="c1"># create empty array to store test log messages</span>
+
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1">#  create the simulation process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+
+
+    <span class="c1">#   Initialize new atmosphere and drag model, add them to task</span>
+    <span class="n">newAtmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">atmoTaskName</span> <span class="o">=</span> <span class="s2">&quot;atmosphere&quot;</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ExpAtmo&quot;</span>
+
+    <span class="n">projArea</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># Set drag area in m^2</span>
+    <span class="n">dragCoeff</span> <span class="o">=</span> <span class="mf">2.2</span>  <span class="c1"># Set drag ceofficient</span>
+
+    <span class="n">dragEffector</span> <span class="o">=</span> <span class="n">dragDynamicEffector</span><span class="o">.</span><span class="n">DragDynamicEffector</span><span class="p">()</span>
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;DragEff&quot;</span>
+
+    <span class="n">dragEffectorTaskName</span> <span class="o">=</span> <span class="s2">&quot;drag&quot;</span>
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">coreParams</span><span class="o">.</span><span class="n">projectedArea</span> <span class="o">=</span> <span class="n">projArea</span>
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">coreParams</span><span class="o">.</span><span class="n">dragCoeff</span> <span class="o">=</span> <span class="n">dragCoeff</span>
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">coreParams</span><span class="o">.</span><span class="n">comOffset</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">atmoTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dragEffectorTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">atmoTaskName</span><span class="p">,</span> <span class="n">newAtmo</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">simpleNavObj</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simpleNavObj</span><span class="p">)</span>
+    <span class="n">simpleNavObj</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dragEffector</span><span class="p">)</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dragEffectorTaskName</span><span class="p">,</span> <span class="n">dragEffector</span><span class="p">)</span>
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="n">dragEffector</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;Earth&quot;</span><span class="p">:</span>
+        <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;Mars&quot;</span><span class="p">:</span>
+        <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createMars</span><span class="p">()</span>
+        <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>          <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup orbit and simulation time</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;Earth&quot;</span><span class="p">:</span>
+        <span class="n">r_eq</span> <span class="o">=</span> <span class="mi">6371</span><span class="o">*</span><span class="mf">1000.0</span>
+        <span class="n">refBaseDens</span> <span class="o">=</span> <span class="mf">1.217</span>
+        <span class="n">refScaleHeight</span> <span class="o">=</span> <span class="mf">8500.0</span>
+
+    <span class="k">elif</span> <span class="n">planetCase</span> <span class="o">==</span> <span class="s2">&quot;Mars&quot;</span><span class="p">:</span>
+        <span class="n">refBaseDens</span> <span class="o">=</span> <span class="mf">0.020</span>
+        <span class="n">refScaleHeight</span> <span class="o">=</span> <span class="mf">11100.0</span>
+        <span class="n">r_eq</span> <span class="o">=</span> <span class="mf">3389.5</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Test failed- did not initialize planets.&quot;</span>
+    <span class="k">if</span> <span class="n">orbitCase</span> <span class="o">==</span> <span class="s2">&quot;LPO&quot;</span><span class="p">:</span>
+        <span class="n">orbAltMin</span> <span class="o">=</span> <span class="mf">300.0</span><span class="o">*</span><span class="mf">1000.0</span>
+        <span class="n">orbAltMax</span> <span class="o">=</span> <span class="n">orbAltMin</span>
+    <span class="k">elif</span> <span class="n">orbitCase</span> <span class="o">==</span> <span class="s2">&quot;LTO&quot;</span><span class="p">:</span>
+        <span class="n">orbAltMin</span> <span class="o">=</span> <span class="mi">300</span><span class="o">*</span><span class="mf">1000.0</span>
+        <span class="n">orbAltMax</span> <span class="o">=</span> <span class="mf">800.0</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">planetRadius</span> <span class="o">=</span> <span class="n">r_eq</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">scaleHeight</span> <span class="o">=</span> <span class="n">refScaleHeight</span>
+    <span class="n">newAtmo</span><span class="o">.</span><span class="n">baseDensity</span> <span class="o">=</span> <span class="n">refBaseDens</span>
+
+    <span class="n">rMin</span> <span class="o">=</span> <span class="n">r_eq</span> <span class="o">+</span> <span class="n">orbAltMin</span>
+    <span class="n">rMax</span> <span class="o">=</span> <span class="n">r_eq</span> <span class="o">+</span> <span class="n">orbAltMax</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">rMin</span><span class="o">+</span><span class="n">rMax</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">rMin</span><span class="o">/</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">0.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span>     <span class="o">=</span> <span class="mf">0.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>      <span class="c1"># this stores consistent initial orbit elements</span>
+                                                <span class="c1"># with circular or equatorial orbit, some angles are</span>
+                                                <span class="c1"># arbitrary</span>
+
+    <span class="c1"># set the simulation time</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span><span class="o">/</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">/</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">/</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">n</span>
+
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="n">P</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">dataNewAtmoLog</span> <span class="o">=</span> <span class="n">newAtmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataNewAtmoLog</span><span class="p">)</span>
+
+    <span class="n">dragEffectorLog</span> <span class="o">=</span> <span class="n">dragEffector</span><span class="o">.</span><span class="n">logger</span><span class="p">(</span><span class="s2">&quot;forceExternal_B&quot;</span><span class="p">,</span> <span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dragEffectorLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Spacecraft States with initialization variables</span>
+    <span class="c1">#</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m - v_CN_N</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">attData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">dragForce</span> <span class="o">=</span> <span class="n">dragEffectorLog</span><span class="o">.</span><span class="n">forceExternal_B</span>
+    <span class="n">densData</span> <span class="o">=</span> <span class="n">dataNewAtmoLog</span><span class="o">.</span><span class="n">neutralDensity</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1">#   Compare to expected values</span>
+
+    <span class="n">endInd</span> <span class="o">=</span> <span class="n">dragForce</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">refDragForce</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">endInd</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">refDensData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">endInd</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-13</span>
+    <span class="c1"># print planetCase</span>
+    <span class="c1"># print orbitCase</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">endInd</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># print &quot;Position data:&quot;, posData[ind,1:]</span>
+        <span class="c1"># print &quot;Velocity data:&quot;, velData[ind,1:]</span>
+        <span class="c1"># print &quot;Density data:&quot;, densData[ind,1]</span>
+        <span class="n">refDragForce</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">cannonballDragComp</span><span class="p">(</span><span class="n">dragCoeff</span><span class="p">,</span><span class="n">densData</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span><span class="n">projArea</span><span class="p">,</span><span class="n">velData</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">attData</span><span class="p">[</span><span class="n">ind</span><span class="p">])</span>
+        <span class="c1"># print &quot;Reference drag data:&quot;, refDragForce[ind,:]</span>
+        <span class="c1"># print &quot;Drag Data:&quot;, dragForce[ind,:]</span>
+        <span class="c1"># print &quot;&quot;</span>
+        <span class="c1"># check a vector values</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">endInd</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqual</span><span class="p">(</span><span class="n">dragForce</span><span class="p">[</span><span class="n">ind</span><span class="p">,:],</span> <span class="n">refDragForce</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">&quot;FAILED:  DragEffector failed force unit test with a value difference of &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dragForce</span><span class="p">[</span><span class="n">ind</span><span class="p">,:]</span><span class="o">-</span><span class="n">refDragForce</span><span class="p">[</span><span class="n">ind</span><span class="p">])))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+
+        <span class="c1"># draw the inertial position vector components</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="o">/</span><span class="n">P</span><span class="p">,</span> <span class="n">posData</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span><span class="o">/</span><span class="mf">1000.</span><span class="p">,</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span>
+                     <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$r_{BN,&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [orbits]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Inertial Position [km]&#39;</span><span class="p">)</span>
+
+        <span class="c1"># draw orbit in perifocal frame</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="o">*</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="o">*</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="o">/</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">))</span><span class="o">*</span><span class="mf">4.75</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">oe</span><span class="o">.</span><span class="n">rApoap</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">rPeriap</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span><span class="o">/</span><span class="mi">1000</span><span class="o">*</span><span class="mf">1.25</span><span class="p">)</span>
+        <span class="c1"># draw the planet</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+        <span class="n">planetColor</span><span class="o">=</span> <span class="s1">&#39;#008800&#39;</span>
+        <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span><span class="o">/</span><span class="mi">1000</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+        <span class="c1"># draw the actual orbit</span>
+        <span class="n">rData</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">fData</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)):</span>
+            <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span><span class="n">velData</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span><span class="p">)</span>
+            <span class="n">fData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">f</span> <span class="o">+</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rData</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span>
+                 <span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span>
+                 <span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mf">3.0</span>
+                 <span class="p">)</span>
+        <span class="c1"># draw the full osculating orbit from the initial conditions</span>
+        <span class="n">fData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">fData</span><span class="p">)):</span>
+            <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rData</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span>
+                 <span class="p">,</span><span class="s1">&#39;--&#39;</span>
+                 <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#555555&#39;</span>
+                 <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$i_e$ Cord. [km]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$i_p$ Cord. [km]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
+        <span class="n">smaData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)):</span>
+            <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">velData</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">smaData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">a</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">posData</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="o">/</span><span class="n">P</span><span class="p">,</span> <span class="n">smaData</span>
+                 <span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span><span class="p">,</span>
+                 <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [orbits]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;SMA [km]&#39;</span><span class="p">)</span>
+
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="n">dataNewAtmoLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">densData</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Density Data vs. Time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Density in kg/m^3&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">dragEffector</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed: &quot;</span> <span class="o">+</span> <span class="n">dragEffector</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span></div>
+
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="s2">&quot;LPO&quot;</span><span class="p">,</span><span class="s2">&quot;Earth&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

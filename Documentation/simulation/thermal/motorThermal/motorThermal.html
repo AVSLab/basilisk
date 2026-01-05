@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: motorThermal &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="motorThermal" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">thermal</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">motorThermal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sensorThermal/index.html">sensorThermal</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">thermal</a></li>
+          <li class="breadcrumb-item"><a href="index.html">motorThermal</a></li>
+      <li class="breadcrumb-item active">Module: motorThermal</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/thermal/motorThermal/motorThermal.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-motorthermal">
+<span id="motorthermal"></span><h1>Module: motorThermal<a class="headerlink" href="#module-motorthermal" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Module that computes the motor temperature. It takes into account mechanical power efficiency, as well as friction,
+as sources of heat. There is also a dissipative term due to the temperature gradient between the motor and the
+air surrounding it.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rwStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#rwconfiglogmsgpayload"><span class="std std-ref">RWConfigLogMsgPayload</span></a></p></td>
+<td><p>Input reaction wheel state message. It contains the mechanical torque, friction torque and wheel speed information to compute the mechanical power.</p></td>
+</tr>
+<tr class="row-odd"><td><p>temperatureOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TemperatureMsgPayload.html#temperaturemsgpayload"><span class="std std-ref">TemperatureMsgPayload</span></a></p></td>
+<td><p>Output temperature message.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>This module is a simulation environment module which simulates the temperature of a motor. Temperature is computed as a function of the net power to the motor
+and the motor’s heat capacity, which maps the net power to a temperature variation.
+The heat generation component is composed of two factors: mechanical power inefficiencies (loss through current, etc) and friction contributions. The mechanical
+power <span class="math notranslate nohighlight">\(P_{mec}\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[P_{mec}=\Omega \times u_s\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega\)</span> is the motor angular velocity and <span class="math notranslate nohighlight">\(u_s\)</span> represents the applied torque. Given the mechanical efficiency <span class="math notranslate nohighlight">\(\eta\)</span>, we can convert
+mechanical power into thermal power as follows:</p>
+<div class="math notranslate nohighlight">
+\[P_{loss}=P_{mec}\frac{1-\eta}{\eta}\]</div>
+<p>Similarly to the mechanical power, the friction dissipation is given by:</p>
+<div class="math notranslate nohighlight">
+\[P_{f}=\Omega \times \tau_f\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tau_f\)</span> represents the friction torque. The absolute value of these two terms added together represents the thermal power generation. As for the power
+dissipation, we assume a temperature gradient between the motor and the surrounding environment. For simplicity, a constant ambient temperature is considered. The
+thermal power dissipation is calculated using the temperature difference between the motor and the environment, scaled by the ambient’s thermal resistance <span class="math notranslate nohighlight">\(R_{ambient}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[P_{dissipation} = (T_k - T_{ambient})/R_{ambient}\]</div>
+<p>The subscript k in the temperature implies that it is the motor’s temperature at time k. For the final calculation, we need to convert power into heat. This is done
+through a simple Euler integration:</p>
+<div class="math notranslate nohighlight">
+\[Q=P\Delta t\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q\)</span> represents the heat, <span class="math notranslate nohighlight">\(P\)</span> is the power and <span class="math notranslate nohighlight">\(\Delta t\)</span> is the integration time interval, which is the same as the simulation time step.
+Finally, the new motor temperature can be calculated using the temperature at the previous time step plus the net heat scaled by the motor’s heat capacity:</p>
+<div class="math notranslate nohighlight">
+\[T_{k+1} = T_k + \Delta t\frac{P_{generation}-P_{dissipation}}{C_{motor}} = T_k + \Delta t\frac{|P_{loss}|+|P_{f}|-P_{dissipation}/R_{ambient}}{C_{motor}}\]</div>
+<p>where, again, the k+1 subscript denotes the temperature at the next time step.</p>
+<section id="tips-for-estimating-c-motor-and-r-ambient">
+<h3>Tips for estimating <span class="math notranslate nohighlight">\(C_{motor}\)</span> and <span class="math notranslate nohighlight">\(R_{ambient}\)</span><a class="headerlink" href="#tips-for-estimating-c-motor-and-r-ambient" title="Link to this heading"></a></h3>
+<p>The motor’s heat capacity can be estimated from its mass and specific heat capacity:</p>
+<div class="math notranslate nohighlight">
+\[C_{motor}=m_{motor}c_{motor}\]</div>
+<p>The constant <span class="math notranslate nohighlight">\(c\)</span> is specific to each material. For example, steel has a specific heat capacity of 466 <span class="math notranslate nohighlight">\(Jkg^{-1}Celsius^{-1}\)</span>.
+As for the ambient thermal resistance, it can be estimated using the following equation:</p>
+<div class="math notranslate nohighlight">
+\[R_{ambient}=\frac{1}{hA}\]</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is the area where the heat is being dissipated (for example, the area of a cilinder) and <span class="math notranslate nohighlight">\(h\)</span> represents the convection
+coefficient, which for air should be around 100 <span class="math notranslate nohighlight">\(Wm^{-2}Celsius^{-1}\)</span>.</p>
+</section>
+</section>
+<section id="model-functions">
+<h2>Model Functions<a class="headerlink" href="#model-functions" title="Link to this heading"></a></h2>
+<p>The functions of the temperature model are:</p>
+<ul class="simple">
+<li><p><strong>Temperature Modelling:</strong> Simulates the motor’s temperature given previous temperature, motor characteristics and ambient conditions.</p></li>
+</ul>
+</section>
+<section id="model-assumptions-and-limitations">
+<h2>Model Assumptions and Limitations<a class="headerlink" href="#model-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This code makes the following assumptions:</p>
+<ul class="simple">
+<li><p><strong>Ambient temperature is constant:</strong> Ambient temperature is not affected by the motor’s temperature.</p></li>
+<li><p><strong>Ambient thermal resistance is constant:</strong> Ambient thermal resistance does not change with temperature, pressure, etc.</p></li>
+<li><p><strong>Motor heat capacity is constant:</strong> Motor heat capacity does not change with temperature.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section contains conceptual overviews of the code and clear examples for the prospective user.</p>
+<section id="module-setup">
+<h3>Module Setup<a class="headerlink" href="#module-setup" title="Link to this heading"></a></h3>
+<p>The temperature module is created in python using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">thermalModel</span> <span class="o">=</span> <span class="n">motorThermal</span><span class="o">.</span><span class="n">MotorThermal</span><span class="p">()</span>
+<span class="linenos">2</span><span class="n">thermalModel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s1">&#39;rwThermals&#39;</span>
+</pre></div>
+</div>
+<p>A sample setup is done using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">thermalModel</span><span class="o">.</span><span class="n">currentTemperature</span> <span class="o">=</span> <span class="mi">40</span>  <span class="c1"># [Celsius]</span>
+<span class="linenos">2</span><span class="n">thermalModel</span><span class="o">.</span><span class="n">ambientTemperature</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># [Celsius]</span>
+<span class="linenos">3</span><span class="n">thermalModel</span><span class="o">.</span><span class="n">efficiency</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="linenos">4</span><span class="n">thermalModel</span><span class="o">.</span><span class="n">ambientThermalResistance</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Air Thermal Resistance</span>
+<span class="linenos">5</span><span class="n">thermalModel</span><span class="o">.</span><span class="n">motorHeatCapacity</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Motor Heat Capacity</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412MotorThermal">
+<span id="_CPPv312MotorThermal"></span><span id="_CPPv212MotorThermal"></span><span id="MotorThermal"></span><span class="target" id="class_motor_thermal"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MotorThermal</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv412MotorThermal" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;motorThermal.h&gt;</em></div>
+<p>Motor temperature module. It simulates the heating and cooling of a motor based on ambient temperature, as well as heat generated during spin-up or breaking. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal12MotorThermalEv">
+<span id="_CPPv3N12MotorThermal12MotorThermalEv"></span><span id="_CPPv2N12MotorThermal12MotorThermalEv"></span><span id="MotorThermal::MotorThermal"></span><span class="target" id="class_motor_thermal_1a531fd883044f90f16f77fa8847d3e839"></span><span class="sig-name descname"><span class="n"><span class="pre">MotorThermal</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermal12MotorThermalEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermalD0Ev">
+<span id="_CPPv3N12MotorThermalD0Ev"></span><span id="_CPPv2N12MotorThermalD0Ev"></span><span id="MotorThermal::~MotorThermal"></span><span class="target" id="class_motor_thermal_1ad6c442de19b301f2d9195559a3e86306"></span><span class="sig-name descname"><span class="n"><span class="pre">~MotorThermal</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermalD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal5ResetE8uint64_t">
+<span id="_CPPv3N12MotorThermal5ResetE8uint64_t"></span><span id="_CPPv2N12MotorThermal5ResetE8uint64_t"></span><span id="MotorThermal::Reset__uint64_t"></span><span class="target" id="class_motor_thermal_1a2dc1ea1a53579fd5b025fa94a98e6670"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermal5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal11UpdateStateE8uint64_t">
+<span id="_CPPv3N12MotorThermal11UpdateStateE8uint64_t"></span><span id="_CPPv2N12MotorThermal11UpdateStateE8uint64_t"></span><span id="MotorThermal::UpdateState__uint64_t"></span><span class="target" id="class_motor_thermal_1a099c44813de6ad61be2557cd02b2386c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermal11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to update the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal17readInputMessagesEv">
+<span id="_CPPv3N12MotorThermal17readInputMessagesEv"></span><span id="_CPPv2N12MotorThermal17readInputMessagesEv"></span><span id="MotorThermal::readInputMessages"></span><span class="target" id="class_motor_thermal_1a711eb84309783cd97efa7a88d44abaf5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermal17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the reaction wheel state input message </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N12MotorThermal19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N12MotorThermal19writeOutputMessagesE8uint64_t"></span><span id="MotorThermal::writeOutputMessages__uint64_t"></span><span class="target" id="class_motor_thermal_1a24ba25e59f3a0ae4845cfae43e7f006e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermal19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method writes the motor temperature output state message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The clock time associated with the model call </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal18computeTemperatureE8uint64_t">
+<span id="_CPPv3N12MotorThermal18computeTemperatureE8uint64_t"></span><span id="_CPPv2N12MotorThermal18computeTemperatureE8uint64_t"></span><span id="MotorThermal::computeTemperature__uint64_t"></span><span class="target" id="class_motor_thermal_1af9a47dd9eac27cfe2c16eaa4e8efff41"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTemperature</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MotorThermal18computeTemperatureE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the reaction wheel temperature </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal17temperatureOutMsgE">
+<span id="_CPPv3N12MotorThermal17temperatureOutMsgE"></span><span id="_CPPv2N12MotorThermal17temperatureOutMsgE"></span><span id="MotorThermal::temperatureOutMsg__Message:TemperatureMsgPayload:"></span><span class="target" id="class_motor_thermal_1a238599347443e56c0dc1edf56cb3926b"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TemperatureMsgPayload.html#_CPPv421TemperatureMsgPayload" title="TemperatureMsgPayload"><span class="n"><span class="pre">TemperatureMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">temperatureOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal17temperatureOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Celsius] temperature output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal12rwStateInMsgE">
+<span id="_CPPv3N12MotorThermal12rwStateInMsgE"></span><span id="_CPPv2N12MotorThermal12rwStateInMsgE"></span><span id="MotorThermal::rwStateInMsg__ReadFunctor:RWConfigLogMsgPayload:"></span><span class="target" id="class_motor_thermal_1a3d868084c03d3c339d373d88c1169e87"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#_CPPv421RWConfigLogMsgPayload" title="RWConfigLogMsgPayload"><span class="n"><span class="pre">RWConfigLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal12rwStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>reaction wheel state input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal10efficiencyE">
+<span id="_CPPv3N12MotorThermal10efficiencyE"></span><span id="_CPPv2N12MotorThermal10efficiencyE"></span><span id="MotorThermal::efficiency__double"></span><span class="target" id="class_motor_thermal_1ae736415aeab178af7c66045ad30993e5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">efficiency</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal10efficiencyE" title="Link to this definition"></a><br /></dt>
+<dd><p>efficiency factor to convert power into mechanical power </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal18currentTemperatureE">
+<span id="_CPPv3N12MotorThermal18currentTemperatureE"></span><span id="_CPPv2N12MotorThermal18currentTemperatureE"></span><span id="MotorThermal::currentTemperature__double"></span><span class="target" id="class_motor_thermal_1a2401ecac6c236f49a627e7fffbe6db21"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentTemperature</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal18currentTemperatureE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Celsius] stored temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal18ambientTemperatureE">
+<span id="_CPPv3N12MotorThermal18ambientTemperatureE"></span><span id="_CPPv2N12MotorThermal18ambientTemperatureE"></span><span id="MotorThermal::ambientTemperature__double"></span><span class="target" id="class_motor_thermal_1ac8b6a81cc1b23a642f366e600db3abfd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ambientTemperature</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal18ambientTemperatureE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Celsius] ambient temperature for heat dissipation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal24ambientThermalResistanceE">
+<span id="_CPPv3N12MotorThermal24ambientThermalResistanceE"></span><span id="_CPPv2N12MotorThermal24ambientThermalResistanceE"></span><span id="MotorThermal::ambientThermalResistance__double"></span><span class="target" id="class_motor_thermal_1aaccb96d8c5e4aac7e7abed8edaefd4dc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ambientThermalResistance</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal24ambientThermalResistanceE" title="Link to this definition"></a><br /></dt>
+<dd><p>[W/Celsius] ambient thermal resistance to convert heat into temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal17motorHeatCapacityE">
+<span id="_CPPv3N12MotorThermal17motorHeatCapacityE"></span><span id="_CPPv2N12MotorThermal17motorHeatCapacityE"></span><span id="MotorThermal::motorHeatCapacity__double"></span><span class="target" id="class_motor_thermal_1a807800deefe714b667914d865a0d202d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorHeatCapacity</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal17motorHeatCapacityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[J/Celsius] motor heat caapcity to convert heat into temperature </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal9bskLoggerE">
+<span id="_CPPv3N12MotorThermal9bskLoggerE"></span><span id="_CPPv2N12MotorThermal9bskLoggerE"></span><span id="MotorThermal::bskLogger__BSKLogger"></span><span class="target" id="class_motor_thermal_1a86a488e9f4924272b6e7e8645047dc5b"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal17temperatureBufferE">
+<span id="_CPPv3N12MotorThermal17temperatureBufferE"></span><span id="_CPPv2N12MotorThermal17temperatureBufferE"></span><span id="MotorThermal::temperatureBuffer__TemperatureMsgPayload"></span><span class="target" id="class_motor_thermal_1ab72819b4ef3d79ab16e929c305e17349"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TemperatureMsgPayload.html#_CPPv421TemperatureMsgPayload" title="TemperatureMsgPayload"><span class="n"><span class="pre">TemperatureMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">temperatureBuffer</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal17temperatureBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>temperature buffer for internal calculations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal13rwStateBufferE">
+<span id="_CPPv3N12MotorThermal13rwStateBufferE"></span><span id="_CPPv2N12MotorThermal13rwStateBufferE"></span><span id="MotorThermal::rwStateBuffer__RWConfigLogMsgPayload"></span><span class="target" id="class_motor_thermal_1aff2414bb1dc9c9e2ca60a6155d1cd35f"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#_CPPv421RWConfigLogMsgPayload" title="RWConfigLogMsgPayload"><span class="n"><span class="pre">RWConfigLogMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwStateBuffer</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal13rwStateBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>reaction wheel state buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12MotorThermal8prevTimeE">
+<span id="_CPPv3N12MotorThermal8prevTimeE"></span><span id="_CPPv2N12MotorThermal8prevTimeE"></span><span id="MotorThermal::prevTime__uint64_t"></span><span class="target" id="class_motor_thermal_1a232d5a383d4dc6f76fbcd463d76df6af"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevTime</span></span></span><a class="headerlink" href="#_CPPv4N12MotorThermal8prevTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Previous simulation time observed </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="motorThermal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

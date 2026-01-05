@@ -1,0 +1,540 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_ThrusterStateEffectorUnit &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_ThrusterStateEffectorUnit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_ThrusterStateEffectorUnit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2022, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">thrusterStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">sysModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ResultsStore</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PassFail</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">texSnippet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PassFail</span><span class="p">)):</span>
+            <span class="n">snippetName</span> <span class="o">=</span> <span class="s1">&#39;Result&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">PassFail</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;PASSED&#39;</span><span class="p">:</span>
+                <span class="n">textColor</span> <span class="o">=</span> <span class="s1">&#39;ForestGreen&#39;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">PassFail</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">:</span>
+                <span class="n">textColor</span> <span class="o">=</span> <span class="s1">&#39;Red&#39;</span>
+            <span class="n">texSnippet</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">textColor</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">PassFail</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+            <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">texSnippet</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">testFixture</span><span class="p">():</span>
+    <span class="n">listRes</span> <span class="o">=</span> <span class="n">ResultsStore</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">listRes</span>
+    <span class="n">listRes</span><span class="o">.</span><span class="n">texSnippet</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">thrusterEffectorAllTests</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_unitThrusters</span><span class="p">(</span><span class="n">show_plots</span><span class="p">)</span>
+
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail(True)</span>
+
+
+<div class="viewcode-block" id="test_unitThrusters">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/_UnitTest/test_ThrusterStateEffectorUnit.html#test_ThrusterStateEffectorUnit.test_unitThrusters">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;thrustNumber, initialConditions, duration, long_angle, lat_angle, location, swirlTorque, rate, attachBody&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 1 thruster, thrust on</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 1 thruster, thrust off</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">60.</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 1 thruster, thrust on, different orientation and location</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 1 thruster, thrust off, different orientation and location</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 2 thrusters, thrust on</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 2 thrusters, thrust off</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;OFF&quot;</span><span class="p">),</span>  <span class="c1"># 2 thrusters, thrust on, swirl torque</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;ON&quot;</span><span class="p">)</span>  <span class="c1"># 2 thrusters, attached body</span>
+<span class="p">])</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unitThrusters</span><span class="p">(</span><span class="n">testFixture</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">thrustNumber</span><span class="p">,</span> <span class="n">initialConditions</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">long_angle</span><span class="p">,</span> <span class="n">lat_angle</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">swirlTorque</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">attachBody</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test script tests the stateEffector implementation of thrusters. It sets up the thruster module and runs</span>
+<span class="sd">    a combination of 6 different scenarios. Each scenario uses either one or two thrusters, while also changing the</span>
+<span class="sd">    thruster&#39;s locations and whether thruster 1 is firing or not.</span>
+
+<span class="sd">    For information on how the thruster module works and what the closed-form solution for the ``thrustFactor`` variable</span>
+<span class="sd">    is, see :ref:`thrusterStateEffector`. Given the ``thrustFactor`` :math:`\kappa`, the thrust is computed as follows:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \textbf{F} = \kappa \cdot F_{\mathrm{max}} \cdot \hat{n}</span>
+
+<span class="sd">    where :math:`\hat{n}` is the thruster&#39;s direction vector. The torque is computed by:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \textbf{T} = \textbf{r}\times\textbf{F} + \kappa \cdot T_{\mathrm{maxSwirl}} \cdot \hat{n}</span>
+
+<span class="sd">    where :math:`\textbf{r}` corresponds to the thruster&#39;s position relative to the spacecraft&#39;s center of mass and the</span>
+<span class="sd">    second term represents the swirl torque. The mass flow rate is given by:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \dot{m} = \dfrac{F}{g\cdot I_{sp}}</span>
+
+<span class="sd">    where :math:`g` is Earth&#39;s gravitational acceleration and :math:`I_{sp}` is the thruster&#39;s specific impulse.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        thrustNumber (int): number of thrusters used in the simulation</span>
+<span class="sd">        initialConditions (float): initial value of the ``thrustFactor`` variable for thruster 1. Thruster always starts</span>
+<span class="sd">        off.</span>
+<span class="sd">        duration (float): duration of the thrust in seconds.</span>
+<span class="sd">        long_angle (float): longitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.</span>
+<span class="sd">        lat_angle (float): latitude angle in degrees for thruster 1. Thruster 2 is also impacted by this value.</span>
+<span class="sd">        location (float): location of thruster 1.</span>
+<span class="sd">        swirlTorque (float): maximum value of the swirl torque on the thruster.</span>
+<span class="sd">        rate (int): simulation rate in nanoseconds.</span>
+<span class="sd">        attachBody (flag): whether the thruster is attached to the hub or to a different body.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file we are checking the values of the variables</span>
+
+<span class="sd">    - ``thrForce``</span>
+<span class="sd">    - ``thrTorque``</span>
+<span class="sd">    - ``mDot``</span>
+
+<span class="sd">    All these variables are compared to the true values from the closed-form expressions given in :ref:`thrusterStateEffector`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">unitThrusters</span><span class="p">(</span><span class="n">testFixture</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">thrustNumber</span><span class="p">,</span> <span class="n">initialConditions</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">long_angle</span><span class="p">,</span>
+                                               <span class="n">lat_angle</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">swirlTorque</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">attachBody</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="c1"># Run the test</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unitThrusters</span><span class="p">(</span><span class="n">testFixture</span><span class="p">,</span> <span class="n">show_plots</span><span class="p">,</span> <span class="n">thrustNumber</span><span class="p">,</span> <span class="n">initialConditions</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">long_angle</span><span class="p">,</span> <span class="n">lat_angle</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">swirlTorque</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">attachBody</span><span class="p">):</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="c1">#  Create a simulation and set the rate</span>
+    <span class="n">TotalSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testRate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>  <span class="c1"># Parametrized rate of test</span>
+
+    <span class="c1"># breakpoint()</span>
+
+    <span class="c1"># Create the process and task</span>
+    <span class="n">unitTaskName1</span> <span class="o">=</span> <span class="s2">&quot;unitTask1&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitTaskName2</span> <span class="o">=</span> <span class="s2">&quot;unitTask2&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitTaskName3</span> <span class="o">=</span> <span class="s2">&quot;unitTask3&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName1</span> <span class="o">=</span> <span class="s2">&quot;TestProcess1&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName2</span> <span class="o">=</span> <span class="s2">&quot;TestProcess2&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName3</span> <span class="o">=</span> <span class="s2">&quot;TestProcess3&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">testProc1</span> <span class="o">=</span> <span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">testProc1</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName1</span><span class="p">,</span> <span class="n">testRate</span><span class="p">))</span>
+    <span class="n">testProc2</span> <span class="o">=</span> <span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">testProc2</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName2</span><span class="p">,</span> <span class="n">testRate</span><span class="p">))</span>
+    <span class="n">testProc3</span> <span class="o">=</span> <span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">testProc3</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName3</span><span class="p">,</span> <span class="n">testRate</span><span class="p">))</span>
+
+    <span class="c1"># Create the spacecraft object</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Define initial conditions of the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>
+
+    <span class="c1"># Constants for thruster creation</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mf">9.80665</span>
+    <span class="n">Isp</span> <span class="o">=</span> <span class="mf">226.7</span>
+
+    <span class="c1">#  Create the thrusters</span>
+    <span class="n">thrusterSet</span> <span class="o">=</span> <span class="n">thrusterStateEffector</span><span class="o">.</span><span class="n">ThrusterStateEffector</span><span class="p">()</span>
+    <span class="n">thrusterSet</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ACSThrusterDynamics&quot;</span>
+
+    <span class="c1">#  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust) for thruster 1</span>
+    <span class="n">long_angle_deg</span> <span class="o">=</span> <span class="n">long_angle</span>  <span class="c1"># Parametrized angle of thrust</span>
+    <span class="n">lat_angle_deg</span> <span class="o">=</span> <span class="n">lat_angle</span>
+    <span class="n">long_angle_rad</span> <span class="o">=</span> <span class="n">long_angle_deg</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+    <span class="n">lat_angle_rad</span> <span class="o">=</span> <span class="n">lat_angle_deg</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+    <span class="n">thruster1</span> <span class="o">=</span> <span class="n">thrusterStateEffector</span><span class="o">.</span><span class="n">THRSimConfig</span><span class="p">()</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">thrLoc_B</span> <span class="o">=</span> <span class="n">location</span>  <span class="c1"># Parametrized location for thruster</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">thrDir_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">long_angle_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_angle_rad</span><span class="p">)],</span>
+                          <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">long_angle_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_angle_rad</span><span class="p">)],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_angle_rad</span><span class="p">)]]</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">steadyIsp</span> <span class="o">=</span> <span class="mf">226.7</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">MinOnTime</span> <span class="o">=</span> <span class="mf">0.006</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxSwirlTorque</span> <span class="o">=</span> <span class="n">swirlTorque</span>
+    <span class="n">thrusterSet</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">thruster1</span><span class="p">)</span>
+
+    <span class="n">loc1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thruster1</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">dir1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thruster1</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="c1">#  Create thruster characteristic parameters for thruster 2</span>
+    <span class="k">if</span> <span class="n">thrustNumber</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">thruster2</span> <span class="o">=</span> <span class="n">thrusterStateEffector</span><span class="o">.</span><span class="n">THRSimConfig</span><span class="p">()</span>
+        <span class="n">thruster2</span><span class="o">.</span><span class="n">thrLoc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">thruster2</span><span class="o">.</span><span class="n">thrDir_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">long_angle_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_angle_rad</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)],</span>
+             <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">long_angle_rad</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_angle_rad</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)],</span>
+             <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_angle_rad</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)]])</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">thruster2</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">=</span> <span class="mf">20.0</span>
+        <span class="n">thruster2</span><span class="o">.</span><span class="n">steadyIsp</span> <span class="o">=</span> <span class="mf">226.7</span>
+        <span class="n">thruster2</span><span class="o">.</span><span class="n">MinOnTime</span> <span class="o">=</span> <span class="mf">0.006</span>
+        <span class="n">thruster2</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="n">loc2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thruster2</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">thrLoc_B</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">dir2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thruster2</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">thrDir_B</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+
+        <span class="k">if</span> <span class="n">attachBody</span> <span class="o">==</span> <span class="s2">&quot;ON&quot;</span><span class="p">:</span>
+            <span class="c1"># Set up the dcm and location</span>
+            <span class="n">dcm_BF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="n">r_FB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Create the module</span>
+            <span class="n">pyModule</span> <span class="o">=</span> <span class="n">attachedBodyModule</span><span class="p">(</span><span class="n">dcm_BF</span><span class="p">,</span> <span class="n">r_FB_B</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="n">pyModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attachedBody&quot;</span>
+            <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName3</span><span class="p">,</span> <span class="n">pyModule</span><span class="p">)</span>
+
+            <span class="c1"># Attach messages</span>
+            <span class="n">pyModule</span><span class="o">.</span><span class="n">scInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+            <span class="c1"># Update the direction and location of the thruster</span>
+            <span class="n">dir2</span> <span class="o">=</span> <span class="n">dcm_BF</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dir2</span><span class="p">)</span>
+            <span class="n">loc2</span> <span class="o">=</span> <span class="n">dcm_BF</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">loc2</span><span class="p">)</span> <span class="o">+</span> <span class="n">r_FB_B</span>
+
+            <span class="c1"># Attach thruster</span>
+            <span class="n">thrusterSet</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">thruster2</span><span class="p">,</span> <span class="n">pyModule</span><span class="o">.</span><span class="n">bodyOutMsg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">thrusterSet</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">thruster2</span><span class="p">)</span>
+
+    <span class="c1"># Set the initial conditions</span>
+    <span class="n">thrusterSet</span><span class="o">.</span><span class="n">kappaInit</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">initialConditions</span><span class="p">])</span>
+
+    <span class="c1"># Attach thrusters and add the effector to the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">thrusterSet</span><span class="p">)</span>
+
+    <span class="c1"># Save state</span>
+    <span class="n">dataRec</span> <span class="o">=</span> <span class="n">thrusterSet</span><span class="o">.</span><span class="n">thrusterOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">testRate</span><span class="p">)</span>
+
+    <span class="c1"># Add both modules and the recorder to tasks</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName1</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName2</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">)</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName2</span><span class="p">,</span> <span class="n">dataRec</span><span class="p">)</span>
+
+    <span class="c1">#  Define the start of the thrust and its duration</span>
+    <span class="n">thrDurationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="c1"># Log variables of interest</span>
+    <span class="n">thrusterSetLog</span> <span class="o">=</span> <span class="n">thrusterSet</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;forceOnBody_B&quot;</span><span class="p">,</span> <span class="s2">&quot;torqueOnBodyPntB_B&quot;</span><span class="p">,</span> <span class="s2">&quot;mDotTotal&quot;</span><span class="p">])</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName2</span><span class="p">,</span> <span class="n">thrusterSetLog</span><span class="p">)</span>
+
+    <span class="c1">#  Configure a single thruster firing, create a message for it</span>
+    <span class="n">ThrustMessage</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsgPayload</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">thrustNumber</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">ThrustMessage</span><span class="o">.</span><span class="n">OnTimeRequest</span> <span class="o">=</span> <span class="p">[</span><span class="n">duration</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">thrustNumber</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">ThrustMessage</span><span class="o">.</span><span class="n">OnTimeRequest</span> <span class="o">=</span> <span class="p">[</span><span class="n">duration</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]</span>
+    <span class="n">thrCmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ThrustMessage</span><span class="p">)</span>
+    <span class="n">thrusterSet</span><span class="o">.</span><span class="n">cmdsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrCmdMsg</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Close all plots</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">thrDurationTime</span><span class="p">))</span>
+    <span class="n">TotalSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Plot the thrust factor if needed</span>
+    <span class="n">dataThrustFactor</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">thrustFactor</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">dataThrustFactor</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [s]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Thrust Factor&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Gather the Force, Torque and Mass Rate results</span>
+    <span class="n">thrForce</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">thrusterSetLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">thrusterSetLog</span><span class="o">.</span><span class="n">forceOnBody_B</span><span class="p">)</span>
+    <span class="n">thrTorque</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">thrusterSetLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">thrusterSetLog</span><span class="o">.</span><span class="n">torqueOnBodyPntB_B</span><span class="p">)</span>
+    <span class="n">mDot</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">thrusterSetLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">thrusterSetLog</span><span class="o">.</span><span class="n">mDotTotal</span><span class="p">)</span>
+
+    <span class="c1"># Save the time vector</span>
+    <span class="n">timeSec</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+
+    <span class="c1"># Generate the truth data (force, torque and mass rate)</span>
+    <span class="n">expectedThrustData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">thrForce</span><span class="p">)[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">expectedTorqueData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">thrTorque</span><span class="p">)[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">expectedMDot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mDot</span><span class="p">)[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">thrForce</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">thrustNumber</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Compute the thrust force</span>
+            <span class="k">if</span> <span class="n">duration</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">thrustFactor1</span> <span class="o">=</span> <span class="n">initialConditions</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">*</span> <span class="n">timeSec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">force1</span> <span class="o">=</span> <span class="n">thrustFactor1</span> <span class="o">*</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">dir1</span>
+                <span class="n">expectedThrustData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">force1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">thrustFactor1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">initialConditions</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">*</span> <span class="n">timeSec</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">force1</span> <span class="o">=</span> <span class="n">thrustFactor1</span> <span class="o">*</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">dir1</span>
+                <span class="n">expectedThrustData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">force1</span>
+            <span class="c1"># Compute the torque</span>
+            <span class="n">expectedTorqueData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">loc1</span><span class="p">,</span> <span class="n">force1</span><span class="p">)</span> <span class="o">+</span> <span class="n">thrustFactor1</span> <span class="o">*</span> <span class="n">swirlTorque</span> <span class="o">*</span> <span class="n">dir1</span>
+            <span class="c1"># Compute the mass flow rate</span>
+            <span class="n">expectedMDot</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">thrustFactor1</span> <span class="o">/</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">Isp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Compute the thrust force</span>
+            <span class="k">if</span> <span class="n">duration</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">thrustFactor1</span> <span class="o">=</span> <span class="n">initialConditions</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">*</span> <span class="n">timeSec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">thrustFactor2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">*</span> <span class="n">timeSec</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">force1</span> <span class="o">=</span> <span class="n">thrustFactor1</span> <span class="o">*</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">dir1</span>
+                <span class="n">force2</span> <span class="o">=</span> <span class="n">thrustFactor2</span> <span class="o">*</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">dir2</span>
+                <span class="n">expectedThrustData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">force1</span> <span class="o">+</span> <span class="n">force2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">thrustFactor1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">initialConditions</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">*</span> <span class="n">timeSec</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">thrustFactor2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">cutoffFrequency</span> <span class="o">*</span> <span class="n">timeSec</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">force1</span> <span class="o">=</span> <span class="n">thrustFactor1</span> <span class="o">*</span> <span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">dir1</span>
+                <span class="n">force2</span> <span class="o">=</span> <span class="n">thrustFactor2</span> <span class="o">*</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">dir2</span>
+                <span class="n">expectedThrustData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">force1</span> <span class="o">+</span> <span class="n">force2</span>
+            <span class="c1"># Compute the torque</span>
+            <span class="n">expectedTorqueData</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">loc1</span><span class="p">,</span> <span class="n">force1</span><span class="p">)</span> <span class="o">+</span> <span class="n">thrustFactor1</span> <span class="o">*</span> <span class="n">swirlTorque</span> <span class="o">*</span> <span class="n">dir1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">loc2</span><span class="p">,</span> <span class="n">force2</span><span class="p">)</span>
+            <span class="c1"># Compute the mass flow rate</span>
+            <span class="n">expectedMDot</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">thruster1</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">thrustFactor1</span> <span class="o">+</span> <span class="n">thruster2</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">*</span> <span class="n">thrustFactor2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="n">Isp</span><span class="p">)</span>
+
+    <span class="c1"># Modify expected values for comparison and define errorTolerance</span>
+    <span class="n">TruthForce</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">expectedThrustData</span><span class="p">)</span>
+    <span class="n">TruthTorque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">expectedTorqueData</span><span class="p">)</span>
+    <span class="n">TruthMDot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">expectedMDot</span><span class="p">)</span>
+    <span class="n">ErrTolerance</span> <span class="o">=</span> <span class="mf">1E-3</span>
+
+    <span class="c1"># Compare Force values (exclude first element because of python process priority)</span>
+    <span class="n">thrForce</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">thrForce</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove time column</span>
+    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArray</span><span class="p">(</span><span class="n">TruthForce</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:],</span> <span class="n">thrForce</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:],</span> <span class="n">ErrTolerance</span><span class="p">,</span> <span class="s2">&quot;Force&quot;</span><span class="p">,</span>
+                                                               <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="c1"># Compare Torque values (exclude first element because of python process priority)</span>
+    <span class="n">thrTorque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">thrTorque</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove time column</span>
+    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArray</span><span class="p">(</span><span class="n">TruthTorque</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:],</span> <span class="n">thrTorque</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:],</span> <span class="n">ErrTolerance</span><span class="p">,</span> <span class="s2">&quot;Torque&quot;</span><span class="p">,</span>
+                                                               <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="c1"># Compare mass flow rate values</span>
+    <span class="n">mDot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">mDot</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ErrTolerance</span> <span class="o">=</span> <span class="mf">1E-6</span>
+    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">TruthMDot</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mDot</span><span class="p">),</span> <span class="n">ErrTolerance</span><span class="p">,</span> <span class="s2">&quot;MDot&quot;</span><span class="p">,</span>
+                                                               <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED&quot;</span><span class="p">)</span>
+        <span class="n">testFixture</span><span class="o">.</span><span class="n">PassFail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;PASSED&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">testFixture</span><span class="o">.</span><span class="n">PassFail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<div class="viewcode-block" id="attachedBodyModule">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/_UnitTest/test_ThrusterStateEffectorUnit.html#test_ThrusterStateEffectorUnit.attachedBodyModule">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">attachedBodyModule</span><span class="p">(</span><span class="n">sysModel</span><span class="o">.</span><span class="n">SysModel</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dcm_BF</span><span class="p">,</span> <span class="n">r_FB_B</span><span class="p">,</span> <span class="n">modelActive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modelPriority</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">attachedBodyModule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Input spacecraft state structure message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scMsgBuffer</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Output body state message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bodyOutMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+
+        <span class="c1"># Save dcm and location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcm_BF</span> <span class="o">=</span> <span class="n">dcm_BF</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_FB_B</span> <span class="o">=</span> <span class="n">r_FB_B</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+        <span class="c1"># Read input message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scMsgBuffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scInMsg</span><span class="p">()</span>
+
+        <span class="c1"># Write output message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writeOutputMsg</span><span class="p">(</span><span class="n">CurrentSimNanos</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">writeOutputMsg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+        <span class="c1"># Create output message buffer</span>
+        <span class="n">bodyOutMsgBuffer</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+
+        <span class="c1"># Grab the spacecraft hub states</span>
+        <span class="n">sigma_BN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scMsgBuffer</span><span class="o">.</span><span class="n">sigma_BN</span>
+        <span class="n">dcm_BN</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scMsgBuffer</span><span class="o">.</span><span class="n">omega_BN_B</span>
+        <span class="n">r_BN_N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scMsgBuffer</span><span class="o">.</span><span class="n">r_BN_N</span>
+
+        <span class="c1"># Compute the attached body states relative to the hub</span>
+        <span class="n">dcm_FB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcm_BF</span><span class="p">)</span>
+        <span class="n">sigma_FB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcm_FB</span><span class="p">)</span>
+        <span class="n">sigma_FN</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">addMRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">),</span> <span class="n">sigma_FB</span><span class="p">)</span>
+        <span class="n">omega_FB_F</span> <span class="o">=</span> <span class="n">dcm_FB</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">)</span>
+        <span class="n">r_FN_N</span> <span class="o">=</span> <span class="n">r_BN_N</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dcm_BN</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_FB_B</span><span class="p">))</span>
+
+        <span class="c1"># Write the output message information</span>
+        <span class="n">bodyOutMsgBuffer</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">sigma_FN</span>
+        <span class="n">bodyOutMsgBuffer</span><span class="o">.</span><span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">omega_FB_F</span>
+        <span class="n">bodyOutMsgBuffer</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">r_FN_N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bodyOutMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bodyOutMsgBuffer</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleID</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unitThrusters</span><span class="p">(</span><span class="n">ResultsStore</span><span class="p">(),</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.125</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="s2">&quot;ON&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

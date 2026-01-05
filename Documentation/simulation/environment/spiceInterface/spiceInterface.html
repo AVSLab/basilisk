@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: spiceInterface &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spiceInterface" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../ExponentialAtmosphere/index.html">ExponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MsisAtmosphere/index.html">MsisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TabularAtmosphere/index.html">TabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../albedo/index.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dentonFluxModel/index.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eclipse/index.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemerisConverter/index.html">ephemerisConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundLocation/index.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../groundMapping/index.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldCenteredDipole/index.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magneticFieldWMM/index.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../planetEphemeris/index.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarFlux/index.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftLocation/index.html">spacecraftLocation</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spiceInterface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spiceInterface</a></li>
+      <li class="breadcrumb-item active">Module: spiceInterface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/environment/spiceInterface/spiceInterface.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spiceinterface">
+<span id="spiceinterface"></span><h1>Module: spiceInterface<a class="headerlink" href="#module-spiceinterface" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The SPICE interface class gets time and planetary or spacecraft body information from the JPL ephemeris library</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/31fea3820d3d228d8878ee442250366b/Basilisk-SPICE_INTERFACE20170712.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>spiceTimeOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpiceTimeMsgPayload.html#spicetimemsgpayload"><span class="std std-ref">SpiceTimeMsgPayload</span></a></p></td>
+<td><p>spice time sampling output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>epochInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#epochmsgpayload"><span class="std std-ref">EpochMsgPayload</span></a></p></td>
+<td><p>(optional) input epoch message</p></td>
+</tr>
+<tr class="row-even"><td><p>planetStateOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#spiceplanetstatemsgpayload"><span class="std std-ref">SpicePlanetStateMsgPayload</span></a></p></td>
+<td><p>vector of planet state output messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>scStateOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of spacecraft state messages</p></td>
+</tr>
+<tr class="row-even"><td><p>attRefStateOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>vector of spacecraft attitude reference state output messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>transRefStateOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TransRefMsgPayload.html#transrefmsgpayload"><span class="std std-ref">TransRefMsgPayload</span></a></p></td>
+<td><p>vector of spacecraft translation reference state output messages</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This module uses the JPL Spice software to determine the position and orientation of both a celestial body, or a spacecraft.
+The appropriate Spice kernel must be loaded up to provide the state information for the selected body names.</p>
+<p>To setup a celestial body, use the module method <code class="docutils literal notranslate"><span class="pre">addPlanetNames(vector&lt;string&gt;)</span></code> in python.  Multiple object names can be
+provided by providing a list of names.  With each module update cycle, the corresponding celestial body
+states are provided in the vector of output messages <code class="docutils literal notranslate"><span class="pre">planetStateOutMsgs[]</span></code>.  Note that the vector elements are in
+the order that the celestial body names were added.</p>
+<p>To use this module to read in spacecraft states from a spice kernel, then the spacecraft Spice name is added using
+the method <code class="docutils literal notranslate"><span class="pre">addSpacecraftNames(vector&lt;string&gt;)</span></code>.  The module provides a vector out corresponding spacecraft state output
+messages in three different formats.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">scStateOutMsgs[]</span></code>: these are the <a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a> state output messages that the <a class="reference internal" href="../../dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> module provides</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">attRefStateOutMsgs[]</span></code>: these are the attitude reference messages <a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a>.  These are useful to
+only prescribe the spacecraft attitude motion.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transRefStateOutMsgs[]</span></code>: these are the translational reference message <a class="reference internal" href="../../../architecture/msgPayloadDefC/TransRefMsgPayload.html#transrefmsgpayload"><span class="std std-ref">TransRefMsgPayload</span></a>.  These are useful to only
+prescribe the translational motion and leave the attitude motion free.</p></li>
+</ul>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv411SpiceKernel">
+<span id="_CPPv311SpiceKernel"></span><span id="_CPPv211SpiceKernel"></span><span id="SpiceKernel"></span><span class="target" id="class_spice_kernel"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpiceKernel</span></span></span><a class="headerlink" href="#_CPPv411SpiceKernel" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spiceInterface.h&gt;</em></div>
+<p>Thin RAII wrapper around a single SPICE kernel.</p>
+<p>The class furnishes a kernel on construction and unloads it on destruction, and provides a static request function that caches instances by canonical absolute path so that a given kernel file is not furnished multiple times. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernelD0Ev">
+<span id="_CPPv3N11SpiceKernelD0Ev"></span><span id="_CPPv2N11SpiceKernelD0Ev"></span><span id="SpiceKernel::~SpiceKernel"></span><span class="target" id="class_spice_kernel_1a93cd0c66499d3f53eaca9923a4a7301e"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpiceKernel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SpiceKernelD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor unloads the kernel from SPICE if the load succeeded.</p>
+<p>This runs once when the last shared_ptr owning this <a class="reference internal" href="#class_spice_kernel"><span class="std std-ref">SpiceKernel</span></a> instance is destroyed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SpiceKernel7getPathEv">
+<span id="_CPPv3NK11SpiceKernel7getPathEv"></span><span id="_CPPv2NK11SpiceKernel7getPathEv"></span><span id="SpiceKernel::getPathC"></span><span class="target" id="class_spice_kernel_1a697023e546186e03554c7c111ecd5697"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getPath</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SpiceKernel7getPathEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Canonical absolute path used as the cache key and SPICE file name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SpiceKernel16wasLoadSuccesfulEv">
+<span id="_CPPv3NK11SpiceKernel16wasLoadSuccesfulEv"></span><span id="_CPPv2NK11SpiceKernel16wasLoadSuccesfulEv"></span><span id="SpiceKernel::wasLoadSuccesfulC"></span><span class="target" id="class_spice_kernel_1a0b3102048ac8bdc25f30b23013d4e9ab"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wasLoadSuccesful</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SpiceKernel16wasLoadSuccesfulEv" title="Link to this definition"></a><br /></dt>
+<dd><p>True if furnsh_c succeeded for this kernel. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel11SpiceKernelERK11SpiceKernel">
+<span id="_CPPv3N11SpiceKernel11SpiceKernelERK11SpiceKernel"></span><span id="_CPPv2N11SpiceKernel11SpiceKernelERK11SpiceKernel"></span><span id="SpiceKernel::SpiceKernel__SpiceKernelCR"></span><span class="target" id="class_spice_kernel_1ac15f9e4c0ecd3caace692e37cb16fd49"></span><span class="sig-name descname"><span class="n"><span class="pre">SpiceKernel</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11SpiceKernel11SpiceKernelERK11SpiceKernel" title="SpiceKernel::SpiceKernel"><span class="n"><span class="pre">SpiceKernel</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N11SpiceKernel11SpiceKernelERK11SpiceKernel" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernelaSERK11SpiceKernel">
+<span id="_CPPv3N11SpiceKernelaSERK11SpiceKernel"></span><span id="_CPPv2N11SpiceKernelaSERK11SpiceKernel"></span><span id="SpiceKernel::assign-operator__SpiceKernelCR"></span><span class="target" id="class_spice_kernel_1a6cfbc149a7f7dc3a7fabc7c8da367775"></span><a class="reference internal" href="#_CPPv411SpiceKernel" title="SpiceKernel"><span class="n"><span class="pre">SpiceKernel</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411SpiceKernel" title="SpiceKernel"><span class="n"><span class="pre">SpiceKernel</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N11SpiceKernelaSERK11SpiceKernel" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel7requestERKNSt10filesystem4pathE">
+<span id="_CPPv3N11SpiceKernel7requestERKNSt10filesystem4pathE"></span><span id="_CPPv2N11SpiceKernel7requestERKNSt10filesystem4pathE"></span><span id="SpiceKernel::request__std::filesystem::pathCR"></span><span class="target" id="class_spice_kernel_1a77fc1c655bccaba342aedc22c59befe0"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411SpiceKernel" title="SpiceKernel"><span class="n"><span class="pre">SpiceKernel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">request</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">filesystem</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">path</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">path</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SpiceKernel7requestERKNSt10filesystem4pathE" title="Link to this definition"></a><br /></dt>
+<dd><p>Request a shared handle for the kernel at the given path.</p>
+<p>The first call for a canonical path constructs a <a class="reference internal" href="#class_spice_kernel"><span class="std std-ref">SpiceKernel</span></a>, which furnishes the kernel once. Later calls for the same path reuse the existing instance as long as it is still alive. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel11SpiceKernelENSt6stringE">
+<span id="_CPPv3N11SpiceKernel11SpiceKernelENSt6stringE"></span><span id="_CPPv2N11SpiceKernel11SpiceKernelENSt6stringE"></span><span id="SpiceKernel::SpiceKernel__ss"></span><span class="target" id="class_spice_kernel_1a4e69c38c4a5261562c3bdf71df2bdd2c"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpiceKernel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">path</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SpiceKernel11SpiceKernelENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct a <a class="reference internal" href="#class_spice_kernel"><span class="std std-ref">SpiceKernel</span></a> by furnishing the given canonical path.</p>
+<p>The constructor switches SPICE into RETURN mode, calls furnsh_c, checks failed_c, and records the load status. The destructor will unload only if loadSucceeded is true. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel4pathE">
+<span id="_CPPv3N11SpiceKernel4pathE"></span><span id="_CPPv2N11SpiceKernel4pathE"></span><span id="SpiceKernel::path__ss"></span><span class="target" id="class_spice_kernel_1a9a48f49a6103ef603afa5ae595fb8496"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">path</span></span></span><a class="headerlink" href="#_CPPv4N11SpiceKernel4pathE" title="Link to this definition"></a><br /></dt>
+<dd><p>Canonical absolute path used as the cache key and SPICE file name. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel13loadSucceededE">
+<span id="_CPPv3N11SpiceKernel13loadSucceededE"></span><span id="_CPPv2N11SpiceKernel13loadSucceededE"></span><span id="SpiceKernel::loadSucceeded__b"></span><span class="target" id="class_spice_kernel_1ab15b0b35c2d96ab856e8cea52546fde9"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadSucceeded</span></span></span><a class="headerlink" href="#_CPPv4N11SpiceKernel13loadSucceededE" title="Link to this definition"></a><br /></dt>
+<dd><p>True if furnsh_c succeeded for this kernel. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel5mutexE">
+<span id="_CPPv3N11SpiceKernel5mutexE"></span><span id="_CPPv2N11SpiceKernel5mutexE"></span><span id="SpiceKernel::mutex__std::mutex"></span><span class="target" id="class_spice_kernel_1ad5d085d87d0e0734c9492ebab3f2b980"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">mutex</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mutex</span></span></span><a class="headerlink" href="#_CPPv4N11SpiceKernel5mutexE" title="Link to this definition"></a><br /></dt>
+<dd><p>Static mutex guarding the shared kernel cache.</p>
+<p>All access to SpiceKernel::cache must take this lock so that repeated calls to request from different threads do not race. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SpiceKernel5cacheE">
+<span id="_CPPv3N11SpiceKernel5cacheE"></span><span id="_CPPv2N11SpiceKernel5cacheE"></span><span id="SpiceKernel::cache__std::unordered_map:ss.std::weak_ptr:SpiceKernel::"></span><span class="target" id="class_spice_kernel_1a1a2ecde89e31b8963b5c189fb1475aa7"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">weak_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411SpiceKernel" title="SpiceKernel"><span class="n"><span class="pre">SpiceKernel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cache</span></span></span><a class="headerlink" href="#_CPPv4N11SpiceKernel5cacheE" title="Link to this definition"></a><br /></dt>
+<dd><p>Global cache mapping canonical absolute paths to weak pointers.</p>
+<p>A non expired weak pointer means there is already a live <a class="reference internal" href="#class_spice_kernel"><span class="std std-ref">SpiceKernel</span></a> instance owning that kernel, so request can reuse it instead of calling furnsh_c again. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414SpiceInterface">
+<span id="_CPPv314SpiceInterface"></span><span id="_CPPv214SpiceInterface"></span><span id="SpiceInterface"></span><span class="target" id="class_spice_interface"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpiceInterface</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv414SpiceInterface" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spiceInterface.h&gt;</em></div>
+<p>spice interface class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14SpiceInterfaceEv">
+<span id="_CPPv3N14SpiceInterface14SpiceInterfaceEv"></span><span id="_CPPv2N14SpiceInterface14SpiceInterfaceEv"></span><span id="SpiceInterface::SpiceInterface"></span><span class="target" id="class_spice_interface_1a63549f864889f0df19f179fac7a3cc7e"></span><span class="sig-name descname"><span class="n"><span class="pre">SpiceInterface</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface14SpiceInterfaceEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This constructor initializes the variables that spice uses. Most of them are not intended to be changed, but a couple are user configurable. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterfaceD0Ev">
+<span id="_CPPv3N14SpiceInterfaceD0Ev"></span><span id="_CPPv2N14SpiceInterfaceD0Ev"></span><span id="SpiceInterface::~SpiceInterface"></span><span class="target" id="class_spice_interface_1a7fdfcc1bbf8e6885ad5ee8aca2984fc1"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpiceInterface</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterfaceD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>The only needed activity in the destructor is to delete the spice I/O buffer that was allocated in the constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface11UpdateStateE8uint64_t">
+<span id="_CPPv3N14SpiceInterface11UpdateStateE8uint64_t"></span><span id="_CPPv2N14SpiceInterface11UpdateStateE8uint64_t"></span><span id="SpiceInterface::UpdateState__uint64_t"></span><span class="target" id="class_spice_interface_1abe69b9b9ab322dac146b956db409afda"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is the interface point between the upper level simulation and the SPICE interface at runtime. It calls all of the necessary lower level methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current clock time for the simulation </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface15loadSpiceKernelEPcPKc">
+<span id="_CPPv3N14SpiceInterface15loadSpiceKernelEPcPKc"></span><span id="_CPPv2N14SpiceInterface15loadSpiceKernelEPcPKc"></span><span id="SpiceInterface::loadSpiceKernel__cP.cCP"></span><span class="target" id="class_spice_interface_1a6af08e3926de6b92f98d62687c4096bb"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadSpiceKernel</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">kernelName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dataPath</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface15loadSpiceKernelEPcPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Load a SPICE kernel for use by this interface.</p>
+<p>This function takes a kernel file name and a base directory and ensures that the corresponding SPICE kernel is available to the simulation. Internally the module keeps track of which kernels it has already loaded so that the same file is not loaded multiple times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernelName</strong> – File name of the kernel inside dataPath. </p></li>
+<li><p><strong>dataPath</strong> – Directory where the kernel is located. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 on success, 1 if loading the kernel failed. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface17unloadSpiceKernelEPcPKc">
+<span id="_CPPv3N14SpiceInterface17unloadSpiceKernelEPcPKc"></span><span id="_CPPv2N14SpiceInterface17unloadSpiceKernelEPcPKc"></span><span id="SpiceInterface::unloadSpiceKernel__cP.cCP"></span><span class="target" id="class_spice_interface_1a7f409d39805ee31564c7a6a83d4997e5"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unloadSpiceKernel</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">kernelName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dataPath</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface17unloadSpiceKernelEPcPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Tell this interface that a SPICE kernel is no longer needed.</p>
+<p>This function removes the kernel from the set of kernels managed by this interface. Once no users remain, the underlying kernel is also removed from SPICE so it no longer affects future queries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernelName</strong> – File name of the kernel inside dataPath. </p></li>
+<li><p><strong>dataPath</strong> – Directory where the kernel is located. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>always 0. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface20getCurrentTimeStringEv">
+<span id="_CPPv3N14SpiceInterface20getCurrentTimeStringEv"></span><span id="_CPPv2N14SpiceInterface20getCurrentTimeStringEv"></span><span id="SpiceInterface::getCurrentTimeString"></span><span class="target" id="class_spice_interface_1a71794492749a0374a738c528c45803d7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getCurrentTimeString</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface20getCurrentTimeStringEv" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface5ResetE8uint64_t">
+<span id="_CPPv3N14SpiceInterface5ResetE8uint64_t"></span><span id="_CPPv2N14SpiceInterface5ResetE8uint64_t"></span><span id="SpiceInterface::Reset__uint64_t"></span><span class="target" id="class_spice_interface_1a5c4dd146eca438ecee2df17417945ab9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset the module to origina configuration values.</p>
+<p>Reset the module to original configuration values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface12initTimeDataEv">
+<span id="_CPPv3N14SpiceInterface12initTimeDataEv"></span><span id="_CPPv2N14SpiceInterface12initTimeDataEv"></span><span id="SpiceInterface::initTimeData"></span><span class="target" id="class_spice_interface_1a10635607ed9544ddcce54af1b2d1deaf"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initTimeData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface12initTimeDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to initialize the zero-time that will be used to calculate all system time values in the Update method. It also creates the output message for time data </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14computeGPSDataEv">
+<span id="_CPPv3N14SpiceInterface14computeGPSDataEv"></span><span id="_CPPv2N14SpiceInterface14computeGPSDataEv"></span><span id="SpiceInterface::computeGPSData"></span><span class="target" id="class_spice_interface_1ae1cdd255a352f6419a16334499856022"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeGPSData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface14computeGPSDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the GPS time data for the current elapsed time. It uses the total elapsed times at both the GPS epoch time and the current time to compute the GPS time (week, seconds, rollovers) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface13pullSpiceDataEPNSt6vectorI26SpicePlanetStateMsgPayloadEE">
+<span id="_CPPv3N14SpiceInterface13pullSpiceDataEPNSt6vectorI26SpicePlanetStateMsgPayloadEE"></span><span id="_CPPv2N14SpiceInterface13pullSpiceDataEPNSt6vectorI26SpicePlanetStateMsgPayloadEE"></span><span id="SpiceInterface::pullSpiceData__std::vector:SpicePlanetStateMsgPayload:P"></span><span class="target" id="class_spice_interface_1ad6d4a8e11c3d63f6890381cdd8bc53b4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pullSpiceData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">spiceData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface13pullSpiceDataEPNSt6vectorI26SpicePlanetStateMsgPayloadEE" title="Link to this definition"></a><br /></dt>
+<dd><p>This method gets the state of each spice item that has been added to the module and saves the information off into the array. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N14SpiceInterface19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N14SpiceInterface19writeOutputMessagesE8uint64_t"></span><span id="SpiceInterface::writeOutputMessages__uint64_t"></span><span class="target" id="class_spice_interface_1ae88f8bdc020e79f9386e62df484b0aa5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the values computed in the model and outputs them. It packages up the internal variables into the output structure definitions and puts them out on the messaging system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface13addKernelPathERKNSt6stringE">
+<span id="_CPPv3N14SpiceInterface13addKernelPathERKNSt6stringE"></span><span id="_CPPv2N14SpiceInterface13addKernelPathERKNSt6stringE"></span><span id="SpiceInterface::addKernelPath__ssCR"></span><span class="target" id="class_spice_interface_1ad660183735adca907b8b129dd064ec5b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addKernelPath</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">kernelPath</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface13addKernelPathERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a SPICE kernel by full path (absolute or relative). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14addKernelPathsERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N14SpiceInterface14addKernelPathsERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N14SpiceInterface14addKernelPathsERKNSt6vectorINSt6stringEEE"></span><span id="SpiceInterface::addKernelPaths__std::vector:ss:CR"></span><span class="target" id="class_spice_interface_1a51f5ea99f13e476f93b63f034a8424ca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addKernelPaths</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">kernelPaths</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface14addKernelPathsERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Convenience: add many kernels. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface16clearKernelPathsEv">
+<span id="_CPPv3N14SpiceInterface16clearKernelPathsEv"></span><span id="_CPPv2N14SpiceInterface16clearKernelPathsEv"></span><span id="SpiceInterface::clearKernelPaths"></span><span class="target" id="class_spice_interface_1ac9934919c48a305b7607d6124b4cbb49"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearKernelPaths</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface16clearKernelPathsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Clear configured kernel paths (does not unload already loaded kernels). </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface11clearKeeperEv">
+<span id="_CPPv3N14SpiceInterface11clearKeeperEv"></span><span id="_CPPv2N14SpiceInterface11clearKeeperEv"></span><span id="SpiceInterface::clearKeeper"></span><span class="target" id="class_spice_interface_1aba25cdd800184d943a3d2e407f72e765"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearKeeper</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface11clearKeeperEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Resets all data loaded to SPICE.</p>
+<p>Calls <code class="docutils literal notranslate"><span class="pre">kclear_c</span></code>, which resets all loaded kernels for all simulations in this process. Avoid using this, as it can affect other simulations running in parallel. Kernels loaded with <code class="docutils literal notranslate"><a class="reference internal" href="#class_spice_interface_1a6af08e3926de6b92f98d62687c4096bb"><span class="std std-ref"><span class="pre">loadSpiceKernel</span></span></a></code> will be automatically cleared when all simulations that need it have closed.</p>
+<p>Deprecated, pending removal 11/20/2026. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14addPlanetNamesENSt6vectorINSt6stringEEE">
+<span id="_CPPv3N14SpiceInterface14addPlanetNamesENSt6vectorINSt6stringEEE"></span><span id="_CPPv2N14SpiceInterface14addPlanetNamesENSt6vectorINSt6stringEEE"></span><span id="SpiceInterface::addPlanetNames__std::vector:ss:"></span><span class="target" id="class_spice_interface_1ab5cc838778b98bdd1a78dbbc49d49cf2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addPlanetNames</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">planetNames</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface14addPlanetNamesENSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>take a vector of planet name strings and create the vector of planet state output messages and the vector of planet state message payloads </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface18addSpacecraftNamesENSt6vectorINSt6stringEEE">
+<span id="_CPPv3N14SpiceInterface18addSpacecraftNamesENSt6vectorINSt6stringEEE"></span><span id="_CPPv2N14SpiceInterface18addSpacecraftNamesENSt6vectorINSt6stringEEE"></span><span id="SpiceInterface::addSpacecraftNames__std::vector:ss:"></span><span class="target" id="class_spice_interface_1a166ba057be0d58c1965f68d2b62e2202"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftNames</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spacecraftNames</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14SpiceInterface18addSpacecraftNamesENSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>take a vector of spacecraft name strings and create the vectors of spacecraft state output messages and the vector of spacecraft state message payloads </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface15spiceTimeOutMsgE">
+<span id="_CPPv3N14SpiceInterface15spiceTimeOutMsgE"></span><span id="_CPPv2N14SpiceInterface15spiceTimeOutMsgE"></span><span id="SpiceInterface::spiceTimeOutMsg__Message:SpiceTimeMsgPayload:"></span><span class="target" id="class_spice_interface_1adba8813710465e3c7dce29611c362c53"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpiceTimeMsgPayload.html#_CPPv419SpiceTimeMsgPayload" title="SpiceTimeMsgPayload"><span class="n"><span class="pre">SpiceTimeMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spiceTimeOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface15spiceTimeOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>spice time sampling output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface10epochInMsgE">
+<span id="_CPPv3N14SpiceInterface10epochInMsgE"></span><span id="_CPPv2N14SpiceInterface10epochInMsgE"></span><span id="SpiceInterface::epochInMsg__ReadFunctor:EpochMsgPayload:"></span><span class="target" id="class_spice_interface_1a5e16b267c6bd5adfca3fc6457530abbe"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EpochMsgPayload.html#_CPPv415EpochMsgPayload" title="EpochMsgPayload"><span class="n"><span class="pre">EpochMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epochInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface10epochInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) input epoch message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface18planetStateOutMsgsE">
+<span id="_CPPv3N14SpiceInterface18planetStateOutMsgsE"></span><span id="_CPPv2N14SpiceInterface18planetStateOutMsgsE"></span><span id="SpiceInterface::planetStateOutMsgs__std::vector:Message:SpicePlanetStateMsgPayload:P:"></span><span class="target" id="class_spice_interface_1a2d776ad89efad6f62ba52f78c87d73b0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetStateOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface18planetStateOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of planet state output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14scStateOutMsgsE">
+<span id="_CPPv3N14SpiceInterface14scStateOutMsgsE"></span><span id="_CPPv2N14SpiceInterface14scStateOutMsgsE"></span><span id="SpiceInterface::scStateOutMsgs__std::vector:Message:SCStatesMsgPayload:P:"></span><span class="target" id="class_spice_interface_1ab06260ee8b07f6352cf501ff1416445b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface14scStateOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft state output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface18attRefStateOutMsgsE">
+<span id="_CPPv3N14SpiceInterface18attRefStateOutMsgsE"></span><span id="_CPPv2N14SpiceInterface18attRefStateOutMsgsE"></span><span id="SpiceInterface::attRefStateOutMsgs__std::vector:Message:AttRefMsgPayload:P:"></span><span class="target" id="class_spice_interface_1a2414d26a7cc3adca06a84c9e1d8c4b8c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#_CPPv416AttRefMsgPayload" title="AttRefMsgPayload"><span class="n"><span class="pre">AttRefMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefStateOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface18attRefStateOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft attitude reference state output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface20transRefStateOutMsgsE">
+<span id="_CPPv3N14SpiceInterface20transRefStateOutMsgsE"></span><span id="_CPPv2N14SpiceInterface20transRefStateOutMsgsE"></span><span id="SpiceInterface::transRefStateOutMsgs__std::vector:Message:TransRefMsgPayload:P:"></span><span class="target" id="class_spice_interface_1a633fbbb963fee18636a408ce6c85d672"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TransRefMsgPayload.html#_CPPv418TransRefMsgPayload" title="TransRefMsgPayload"><span class="n"><span class="pre">TransRefMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transRefStateOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface20transRefStateOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of spacecraft translational reference state output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface13SPICEDataPathE">
+<span id="_CPPv3N14SpiceInterface13SPICEDataPathE"></span><span id="_CPPv2N14SpiceInterface13SPICEDataPathE"></span><span id="SpiceInterface::SPICEDataPath__ss"></span><span class="target" id="class_spice_interface_1a54964e27753edcb18ed55efbca8093ea"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SPICEDataPath</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface13SPICEDataPathE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Path on file to SPICE data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface13referenceBaseE">
+<span id="_CPPv3N14SpiceInterface13referenceBaseE"></span><span id="_CPPv2N14SpiceInterface13referenceBaseE"></span><span id="SpiceInterface::referenceBase__ss"></span><span class="target" id="class_spice_interface_1a928f07e1efcf33dcb4dd9c8f20f03b15"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">referenceBase</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface13referenceBaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Base reference frame to use </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface8zeroBaseE">
+<span id="_CPPv3N14SpiceInterface8zeroBaseE"></span><span id="_CPPv2N14SpiceInterface8zeroBaseE"></span><span id="SpiceInterface::zeroBase__ss"></span><span class="target" id="class_spice_interface_1aa792e93ebf9ad2b437781bc244a4d981"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">zeroBase</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface8zeroBaseE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Base zero point to use for states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14timeOutPictureE">
+<span id="_CPPv3N14SpiceInterface14timeOutPictureE"></span><span id="_CPPv2N14SpiceInterface14timeOutPictureE"></span><span id="SpiceInterface::timeOutPicture__ss"></span><span class="target" id="class_spice_interface_1a05a6a03962d38fea9996bb7f49498456"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeOutPicture</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface14timeOutPictureE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Optional parameter used to extract time strings </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface11SPICELoadedE">
+<span id="_CPPv3N14SpiceInterface11SPICELoadedE"></span><span id="_CPPv2N14SpiceInterface11SPICELoadedE"></span><span id="SpiceInterface::SPICELoaded__b"></span><span class="target" id="class_spice_interface_1a95403c16fb0d05715fd62989ede7d31c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SPICELoaded</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface11SPICELoadedE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Boolean indicating to reload spice </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface14charBufferSizeE">
+<span id="_CPPv3N14SpiceInterface14charBufferSizeE"></span><span id="_CPPv2N14SpiceInterface14charBufferSizeE"></span><span id="SpiceInterface::charBufferSize__i"></span><span class="target" id="class_spice_interface_1a161a0c76c6177777600df290afd636fa"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">charBufferSize</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface14charBufferSizeE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; avert your eyes we’re getting SPICE </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface11spiceBufferE">
+<span id="_CPPv3N14SpiceInterface11spiceBufferE"></span><span id="_CPPv2N14SpiceInterface11spiceBufferE"></span><span id="SpiceInterface::spiceBuffer__uint8_tP"></span><span class="target" id="class_spice_interface_1ab1e130de1b13e421f6e44be815791ff3"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">spiceBuffer</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface11spiceBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; General buffer to pass down to spice </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface10UTCCalInitE">
+<span id="_CPPv3N14SpiceInterface10UTCCalInitE"></span><span id="_CPPv2N14SpiceInterface10UTCCalInitE"></span><span id="SpiceInterface::UTCCalInit__ss"></span><span class="target" id="class_spice_interface_1a0074d718fa71d5be716f100f161e4a7a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UTCCalInit</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface10UTCCalInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; UTC time string for init time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface12planetFramesE">
+<span id="_CPPv3N14SpiceInterface12planetFramesE"></span><span id="_CPPv2N14SpiceInterface12planetFramesE"></span><span id="SpiceInterface::planetFrames__std::vector:ss:"></span><span class="target" id="class_spice_interface_1a465a4b35b44cd5a6a0cb14e2c0aa0904"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetFrames</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface12planetFramesE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Optional vector of planet frame names. Default values are IAU_ + planet name </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface12timeDataInitE">
+<span id="_CPPv3N14SpiceInterface12timeDataInitE"></span><span id="_CPPv2N14SpiceInterface12timeDataInitE"></span><span id="SpiceInterface::timeDataInit__b"></span><span class="target" id="class_spice_interface_1a1e0cfc50ec8ae35f82f14e2acb3f5ded"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeDataInit</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface12timeDataInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Flag indicating whether time has been init </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface11J2000ETInitE">
+<span id="_CPPv3N14SpiceInterface11J2000ETInitE"></span><span id="_CPPv2N14SpiceInterface11J2000ETInitE"></span><span id="SpiceInterface::J2000ETInit__double"></span><span class="target" id="class_spice_interface_1a0c588735af532fa7c5e5432adb055036"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">J2000ETInit</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface11J2000ETInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>s Seconds elapsed since J2000 at init </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface12J2000CurrentE">
+<span id="_CPPv3N14SpiceInterface12J2000CurrentE"></span><span id="_CPPv2N14SpiceInterface12J2000CurrentE"></span><span id="SpiceInterface::J2000Current__double"></span><span class="target" id="class_spice_interface_1aedb85311ec1305d51ffd80d95304ae5f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">J2000Current</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface12J2000CurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>s Current J2000 elapsed time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface17julianDateCurrentE">
+<span id="_CPPv3N14SpiceInterface17julianDateCurrentE"></span><span id="_CPPv2N14SpiceInterface17julianDateCurrentE"></span><span id="SpiceInterface::julianDateCurrent__double"></span><span class="target" id="class_spice_interface_1a73f33934c48df5747d2658226fd681da"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">julianDateCurrent</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface17julianDateCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>s Current JulianDate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface10GPSSecondsE">
+<span id="_CPPv3N14SpiceInterface10GPSSecondsE"></span><span id="_CPPv2N14SpiceInterface10GPSSecondsE"></span><span id="SpiceInterface::GPSSeconds__double"></span><span class="target" id="class_spice_interface_1a4bff839079f4ee152a5cbc4ae161372a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GPSSeconds</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface10GPSSecondsE" title="Link to this definition"></a><br /></dt>
+<dd><p>s Current GPS seconds </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface7GPSWeekE">
+<span id="_CPPv3N14SpiceInterface7GPSWeekE"></span><span id="_CPPv2N14SpiceInterface7GPSWeekE"></span><span id="SpiceInterface::GPSWeek__uint16_t"></span><span class="target" id="class_spice_interface_1a577e80e85e70c4236acd79d87436e56c"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GPSWeek</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface7GPSWeekE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Current GPS week value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface12GPSRolloversE">
+<span id="_CPPv3N14SpiceInterface12GPSRolloversE"></span><span id="_CPPv2N14SpiceInterface12GPSRolloversE"></span><span id="SpiceInterface::GPSRollovers__uint64_t"></span><span class="target" id="class_spice_interface_1a5ac156d521dee515d008e232b005a931"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GPSRollovers</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface12GPSRolloversE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Count on the number of GPS rollovers </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface9bskLoggerE">
+<span id="_CPPv3N14SpiceInterface9bskLoggerE"></span><span id="_CPPv2N14SpiceInterface9bskLoggerE"></span><span id="SpiceInterface::bskLogger__BSKLogger"></span><span class="target" id="class_spice_interface_1a9880413126777995028d1d1d91264745"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface12GPSEpochTimeE">
+<span id="_CPPv3N14SpiceInterface12GPSEpochTimeE"></span><span id="_CPPv2N14SpiceInterface12GPSEpochTimeE"></span><span id="SpiceInterface::GPSEpochTime__ss"></span><span class="target" id="class_spice_interface_1ae7532f2244ab2e8a184472a3424d6e4c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GPSEpochTime</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface12GPSEpochTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; String for the GPS epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface10JDGPSEpochE">
+<span id="_CPPv3N14SpiceInterface10JDGPSEpochE"></span><span id="_CPPv2N14SpiceInterface10JDGPSEpochE"></span><span id="SpiceInterface::JDGPSEpoch__double"></span><span class="target" id="class_spice_interface_1a8046fb5fa1cd8383a49f0d660c30473c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">JDGPSEpoch</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface10JDGPSEpochE" title="Link to this definition"></a><br /></dt>
+<dd><p>s Epoch for GPS time. Saved for efficiency </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface10planetDataE">
+<span id="_CPPv3N14SpiceInterface10planetDataE"></span><span id="_CPPv2N14SpiceInterface10planetDataE"></span><span id="SpiceInterface::planetData__std::vector:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_spice_interface_1a1791a03b333f52c4057733fc1ee008cd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetData</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface10planetDataE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface6scDataE">
+<span id="_CPPv3N14SpiceInterface6scDataE"></span><span id="_CPPv2N14SpiceInterface6scDataE"></span><span id="SpiceInterface::scData__std::vector:SpicePlanetStateMsgPayload:"></span><span class="target" id="class_spice_interface_1aff3409dcd8baabd7e8c2daafeeef8b39"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.html#_CPPv426SpicePlanetStateMsgPayload" title="SpicePlanetStateMsgPayload"><span class="n"><span class="pre">SpicePlanetStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scData</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface6scDataE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface11kernelPathsE">
+<span id="_CPPv3N14SpiceInterface11kernelPathsE"></span><span id="_CPPv2N14SpiceInterface11kernelPathsE"></span><span id="SpiceInterface::kernelPaths__std::vector:ss:"></span><span class="target" id="class_spice_interface_1a115302773aa0397b1e31305da7a47fb8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kernelPaths</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface11kernelPathsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Optional explicit kernel list. If non-empty, <a class="reference internal" href="#class_spice_interface_1a5c4dd146eca438ecee2df17417945ab9"><span class="std std-ref">Reset()</span></a> loads these instead. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface26configuredLoadedKernelKeysE">
+<span id="_CPPv3N14SpiceInterface26configuredLoadedKernelKeysE"></span><span id="_CPPv2N14SpiceInterface26configuredLoadedKernelKeysE"></span><span id="SpiceInterface::configuredLoadedKernelKeys__std::set:ss:"></span><span class="target" id="class_spice_interface_1a648306027caccf5898a771550e79b33d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">set</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">configuredLoadedKernelKeys</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface26configuredLoadedKernelKeysE" title="Link to this definition"></a><br /></dt>
+<dd><p>Track which configured kernel paths have been loaded. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14SpiceInterface13loadedKernelsE">
+<span id="_CPPv3N14SpiceInterface13loadedKernelsE"></span><span id="_CPPv2N14SpiceInterface13loadedKernelsE"></span><span id="SpiceInterface::loadedKernels__std::unordered_map:ss.std::shared_ptr:SpiceKernel::"></span><span class="target" id="class_spice_interface_1a43a7dc38b82bb1ab557775fba7fb6b9b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411SpiceKernel" title="SpiceKernel"><span class="n"><span class="pre">SpiceKernel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loadedKernels</span></span></span><a class="headerlink" href="#_CPPv4N14SpiceInterface13loadedKernelsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Map of loaded kernel paths to their RAII handles.</p>
+<p>As long as an entry is present, the corresponding kernel remains furnished in SPICE. Removing an entry allows the <a class="reference internal" href="#class_spice_kernel"><span class="std std-ref">SpiceKernel</span></a> destructor to unload the kernel when all shared_ptr copies are gone. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spiceInterface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,905 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Migrating Basilisk Scripts from Version 1.X to 2.X &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Developer Information" href="../Developer.html" />
+    <link rel="prev" title="FAQ: Microsoft Windows" href="FAQwindows.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../User.html">User Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="FAQ.html">FAQ - Frequency Asked Questions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="FAQwindows.html">FAQ: Microsoft Windows</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Migrating Basilisk Scripts from Version 1.X to 2.X</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-names">Message Names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#importing-basilisk-architecture-packages">Importing Basilisk architecture Packages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-module-input-output-message-names">Configuring Module Input/Output Message Names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-and-message-naming-changes">Module and Message Naming Changes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-a-basilisk-message-from-python-using-the-default-c-wrapper">Setting a Basilisk Message from Python using the default C++ wrapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-a-c-wrapped-basilisk-message-from-python">Setting a C-Wrapped Basilisk Message from Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reading-a-basilisk-message-from-python">Reading a Basilisk Message from Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#connecting-output-to-input-messages-in-python">Connecting Output to Input Messages in Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#recorded-message-data">Recorded Message Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-basilisk-simulation">Running Basilisk Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#miscellaneous-changes">Miscellaneous Changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../User.html">User Information</a></li>
+      <li class="breadcrumb-item active">Migrating Basilisk Scripts from Version 1.X to 2.X</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/User/migratingToBsk2.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="migrating-basilisk-scripts-from-version-1-x-to-2-x">
+<span id="migratingtobsk2"></span><h1>Migrating Basilisk Scripts from Version 1.X to 2.X<a class="headerlink" href="#migrating-basilisk-scripts-from-version-1-x-to-2-x" title="Link to this heading"></a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h2>
+<p>This document discusses what user-facing changes occurred with the new messaging system in Basilisk version 2.0
+and higher.  The string messaging system is replaced with a smarter message object system that</p>
+<ul class="simple">
+<li><p>prevents the user from connecting to the wrong message type in the C/C++ code</p></li>
+<li><p>warns the user if the Python scripts connects messages of the wrong type</p></li>
+<li><p>has much faster message recording functionality</p></li>
+<li><p>requires explicit message connection setup, i.e. no hidden implicit message naming</p></li>
+</ul>
+<p>The overall goal is to create a new implementation is that is easier to use and understand, as well as faster
+to execute.</p>
+<p>However, nothing is for free.  Making these changes was not possible without breaking existing code.  This migration
+help page outlines all the user-facing changes that have occurred.  This facilities the process of upgrading legacy
+Basilisk python scripts to function with the new message system, etc.</p>
+<p>For changes related to updating Basilisk C and C++ module code, see <a class="reference internal" href="../Developer/migratingBskModuleToBsk2.html#migratingmoduletobsk2"><span class="std std-ref">Migrating Basilisk Modules from Version 1.X to 2.X</span></a>.</p>
+</section>
+<section id="message-names">
+<h2>Message Names<a class="headerlink" href="#message-names" title="Link to this heading"></a></h2>
+<p>The module input and output messages are no longer specified through a name, and then subscribed to via an ID handle.
+Rather, the messages have become smart objects that can be directly connected to the receiving module.  Thus,
+while before we had <code class="docutils literal notranslate"><span class="pre">stateOutMsgName</span></code> and <code class="docutils literal notranslate"><span class="pre">stateOutMsgId</span></code> variables, now a single msg variable named
+<code class="docutils literal notranslate"><span class="pre">stateOutMsg</span></code> is used.   See <a class="reference internal" href="../Developer/CodingGuidlines.html#codingguidelines"><span class="std std-ref">Coding Guidelines</span></a> for more info on message naming.</p>
+</section>
+<section id="importing-basilisk-architecture-packages">
+<h2>Importing Basilisk architecture Packages<a class="headerlink" href="#importing-basilisk-architecture-packages" title="Link to this heading"></a></h2>
+<p>All message payload definitions are now stored contained in the <code class="docutils literal notranslate"><span class="pre">message2</span></code> package, providing a
+unified interface to all flight software and simulation messages.  Thus, instead of importing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">fswMessages</span>
+</pre></div>
+</div>
+<p>just import <code class="docutils literal notranslate"><span class="pre">message2</span></code> using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+</pre></div>
+</div>
+<p>Further, the <code class="docutils literal notranslate"><span class="pre">sim_model</span></code>, <code class="docutils literal notranslate"><span class="pre">alg_contain</span></code> and <code class="docutils literal notranslate"><span class="pre">MessagingAccess</span></code> packages are now stored
+within the new <code class="docutils literal notranslate"><span class="pre">architecture</span></code> library and imported using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">alg_contain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessagingAccess</span>
+</pre></div>
+</div>
+</section>
+<section id="configuring-module-input-output-message-names">
+<h2>Configuring Module Input/Output Message Names<a class="headerlink" href="#configuring-module-input-output-message-names" title="Link to this heading"></a></h2>
+<p>The Basilisk modules no longer use message names.  Rather, the message objects now direct are connected
+to each other within Python.  Thus, the BSK module doesn’t have to set message names from Python.</p>
+</section>
+<section id="module-and-message-naming-changes">
+<h2>Module and Message Naming Changes<a class="headerlink" href="#module-and-message-naming-changes" title="Link to this heading"></a></h2>
+<p>Some early Basilisk modules and message names never complied with the naming guidelines in <a class="reference internal" href="../Developer/CodingGuidlines.html#codingguidelines"><span class="std std-ref">Coding Guidelines</span></a>.
+The following list outlines any module or message naming changes that occurred in this upgrade process.  That is,
+message naming is listed if it is outside the standard adjusted (see <a class="reference internal" href="../Developer/CodingGuidlines.html#codingguidelines"><span class="std std-ref">Coding Guidelines</span></a>) where
+<code class="docutils literal notranslate"><span class="pre">descriptionOutMsgName</span></code> becomes <code class="docutils literal notranslate"><span class="pre">descriptionOutMsg</span></code>.
+This list makes it simple to see what naming will need to be changed.  Further, some modules have now a new name.
+For example, the module <code class="docutils literal notranslate"><span class="pre">spacecraftPlus</span></code> is now called simply <code class="docutils literal notranslate"><span class="pre">spacecraft</span></code>.  These module name changes are
+also listed in this table below.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Table of Module Message and Name Changes</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Module Name</p></th>
+<th class="head"><p>Old Msg Name</p></th>
+<th class="head"><p>New Msg Interface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>attTrackingError</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataMessageName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attGuidOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavMessageName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attNavInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputRefMessageName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>bore_ang_calc  →
+<code class="docutils literal notranslate"><span class="pre">boreAngCalc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">celBodyString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">angOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>celestialTwoBodyPoint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputCelMessName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputSecMessName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">secCelBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">transNavInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>cheby_pos_ephem  →
+<code class="docutils literal notranslate"><span class="pre">chebyPosEphem</span></code></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>clock_synch  →
+<code class="docutils literal notranslate"><span class="pre">simSynch</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clockOutputName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clockOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>coarse_sun_sensor →
+<code class="docutils literal notranslate"><span class="pre">coarseSunSensor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputConstellationMessage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">constellationOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cssConfigLogMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cssConfigLogOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>cssComm</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SensorListName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sensorListInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cssArrayOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>DataStorageUnitBase</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nodeDataUseMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nodeDataUseInMsgs</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>dvAccumulation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputNavName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dvAcumOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>dvAttEffect</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inputControlName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrOnTimeOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>dvExecuteGuidance</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">burnExecOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">outputThrName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrCmdOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputBurnDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">burnDataInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navDataInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>dvGuidance</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputBurnDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">burnDataInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>ephemeris_converter →
+<code class="docutils literal notranslate"><span class="pre">ephemerisConverter</span></code></p></td>
+<td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ephemOutMsgs</span></code></p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">spiceInMsgs</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ephem_Difference →
+<code class="docutils literal notranslate"><span class="pre">ephemDifference</span></code></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>ephem_nav_converter →
+<code class="docutils literal notranslate"><span class="pre">ephemNavConverter</span></code></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>faultDetection</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navMeasPrimaryMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navMeasPrimaryInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">navMeasSecondaryMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navMeasSecondaryInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>GravBodyData</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bodyInMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">planetBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">planetName</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>headingSuKF</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>hillPoint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputCelMessName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">transNavInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>horizonOpNav</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>imuComm</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">imuComInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">InputPropsName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vehConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">imuSensorOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>imu_sensor →
+<code class="docutils literal notranslate"><span class="pre">imuSensor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputStateMsg</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataMsg</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sensorOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>inertial3D</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>inertial3DSpin</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputRefName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>lowPassFilterTorqueCommand</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>oe_state_ephem  →
+<code class="docutils literal notranslate"><span class="pre">oeStateEphem</span></code></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td rowspan="6"><p>orb_elem_convert  →
+<code class="docutils literal notranslate"><span class="pre">orbElemConvert</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">StateString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">spiceStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StateString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">elemInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scStateOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">spiceStateOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">elemOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>magnetometer</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stateIntMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stateInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">magIntMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">magInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>MRP_Feedback →
+<code class="docutils literal notranslate"><span class="pre">mrpFeedback</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputRWSpeedsName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwSpeedsInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>MRP_PD →
+<code class="docutils literal notranslate"><span class="pre">mrpPD</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputVehicleConfigDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vehConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>MRP_Steering →
+<code class="docutils literal notranslate"><span class="pre">mrpSteering</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rateCmdOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="4"><p>navAggregate</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputAttName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navAttOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">outputTransName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navTransOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navAttInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">navTransInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>opNavPoint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>pixelLineConverter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>pixelLineBiasUKF</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cameraConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>PRV_Steering →
+<code class="docutils literal notranslate"><span class="pre">prvSteering</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rateCmdOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>radiation_pressure →
+<code class="docutils literal notranslate"><span class="pre">radiationPressure</span></code></p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>rasterManager</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AttStateOutMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attStateOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>rateServoFullNonlinear</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputRWSpeedsName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwSpeedsInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputRateSteeringName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rateSteeringInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>reactionWheelStateEffector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OutputDataString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwSpeedOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">InputCmds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwMotorCmdInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rwOutMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwOutMsgs</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>rwMotorTorque</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scMassStateOutMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwMotorTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>rwMotorTorque</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scMassStateOutMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwMotorTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputVehControlName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vehControlInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>PowerStorageBase</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nodePowerUseMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nodePowerUseInMsgs</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="4"><p>rwNullSpace</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inputRWCommands</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwMotorTorqueInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputRWSpeeds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwSpeedsInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputRWConfigData</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">outputControlName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwMotorTorqueOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>simpleDeadband</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attGuidOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="4"><p>simple_nav →
+<code class="docutils literal notranslate"><span class="pre">simpleNav</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputAttMessage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">outputTransMessage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">transOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputStateName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputSunName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sunStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><dl class="simple">
+<dt>spacecraftDynamics →</dt><dd><p><code class="docutils literal notranslate"><span class="pre">spacecraftSystem</span></code></p>
+</dd>
+</dl>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><dl class="simple">
+<dt>spacecraftPlus →</dt><dd><p><code class="docutils literal notranslate"><span class="pre">spacecraft</span></code></p>
+</dd>
+</dl>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scMassStateOutMsgName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scMassOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>spaceToGroundTransmitter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">storageUnitMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">storageUnitInMsgs</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">groundLocationAccessMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stAttOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>simpleTransmitter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">storageUnitMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">storageUnitInMsgs</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>spice_interface →
+<code class="docutils literal notranslate"><span class="pre">spiceInterface</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputTimePort</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">spiceTimeOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">planetNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">planetStateOutMsgs</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>star_tracker →
+<code class="docutils literal notranslate"><span class="pre">starTracker</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inputStateMessage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scStateInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">outputStateMessage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sensorOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>stComm</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stSensorInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stAttOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>sunSafeACS</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputGuidName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>thrForceMapping</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrForceCmdOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputVehControlName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdTorqueInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputThrusterConfName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputVehicleConfigDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vehConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>thrusterDynamicEffector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputCmds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdsInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thrusterOutMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrusterOutMsgs</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="5"><p>thrustRWDesat</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inputSpeedName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwSpeedInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputRWConfigData</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rwConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputThrConfigName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputMassPropsName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vecConfigInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">outputThrName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">thrCmdOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>vehicleConfigData</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">outputPropsName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vecConfigOutMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td rowspan="3"><p>velocityPoint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">inputControlName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inputCelMessName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputNavDataName</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">transNavInMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td rowspan="3"><p>VSCMGStateEffector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputCmds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cmdInMsg</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OutputDataString</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">speedOutMsg</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vscmgOutMsgNames</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vscmgOutMsgs</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="setting-a-basilisk-message-from-python-using-the-default-c-wrapper">
+<h2>Setting a Basilisk Message from Python using the default C++ wrapper<a class="headerlink" href="#setting-a-basilisk-message-from-python-using-the-default-c-wrapper" title="Link to this heading"></a></h2>
+<p>Import <code class="docutils literal notranslate"><span class="pre">messages2</span></code> to have access to all message definitions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+</pre></div>
+</div>
+<p>To create the message content of type <code class="docutils literal notranslate"><span class="pre">ParticularMsgPayload</span></code>, first get a copy of the message structure using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsgPayload</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Next, fill in <code class="docutils literal notranslate"><span class="pre">msgData</span></code> with the needed information.  The structure is always initialized to zero on creation.
+When done, use the following command to create the Msg object and get a copy for other modules to subscribe to.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msgData</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">time</span></code> is the message write time in nano-seconds.  It is optional and defaults to 0.</p>
+<p>If you want to just create a message from Python, but not write to it, you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsg</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will create a zero’d message payload with a header that indicates it has never been written.  To write
+to it at a later time you simply use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msgData</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that stand-alone messages written in Python don’t have a module ID.  The message module ID is thus set to 0.
+If you want to specify another module ID, this can be done with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msgData</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">moduleID</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next consider a C++ module that needs to not write to it’s own C++ wrapped output message
+<code class="docutils literal notranslate"><span class="pre">module.someOutMsg</span></code>, but rather to a stand-alone C++ message <code class="docutils literal notranslate"><span class="pre">standAloneMsg</span></code> created in Python.
+Thus the module output is re-directed to another message object.
+This can be done very simply with replacing the module internal message with the external
+message of the same type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">somOutMsg</span> <span class="o">=</span> <span class="n">standAloneMsg</span>
+</pre></div>
+</div>
+<p>Any module <code class="docutils literal notranslate"><span class="pre">nextModule.SomeInMsg</span></code> that needs to read the output of <code class="docutils literal notranslate"><span class="pre">module.someOutMsg</span></code> can be setup to
+read the output of the stand-alone message <code class="docutils literal notranslate"><span class="pre">standAloneMsg</span></code> instead using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nextModule</span><span class="o">.</span><span class="n">SomeInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">standAloneMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="setting-a-c-wrapped-basilisk-message-from-python">
+<h2>Setting a C-Wrapped Basilisk Message from Python<a class="headerlink" href="#setting-a-c-wrapped-basilisk-message-from-python" title="Link to this heading"></a></h2>
+<p>In rare cases you might want to create a C-wrapped msg copy in Python.  The default should be to use the
+C++ wrapped method shown above.  One scenario where a C-wrapped message might be needed is if you have
+multiple C-modules that should write to the same output message.  In this case it is possible to create a
+stand-alone C-wrapped message copy in Python and re-direct the module output message to write to this stand-alone
+message instead.  As the C-module only calls C-code, in this situation the stand-alone message must have
+a C-wrapped interface.  An example of this is shown in <a class="reference internal" href="../../examples/scenarioAttitudeFeedback.html#scenarioattitudefeedback"><span class="std std-ref">scenarioAttitudeFeedback</span></a>.</p>
+<section id="creating-a-c-wrapped-message">
+<h3>Creating a C-Wrapped Message<a class="headerlink" href="#creating-a-c-wrapped-message" title="Link to this heading"></a></h3>
+<p>The C-wrapped message interface is imported using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+</pre></div>
+</div>
+<p>The message payload is still created as before, using for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsgPayload</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To create a C-wrapped message copy use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsg_C</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This step creates an instance of <code class="docutils literal notranslate"><span class="pre">ParticularMsg_C</span></code> and adds itself as an author so you can write to it.
+Now you can write to the C-wrapped message as you with with C++ wrapped messages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msgData</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to create a C-wrapped message and write to it in one step, you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsg_C</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">msgData</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="redirecting-module-output-to-stand-alone-c-wrapped-message">
+<h3>Redirecting Module Output to Stand-Alone C-Wrapped Message<a class="headerlink" href="#redirecting-module-output-to-stand-alone-c-wrapped-message" title="Link to this heading"></a></h3>
+<p>Next consider the scenario where you don’t want to have a C module to write to it’s own output message
+<code class="docutils literal notranslate"><span class="pre">module.SomeOutMsg</span></code> of type <code class="docutils literal notranslate"><span class="pre">ParticularMsg</span></code>, but rather you want the module to write to a stand-alone
+module message <code class="docutils literal notranslate"><span class="pre">standAloneMsg</span></code> of the same type.  This can be done with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">messaging</span><span class="o">.</span><span class="n">ParticularMsg_C_addAuthor</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">someOutMsg</span><span class="p">,</span> <span class="n">standAloneMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Any module <code class="docutils literal notranslate"><span class="pre">nextModule.SomeInMsg</span></code> that needs to read the output of <code class="docutils literal notranslate"><span class="pre">module.someOutMsg</span></code> can be setup to
+read the output of the stand-alone message <code class="docutils literal notranslate"><span class="pre">standAloneMsg</span></code> instead using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nextModule</span><span class="o">.</span><span class="n">SomeInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">standAloneMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reading-a-basilisk-message-from-python">
+<h2>Reading a Basilisk Message from Python<a class="headerlink" href="#reading-a-basilisk-message-from-python" title="Link to this heading"></a></h2>
+<p>Assume <code class="docutils literal notranslate"><span class="pre">bskObject</span></code> is the Basilisk module created in Python.  To read an output message <code class="docutils literal notranslate"><span class="pre">someOutMsg</span></code>
+and print a variable <code class="docutils literal notranslate"><span class="pre">someMsgVariable</span></code> within this outpout message, you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msgCopy</span> <span class="o">=</span> <span class="n">bskObject</span><span class="o">.</span><span class="n">someOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">msgCopy</span><span class="o">.</span><span class="n">someMsgVariable</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="connecting-output-to-input-messages-in-python">
+<h2>Connecting Output to Input Messages in Python<a class="headerlink" href="#connecting-output-to-input-messages-in-python" title="Link to this heading"></a></h2>
+<p>Assume you have a message <code class="docutils literal notranslate"><span class="pre">someMsg</span></code> that you want to connect to another Basilisk module.  This message
+can be a stand-alone message in Python, or a output message within a Basilisk module.  It doesn’t matter if this
+message <code class="docutils literal notranslate"><span class="pre">someMsg</span></code> is created in a C or C++ Basilisk module.</p>
+<p>If you want to connect to the input message <code class="docutils literal notranslate"><span class="pre">someInMsg</span></code> of a C++ Basilisk module <code class="docutils literal notranslate"><span class="pre">moduleObject</span></code>,
+then you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">moduleObject</span><span class="o">.</span><span class="n">someInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">someMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to connect the input message <code class="docutils literal notranslate"><span class="pre">someInMsg</span></code> of a C wrapped Basilisk module <code class="docutils literal notranslate"><span class="pre">moduleConfig</span></code>,
+then you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">moduleConfig</span><span class="o">.</span><span class="n">someInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">someMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It does not matter if these message interfaces are based in C or C++. The <code class="docutils literal notranslate"><span class="pre">subscribeTo()</span></code> method handles this
+automatically.</p>
+</section>
+<section id="recorded-message-data">
+<h2>Recorded Message Data<a class="headerlink" href="#recorded-message-data" title="Link to this heading"></a></h2>
+<p>The recording of messages is much simplified.  There are a few changes to note in the format of the recorded data.</p>
+<p>Here is some sample code.  The only line required to create a message recorder module for the message is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">attErrorRec</span> <span class="o">=</span> <span class="n">attErrorConfig</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This creates an object that can be added to a Basilisk task list through:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attErrorRec</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The update rate of <code class="docutils literal notranslate"><span class="pre">simTaskName</span></code> controls the frequency at which this message is recorded.
+If you want the message to be logged at a lower rate, but still keep the recorder module in the <code class="docutils literal notranslate"><span class="pre">simTaskName</span></code> task
+queue, then you can set this with <code class="docutils literal notranslate"><span class="pre">.recorder(value)</span></code>.  Here <code class="docutils literal notranslate"><span class="pre">value</span></code> is the minimum time period (ns) before
+a message is recorded. If you want to set a desired number of data points to be recorded, then
+you can use the <code class="docutils literal notranslate"><span class="pre">samplingRatio()</span></code> helper function to determine a minimum recording time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingRatio</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+<span class="n">dataRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataRec</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>If you add the recorder module to another task running at a different frequency, be aware that the message
+time information is that of when the message was recorded, not when it is written.  Thus, in a
+case where the recording update rate is not an integer multiple of the simulation task rate
+the latest message data is recorded, but the time stamp is not when
+the message was written, but when it was recorded.  If you are logging orbital positions, your recorded
+position would thus be off relative to the time stamp.
+Recording the message when the module wrote the message ensures the
+recording time tag is in sync with the data.  The easiest way to get down-sampled data is to add the
+message recorder module to the same task that contains the module writing the message.  Ensure the
+recorder is called after the module such that the recorded module message is current for this time step.</p>
+</div>
+<p>If you are starting and stopping the simulation and need to update the minimum time interval before
+messages are recorded, you can do this with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataRec</span><span class="o">.</span><span class="n">updateTimeInterval</span><span class="p">(</span><span class="n">newSamplingTime</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That is it.  The data is now recorded into <code class="docutils literal notranslate"><span class="pre">attErrorRec</span></code> automatically during the simulation run.
+In the new messaging system  the time information when the message is recorded
+is no longer pre-pended in a first column, but rather provided as a
+separate array accessed through <code class="docutils literal notranslate"><span class="pre">datRec.times()</span></code>.  This means recording <cite>N</cite> time steps of a 3D vector no longer no longer
+yields a <cite>Nx4</cite> array, but rather a <cite>Nx3</cite> array.</p>
+<p>To record a particular variable <cite>variableName</cite> within the message you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">varLog</span> <span class="o">=</span> <span class="n">dataRec</span><span class="o">.</span><span class="n">variableName</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">variableName</span></code> is a <cite>N</cite> dimensional vector of values, the <code class="docutils literal notranslate"><span class="pre">varLog</span></code> will be an <cite>MxN</cite> matrix of data
+values where <cite>M</cite> is the number of recorded time steps.  You can use the typical python commands to select a subset
+of this matrix.</p>
+<p>Some plotting or value checking logic might have to be updated.
+For example, to plot using recorded data use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">attErrorRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">attErrorRec</span><span class="o">.</span><span class="n">sigma_BR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>If you want to retrieve a vector of times when the message was written (i.e. recorded the <code class="docutils literal notranslate"><span class="pre">.timeWritten()</span></code> message
+information), then you can do this through <code class="docutils literal notranslate"><span class="pre">dataRec.timesWritten()</span></code>.  Depending on how ofter a message is
+written by a module, and how often a message is recorded, these times can be different.</p>
+</section>
+<section id="running-basilisk-simulation">
+<h2>Running Basilisk Simulation<a class="headerlink" href="#running-basilisk-simulation" title="Link to this heading"></a></h2>
+<p>The method <code class="docutils literal notranslate"><span class="pre">.InitializeSimulationAndDiscover()</span></code> has been removed in favor of <code class="docutils literal notranslate"><span class="pre">.InitializeSimulation()</span></code> as
+it did the regular simulation initialization and setup cross-process messaging using the old messaging system.  This
+is no longer needed.  Thus, rather then having 2 methods to initialize a Basilisk simulation, only the regular
+initializaiton method is now used.</p>
+</section>
+<section id="miscellaneous-changes">
+<h2>Miscellaneous Changes<a class="headerlink" href="#miscellaneous-changes" title="Link to this heading"></a></h2>
+<p>If from Python you access <code class="docutils literal notranslate"><span class="pre">#define</span></code> values of <code class="docutils literal notranslate"><span class="pre">macroDefinitions.h</span></code>, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">simFswInterfaceMessages</span><span class="o">.</span><span class="n">MAX_EFF_CNT</span>
+<span class="n">fswMessages</span><span class="o">.</span><span class="n">MAX_EFF_CNT</span>
+</pre></div>
+</div>
+<p>then you can now access these definitions using  <code class="docutils literal notranslate"><span class="pre">messaging.i</span></code> using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">messaging</span><span class="o">.</span><span class="n">MAX_EFF_CNT</span>
+</pre></div>
+</div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/7psCHvvrf4Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="FAQwindows.html" class="btn btn-neutral float-left" title="FAQ: Microsoft Windows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Developer.html" class="btn btn-neutral float-right" title="Developer Information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

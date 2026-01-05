@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. scenario_FeedbackRW &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="3. scenario_AttGuidance" href="scenario_AttGuidance.html" />
+    <link rel="prev" title="1. scenario_BasicOrbit" href="scenario_BasicOrbit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../../index.html#single-satellite">Single Satellite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../index.html#satellite-formation">Satellite Formation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>scenario_FeedbackRW</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/examples/BskSim/scenarios/scenario_FeedbackRW.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenario-feedbackrw">
+<span id="id1"></span><h1><span class="section-number">2. </span>scenario_FeedbackRW<a class="headerlink" href="#scenario-feedbackrw" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/34JXysCB77g" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><section id="overview">
+<h2><span class="section-number">2.1. </span>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This script sets up a 6-DOF spacecraft orbiting Earth. The goal of the scenario is to</p>
+<ol class="arabic simple">
+<li><p>add reaction wheels to <a class="reference internal" href="../models/BSK_Dynamics.html#bsk-dynamics"><span class="std std-ref">BSK_Dynamics</span></a>, and</p></li>
+<li><p>establish a inertial pointing FSW mode in <a class="reference internal" href="../models/BSK_Fsw.html#bsk-fsw"><span class="std std-ref">BSK_Fsw</span></a>.</p></li>
+</ol>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples/BskSim/scenarios</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenario_FeedbackRW</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The simulation mimics the basic simulation in the earlier tutorial in
+<a class="reference internal" href="../../scenarioAttitudeFeedbackRW.html#scenarioattitudefeedbackrw"><span class="std std-ref">scenarioAttitudeFeedbackRW</span></a>.
+The simulation layout is shown in the following illustration.</p>
+<img alt="../../../_images/test_scenario_FeedbackRW.svg" class="align-center" src="../../../_images/test_scenario_FeedbackRW.svg" />
+<p>Two simulation processes are created: one
+which contains dynamics modules, and one that contains the FSW
+modules. The initial setup for the simulation closely models that of <a class="reference internal" href="scenario_BasicOrbit.html#scenario-basicorbit"><span class="std std-ref">scenario_BasicOrbit</span></a>.</p>
+</section>
+<section id="custom-dynamics-configurations-instructions">
+<h2><span class="section-number">2.2. </span>Custom Dynamics Configurations Instructions<a class="headerlink" href="#custom-dynamics-configurations-instructions" title="Link to this heading"></a></h2>
+<p>In addition to the modules used in <a class="reference internal" href="scenario_BasicOrbit.html#scenario-basicorbit"><span class="std std-ref">scenario_BasicOrbit</span></a>, the user must configure the RW module
+in <a class="reference internal" href="../models/BSK_Dynamics.html#bsk-dynamics"><span class="std std-ref">BSK_Dynamics</span></a>
+to stabilize the tumbling. This is accomplished by first creating the RW state effector.
+The RW object is then configured through <code class="docutils literal notranslate"><span class="pre">InitAllDynObjects(SimBase)</span></code> which
+includes the <code class="docutils literal notranslate"><span class="pre">SetReactionWheelDynEffector()</span></code>
+function which configures the RW pyramid’s properties and messages.</p>
+</section>
+<section id="custom-fsw-configurations-instructions">
+<h2><span class="section-number">2.3. </span>Custom FSW Configurations Instructions<a class="headerlink" href="#custom-fsw-configurations-instructions" title="Link to this heading"></a></h2>
+<p>To configure the desired <a class="reference internal" href="../../../Documentation/fswAlgorithms/attGuidance/inertial3D/inertial3D.html#inertial3d"><span class="std std-ref">Module: inertial3D</span></a> FSW mode the user must declare the following modules
+within the <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> function in <a class="reference internal" href="../models/BSK_Fsw.html#bsk-fsw"><span class="std std-ref">BSK_Fsw</span></a>.
+These provide the initial setup for an attitude guidance system that makes use of an inertial pointing model, a module
+that tracks the error of the spacecraft’s MRP parameters against the pointing model, and a module that takes that
+information to provide a torque to correct for the error.</p>
+<p>Following the initial declaration of these configuration modules, <a class="reference internal" href="../models/BSK_Fsw.html#bsk-fsw"><span class="std std-ref">BSK_Fsw</span></a>
+calls a <code class="docutils literal notranslate"><span class="pre">InitAllFSWObjects()</span></code> command,
+which, like <a class="reference internal" href="../models/BSK_Dynamics.html#bsk-dynamics"><span class="std std-ref">BSK_Dynamics</span></a>’s <code class="docutils literal notranslate"><span class="pre">InitAllDynObjects()</span></code>, calls additional setter functions that configure each
+of the FSW modules with the appropriate information and message names.</p>
+<p>In addition to the modules used for attitude guidance, there are also two setter functions that send vehicle and RW
+configuration messages that are linked into the attitude guidance modules called <code class="docutils literal notranslate"><span class="pre">SetVehicleConfiguration()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">SetRWConfigMsg()</span></code>.</p>
+<p>After each configuration module has been properly initialized with various message names, FSW tasks are generated.
+The two tasks required for the <a class="reference internal" href="../../../Documentation/fswAlgorithms/attGuidance/inertial3D/inertial3D.html#inertial3d"><span class="std std-ref">Module: inertial3D</span></a> mode are <code class="docutils literal notranslate"><span class="pre">inertial3DPointTask</span></code> and <code class="docutils literal notranslate"><span class="pre">mrpFeedbackRWsTask</span></code>.
+Note how the tasks are divided between the pointing model and control loop. These modular tasks allow
+for simple FSW reconfigurations should the user want to use a different pointing model, but to use the same feedback
+control loop. This will be seen and discussed in later scenarios.</p>
+<p>Because the FSW guidance and control are broken up into separate tasks to be enabled, they must share a common
+stand-along (gateway) message to connect these tasks.  These are setup with the method <code class="docutils literal notranslate"><span class="pre">setupGatewayMsgs()</span></code>.
+Note that if a C FSW module re-directs its message writing to such a stand-alone message, when recording
+the message this stand-alone message should be recorded.  The output message payload within the module itself
+remain zero in such a case.</p>
+<p>Finally, the <a class="reference internal" href="../../../Documentation/fswAlgorithms/attGuidance/inertial3D/inertial3D.html#inertial3d"><span class="std std-ref">Module: inertial3D</span></a> mode call in <a class="reference internal" href="#scenario-feedbackrw"><span class="std std-ref">scenario_FeedbackRW</span></a> needs to be triggered by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SimBase</span><span class="o">.</span><span class="n">createNewEvent</span><span class="p">(</span><span class="s2">&quot;initiateInertial3D&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processTasksTimeStep</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>
+              <span class="n">conditionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeRequest</span> <span class="o">==</span> <span class="s2">&quot;inertial3D&quot;</span><span class="p">,</span>
+              <span class="n">actionFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">fswProc</span><span class="o">.</span><span class="n">disableAllTasks</span><span class="p">(),</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">FSWModels</span><span class="o">.</span><span class="n">zeroGateWayMsgs</span><span class="p">(),</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;inertial3DPointTask&quot;</span><span class="p">),</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">enableTask</span><span class="p">(</span><span class="s2">&quot;mrpFeedbackRWsTask&quot;</span><span class="p">),</span>
+              <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>which disables any existing tasks, zero’s all the stand-alone gateway messages
+and enables the inertial pointing task and RW feedback task.
+This concludes how to construct a preconfigured FSW mode that will be available for any future scenario
+that uses the BSK_Sim architecture.</p>
+<p>This simulation runs for 10 minutes and then switches the FSW mode to <code class="docutils literal notranslate"><span class="pre">directInertial3D</span></code>.  The difference here
+is that the requested command torque from the <code class="docutils literal notranslate"><span class="pre">mrpFeedback</span></code> module in this mode is directly sent to the
+spacecraft object as an external torque.  Also, not that while in <code class="docutils literal notranslate"><span class="pre">inertial3D</span></code> mode the <code class="docutils literal notranslate"><span class="pre">mrpFeedback</span></code> module
+receives the RW speeds to feed-forward compensate for them, in the <code class="docutils literal notranslate"><span class="pre">directInertial3D</span></code> mode this is not the case.</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2><span class="section-number">2.4. </span>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">showPlots</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<img alt="../../../_images/scenario_FeedbackRW_attitudeErrorNorm.svg" class="align-center" src="../../../_images/scenario_FeedbackRW_attitudeErrorNorm.svg" />
+<img alt="../../../_images/scenario_FeedbackRW_rwMotorTorque.svg" class="align-center" src="../../../_images/scenario_FeedbackRW_rwMotorTorque.svg" />
+<img alt="../../../_images/scenario_FeedbackRW_rateError.svg" class="align-center" src="../../../_images/scenario_FeedbackRW_rateError.svg" />
+<img alt="../../../_images/scenario_FeedbackRW_rwSpeed.svg" class="align-center" src="../../../_images/scenario_FeedbackRW_rwSpeed.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario_FeedbackRW.run">
+<span class="sig-prename descclassname"><span class="pre">scenario_FeedbackRW.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/scenario_FeedbackRW.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenario_FeedbackRW.run" title="Link to this definition"></a></dt>
+<dd><p>The scenarios can be run with the followings setups parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>showPlots</strong> (<em>bool</em>) – Determines if the script should display plots</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario_FeedbackRW.scenario_AttitudeFeedbackRW">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scenario_FeedbackRW.</span></span><span class="sig-name descname"><span class="pre">scenario_AttitudeFeedbackRW</span></span><a class="reference internal" href="../../../_modules/scenario_FeedbackRW.html#scenario_AttitudeFeedbackRW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenario_FeedbackRW.scenario_AttitudeFeedbackRW" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../BSK_masters.html#BSK_masters.BSKSim" title="BSK_masters.BSKSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">BSKSim</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BSKScenario</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario_FeedbackRW.scenario_AttitudeFeedbackRW.configure_initial_conditions">
+<span class="sig-name descname"><span class="pre">configure_initial_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/scenario_FeedbackRW.html#scenario_AttitudeFeedbackRW.configure_initial_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenario_FeedbackRW.scenario_AttitudeFeedbackRW.configure_initial_conditions" title="Link to this definition"></a></dt>
+<dd><p>Developer must override this method in their BSK_Scenario derived subclass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario_FeedbackRW.scenario_AttitudeFeedbackRW.log_outputs">
+<span class="sig-name descname"><span class="pre">log_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/scenario_FeedbackRW.html#scenario_AttitudeFeedbackRW.log_outputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenario_FeedbackRW.scenario_AttitudeFeedbackRW.log_outputs" title="Link to this definition"></a></dt>
+<dd><p>Developer must override this method in their BSK_Scenario derived subclass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario_FeedbackRW.scenario_AttitudeFeedbackRW.pull_outputs">
+<span class="sig-name descname"><span class="pre">pull_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/scenario_FeedbackRW.html#scenario_AttitudeFeedbackRW.pull_outputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenario_FeedbackRW.scenario_AttitudeFeedbackRW.pull_outputs" title="Link to this definition"></a></dt>
+<dd><p>Developer must override this method in their BSK_Scenario derived subclass.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenario_BasicOrbit.html" class="btn btn-neutral float-left" title="1. scenario_BasicOrbit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenario_AttGuidance.html" class="btn btn-neutral float-right" title="3. scenario_AttGuidance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

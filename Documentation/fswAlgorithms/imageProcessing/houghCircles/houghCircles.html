@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: houghCircles &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="houghCircles" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">imageProcessing</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../centerRadiusCNN/index.html">centerRadiusCNN</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../horizonOpNav/index.html">horizonOpNav</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">houghCircles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../limbFinding/index.html">limbFinding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pixelLineConverter/index.html">pixelLineConverter</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">imageProcessing</a></li>
+          <li class="breadcrumb-item"><a href="index.html">houghCircles</a></li>
+      <li class="breadcrumb-item active">Module: houghCircles</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/imageProcessing/houghCircles/houghCircles.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-houghcircles">
+<span id="houghcircles"></span><h1>Module: houghCircles<a class="headerlink" href="#module-houghcircles" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV’s HoughCricle Transform.</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/f0e9ce3d3253274d4449a8b9ac8f74f6/Basilisk-houghCircles-20190213.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>opnavCirclesOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavCirclesMsgPayload.html#opnavcirclesmsgpayload"><span class="std std-ref">OpNavCirclesMsgPayload</span></a></p></td>
+<td><p>output navigation message for relative position</p></td>
+</tr>
+<tr class="row-odd"><td><p>imageInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#cameraimagemsgpayload"><span class="std std-ref">CameraImageMsgPayload</span></a></p></td>
+<td><p>camera image input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412HoughCircles">
+<span id="_CPPv312HoughCircles"></span><span id="_CPPv212HoughCircles"></span><span id="HoughCircles"></span><span class="target" id="class_hough_circles"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HoughCircles</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv412HoughCircles" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;houghCircles.h&gt;</em></div>
+<p>visual planet tracking with Hough circles </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles12HoughCirclesEv">
+<span id="_CPPv3N12HoughCircles12HoughCirclesEv"></span><span id="_CPPv2N12HoughCircles12HoughCirclesEv"></span><span id="HoughCircles::HoughCircles"></span><span class="target" id="class_hough_circles_1ac0114f24c4362050288f81b8f28a4d73"></span><span class="sig-name descname"><span class="n"><span class="pre">HoughCircles</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12HoughCircles12HoughCirclesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor for the <a class="reference internal" href="#class_hough_circles"><span class="std std-ref">HoughCircles</span></a> module. It also sets some default values at its creation. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCirclesD0Ev">
+<span id="_CPPv3N12HoughCirclesD0Ev"></span><span id="_CPPv2N12HoughCirclesD0Ev"></span><span id="HoughCircles::~HoughCircles"></span><span class="target" id="class_hough_circles_1a666fb66b2559cae310751ad83513e90f"></span><span class="sig-name descname"><span class="n"><span class="pre">~HoughCircles</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12HoughCirclesD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles11UpdateStateE8uint64_t">
+<span id="_CPPv3N12HoughCircles11UpdateStateE8uint64_t"></span><span id="_CPPv2N12HoughCircles11UpdateStateE8uint64_t"></span><span id="HoughCircles::UpdateState__uint64_t"></span><span class="target" id="class_hough_circles_1ad1ebc9b20bbb77bf3a19ca91a45ffee0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12HoughCircles11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This module reads an OpNav image and extracts circle information from its content using OpenCV’s HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The clock time at which the function was called (nanoseconds) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles5ResetE8uint64_t">
+<span id="_CPPv3N12HoughCircles5ResetE8uint64_t"></span><span id="_CPPv2N12HoughCircles5ResetE8uint64_t"></span><span id="HoughCircles::Reset__uint64_t"></span><span class="target" id="class_hough_circles_1a42d4d9a3079a567ec8c977a2938a97f4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12HoughCircles5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The clock time at which the function was called (nanoseconds) </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles8filenameE">
+<span id="_CPPv3N12HoughCircles8filenameE"></span><span id="_CPPv2N12HoughCircles8filenameE"></span><span id="HoughCircles::filename__ss"></span><span class="target" id="class_hough_circles_1a77c5248ce2d4c488ce39ee6d2859b525"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filename</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles8filenameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Filename for module to read an image directly. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles18opnavCirclesOutMsgE">
+<span id="_CPPv3N12HoughCircles18opnavCirclesOutMsgE"></span><span id="_CPPv2N12HoughCircles18opnavCirclesOutMsgE"></span><span id="HoughCircles::opnavCirclesOutMsg__Message:OpNavCirclesMsgPayload:"></span><span class="target" id="class_hough_circles_1a054090633e8ec112970f6d533c4e54fc"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavCirclesMsgPayload.html#_CPPv422OpNavCirclesMsgPayload" title="OpNavCirclesMsgPayload"><span class="n"><span class="pre">OpNavCirclesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opnavCirclesOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles18opnavCirclesOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the OpNavCirclesMsg output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles10imageInMsgE">
+<span id="_CPPv3N12HoughCircles10imageInMsgE"></span><span id="_CPPv2N12HoughCircles10imageInMsgE"></span><span id="HoughCircles::imageInMsg__ReadFunctor:CameraImageMsgPayload:"></span><span class="target" id="class_hough_circles_1a9592b5142c1a8ab1219703884f5ff1d1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraImageMsgPayload.html#_CPPv421CameraImageMsgPayload" title="CameraImageMsgPayload"><span class="n"><span class="pre">CameraImageMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">imageInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles10imageInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the camera output message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles7saveDirE">
+<span id="_CPPv3N12HoughCircles7saveDirE"></span><span id="_CPPv2N12HoughCircles7saveDirE"></span><span id="HoughCircles::saveDir__ss"></span><span class="target" id="class_hough_circles_1acefa953d430ff90f22b24fe5379d7282"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saveDir</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles7saveDirE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the directory to save images. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles13sensorTimeTagE">
+<span id="_CPPv3N12HoughCircles13sensorTimeTagE"></span><span id="_CPPv2N12HoughCircles13sensorTimeTagE"></span><span id="HoughCircles::sensorTimeTag__uint64_t"></span><span class="target" id="class_hough_circles_1a9d466e20cf695c8991dbee5f46314030"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensorTimeTag</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles13sensorTimeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Current time tag for sensor out </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles9blurrSizeE">
+<span id="_CPPv3N12HoughCircles9blurrSizeE"></span><span id="_CPPv2N12HoughCircles9blurrSizeE"></span><span id="HoughCircles::blurrSize__int32_t"></span><span class="target" id="class_hough_circles_1a5ac5597b57c542ec40afd3c2d23be156"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">blurrSize</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles9blurrSizeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[px] Size of the blurring box in pixels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles11cannyThreshE">
+<span id="_CPPv3N12HoughCircles11cannyThreshE"></span><span id="_CPPv2N12HoughCircles11cannyThreshE"></span><span id="HoughCircles::cannyThresh__int32_t"></span><span class="target" id="class_hough_circles_1aedcad920d237efc5dca38e1a7dea859a"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cannyThresh</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles11cannyThreshE" title="Link to this definition"></a><br /></dt>
+<dd><p>[px] Canny edge detection Threshold </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles10voteThreshE">
+<span id="_CPPv3N12HoughCircles10voteThreshE"></span><span id="_CPPv2N12HoughCircles10voteThreshE"></span><span id="HoughCircles::voteThresh__int32_t"></span><span class="target" id="class_hough_circles_1a532f49c870645166ad223831d3f62d5d"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">voteThresh</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles10voteThreshE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Threshold in number of votes to qualify a circle as detected </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles12houghMinDistE">
+<span id="_CPPv3N12HoughCircles12houghMinDistE"></span><span id="_CPPv2N12HoughCircles12houghMinDistE"></span><span id="HoughCircles::houghMinDist__int32_t"></span><span class="target" id="class_hough_circles_1aab616ac4848ab4ddaae04b00b2f56288"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">houghMinDist</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles12houghMinDistE" title="Link to this definition"></a><br /></dt>
+<dd><p>[px] Min distance between 2 detected circles </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles14houghMinRadiusE">
+<span id="_CPPv3N12HoughCircles14houghMinRadiusE"></span><span id="_CPPv2N12HoughCircles14houghMinRadiusE"></span><span id="HoughCircles::houghMinRadius__int32_t"></span><span class="target" id="class_hough_circles_1a8c0a225045e76fbe1b44b05a9c454aa0"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">houghMinRadius</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles14houghMinRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Min radius of a detected circle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles14houghMaxRadiusE">
+<span id="_CPPv3N12HoughCircles14houghMaxRadiusE"></span><span id="_CPPv2N12HoughCircles14houghMaxRadiusE"></span><span id="HoughCircles::houghMaxRadius__int32_t"></span><span class="target" id="class_hough_circles_1ad4634e822ee6b9cea8734ced21ac2158"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">houghMaxRadius</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles14houghMaxRadiusE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Max radius of a detected circle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles7dpValueE">
+<span id="_CPPv3N12HoughCircles7dpValueE"></span><span id="_CPPv2N12HoughCircles7dpValueE"></span><span id="HoughCircles::dpValue__int32_t"></span><span class="target" id="class_hough_circles_1ac082f5a39334dd75a2ee578735c333e9"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dpValue</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles7dpValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Subscaling of image for circle searching, 1 searches full image </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles7noiseSFE">
+<span id="_CPPv3N12HoughCircles7noiseSFE"></span><span id="_CPPv2N12HoughCircles7noiseSFE"></span><span id="HoughCircles::noiseSF__double"></span><span class="target" id="class_hough_circles_1a115ae98df2dbe6166e21b2c796d9f7de"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseSF</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles7noiseSFE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Scale Factor for noise control </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles15expectedCirclesE">
+<span id="_CPPv3N12HoughCircles15expectedCirclesE"></span><span id="_CPPv2N12HoughCircles15expectedCirclesE"></span><span id="HoughCircles::expectedCircles__int32_t"></span><span class="target" id="class_hough_circles_1ad3c89fa6975dec4e061cdf7a3618e352"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">expectedCircles</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles15expectedCirclesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of expected circles to be found </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles10saveImagesE">
+<span id="_CPPv3N12HoughCircles10saveImagesE"></span><span id="_CPPv2N12HoughCircles10saveImagesE"></span><span id="HoughCircles::saveImages__int32_t"></span><span class="target" id="class_hough_circles_1a377ca40c3a86d53f459c9d9f1dbc0fb0"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saveImages</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles10saveImagesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] 1 to save images to file for debugging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12HoughCircles9bskLoggerE">
+<span id="_CPPv3N12HoughCircles9bskLoggerE"></span><span id="_CPPv2N12HoughCircles9bskLoggerE"></span><span id="HoughCircles::bskLogger__BSKLogger"></span><span class="target" id="class_hough_circles_1a4dc35fda3d7a038061672ac3e2adca70"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12HoughCircles9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="houghCircles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

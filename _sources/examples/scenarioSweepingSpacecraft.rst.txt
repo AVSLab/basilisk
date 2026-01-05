@@ -1,0 +1,13 @@
+.. _scenarioSweepingSpacecraft:
+
+scenarioSweepingSpacecraft
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioSweepingSpacecraft
+   :members:
+   :show-inheritance:
+

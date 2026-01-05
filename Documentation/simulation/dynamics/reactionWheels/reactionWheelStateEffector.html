@@ -1,0 +1,532 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: reactionWheelStateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: reactionWheelSupport" href="reactionWheelSupport.html" />
+    <link rel="prev" title="reactionWheels" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">reactionWheels</a></li>
+      <li class="breadcrumb-item active">Module: reactionWheelStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/reactionWheels/reactionWheelStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-reactionwheelstateeffector">
+<span id="reactionwheelstateeffector"></span><h1>Module: reactionWheelStateEffector<a class="headerlink" href="#module-reactionwheelstateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Class that is used to implement an effector impacting a dynamic body
+that does not itself maintain a state or represent a changing component of
+the body (for example: gravity, thrusters, solar radiation pressure, etc.)</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/17eeb82a3f1a8e0b8617c8b8284303ed/Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rwMotorCmdInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#arraymotortorquemsgpayload"><span class="std std-ref">ArrayMotorTorqueMsgPayload</span></a></p></td>
+<td><p>(optional) RW motor torque array cmd input message.  If not connected the motor torques are set to zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p>rwSpeedOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#rwspeedmsgpayload"><span class="std std-ref">RWSpeedMsgPayload</span></a></p></td>
+<td><p>RW speed array output message</p></td>
+</tr>
+<tr class="row-even"><td><p>rwOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#rwconfiglogmsgpayload"><span class="std std-ref">RWConfigLogMsgPayload</span></a></p></td>
+<td><p>vector of RW log output messages</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The reaction wheel state effector module provides functionality for simulating reaction wheels in a spacecraft.
+It includes safety mechanisms to prevent numerical instability that can occur with excessive wheel acceleration
+or when using unlimited torque with small spacecraft inertia.</p>
+<section id="threshold-parameters">
+<h3>Threshold Parameters<a class="headerlink" href="#threshold-parameters" title="Link to this heading"></a></h3>
+<p>The module includes two configurable threshold parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxWheelAcceleration</span></code>: Maximum allowed wheel acceleration to prevent numerical instability. Default value is 1.0e6 rad/s^2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">largeTorqueThreshold</span></code>: Threshold for warning about large torque with unlimited torque setting. Default value is 10.0 Nm.</p></li>
+</ul>
+<p>These parameters can be accessed and modified using the following getter and setter methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the current maximum wheel acceleration threshold</span>
+<span class="n">current_max_accel</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">getMaxWheelAcceleration</span><span class="p">()</span>
+
+<span class="c1"># Set a new maximum wheel acceleration threshold</span>
+<span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">setMaxWheelAcceleration</span><span class="p">(</span><span class="mf">2.0e6</span><span class="p">)</span>  <span class="c1"># rad/s^2</span>
+
+<span class="c1"># Get the current large torque threshold</span>
+<span class="n">current_torque_threshold</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">getLargeTorqueThreshold</span><span class="p">()</span>
+
+<span class="c1"># Set a new large torque threshold</span>
+<span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">setLargeTorqueThreshold</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>  <span class="c1"># Nm</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv426ReactionWheelStateEffector">
+<span id="_CPPv326ReactionWheelStateEffector"></span><span id="_CPPv226ReactionWheelStateEffector"></span><span id="ReactionWheelStateEffector"></span><span class="target" id="class_reaction_wheel_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReactionWheelStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><a class="headerlink" href="#_CPPv426ReactionWheelStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;reactionWheelStateEffector.h&gt;</em></div>
+<p>reaction wheel state effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector26ReactionWheelStateEffectorEv">
+<span id="_CPPv3N26ReactionWheelStateEffector26ReactionWheelStateEffectorEv"></span><span id="_CPPv2N26ReactionWheelStateEffector26ReactionWheelStateEffectorEv"></span><span id="ReactionWheelStateEffector::ReactionWheelStateEffector"></span><span class="target" id="class_reaction_wheel_state_effector_1ab22894da35d867568800b40a6d5012dc"></span><span class="sig-name descname"><span class="n"><span class="pre">ReactionWheelStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector26ReactionWheelStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffectorD0Ev">
+<span id="_CPPv3N26ReactionWheelStateEffectorD0Ev"></span><span id="_CPPv2N26ReactionWheelStateEffectorD0Ev"></span><span id="ReactionWheelStateEffector::~ReactionWheelStateEffector"></span><span class="target" id="class_reaction_wheel_state_effector_1ab7f5a6781873615f1e9e1ec65f437cc9"></span><span class="sig-name descname"><span class="n"><span class="pre">~ReactionWheelStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N26ReactionWheelStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N26ReactionWheelStateEffector14registerStatesER15DynParamManager"></span><span id="ReactionWheelStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_reaction_wheel_state_effector_1aa277a172359ce3f0d4afc329c4bfd12c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N26ReactionWheelStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N26ReactionWheelStateEffector12linkInStatesER15DynParamManager"></span><span id="ReactionWheelStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_reaction_wheel_state_effector_1a466eb3639dd5962a074c353fa5f1748c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N26ReactionWheelStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N26ReactionWheelStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="ReactionWheelStateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_reaction_wheel_state_effector_1a0e0253a53880d9316eed5bf434651e82"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTimeNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is here to write the output message structure into the specified message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integTimeNanos</strong> – The current time used for time-stamping the message </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N26ReactionWheelStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N26ReactionWheelStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="ReactionWheelStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_reaction_wheel_state_effector_1a9a0392ddec84f91a0adf92761889ee17"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N26ReactionWheelStateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N26ReactionWheelStateEffector23updateEffectorMassPropsEd"></span><span id="ReactionWheelStateEffector::updateEffectorMassProps__double"></span><span class="target" id="class_reaction_wheel_state_effector_1a396fbd883a6cc91947ca13f9dabbdac6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Method for stateEffector to give mass contributions </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N26ReactionWheelStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N26ReactionWheelStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="ReactionWheelStateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_reaction_wheel_state_effector_1a3e7a46acb25134a8469508e74de585be"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Back-sub contributions </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N26ReactionWheelStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N26ReactionWheelStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="ReactionWheelStateEffector::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="class_reaction_wheel_state_effector_1a660df9ebccea88336d05722c2ac89ac1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Energy and momentum calculations </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector5ResetE8uint64_t">
+<span id="_CPPv3N26ReactionWheelStateEffector5ResetE8uint64_t"></span><span id="_CPPv2N26ReactionWheelStateEffector5ResetE8uint64_t"></span><span id="ReactionWheelStateEffector::Reset__uint64_t"></span><span class="target" id="class_reaction_wheel_state_effector_1aa3589d73c91ede618c782bdb44fe9261"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset the module to origina configuration values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector16addReactionWheelENSt10shared_ptrI15RWConfigPayloadEE">
+<span id="_CPPv3N26ReactionWheelStateEffector16addReactionWheelENSt10shared_ptrI15RWConfigPayloadEE"></span><span id="_CPPv2N26ReactionWheelStateEffector16addReactionWheelENSt10shared_ptrI15RWConfigPayloadEE"></span><span id="ReactionWheelStateEffector::addReactionWheel__std::shared_ptr:RWConfigPayload:"></span><span class="target" id="class_reaction_wheel_state_effector_1a5864254dec868465966fed7eadcbbd2f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addReactionWheel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/RWConfigPayload.html#_CPPv415RWConfigPayload" title="RWConfigPayload"><span class="n"><span class="pre">RWConfigPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">NewRW</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector16addReactionWheelENSt10shared_ptrI15RWConfigPayloadEE" title="Link to this definition"></a><br /></dt>
+<dd><p>add a RW data object to the reactionWheelStateEffector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N26ReactionWheelStateEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N26ReactionWheelStateEffector11UpdateStateE8uint64_t"></span><span id="ReactionWheelStateEffector::UpdateState__uint64_t"></span><span class="target" id="class_reaction_wheel_state_effector_1a36aa215de12d330d123da74b04c4453e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is the main cyclical call for the scheduled part of the RW dynamics model. It reads the current commands array and sets the RW configuration data based on that incoming command set. Note that the main dynamical method (ComputeDynamics()) is not called here and is intended to be called from the dynamics plant in the system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector19WriteOutputMessagesE8uint64_t">
+<span id="_CPPv3N26ReactionWheelStateEffector19WriteOutputMessagesE8uint64_t"></span><span id="_CPPv2N26ReactionWheelStateEffector19WriteOutputMessagesE8uint64_t"></span><span id="ReactionWheelStateEffector::WriteOutputMessages__uint64_t"></span><span class="target" id="class_reaction_wheel_state_effector_1a45248de105ba573fa0abbe1fca34246b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector19WriteOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is here to write the output message structure into the specified message. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current time used for time-stamping the message </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector10ReadInputsEv">
+<span id="_CPPv3N26ReactionWheelStateEffector10ReadInputsEv"></span><span id="_CPPv2N26ReactionWheelStateEffector10ReadInputsEv"></span><span id="ReactionWheelStateEffector::ReadInputs"></span><span class="target" id="class_reaction_wheel_state_effector_1aeee23c8bcb4d5efbf1d174417d5f7425"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector10ReadInputsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the incoming command message and set the associated command structure for operating the RWs. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector19ConfigureRWRequestsEd">
+<span id="_CPPv3N26ReactionWheelStateEffector19ConfigureRWRequestsEd"></span><span id="_CPPv2N26ReactionWheelStateEffector19ConfigureRWRequestsEd"></span><span id="ReactionWheelStateEffector::ConfigureRWRequests__double"></span><span class="target" id="class_reaction_wheel_state_effector_1ae74c17bf17d25d38f60632ed8564f10c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConfigureRWRequests</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector19ConfigureRWRequestsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the new commands vector and set the RW firings appropriately. It assumes that the ReadInputs method has already been run successfully.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentTime</strong> – The current simulation time converted to a double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26ReactionWheelStateEffector23getMaxWheelAccelerationEv">
+<span id="_CPPv3NK26ReactionWheelStateEffector23getMaxWheelAccelerationEv"></span><span id="_CPPv2NK26ReactionWheelStateEffector23getMaxWheelAccelerationEv"></span><span id="ReactionWheelStateEffector::getMaxWheelAccelerationC"></span><span class="target" id="class_reaction_wheel_state_effector_1a5e8bb753c8beb5352f39fd9188bce646"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMaxWheelAcceleration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26ReactionWheelStateEffector23getMaxWheelAccelerationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the maximum wheel acceleration threshold. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Maximum wheel acceleration in rad/s^2 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector23setMaxWheelAccelerationEd">
+<span id="_CPPv3N26ReactionWheelStateEffector23setMaxWheelAccelerationEd"></span><span id="_CPPv2N26ReactionWheelStateEffector23setMaxWheelAccelerationEd"></span><span id="ReactionWheelStateEffector::setMaxWheelAcceleration__double"></span><span class="target" id="class_reaction_wheel_state_effector_1a0d7c72beea4e3b9b633ab3102be2d0b5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMaxWheelAcceleration</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector23setMaxWheelAccelerationEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the maximum wheel acceleration threshold. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – New maximum wheel acceleration value in rad/s^2 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK26ReactionWheelStateEffector23getLargeTorqueThresholdEv">
+<span id="_CPPv3NK26ReactionWheelStateEffector23getLargeTorqueThresholdEv"></span><span id="_CPPv2NK26ReactionWheelStateEffector23getLargeTorqueThresholdEv"></span><span id="ReactionWheelStateEffector::getLargeTorqueThresholdC"></span><span class="target" id="class_reaction_wheel_state_effector_1a778f256ece44fdf3ccec2a937dff43a3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getLargeTorqueThreshold</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK26ReactionWheelStateEffector23getLargeTorqueThresholdEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the large torque threshold for unlimited torque warning. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Large torque threshold in Nm </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector23setLargeTorqueThresholdEd">
+<span id="_CPPv3N26ReactionWheelStateEffector23setLargeTorqueThresholdEd"></span><span id="_CPPv2N26ReactionWheelStateEffector23setLargeTorqueThresholdEd"></span><span id="ReactionWheelStateEffector::setLargeTorqueThreshold__double"></span><span class="target" id="class_reaction_wheel_state_effector_1a60f547db2fb2f90f03079f04e98f51c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setLargeTorqueThreshold</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector23setLargeTorqueThresholdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Set the large torque threshold for unlimited torque warning. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – New large torque threshold value in Nm </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector17ReactionWheelDataE">
+<span id="_CPPv3N26ReactionWheelStateEffector17ReactionWheelDataE"></span><span id="_CPPv2N26ReactionWheelStateEffector17ReactionWheelDataE"></span><span id="ReactionWheelStateEffector::ReactionWheelData__std::vector:std::shared_ptr:RWConfigPayload::"></span><span class="target" id="class_reaction_wheel_state_effector_1a789fa341780aa0b423e8ef3fec44b12f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../_GeneralModuleFiles/RWConfigPayload.html#_CPPv415RWConfigPayload" title="RWConfigPayload"><span class="n"><span class="pre">RWConfigPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReactionWheelData</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector17ReactionWheelDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; RW information </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector15rwMotorCmdInMsgE">
+<span id="_CPPv3N26ReactionWheelStateEffector15rwMotorCmdInMsgE"></span><span id="_CPPv2N26ReactionWheelStateEffector15rwMotorCmdInMsgE"></span><span id="ReactionWheelStateEffector::rwMotorCmdInMsg__ReadFunctor:ArrayMotorTorqueMsgPayload:"></span><span class="target" id="class_reaction_wheel_state_effector_1af52820aa1c4acaaf915cb64cc2b35025"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#_CPPv426ArrayMotorTorqueMsgPayload" title="ArrayMotorTorqueMsgPayload"><span class="n"><span class="pre">ArrayMotorTorqueMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwMotorCmdInMsg</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector15rwMotorCmdInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; RW motor torque array cmd input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector13rwSpeedOutMsgE">
+<span id="_CPPv3N26ReactionWheelStateEffector13rwSpeedOutMsgE"></span><span id="_CPPv2N26ReactionWheelStateEffector13rwSpeedOutMsgE"></span><span id="ReactionWheelStateEffector::rwSpeedOutMsg__Message:RWSpeedMsgPayload:"></span><span class="target" id="class_reaction_wheel_state_effector_1ae540fffcaaf2b99ed6cfcff239a24687"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#_CPPv417RWSpeedMsgPayload" title="RWSpeedMsgPayload"><span class="n"><span class="pre">RWSpeedMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwSpeedOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector13rwSpeedOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; RW speed array output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector9rwOutMsgsE">
+<span id="_CPPv3N26ReactionWheelStateEffector9rwOutMsgsE"></span><span id="_CPPv2N26ReactionWheelStateEffector9rwOutMsgsE"></span><span id="ReactionWheelStateEffector::rwOutMsgs__std::vector:Message:RWConfigLogMsgPayload:P:"></span><span class="target" id="class_reaction_wheel_state_effector_1ae1bbb2a58f34c8acda3f84c336902113"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWConfigLogMsgPayload.html#_CPPv421RWConfigLogMsgPayload" title="RWConfigLogMsgPayload"><span class="n"><span class="pre">RWConfigLogMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector9rwOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; vector of RW log output messages </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector9NewRWCmdsE">
+<span id="_CPPv3N26ReactionWheelStateEffector9NewRWCmdsE"></span><span id="_CPPv2N26ReactionWheelStateEffector9NewRWCmdsE"></span><span id="ReactionWheelStateEffector::NewRWCmds__std::vector:RWCmdMsgPayload:"></span><span class="target" id="class_reaction_wheel_state_effector_1a9208b9572b7172132ae2d56d0ade78fb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWCmdMsgPayload.html#_CPPv415RWCmdMsgPayload" title="RWCmdMsgPayload"><span class="n"><span class="pre">RWCmdMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NewRWCmds</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector9NewRWCmdsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Incoming attitude commands </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector16rwSpeedMsgBufferE">
+<span id="_CPPv3N26ReactionWheelStateEffector16rwSpeedMsgBufferE"></span><span id="_CPPv2N26ReactionWheelStateEffector16rwSpeedMsgBufferE"></span><span id="ReactionWheelStateEffector::rwSpeedMsgBuffer__RWSpeedMsgPayload"></span><span class="target" id="class_reaction_wheel_state_effector_1afd8c0db652725dcf5ba55ede6b139216"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/RWSpeedMsgPayload.html#_CPPv417RWSpeedMsgPayload" title="RWSpeedMsgPayload"><span class="n"><span class="pre">RWSpeedMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rwSpeedMsgBuffer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector16rwSpeedMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>(-) Output data from the reaction wheels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector30nameOfReactionWheelOmegasStateE">
+<span id="_CPPv3N26ReactionWheelStateEffector30nameOfReactionWheelOmegasStateE"></span><span id="_CPPv2N26ReactionWheelStateEffector30nameOfReactionWheelOmegasStateE"></span><span id="ReactionWheelStateEffector::nameOfReactionWheelOmegasState__ss"></span><span class="target" id="class_reaction_wheel_state_effector_1a9f2bb45f608d835611fcde6cc398e1bc"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfReactionWheelOmegasState</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector30nameOfReactionWheelOmegasStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector30nameOfReactionWheelThetasStateE">
+<span id="_CPPv3N26ReactionWheelStateEffector30nameOfReactionWheelThetasStateE"></span><span id="_CPPv2N26ReactionWheelStateEffector30nameOfReactionWheelThetasStateE"></span><span id="ReactionWheelStateEffector::nameOfReactionWheelThetasState__ss"></span><span class="target" id="class_reaction_wheel_state_effector_1a803c3b0f442fa78a2d99865487856190"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfReactionWheelThetasState</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector30nameOfReactionWheelThetasStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector5numRWE">
+<span id="_CPPv3N26ReactionWheelStateEffector5numRWE"></span><span id="_CPPv2N26ReactionWheelStateEffector5numRWE"></span><span id="ReactionWheelStateEffector::numRW__s"></span><span class="target" id="class_reaction_wheel_state_effector_1a9f42a0cb3d8be2c4e9db504b59a5064c"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numRW</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector5numRWE" title="Link to this definition"></a><br /></dt>
+<dd><p>number of reaction wheels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector11numRWJitterE">
+<span id="_CPPv3N26ReactionWheelStateEffector11numRWJitterE"></span><span id="_CPPv2N26ReactionWheelStateEffector11numRWJitterE"></span><span id="ReactionWheelStateEffector::numRWJitter__s"></span><span class="target" id="class_reaction_wheel_state_effector_1afad7e10e41400676c354e773e17f34e6"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numRWJitter</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector11numRWJitterE" title="Link to this definition"></a><br /></dt>
+<dd><p>number of RW with jitter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector9bskLoggerE">
+<span id="_CPPv3N26ReactionWheelStateEffector9bskLoggerE"></span><span id="_CPPv2N26ReactionWheelStateEffector9bskLoggerE"></span><span id="ReactionWheelStateEffector::bskLogger__BSKLogger"></span><span class="target" id="class_reaction_wheel_state_effector_1a96b2f0ab29e09d7827f426c50f427d62"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector17incomingCmdBufferE">
+<span id="_CPPv3N26ReactionWheelStateEffector17incomingCmdBufferE"></span><span id="_CPPv2N26ReactionWheelStateEffector17incomingCmdBufferE"></span><span id="ReactionWheelStateEffector::incomingCmdBuffer__ArrayMotorTorqueMsgPayload"></span><span class="target" id="class_reaction_wheel_state_effector_1a61f6e7baa08f909d3ec67ff1daf5afa7"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#_CPPv426ArrayMotorTorqueMsgPayload" title="ArrayMotorTorqueMsgPayload"><span class="n"><span class="pre">ArrayMotorTorqueMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">incomingCmdBuffer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector17incomingCmdBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; One-time allocation for savings </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector15prevCommandTimeE">
+<span id="_CPPv3N26ReactionWheelStateEffector15prevCommandTimeE"></span><span id="_CPPv2N26ReactionWheelStateEffector15prevCommandTimeE"></span><span id="ReactionWheelStateEffector::prevCommandTime__uint64_t"></span><span class="target" id="class_reaction_wheel_state_effector_1a46d9d6d61db696ce2d8211565ee8a4a8"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevCommandTime</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector15prevCommandTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Time for previous valid thruster firing </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector11OmegasStateE">
+<span id="_CPPv3N26ReactionWheelStateEffector11OmegasStateE"></span><span id="_CPPv2N26ReactionWheelStateEffector11OmegasStateE"></span><span id="ReactionWheelStateEffector::OmegasState__StateDataP"></span><span class="target" id="class_reaction_wheel_state_effector_1a2af6c55b1b3212a0720aaccbd2b94d6d"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">OmegasState</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector11OmegasStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector11thetasStateE">
+<span id="_CPPv3N26ReactionWheelStateEffector11thetasStateE"></span><span id="_CPPv2N26ReactionWheelStateEffector11thetasStateE"></span><span id="ReactionWheelStateEffector::thetasState__StateDataP"></span><span class="target" id="class_reaction_wheel_state_effector_1a2ed874b77db8b578120813354012eea9"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">thetasState</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector11thetasStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>class variable </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector3g_NE">
+<span id="_CPPv3N26ReactionWheelStateEffector3g_NE"></span><span id="_CPPv2N26ReactionWheelStateEffector3g_NE"></span><span id="ReactionWheelStateEffector::g_N__Eigen::MatrixXdP"></span><span class="target" id="class_reaction_wheel_state_effector_1aabf9503555a29a10444c575d9e29b85b"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">g_N</span></span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector3g_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] Gravitational acceleration in N frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector20maxWheelAccelerationE">
+<span id="_CPPv3N26ReactionWheelStateEffector20maxWheelAccelerationE"></span><span id="_CPPv2N26ReactionWheelStateEffector20maxWheelAccelerationE"></span><span id="ReactionWheelStateEffector::maxWheelAcceleration__double"></span><span class="target" id="class_reaction_wheel_state_effector_1a3fbd556a946de6c5ae7bac6a218cf0b1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxWheelAcceleration</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0e6</span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector20maxWheelAccelerationE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s^2] Maximum allowed wheel acceleration to prevent numerical instability </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N26ReactionWheelStateEffector20largeTorqueThresholdE">
+<span id="_CPPv3N26ReactionWheelStateEffector20largeTorqueThresholdE"></span><span id="_CPPv2N26ReactionWheelStateEffector20largeTorqueThresholdE"></span><span id="ReactionWheelStateEffector::largeTorqueThreshold__double"></span><span class="target" id="class_reaction_wheel_state_effector_1a72d0ec9dcd10cae1a586f3d22577a3f6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">largeTorqueThreshold</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">10.0</span></span><a class="headerlink" href="#_CPPv4N26ReactionWheelStateEffector20largeTorqueThresholdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[Nm] Threshold for warning about large torque with unlimited torque setting </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="reactionWheels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reactionWheelSupport.html" class="btn btn-neutral float-right" title="Module: reactionWheelSupport" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

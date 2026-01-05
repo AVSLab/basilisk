@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controller &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="DataWriter" href="DataWriter.html" />
+    <link rel="prev" title="AnalysisBaseClass" href="AnalysisBaseClass.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../RigidBodyKinematics.html">RigidBodyKinematics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../SimulationBaseClass.html">SimulationBaseClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../SpherePlot.html">SpherePlot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../astroFunctions.html">astroFunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bskExamples.html">bskExamples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bskLargeData.html">bskLargeData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasheet_RW.html">datasheet_RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deprecated.html">deprecated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fswSetupRW.html">fswSetupRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fswSetupThrusters.html">fswSetupThrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../fswSetupVSCMGs.html">fswSetupVSCMGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../macros.html">macros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makeDraftModule.html">makeDraftModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../planetStates.html">planetStates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyswice_ck_utilities.html">pyswice_ck_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyswice_spk_utilities.html">pyswice_spk_utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pythonVariableLogger.html">pythonVariableLogger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../quadMapSupport.html">quadMapSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../readAtmTable.html">readAtmTable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simIncludeGravBody.html">simIncludeGravBody</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simIncludeRW.html">simIncludeRW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simIncludeThruster.html">simIncludeThruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simSetPlanetEnvironment.html">simSetPlanetEnvironment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simulationArchTypes.html">simulationArchTypes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../simulationProgessBar.html">simulationProgessBar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tabulate.html">tabulate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tleHandling.html">tleHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../unitTestSupport.html">unitTestSupport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vizSupport.html">vizSupport</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">MonteCarlo</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="AnalysisBaseClass.html">AnalysisBaseClass</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataWriter.html">DataWriter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Dispersions.html">Dispersions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RetentionPolicy.html">RetentionPolicy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_UnitTests/index.html">_UnitTests</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../supportDataTools/index.html">supportDataTools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vizProtobuffer/index.html">vizProtobuffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">utilities</a></li>
+          <li class="breadcrumb-item"><a href="index.html">MonteCarlo</a></li>
+      <li class="breadcrumb-item active">Controller</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/utilities/MonteCarlo/Controller.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="controller">
+<span id="id1"></span><h1>Controller<a class="headerlink" href="#controller" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class" id="module-Controller">
+<dt class="sig sig-object py" id="Controller.Controller">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Controller.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><a class="reference internal" href="../../../_modules/Controller.html#Controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The MonteCarloController class is used to run a monte carlo simulation.
+It is used to execute multiple runs of a simulation with varying initial parameters. Data from each run is retained
+in order to analyze differences in the simulation runs and the parameters used.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.addDispersion">
+<span class="sig-name descname"><span class="pre">addDispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.addDispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.addDispersion" title="Link to this definition"></a></dt>
+<dd><p>Add a dispersion to the simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>disp</strong> – Dispersion
+The dispersion to add to the simulation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.addRetentionPolicy">
+<span class="sig-name descname"><span class="pre">addRetentionPolicy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.addRetentionPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.addRetentionPolicy" title="Link to this definition"></a></dt>
+<dd><p>Add a retention policy to the simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>disp</strong> – RetentionPolicy
+The retention policy to add to the simulation.
+This defines variables to be logged and saved</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.executeCallbacks">
+<span class="sig-name descname"><span class="pre">executeCallbacks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retentionPolicies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.executeCallbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.executeCallbacks" title="Link to this definition"></a></dt>
+<dd><p>Execute retention policy callbacks after running a monteCarlo sim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rng</strong> – A list of simulations to execute callbacks on</p></li>
+<li><p><strong>retentionPolicies</strong> – the retention policies to execute</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.executeSimulations">
+<span class="sig-name descname"><span class="pre">executeSimulations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.executeSimulations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.executeSimulations" title="Link to this definition"></a></dt>
+<dd><p>Execute simulations in parallel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>failed: int[]
+A list of the indices of all failed simulation runs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.generateICSims">
+<span class="sig-name descname"><span class="pre">generateICSims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caseList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.generateICSims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.generateICSims" title="Link to this definition"></a></dt>
+<dd><p>Generator function to clone a baseSimulation for IC run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseSimulation</strong> – SimulationParams
+A base simulation to clone.</p></li>
+<li><p><strong>numSims</strong> – int[]
+The desired runs to generate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>generator&lt;SimulationParams&gt;</dt><dd><p>A generator that yields that number of cloned simulations</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.generateSims">
+<span class="sig-name descname"><span class="pre">generateSims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simNumList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.generateSims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.generateSims" title="Link to this definition"></a></dt>
+<dd><p>Generator function to clone a baseSimulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseSimulation</strong> – SimulationParams
+A base simulation to clone.</p></li>
+<li><p><strong>numSims</strong> – int[]
+The desired runs to generate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>generator&lt;SimulationParams&gt;</dt><dd><p>A generator that yields that number of cloned simulations</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.getParameters">
+<span class="sig-name descname"><span class="pre">getParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caseNumber</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.getParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.getParameters" title="Link to this definition"></a></dt>
+<dd><p>Get the parameters used for a particular run of the montecarlo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caseNumber</strong> (<em>int</em>) – The number of the run to get the parameters used for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of the parameters of the simulation
+For example:
+{“keyForSim”: parameterValue, ‘TaskList[0].TaskModels[0].RNGSeed’: 1674764759}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.getRetainedData">
+<span class="sig-name descname"><span class="pre">getRetainedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.getRetainedData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.getRetainedData" title="Link to this definition"></a></dt>
+<dd><p>Get the data that was retained for a run, or list of runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cases</strong> – int The desired case to get data from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The retained data for that run is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.getRetainedDatas">
+<span class="sig-name descname"><span class="pre">getRetainedDatas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.getRetainedDatas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.getRetainedDatas" title="Link to this definition"></a></dt>
+<dd><p>Get the data that was retained for a list of runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cases</strong> – int[] The desired cases to get data from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A generator is returned, which will yield, in-order, the retained data for each of these cases</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.load">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runDirectory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.load" title="Link to this definition"></a></dt>
+<dd><p>Load a previously completed MonteCarlo simulation
+:param The path to the MonteCarlo.data file that contains the archived MonteCarlo run:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.reRunCases">
+<span class="sig-name descname"><span class="pre">reRunCases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caseList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.reRunCases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.reRunCases" title="Link to this definition"></a></dt>
+<dd><p>Rerun some cases from a MonteCarlo run. Does not run in parallel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caseList</strong> – int[]
+The list of runs to repeat, a list of numbers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>int[]</dt><dd><p>The list of failed runs.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>failures</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.runInitialConditions">
+<span class="sig-name descname"><span class="pre">runInitialConditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caseList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.runInitialConditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.runInitialConditions" title="Link to this definition"></a></dt>
+<dd><p>Run initial conditions given in a file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>caseList</strong> – int[]
+The list of runs to repeat, a list of numbers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>int[]</dt><dd><p>The list of failed runs.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>failures</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setArchiveDir">
+<span class="sig-name descname"><span class="pre">setArchiveDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setArchiveDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setArchiveDir" title="Link to this definition"></a></dt>
+<dd><p>Set-up archives for this MonteCarlo run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dirName</strong> – string
+The name of the directory to archive runs in.
+None, if no archive desired.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setConfigureFunction">
+<span class="sig-name descname"><span class="pre">setConfigureFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newModule</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setConfigureFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setConfigureFunction" title="Link to this definition"></a></dt>
+<dd><p>Set an execution function that executes a simulation instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>executionFunction</strong> – (sim: SimulationBaseClass) =&gt; None
+A function with one parameter, a simulation instance.
+The function will be called after the creationFunction and configurationFunction in each simulation run.
+It must execute the simulation.
+Its return value is not used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setDispMagnitudeFile">
+<span class="sig-name descname"><span class="pre">setDispMagnitudeFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">magnitudes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setDispMagnitudeFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setDispMagnitudeFile" title="Link to this definition"></a></dt>
+<dd><p>Save .txt with the magnitude of each dispersion in % or sigma away from mean</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>magnitudes</strong> – bool
+Whether to save extra files for analysis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setExecutionCount">
+<span class="sig-name descname"><span class="pre">setExecutionCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newCount</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setExecutionCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setExecutionCount" title="Link to this definition"></a></dt>
+<dd><p>Set the number of runs for the MonteCarlo simulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>newCount</strong> – int
+The number of runs to use for the simulation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setExecutionFunction">
+<span class="sig-name descname"><span class="pre">setExecutionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newModule</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setExecutionFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setExecutionFunction" title="Link to this definition"></a></dt>
+<dd><p>Set an execution function that executes a simulation instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>executionFunction</strong> – (sim: SimulationBaseClass) =&gt; None
+A function with one parameter, a simulation instance.
+The function will be called after the creationFunction and configurationFunction in each simulation run.
+It must execute the simulation.
+Its return value is not used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setICDir">
+<span class="sig-name descname"><span class="pre">setICDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setICDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setICDir" title="Link to this definition"></a></dt>
+<dd><p>Set-up archives containing IC data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dirName</strong> – string
+The name of the directory to archive runs in.
+None, if no archive desired.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setICRunFlag">
+<span class="sig-name descname"><span class="pre">setICRunFlag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setICRunFlag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setICRunFlag" title="Link to this definition"></a></dt>
+<dd><p>Set the number of threads to use for the monte carlo simulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>threads</strong> – int
+Number of threads to execute the montecarlo run on.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setShouldDisperseSeeds">
+<span class="sig-name descname"><span class="pre">setShouldDisperseSeeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seedDisp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setShouldDisperseSeeds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setShouldDisperseSeeds" title="Link to this definition"></a></dt>
+<dd><p>Disperse the RNG seeds of each run in the MonteCarlo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seedDisp</strong> – bool
+Whether to disperse the RNG seeds in each run of the simulation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setShowProgressBar">
+<span class="sig-name descname"><span class="pre">setShowProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setShowProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setShowProgressBar" title="Link to this definition"></a></dt>
+<dd><p>To enable or disable progress bar to show simulation progress
+:param value: boolean value, decide to show/hide progress bar</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setSimulationFunction">
+<span class="sig-name descname"><span class="pre">setSimulationFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newObject</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setSimulationFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setSimulationFunction" title="Link to this definition"></a></dt>
+<dd><p>Set the function that creates the simulation instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>creationFunction</strong> – () =&gt; SimulationBaseClass
+A function with no parameters, that returns a simulation instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setThreadCount">
+<span class="sig-name descname"><span class="pre">setThreadCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threads</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setThreadCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setThreadCount" title="Link to this definition"></a></dt>
+<dd><p>Set the number of threads to use for the monte carlo simulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>threads</strong> – int
+Number of threads to execute the montecarlo run on.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setVarCast">
+<span class="sig-name descname"><span class="pre">setVarCast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varCast</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setVarCast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setVarCast" title="Link to this definition"></a></dt>
+<dd><p>Set the variable type to downcast the data to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>varCast</strong> – ‘float’, ‘integer’, ‘signed’, ‘unsigned’ (see pandas.to_numeric documentation)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.Controller.setVerbose">
+<span class="sig-name descname"><span class="pre">setVerbose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#Controller.setVerbose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.Controller.setVerbose" title="Link to this definition"></a></dt>
+<dd><p>Use verbose output for this MonteCarlo run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>verbose</strong> – bool
+Whether to print verbose information during this MonteCarlo sim.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Controller.SimulationExecutor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Controller.</span></span><span class="sig-name descname"><span class="pre">SimulationExecutor</span></span><a class="reference internal" href="../../../_modules/Controller.html#SimulationExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.SimulationExecutor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class is used to execute a simulation in a worker thread.
+To use, create an instance of this class, and then call the instance with the simulation parameters to run them in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">executor</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()</span>
+<span class="n">simParams</span> <span class="o">=</span> <span class="n">SimulationParameters</span><span class="p">()</span>
+<span class="n">successFlag</span> <span class="o">=</span> <span class="n">executor</span><span class="p">(</span><span class="n">simParams</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This class can be used to execute a simulation on a different thread, by using this class as the processes target.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.SimulationExecutor.disperseSeeds">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">disperseSeeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simInstance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#SimulationExecutor.disperseSeeds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.SimulationExecutor.disperseSeeds" title="Link to this definition"></a></dt>
+<dd><p>Disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds.
+Example return dictionary:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+   <span class="s1">&#39;.TaskList[0].TaskModels[1]&#39;</span><span class="p">:</span> <span class="mi">1934586</span><span class="p">,</span>
+   <span class="s1">&#39;.TaskList[0].TaskModels[2]&#39;</span><span class="p">:</span> <span class="mi">3450093</span><span class="p">,</span>
+   <span class="s1">&#39;.TaskList[1].TaskModels[0]&#39;</span><span class="p">:</span> <span class="mi">2221934</span><span class="p">,</span>
+   <span class="s1">&#39;.TaskList[2].TaskModels[0]&#39;</span><span class="p">:</span> <span class="mi">1123244</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>simInstance</strong> (<em>SimulationBaseClass</em>) – A basilisk simulation to set random seeds on</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with the random seeds that should be applied to the sim</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Controller.SimulationExecutor.populateSeeds">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">populateSeeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifications</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#SimulationExecutor.populateSeeds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.SimulationExecutor.populateSeeds" title="Link to this definition"></a></dt>
+<dd><p>only populate the RNG seeds of all the tasks in the sim</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simInstance</strong> – SimulationBaseClass
+A basilisk simulation to set random seeds on</p></li>
+<li><p><strong>modifications</strong> – A dictionary containing RNGSeeds to be populate for the sim, among other sim modifications.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="Controller.SimulationParameters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Controller.</span></span><span class="sig-name descname"><span class="pre">SimulationParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">creationFunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executionFunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configureFunction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retentionPolicies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shouldDisperseSeeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shouldArchiveParameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icfilename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showProgressBar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/Controller.html#SimulationParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Controller.SimulationParameters" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class represents the run parameters for a simulation, with information including</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>a function that creates the simulation</p></li>
+<li><p>a function that executes the simulation</p></li>
+<li><p>the dispersions to use on that simulation</p></li>
+<li><p>parameters describing the data to be retained for a simulation</p></li>
+<li><p>whether randomized seeds should be applied to the simulation</p></li>
+<li><p>whether data should be archived</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="AnalysisBaseClass.html" class="btn btn-neutral float-left" title="AnalysisBaseClass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DataWriter.html" class="btn btn-neutral float-right" title="DataWriter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

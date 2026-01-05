@@ -1,0 +1,8 @@
+.. _linearInterpolation:
+
+linearInterpolation
+===========================
+
+.. autodoxygenfile:: linearInterpolation.hpp
+   :project: utilities
+

@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: rateMsgConverter &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="rateMsgConverter" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">sensorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../CSSSensorData/index.html">CSSSensorData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../IMUSensorData/index.html">IMUSensorData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../STSensorData/index.html">STSensorData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../TAMSensorData/index.html">TAMSensorData</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">rateMsgConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../scanningInstrumentController/index.html">scanningInstrumentController</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleInstrumentController/index.html">simpleInstrumentController</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">sensorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">rateMsgConverter</a></li>
+      <li class="breadcrumb-item active">Module: rateMsgConverter</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/sensorInterfaces/rateMsgConverter/rateMsgConverter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ratemsgconverter">
+<span id="ratemsgconverter"></span><h1>Module: rateMsgConverter<a class="headerlink" href="#module-ratemsgconverter" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The purpose of this module is to read in the IMU sensor body message from message type <a class="reference internal" href="../../../architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.html#imusensorbodymsgpayload"><span class="std std-ref">IMUSensorBodyMsgPayload</span></a>, and store it in the output message of type <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a>.  The output message of type  <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a> is used as a common attitude input message by the FSW modules.  This output message is first zeroed, and then the rate vector is copied into the variable <cite>omega_BN_B</cite>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navRateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>attitude output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>imuRateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/IMUSensorBodyMsgPayload.html#imusensorbodymsgpayload"><span class="std std-ref">IMUSensorBodyMsgPayload</span></a></p></td>
+<td><p>attitude input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425SelfInit_rateMsgConverterP22rateMsgConverterConfig7int64_t">
+<span id="_CPPv325SelfInit_rateMsgConverterP22rateMsgConverterConfig7int64_t"></span><span id="_CPPv225SelfInit_rateMsgConverterP22rateMsgConverterConfig7int64_t"></span><span id="SelfInit_rateMsgConverter__rateMsgConverterConfigP.int64_t"></span><span class="target" id="rate_msg_converter_8h_1adcb534551b868bb4babb3add778c55f9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_rateMsgConverter</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422rateMsgConverterConfig" title="rateMsgConverterConfig"><span class="n"><span class="pre">rateMsgConverterConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425SelfInit_rateMsgConverterP22rateMsgConverterConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the configData for this module. It checks to ensure that the inputs are sane and then creates the output message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423Update_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t">
+<span id="_CPPv323Update_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t"></span><span id="_CPPv223Update_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t"></span><span id="Update_rateMsgConverter__rateMsgConverterConfigP.uint64_t.int64_t"></span><span class="target" id="rate_msg_converter_8h_1a5a695900f14a744a1f9ef51b086bceba"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_rateMsgConverter</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422rateMsgConverterConfig" title="rateMsgConverterConfig"><span class="n"><span class="pre">rateMsgConverterConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423Update_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a time step update of the module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Reset_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t">
+<span id="_CPPv322Reset_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t"></span><span id="_CPPv222Reset_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t"></span><span id="Reset_rateMsgConverter__rateMsgConverterConfigP.uint64_t.int64_t"></span><span class="target" id="rate_msg_converter_8h_1a85b15a103c31fb5695ce71fb1ff17269"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_rateMsgConverter</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422rateMsgConverterConfig" title="rateMsgConverterConfig"><span class="n"><span class="pre">rateMsgConverterConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Reset_rateMsgConverterP22rateMsgConverterConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422rateMsgConverterConfig">
+<span id="_CPPv322rateMsgConverterConfig"></span><span id="_CPPv222rateMsgConverterConfig"></span><span id="rateMsgConverterConfig"></span><span class="target" id="structrate_msg_converter_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rateMsgConverterConfig</span></span></span><a class="headerlink" href="#_CPPv422rateMsgConverterConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;rateMsgConverter.h&gt;</em></div>
+<p>Top level structure for the sub-module routines. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22rateMsgConverterConfig13navRateOutMsgE">
+<span id="_CPPv3N22rateMsgConverterConfig13navRateOutMsgE"></span><span id="_CPPv2N22rateMsgConverterConfig13navRateOutMsgE"></span><span id="rateMsgConverterConfig::navRateOutMsg__NavAttMsg_C"></span><span class="target" id="structrate_msg_converter_config_1a331eec9c501b67e980f3d2ba4018dc05"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navRateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N22rateMsgConverterConfig13navRateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude output message*/ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22rateMsgConverterConfig12imuRateInMsgE">
+<span id="_CPPv3N22rateMsgConverterConfig12imuRateInMsgE"></span><span id="_CPPv2N22rateMsgConverterConfig12imuRateInMsgE"></span><span id="rateMsgConverterConfig::imuRateInMsg__IMUSensorBodyMsg_C"></span><span class="target" id="structrate_msg_converter_config_1a95148eb746a646950cba0f9b8e1bf3fc"></span><span class="n"><span class="pre">IMUSensorBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">imuRateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22rateMsgConverterConfig12imuRateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude Input message*/ </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22rateMsgConverterConfig9bskLoggerE">
+<span id="_CPPv3N22rateMsgConverterConfig9bskLoggerE"></span><span id="_CPPv2N22rateMsgConverterConfig9bskLoggerE"></span><span id="rateMsgConverterConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structrate_msg_converter_config_1aaea9ff9d0417feee2d2b81f3d530ae3a"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N22rateMsgConverterConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="rateMsgConverter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

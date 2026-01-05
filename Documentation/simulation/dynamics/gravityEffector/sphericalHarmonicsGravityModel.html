@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: sphericalHarmonicsGravityModel &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="Module: polyhedralGravityModel" href="polyhedralGravityModel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">gravityEffector</a></li>
+      <li class="breadcrumb-item active">Module: sphericalHarmonicsGravityModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/gravityEffector/sphericalHarmonicsGravityModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sphericalharmonicsgravitymodel">
+<span id="sphericalharmonicsgravitymodel"></span><h1>Module: sphericalHarmonicsGravityModel<a class="headerlink" href="#module-sphericalharmonicsgravitymodel" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv430SphericalHarmonicsGravityModel">
+<span id="_CPPv330SphericalHarmonicsGravityModel"></span><span id="_CPPv230SphericalHarmonicsGravityModel"></span><span id="SphericalHarmonicsGravityModel"></span><span class="target" id="class_spherical_harmonics_gravity_model"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SphericalHarmonicsGravityModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/gravityModel.html#_CPPv412GravityModel" title="GravityModel"><span class="n"><span class="pre">GravityModel</span></span></a><a class="headerlink" href="#_CPPv430SphericalHarmonicsGravityModel" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sphericalHarmonicsGravityModel.h&gt;</em></div>
+<p>The Spherical Harmonics gravity model </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel20initializeParametersEv">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel20initializeParametersEv"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel20initializeParametersEv"></span><span id="SphericalHarmonicsGravityModel::initializeParameters"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a09699e2a70a346935eedf1df7fa12a33"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeParameters</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel20initializeParametersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize all parameters necessary for the computation of gravity.</p>
+<p>The attributes <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1a8be7418994864d6230de833b0b379a2b"><span class="std std-ref"><span class="pre">muBody</span></span></a></code>and <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1a8ffb9ff9f99dad6d11eb5e31c42af487"><span class="std std-ref"><span class="pre">radEquator</span></span></a></code> must be set separately.</p>
+<p>Will return an error message (string) if <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1a1ff368662fdf87381a5f38e99097f532"><span class="std std-ref"><span class="pre">cBar</span></span></a></code> or <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1aa0a599e2cbdfb4eb0ceaa241903b9ccd"><span class="std std-ref"><span class="pre">sBar</span></span></a></code> were not set. Otherwise, returns an empty optional. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel20initializeParametersERK12GravBodyData">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel20initializeParametersERK12GravBodyData"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel20initializeParametersERK12GravBodyData"></span><span id="SphericalHarmonicsGravityModel::initializeParameters__GravBodyDataCR"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a3b572921647db469d484ba8df995cc15"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeParameters</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/gravityEffector.html#_CPPv412GravBodyData" title="GravBodyData"><span class="n"><span class="pre">GravBodyData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel20initializeParametersERK12GravBodyData" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialize all parameters necessary for the computation of gravity.</p>
+<p>The attributes <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1a8be7418994864d6230de833b0b379a2b"><span class="std std-ref"><span class="pre">muBody</span></span></a></code>and <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1a8ffb9ff9f99dad6d11eb5e31c42af487"><span class="std std-ref"><span class="pre">radEquator</span></span></a></code> are read from the given <code class="docutils literal notranslate"><span class="pre">GravBodyData</span></code>.</p>
+<p>Will return an error message (string) if <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1a1ff368662fdf87381a5f38e99097f532"><span class="std std-ref"><span class="pre">cBar</span></span></a></code> or <code class="docutils literal notranslate"><a class="reference internal" href="#class_spherical_harmonics_gravity_model_1aa0a599e2cbdfb4eb0ceaa241903b9ccd"><span class="std std-ref"><span class="pre">sBar</span></span></a></code> were not set. Otherwise, returns an empty optional. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE">
+<span id="_CPPv3NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE"></span><span id="_CPPv2NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE"></span><span id="SphericalHarmonicsGravityModel::computeField__Eigen::Vector3dCRC"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a585f92c0cbb888cc1780c5a2d90123b1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeField</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">position_planetFixed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the gravity acceleration at a position around this body.</p>
+<p>The position is given in the body-fixed reference frame. Likewise, the resulting acceleration should be given in the body-fixed reference frame. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE6size_tb">
+<span id="_CPPv3NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE6size_tb"></span><span id="_CPPv2NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE6size_tb"></span><span id="SphericalHarmonicsGravityModel::computeField__Eigen::Vector3dCR.s.bC"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a1a00b78562fa79326824e5113da37940"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeField</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">position_planetFixed</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">degree</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">include_zero_degree</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK30SphericalHarmonicsGravityModel12computeFieldERKN5Eigen8Vector3dE6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the gravity acceleration at a position around this body.</p>
+<p>The position is given in the body-fixed reference frame. Likewise, the resulting acceleration should be given in the body-fixed reference frame.</p>
+<p>If the given <code class="docutils literal notranslate"><span class="pre">degree</span></code> is smaller than the maximum degree stored in this class, then the field is computed using only degrees up to <code class="docutils literal notranslate"><span class="pre">degree</span></code>. If the requested degree is higher than the available one, an error is thrown.</p>
+<p>If include_zero_degree is false the degree that corresponds to the spherical term (point-mass) of the gravity is ignored. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK30SphericalHarmonicsGravityModel22computePotentialEnergyERKN5Eigen8Vector3dE">
+<span id="_CPPv3NK30SphericalHarmonicsGravityModel22computePotentialEnergyERKN5Eigen8Vector3dE"></span><span id="_CPPv2NK30SphericalHarmonicsGravityModel22computePotentialEnergyERKN5Eigen8Vector3dE"></span><span id="SphericalHarmonicsGravityModel::computePotentialEnergy__Eigen::Vector3dCRC"></span><span class="target" id="class_spherical_harmonics_gravity_model_1aec054fd53350ea2e53950646c3a66bc0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePotentialEnergy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">positionWrtPlanet_N</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK30SphericalHarmonicsGravityModel22computePotentialEnergyERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the gravitational potential energy at a position around this body.</p>
+<p>The current implementation returns the potential energy of a point-mass (the spherical harmonics coefficients of the body are ignored)</p>
+<p>The position is given relative to the body and in the inertial reference frame. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel10radEquatorE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel10radEquatorE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel10radEquatorE"></span><span id="SphericalHarmonicsGravityModel::radEquator__double"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a8ffb9ff9f99dad6d11eb5e31c42af487"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radEquator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel10radEquatorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Reference radius for the planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel6muBodyE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel6muBodyE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel6muBodyE"></span><span id="SphericalHarmonicsGravityModel::muBody__double"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a8be7418994864d6230de833b0b379a2b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">muBody</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel6muBodyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^3/s^2] Gravitation parameter for the planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel6maxDegE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel6maxDegE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel6maxDegE"></span><span id="SphericalHarmonicsGravityModel::maxDeg__s"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a457fe46764ec0c914f3e1327fe5ec956"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxDeg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel6maxDegE" title="Link to this definition"></a><br /></dt>
+<dd><p>The maximum degree of Spherical Harmonics to use</p>
+<p>A value of maxDeg greater than the size of cBar or sBar will cause an error. A value that is lower will truncate the spherical harmonics, ignoring any parameters in cBar/sBar with degree greater than maxDeg. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel4cBarE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel4cBarE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel4cBarE"></span><span id="SphericalHarmonicsGravityModel::cBar__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a1ff368662fdf87381a5f38e99097f532"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cBar</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel4cBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>The normalized “C” spherical harmonics coefficients </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel4sBarE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel4sBarE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel4sBarE"></span><span id="SphericalHarmonicsGravityModel::sBar__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1aa0a599e2cbdfb4eb0ceaa241903b9ccd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBar</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel4sBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>The normalized “S” spherical harmonics coefficients </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel9bskLoggerE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel9bskLoggerE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel9bskLoggerE"></span><span id="SphericalHarmonicsGravityModel::bskLogger__BSKLogger"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a167e3e6ff987e9bad1dfae555703cd8b"></span><span class="k"><span class="pre">mutable</span></span><span class="w"> </span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel4aBarE">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel4aBarE"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel4aBarE"></span><span id="SphericalHarmonicsGravityModel::aBar__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1adf0fddc1231f8b07b9e48074f7322b80"></span><span class="k"><span class="pre">mutable</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aBar</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel4aBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>The following parameters are used internally to compute the gravity.</p>
+<p>They are coefficients used in the method of Pines for the gravity due to SH. For their definition, see the ‘Basilisk-GravityEffector’ documentation. [-] Eq. 61 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel2n1E">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel2n1E"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel2n1E"></span><span id="SphericalHarmonicsGravityModel::n1__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1aba7b174a4d62126d1438ca4e4a357d57"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n1</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel2n1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Eq. 63 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel2n2E">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel2n2E"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel2n2E"></span><span id="SphericalHarmonicsGravityModel::n2__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a81f1ec545b5fa8868dc23466a4ea66f5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n2</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel2n2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Eq. 64 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel6nQuot1E">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel6nQuot1E"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel6nQuot1E"></span><span id="SphericalHarmonicsGravityModel::nQuot1__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a13e598f904f295fb88c264c6d9ab51b5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nQuot1</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel6nQuot1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Eq. 79 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30SphericalHarmonicsGravityModel6nQuot2E">
+<span id="_CPPv3N30SphericalHarmonicsGravityModel6nQuot2E"></span><span id="_CPPv2N30SphericalHarmonicsGravityModel6nQuot2E"></span><span id="SphericalHarmonicsGravityModel::nQuot2__std::vector:std::vector:double::"></span><span class="target" id="class_spherical_harmonics_gravity_model_1a63ed94ead22e1ee792b5019c4d8f5a8c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nQuot2</span></span></span><a class="headerlink" href="#_CPPv4N30SphericalHarmonicsGravityModel6nQuot2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Eq. 80 </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="polyhedralGravityModel.html" class="btn btn-neutral float-left" title="Module: polyhedralGravityModel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

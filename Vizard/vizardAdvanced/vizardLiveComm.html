@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Communication with Vizard &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Video Gallery" href="../vizardGallery.html" />
+    <link rel="prev" title="Custom Unity Models" href="vizardCustomModels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Advanced Features</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="vizardSettings.html">BSK Scripting Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vizardCommandLine.html">Command Line Launching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vizardCustomModels.html">Custom Unity Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Live Communication with Vizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#livestream-mode"><code class="docutils literal notranslate"><span class="pre">liveStream</span></code> Mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attaching-a-directcomm-vizard-instance">Attaching a “DirectComm” Vizard Instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-vizeventdialog-panels">Creating <code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> Panels</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#handling-user-input">Handling User Input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#keyboard-parsing">Keyboard Parsing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#panel-response-parsing">Panel Response Parsing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#broadcaststream-mode"><code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> Mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#broadcast-synchronization">Broadcast Synchronization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attaching-a-receive-only-vizard-instance">Attaching a “Receive Only” Vizard Instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nodisplay-mode"><code class="docutils literal notranslate"><span class="pre">noDisplay</span></code> Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pausing-exiting-a-scenario">Pausing/Exiting a Scenario</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Advanced Features</a></li>
+      <li class="breadcrumb-item active">Live Communication with Vizard</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Vizard/vizardAdvanced/vizardLiveComm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="live-communication-with-vizard">
+<span id="vizardlivecomm"></span><h1>Live Communication with Vizard<a class="headerlink" href="#live-communication-with-vizard" title="Link to this heading"></a></h1>
+<a class="reference internal image-reference" href="../../_images/basiliskVizardLogo.png"><img alt="../../_images/basiliskVizardLogo.png" class="align-right" src="../../_images/basiliskVizardLogo.png" style="width: 251.0px; height: 224.5px;" />
+</a>
+<p>BSK can link with Vizard <strong>live</strong> in three ways:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">liveStream</span></code> : The BSK sim runs in lockstep with Vizard. This supports user input handling and
+performs standard optical navigation if cameras are configured.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> : The BSK sim broadcasts read-only messages in a publish/subscribe pattern,
+where many Vizards may subscribe simultaneously.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">noDisplay</span></code> : The BSK sim performs optical navigation headlessly through Vizard, only sending
+messages to Vizard when an image is requested. This is a more efficient OpNav mode, but shows no
+graphical display in Vizard.</p></li>
+</ul>
+</section>
+<section id="livestream-mode">
+<h1><code class="docutils literal notranslate"><span class="pre">liveStream</span></code> Mode<a class="headerlink" href="#livestream-mode" title="Link to this heading"></a></h1>
+<p>During <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> mode, BSK sends a message containing simulation state information to Vizard at every
+timestep. BSK then waits for an ‘OK’ response before proceeding. In this way, both BSK and Vizard operate
+in lockstep with each other. This is the best method for visualizing a scenario live on your local machine.</p>
+<p>To enable livestreaming through <code class="docutils literal notranslate"><span class="pre">vizSupport</span></code> use the <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> flag:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                          <span class="p">,</span> <span class="n">liveStream</span><span class="o">=</span><span class="kc">True</span>
+                                          <span class="p">)</span>
+</pre></div>
+</div>
+<p>Or, to bypass the <code class="docutils literal notranslate"><span class="pre">vizSupport</span></code> module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizInterface</span><span class="p">()</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">liveStream</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>When the <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> flag is set to <strong>True</strong>, BSK will also automatically obtain user inputs from Vizard
+at each timestep, as detailed in the accompanying section.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>BSK can only take advantage of 2-way communication during livestream mode, so <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> must be
+set to <strong>True</strong>.</p>
+</div>
+<section id="attaching-a-directcomm-vizard-instance">
+<h2>Attaching a “DirectComm” Vizard Instance<a class="headerlink" href="#attaching-a-directcomm-vizard-instance" title="Link to this heading"></a></h2>
+<p>Once BSK is configured to livestream, an instance of Vizard can be attached by copying the port address
+into the “<em>Socket Address</em>” field. Make sure that the “<em>DirectComm</em>” option is selected.</p>
+<p>The communication protocol and port number can be changed using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">reqComProtocol</span> <span class="o">=</span> <span class="s2">&quot;xxx&quot;</span><span class="p">;</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">reqComAddress</span>  <span class="o">=</span> <span class="s2">&quot;xxx&quot;</span><span class="p">;</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">reqPortNumber</span>  <span class="o">=</span> <span class="s2">&quot;XXXX&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>BSK assembles the full <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> address as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">reqComProtocol</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span> <span class="o">+</span> <span class="n">viz</span><span class="o">.</span><span class="n">reqComAddress</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">viz</span><span class="o">.</span><span class="n">reqPortNumber</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Vizard 2-way Communication Parameters</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reqComProtocol</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tcp</span></code></p></td>
+<td><p>Transport protocol to use for the 2-way connection. See all protocol options
+<a class="reference external" href="http://api.zeromq.org/3-2:zmq-connect">here</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reqComAddress</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">localhost</span></code></p></td>
+<td><p>Network address to use for the connection.  This can be either a host name or an IP address.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reqPortNumber</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5556</span></code></p></td>
+<td><p>Port number to use for the connection.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The default 2-way address is therefore <code class="docutils literal notranslate"><span class="pre">tcp://localhost:5556</span></code>.</p>
+</section>
+<section id="creating-vizeventdialog-panels">
+<h2>Creating <code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> Panels<a class="headerlink" href="#creating-vizeventdialog-panels" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> panels are displayed in Vizard, and contain choices for a user to select. These panels
+can be configured to have a prescribed duration and several options for a user to select. The following
+list shows all <code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> structure variables.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> variables</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 13.3%" />
+<col style="width: 6.7%" />
+<col style="width: 6.7%" />
+<col style="width: 6.7%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eventHandlerID</span></code></p></td>
+<td><p>string</p></td>
+<td></td>
+<td><p>Yes</p></td>
+<td><p>Name of Vizard event handler to be returned with <code class="docutils literal notranslate"><span class="pre">VizEventReply</span></code> responses</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">displayString</span></code></p></td>
+<td><p>string</p></td>
+<td></td>
+<td><p>Yes</p></td>
+<td><p>Contains the information or choice that should be posed to the user.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">userOptions</span></code></p></td>
+<td><p>string[]</p></td>
+<td></td>
+<td><p>No</p></td>
+<td><p>Array of display strings, one entry for each user choice that will be shown. If this is
+empty, the dialog is assumed to be informational only. Strings must be unique (cannot display
+the same option multiple times in a panel).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">durationOfDisplay</span></code></p></td>
+<td><p>double</p></td>
+<td><p>nanoseconds</p></td>
+<td><p>No</p></td>
+<td><p>Determines when to close a panel. Default is 0, which leaves the panel on display until closed by user.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">useSimElapsedTimeForDuration</span></code></p></td>
+<td><p>bool</p></td>
+<td></td>
+<td><p>No</p></td>
+<td><p>If true and <code class="docutils literal notranslate"><span class="pre">durationOfDisplay</span></code> is set, use the sim elapsed time to calculate when to
+hide window. If false, use real time (system clock). Default is false.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">useConfirmationPanel</span></code></p></td>
+<td><p>int</p></td>
+<td></td>
+<td><p>No</p></td>
+<td><p>-1 to not show a confirmation panel, 0 to use viz default, 1 to require a user confirmation
+of their selection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hideOnSelection</span></code></p></td>
+<td><p>int</p></td>
+<td></td>
+<td><p>No</p></td>
+<td><p>-1 to continue to show panel , 0 to use viz default, 1 to hide panel after user
+makes a selection, 2 to destroy panel after user makes a selection</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dialogFormat</span></code></p></td>
+<td><p>string</p></td>
+<td></td>
+<td><p>No</p></td>
+<td><p>Select format for dialog box: “WARNING”, “CAUTION”, or none to use viz default format</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example an <code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> panel creation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">powerModePanel</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizEventDialog</span><span class="p">()</span>
+<span class="n">powerModePanel</span><span class="o">.</span><span class="n">eventHandlerID</span> <span class="o">=</span> <span class="s2">&quot;Power Mode Panel&quot;</span>
+<span class="n">powerModePanel</span><span class="o">.</span><span class="n">displayString</span> <span class="o">=</span> <span class="s2">&quot;Set system power mode:&quot;</span>
+<span class="n">powerModePanel</span><span class="o">.</span><span class="n">userOptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Nominal&quot;</span><span class="p">)</span>
+<span class="n">powerModePanel</span><span class="o">.</span><span class="n">userOptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Low-Power&quot;</span><span class="p">)</span>
+<span class="n">powerModePanel</span><span class="o">.</span><span class="n">useConfirmationPanel</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">viz</span><span class="o">.</span><span class="n">vizEventDialogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">powerModePanel</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../../examples/scenarioBasicOrbitStream.html#scenariobasicorbitstream"><span class="std std-ref">scenarioBasicOrbitStream</span></a> for a Basilisk example script that uses Vizard event panels.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The list <code class="docutils literal notranslate"><span class="pre">viz.vizEventDialogs</span></code> sends current panel requests to Vizard as part of the
+VizMessage, then clears itself before the next timestep. If information in a panel needs to
+be modified, the same <code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> instance (with the same <code class="docutils literal notranslate"><span class="pre">eventHandlerID</span></code>) can be
+modified and <strong>re-appended</strong> to <code class="docutils literal notranslate"><span class="pre">viz.vizEventDialogs</span></code>. This will cause the panel to re-open
+if minimized, with updated information. If the panel list needs to be manually cleared, this
+can be done using <code class="docutils literal notranslate"><span class="pre">viz.vizEventDialogs.clear()</span></code>.</p>
+</div>
+<section id="handling-user-input">
+<h3>Handling User Input<a class="headerlink" href="#handling-user-input" title="Link to this heading"></a></h3>
+<p>Responses from panels can be used as inputs back to BSK. The key is that the responses must be
+read from the <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefCpp/VizUserInputMsgPayload.html#vizuserinputmsgpayload"><span class="std std-ref">VizUserInputMsgPayload</span></a> message at the desired rate.</p>
+<p>From Python, this can be achieved by calling <code class="docutils literal notranslate"><span class="pre">scSim.ExecuteSimulation()</span></code> at the desired input
+reception rate so that responses can be parsed and used to influence the simulation state.</p>
+<p>The required structure resembles the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">currentTime</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">inputTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># Read inputs every 5 seconds</span>
+<span class="o">...</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">totalDuration</span><span class="o">/</span><span class="n">inputTimeStep</span><span class="p">)):</span>
+    <span class="n">currentTime</span> <span class="o">+=</span> <span class="n">inputTimeStep</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">currentTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">userInputs</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">userInputMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">keyInputs</span> <span class="o">=</span> <span class="n">userInputs</span><span class="o">.</span><span class="n">keyboardInput</span>
+    <span class="n">eventInputs</span> <span class="o">=</span> <span class="n">userInputs</span><span class="o">.</span><span class="n">vizEventReplies</span>
+
+    <span class="c1"># Parse &quot;keyInputs&quot; and &quot;eventInputs&quot;, modify sim state</span>
+</pre></div>
+</div>
+<p>The 2-way communication output message, <code class="docutils literal notranslate"><span class="pre">viz.userInputMsg</span></code> , is an instance
+of <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefCpp/VizUserInputMsgPayload.html#vizuserinputmsgpayload"><span class="std std-ref">VizUserInputMsgPayload</span></a>. This message fills like a queue: Vizard collects all inputs
+that were recorded over the last <code class="docutils literal notranslate"><span class="pre">scSim.ExecuteSimulation</span></code> call, and hands them all over together.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Setting a low input frequency (here, represented by <code class="docutils literal notranslate"><span class="pre">inputTimeStep</span></code>) could lead to build-up of
+responses, that could logically conflict with one another.</p>
+</div>
+<p>This behavior could also be built into a BSK module, in which case the above code structure would
+not be needed. However, this module would have to hard-code the mappings for different Vizard response
+types and their associated BSK actions.</p>
+</section>
+<section id="keyboard-parsing">
+<h3>Keyboard Parsing<a class="headerlink" href="#keyboard-parsing" title="Link to this heading"></a></h3>
+<p>There are two types of replies that Vizard can send in return. The <code class="docutils literal notranslate"><span class="pre">keyboardInput</span></code> field of the
+message contains a string of keyboard characters that have been pressed since the last timestep.
+<strong>Keys will only be recorded if pre-specified.</strong> In the example below, listeners are configured
+for the keys ‘a’, ‘b’, ‘c’, and ‘d’:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">keyboardLiveInput</span> <span class="o">=</span> <span class="s2">&quot;abcd&quot;</span>
+</pre></div>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Note that Vizard has certain keys pre-programmed as hot-keys for menus and scene actions.
+If a hot-key is selected as a duplicate listener, Vizard will display a warning, and
+dual-actions may occur.</p>
+</div>
+<p>To parse <code class="docutils literal notranslate"><span class="pre">keyInputs</span></code>, search the string for characters of interest:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s1">&#39;a&#39;</span> <span class="ow">in</span> <span class="n">keyInputs</span><span class="p">:</span>
+    <span class="c1"># &#39;a&#39; key action</span>
+<span class="k">if</span> <span class="s1">&#39;b&#39;</span> <span class="ow">in</span> <span class="n">keyInputs</span><span class="p">:</span>
+    <span class="c1"># &#39;b&#39; key action</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="panel-response-parsing">
+<h3>Panel Response Parsing<a class="headerlink" href="#panel-response-parsing" title="Link to this heading"></a></h3>
+<p>Vizard can also return <code class="docutils literal notranslate"><span class="pre">VizEventReply</span></code> structures, which contain information about selections
+made within <code class="docutils literal notranslate"><span class="pre">VizEventDialog</span></code> panels. The following list shows all <code class="docutils literal notranslate"><span class="pre">VizEventReply</span></code> structure variables.</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">VizEventReply</span></code> variables</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 15.4%" />
+<col style="width: 7.7%" />
+<col style="width: 76.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eventHandlerID</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Name provided when setting up the VizEventDialog object</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reply</span></code></p></td>
+<td><p>string</p></td>
+<td><p>Option selected by user</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eventHandlerDestroyed</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>Was the panel closed and destroyed?</p></td>
+</tr>
+</tbody>
+</table>
+<p>To parse <code class="docutils literal notranslate"><span class="pre">eventInputs</span></code> , loop over the list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">eventInputs</span><span class="p">:</span>
+    <span class="n">eventID</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">eventHandlerID</span>
+    <span class="n">eventOption</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">reply</span>
+
+    <span class="k">if</span> <span class="n">eventID</span> <span class="o">==</span> <span class="s2">&quot;Power Mode Panel&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">eventOption</span> <span class="o">==</span> <span class="s2">&quot;Low-Power&quot;</span><span class="p">:</span>
+            <span class="c1"># change mode</span>
+    <span class="k">elif</span> <span class="n">eventID</span> <span class="o">==</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>See the scenario <a class="reference internal" href="../../examples/scenarioBasicOrbitStream.html#scenariobasicorbitstream"><span class="std std-ref">scenarioBasicOrbitStream</span></a> for an implemented 2-way communication example.</p>
+</section>
+</section>
+</section>
+<section id="broadcaststream-mode">
+<h1><code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> Mode<a class="headerlink" href="#broadcaststream-mode" title="Link to this heading"></a></h1>
+<p>In addition to livestreaming, BSK can broadcast its read-only messages to a secondary port
+using the <code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> flag. This follows a publish/subscribe architecture, which means many
+subscriber Vizards can hook up to a single BSK instance.</p>
+<p>To enable broadcasting use the <code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> flag:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                          <span class="p">,</span> <span class="n">broadcastStream</span><span class="o">=</span><span class="kc">True</span>
+                                          <span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>BSK blindly broadcasts to a port, regardless of whether there are subscribers present or not. This means
+that unlike <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> mode, BSK will not wait for a Vizard connection to begin executing.</p>
+</div>
+<p>Vizard can also run both <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> and <code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> modes simultaneously:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                          <span class="p">,</span> <span class="n">liveStream</span><span class="o">=</span><span class="kc">True</span>
+                                          <span class="p">,</span> <span class="n">broadcastStream</span><span class="o">=</span><span class="kc">True</span>
+                                          <span class="p">)</span>
+</pre></div>
+</div>
+<p>This configuration behaves the same as a normal livestream (BSK waits for connection to start), after which
+subscriber Vizards can connect. Subscriber Vizards cannot connect before the publisher Vizard.</p>
+<section id="broadcast-synchronization">
+<h2>Broadcast Synchronization<a class="headerlink" href="#broadcast-synchronization" title="Link to this heading"></a></h2>
+<p>Using <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> and <code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> modes simultaneously can be useful for teaching/training
+environments, where an instructor is running BSK locally and interacting with panels in a publisher Vizard,
+but broadcasting to separate subscriber Vizards run by students/trainees.</p>
+<p>The trainer has the option to force certain visual settings to the broadcast:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> synced settings</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 100.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orbitLinesOn</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">trueTrajectoryLinesOn</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spacecraftCSon</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">planetCSon</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">showHillFrame</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">showVelocityFrame</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">truePathBodySetting</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>See <a class="reference internal" href="vizardSettings.html#vizardsettings"><span class="std std-ref">BSK Scripting Settings</span></a> for types and descriptions of these variables.</p>
+<p>This option is ON by default, but can be disabled within the menu of the trainer Vizard. Additionally,
+panel states (instantiation, selection, deletion) will be synchronized with the subscriber Vizard. Choices
+selected on panels are shown briefly in the subscriber Vizard before closure.</p>
+<p>When disabled, the subscriber Vizard will be briefly notified that they have increased autonomy with visual
+settings. However, no interactions with panels will have any effect on the BSK sim.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Subscriber Vizards are able to move the time slider at the bottom of the window, however panels will not replay.</p>
+</div>
+</section>
+<section id="attaching-a-receive-only-vizard-instance">
+<h2>Attaching a “Receive Only” Vizard Instance<a class="headerlink" href="#attaching-a-receive-only-vizard-instance" title="Link to this heading"></a></h2>
+<p>Once BSK is configured to broadcast, an instance of Vizard can be attached by copying the port address
+into the “<em>Socket Address</em>” box. Make sure that the “<em>Receive Only</em>” option is selected.</p>
+<p>The communication protocol and port number can be changed from Python using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">pubComProtocol</span> <span class="o">=</span> <span class="s2">&quot;xxx&quot;</span><span class="p">;</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">pubComAddress</span>  <span class="o">=</span> <span class="s2">&quot;xxx&quot;</span><span class="p">;</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">pubPortNumber</span>  <span class="o">=</span> <span class="s2">&quot;XXXX&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>BSK assembles the full <code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> address as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">pubComProtocol</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span> <span class="o">+</span> <span class="n">viz</span><span class="o">.</span><span class="n">pubComAddress</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">viz</span><span class="o">.</span><span class="n">pubPortNumber</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Vizard Broadcast Communication Parameters</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pubComProtocol</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tcp</span></code></p></td>
+<td><p>Transport protocol to use for the 2-way connection. See all protocol options
+<a class="reference external" href="http://api.zeromq.org/3-2:zmq-connect">here</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pubComAddress</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">localhost</span></code></p></td>
+<td><p>Network address to use for the connection.  This can be either a host name or an IP address.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pubPortNumber</span></code></p></td>
+<td><p>string</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5570</span></code></p></td>
+<td><p>Port number to use for the connection.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The default broadcast address is therefore <code class="docutils literal notranslate"><span class="pre">tcp://localhost:5570</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the default TCP ports seemed to be available across our development machines, specific
+firewall restrictions or other applications may restrict port use. If the port experiences trouble
+binding, a ZMQ error will be thrown to the terminal and a different port number should be chosen.
+(Error #19 if port is in use, Error #49 if address:port does not exist.)</p>
+</div>
+<p>In order to broadcast temporarily over a network, a dynamic IP address can be used. With both devices on
+the same network, set the broadcast address as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">pubComAddress</span> <span class="o">=</span> <span class="s2">&quot;XX.XXX.XXX.XX&quot;</span>
+</pre></div>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Some networks may block broadcasting. If the broadcast has trouble connecting, check whether the
+two devices can ping each other across the network. The terminal command is <code class="docutils literal notranslate"><span class="pre">ping</span> <span class="pre">XX.XXX.XXX.XX</span></code>
+for Mac, or <code class="docutils literal notranslate"><span class="pre">telnet</span> <span class="pre">XX.XXX.XXX.XX</span></code> for Windows and Linux.</p>
+</div>
+<p>If you’re looking to broadcast for longer durations (i.e. more than a few hours), you may need to set
+up a static IP address. IP addresses are typically assigned dynamically, meaning that they can change
+unpredictably throughout the day. Setting up a static IP address ensures that the broadcast can be
+found at the same address consistently.</p>
+</section>
+</section>
+<section id="nodisplay-mode">
+<h1><code class="docutils literal notranslate"><span class="pre">noDisplay</span></code> Mode<a class="headerlink" href="#nodisplay-mode" title="Link to this heading"></a></h1>
+<p>Vizard can operate headless with a high-performance optical navigation mode, in which it only
+updates and renders the scene when an image is requested from BSK. This mode does not show a display
+to the user, which means that it <em>cannot</em> be used in conjunction with <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> or
+<code class="docutils literal notranslate"><span class="pre">broadcastStream</span></code> modes.</p>
+<p>To use the <code class="docutils literal notranslate"><span class="pre">noDisplay</span></code> flag:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                      <span class="p">,</span> <span class="n">noDisplay</span><span class="o">=</span><span class="kc">True</span>
+                                      <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pausing-exiting-a-scenario">
+<h1>Pausing/Exiting a Scenario<a class="headerlink" href="#pausing-exiting-a-scenario" title="Link to this heading"></a></h1>
+<p>In some instances, it is convenient to have the ability to pause a BSK scenario that is connected to Vizard in <code class="docutils literal notranslate"><span class="pre">liveStream</span></code> mode. We can take advantage of the existing Vizard key listener for this behavior.</p>
+<p>It is important to still call the <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> method for the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> module while paused, which allows for the ‘unpause’ response to be acknowledged. Any panel responses or other Vizard inputs will still be received and processed, and will immediately take effect once unpaused.</p>
+<p>Additionally, repeatedly resetting the <code class="docutils literal notranslate"><span class="pre">clock_sync</span></code> module while paused keeps the visualization from trying to ‘catch up’ once unpaused.</p>
+<p>See <a class="reference internal" href="../../examples/scenarioBasicOrbitStream.html#scenariobasicorbitstream"><span class="std std-ref">scenarioBasicOrbitStream</span></a> for an implementation that pauses/unpauses the scenario using the <code class="docutils literal notranslate"><span class="pre">&lt;p&gt;</span></code> key and cleanly quits the scenario using <code class="docutils literal notranslate"><span class="pre">&lt;z&gt;</span></code>.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vizardCustomModels.html" class="btn btn-neutral float-left" title="Custom Unity Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../vizardGallery.html" class="btn btn-neutral float-right" title="Video Gallery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

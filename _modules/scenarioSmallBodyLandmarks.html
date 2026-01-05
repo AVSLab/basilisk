@@ -1,0 +1,777 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioSmallBodyLandmarks &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioSmallBodyLandmarks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioSmallBodyLandmarks</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">Discusses how to use the pinhole camera module to obtain landmark-based measurements around a small body.</span>
+<span class="sd">This script sets up a 6-DOF spacecraft which is orbiting asteroid 433 Eros.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioSmallBodyLandmarks.py</span>
+
+<span class="sd">The simulation layout is shown in the following illustration.  A single simulation process is created</span>
+<span class="sd">which contains both the spacecraft simulation, flight software and pinhole camera modules.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioSmallBodyLandmarks.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">When the simulation completes 5 plots are shown for the 3D configuration at :math:`t_0`, the 3D configuration</span>
+<span class="sd">at :math:`t_f`, the landmark pixels at :math:`t_f`, the number of visible landmarks evolution and the camera frame C axes</span>
+<span class="sd">projection :math:`\hat c_1`, :math:`\hat c_2` and :math:`\hat c_3` onto the Hill or Orbit frame axes</span>
+<span class="sd">:math:`\hat\imath_r`, :math:`\hat\imath_{\theta}` and :math:`\hat\imath_h`.</span>
+
+<span class="sd">The basic simulation setup is very similar as the one used in :ref:`scenarioAttitudeGuidance`.</span>
+<span class="sd">The dynamics simulation is setup using a :ref:`Spacecraft` module to which a gravity</span>
+<span class="sd">effector is attached. Eros gravity is setup through a :ref:`PlanetEphemeris` module which simulates</span>
+<span class="sd">Eros heliocentric motion. The flight software modules are copied from :ref:`scenarioAttitudeGuidance`</span>
+<span class="sd">as to align the spacecraft body frame, thus also the camera frame, with the Hill frame. The goal is to</span>
+<span class="sd">keep the camera pointing towards Eros center of mass in order to observe surface landmarks. In this</span>
+<span class="sd">case, the attitude control flight software makes :math:`\hat b_1` body axis to point towards the</span>
+<span class="sd">asteroid center of mass :math:`-\hat\imath_r` (negative radial direction ). The camera direction cosine matrix</span>
+<span class="sd">is prescribed by the user as :math:`\hat c_3=\hat b_1`, then it follows that attitude control is ensuring</span>
+<span class="sd">the camera focal direction (:math:`\hat c_3`) is pointing towards the asteroid. This way, the camera is able</span>
+<span class="sd">to track surface landmarks.</span>
+
+<span class="sd">The landmarks are setup based on Eros polyhedron shape. A landmark distribution is defined by surface</span>
+<span class="sd">positions and their normals expressed in the planet rotating frame. The normal is used to check field</span>
+<span class="sd">of view and lighting conditions from the camera and Sun respectively.</span>
+
+<span class="sd">Since dynamics simulations can be computationally expensive, the module has a ``processBatch(rBatch_CP_P,</span>
+<span class="sd">mrpBatch_BP, eBatch_SP_P, show_progress)`` method that is detached from the Simulation Base class. This method</span>
+<span class="sd">requires batches (as matrices) of spacecraft position in the planet frame, spacecraft orientation in the planet</span>
+<span class="sd">frame and Sun&#39;s unit vector in the planet frame. The results can be accessed from the pinhole camera class</span>
+<span class="sd">as illustrated in the subsequent script.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, useBatch = False</span>
+
+<span class="sd">The ``useBatch`` flag is turned off by default but it showcases how the module can be executed detached from the</span>
+<span class="sd">dynamics simulation. This is very convenient as it allows isolated experimentation with the pinholeCamera module</span>
+<span class="sd">without the need of rerunning dynamics simulations (which can be slow if non-Keplerian gravity models are used</span>
+<span class="sd">e.g. polyhedron). Alternatively, it allows to set up customized situations that may not be in accordance with a</span>
+<span class="sd">dynamics simulation (e.g. manually prescribe radial pointing towards the asteroid)</span>
+
+<span class="sd">The 3D situation is shown in these first two plots. In the first one, the attitude control has not converged</span>
+<span class="sd">and the camera is not pointing towards the asteroid. Consequently, no landmarks are visible. In the second</span>
+<span class="sd">one, the attitude control has aligned the camera focal direction (in blue) with the negative radial direction,</span>
+<span class="sd">thus some landmarks are visible (in blue) on the surface. The third figure shows the visible landmark pixels</span>
+<span class="sd">(with their labels) in the image plane.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSmallBodyLandmarks1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSmallBodyLandmarks2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSmallBodyLandmarks3.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The next two plots show time evolution of the number of visible landmarks and the alignment of the camera</span>
+<span class="sd">frame with respect to the Hill frame. Note that :math:`\hat c_3` is aligned with the negative radial direction</span>
+<span class="sd">of the Hill frame as expected.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSmallBodyLandmarks4.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSmallBodyLandmarks5.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the pinholeCamera() module. Illustrates how</span>
+<span class="c1">#           the pinhole camera module can be integrated with spacecraft,</span>
+<span class="c1">#           planet and attitude control modules.</span>
+<span class="c1"># Author:   Julio C. Sanchez</span>
+<span class="c1"># Creation Date:  Jun. 26, 2023</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># The path to the location of Basilisk</span>
+<span class="c1"># Used to get the location of supporting data.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="c1"># import message declarations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="c1"># import FSW Algorithm related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">attTrackingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">hillPoint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpFeedback</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ephemerisConverter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">pinholeCamera</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">planetEphemeris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation.gravityEffector</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadPolyFromFileToList</span>
+
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">unitTestSupport</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># general support file with common unit test functions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.supportDataTools.dataFetcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span><span class="p">,</span> <span class="n">DataFile</span>
+
+<span class="c1"># attempt to import vizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="c1"># Landmark distribution function</span>
+<div class="viewcode-block" id="landmark_distribution">
+<a class="viewcode-back" href="../examples/scenarioSmallBodyLandmarks.html#scenarioSmallBodyLandmarks.landmark_distribution">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">landmark_distribution</span><span class="p">(</span><span class="n">vert_list</span><span class="p">,</span> <span class="n">face_list</span><span class="p">,</span> <span class="n">n_vert</span><span class="p">,</span> <span class="n">n_face</span><span class="p">,</span> <span class="n">n_lmk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a landmark distribution based on a polyhedron shape.&quot;&quot;&quot;</span>
+    <span class="n">pos_vert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vert_list</span><span class="p">)</span>
+    <span class="n">order_face</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">face_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">pos_face</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_face</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">normal_face</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_face</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_face</span><span class="p">):</span>
+        <span class="n">pos0</span> <span class="o">=</span> <span class="n">pos_vert</span><span class="p">[</span><span class="n">order_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pos1</span> <span class="o">=</span> <span class="n">pos_vert</span><span class="p">[</span><span class="n">order_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pos2</span> <span class="o">=</span> <span class="n">pos_vert</span><span class="p">[</span><span class="n">order_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pos_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos0</span> <span class="o">+</span> <span class="n">pos1</span> <span class="o">+</span> <span class="n">pos2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="n">normal_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">pos1</span> <span class="o">-</span> <span class="n">pos0</span><span class="p">,</span> <span class="n">pos2</span> <span class="o">-</span> <span class="n">pos0</span><span class="p">)</span>
+        <span class="n">normal_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">normal_face</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">idx_lmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n_face</span><span class="p">,</span> <span class="n">n_lmk</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">idx_lmk</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">pos_lmk</span> <span class="o">=</span> <span class="n">pos_face</span><span class="p">[</span><span class="n">idx_lmk</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">normal_lmk</span> <span class="o">=</span> <span class="n">normal_face</span><span class="p">[</span><span class="n">idx_lmk</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">pos_lmk</span><span class="p">,</span> <span class="n">normal_lmk</span></div>
+
+
+
+<div class="viewcode-block" id="plot_3D">
+<a class="viewcode-back" href="../examples/scenarioSmallBodyLandmarks.html#scenarioSmallBodyLandmarks.plot_3D">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_3D</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">xyz_vert</span><span class="p">,</span> <span class="n">order_face</span><span class="p">,</span> <span class="n">posLmk</span><span class="p">,</span> <span class="n">isvisibleLmk</span><span class="p">,</span> <span class="n">dcm_CP</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the 3D situation of asteroid, landmarks, spacecraft and camera frame.&quot;&quot;&quot;</span>
+    <span class="n">idxOn</span> <span class="o">=</span> <span class="n">isvisibleLmk</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">idxOff</span> <span class="o">=</span> <span class="n">isvisibleLmk</span> <span class="o">!=</span> <span class="mi">1</span>
+    <span class="n">color_asteroid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">105</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">105</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">105</span> <span class="o">/</span> <span class="mi">255</span><span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span>
+        <span class="n">xyz_vert</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">xyz_vert</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">xyz_vert</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">triangles</span><span class="o">=</span><span class="n">order_face</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">color_asteroid</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">posLmk</span><span class="p">[</span><span class="n">idxOn</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">posLmk</span><span class="p">[</span><span class="n">idxOn</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">posLmk</span><span class="p">[</span><span class="n">idxOn</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;b&quot;</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">posLmk</span><span class="p">[</span><span class="n">idxOff</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">posLmk</span><span class="p">[</span><span class="n">idxOff</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">posLmk</span><span class="p">[</span><span class="n">idxOff</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">dcm_CP</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^</span><span class="si">{P}</span><span class="s2">r_</span><span class="si">{x}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^</span><span class="si">{P}</span><span class="s2">r_</span><span class="si">{y}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^</span><span class="si">{P}</span><span class="s2">r_</span><span class="si">{z}</span><span class="s2">$ [km]&quot;</span><span class="p">)</span>
+    <span class="n">t_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="mi">60</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Asteroid rotating frame, t=&quot;</span> <span class="o">+</span> <span class="n">t_str</span> <span class="o">+</span> <span class="s2">&quot; min&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_pixel">
+<a class="viewcode-back" href="../examples/scenarioSmallBodyLandmarks.html#scenarioSmallBodyLandmarks.plot_pixel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_pixel</span><span class="p">(</span><span class="n">pixelLmk</span><span class="p">,</span> <span class="n">statusLmk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot landmarks labeled pixels in the camera image.&quot;&quot;&quot;</span>
+    <span class="n">idxOn</span> <span class="o">=</span> <span class="n">statusLmk</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">pixelOn</span> <span class="o">=</span> <span class="n">pixelLmk</span><span class="p">[</span><span class="n">idxOn</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">pixelOn</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pixelOn</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pixelOn</span><span class="p">)):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="p">(</span><span class="n">pixelOn</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pixelOn</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">768</span><span class="p">,</span> <span class="mi">768</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$p_x$ [-]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$p_y$ [-]&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_nLmk">
+<a class="viewcode-back" href="../examples/scenarioSmallBodyLandmarks.html#scenarioSmallBodyLandmarks.plot_nLmk">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_nLmk</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">nvisibleLmk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot visible landmarks evolution.&quot;&quot;&quot;</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span> <span class="n">nvisibleLmk</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [h]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Visible landmarks [-]&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_orientation">
+<a class="viewcode-back" href="../examples/scenarioSmallBodyLandmarks.html#scenarioSmallBodyLandmarks.plot_orientation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_orientation</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dcm_HP</span><span class="p">,</span> <span class="n">dcm_CP</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the camera frame orientation with respect to Hill frame.&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_HP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dcm_CP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_HP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dcm_CP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dcm_HP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dcm_CP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+        <span class="p">]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">labelStrings</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;$\hat\imath_r\cdot \hat c_3$&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;${\hat\imath}_{\theta}\cdot \hat c_1$&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;$\hat\imath_h\cdot \hat c_2$&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">t</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">labelStrings</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [h]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Orientation Illustration&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioSmallBodyLandmarks.html#scenarioSmallBodyLandmarks.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">useBatch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        useBatch (bool): Specify if the pinhole camera model batch process is to be checked.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1"># Define the simulation duration</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+
+    <span class="c1">#  Create the process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># Add the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Add modules to the task</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># Setup celestial object ephemeris module</span>
+    <span class="n">gravBodyEphem</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">()</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;erosEphemeris&quot;</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">setPlanetNames</span><span class="p">(</span><span class="n">planetEphemeris</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="s2">&quot;eros&quot;</span><span class="p">]))</span>
+
+    <span class="c1"># Specify asteroid orbit elements and rotational state January 21st, 2022</span>
+    <span class="c1"># https://ssd.jpl.nasa.gov/horizons.cgi#results</span>
+    <span class="n">oeAsteroid</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oeAsteroid</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">1.4583</span> <span class="o">*</span> <span class="mf">149597870.7</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># meters</span>
+    <span class="n">oeAsteroid</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.2227</span>
+    <span class="n">oeAsteroid</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">10.829</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">oeAsteroid</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">304.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">oeAsteroid</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">178.9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">oeAsteroid</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">246.9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">AR</span> <span class="o">=</span> <span class="mf">11.369</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">dec</span> <span class="o">=</span> <span class="mf">17.227</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+    <span class="n">lst0</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">planetElements</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">classicElementVector</span><span class="p">([</span><span class="n">oeAsteroid</span><span class="p">])</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">rightAscension</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">AR</span><span class="p">])</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">declination</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">dec</span><span class="p">])</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">lst0</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">lst0</span><span class="p">])</span>
+    <span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">rotRate</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">360</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">/</span> <span class="p">(</span><span class="mf">5.27</span> <span class="o">*</span> <span class="mf">3600.0</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">dcm_PN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">euler3232C</span><span class="p">([</span><span class="n">AR</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lst0</span><span class="p">])</span>
+
+    <span class="c1"># Set up asteroid gravity effector (only Keplerian gravity for simplicity)</span>
+    <span class="c1"># https://ssd.jpl.nasa.gov/tools/gravity.html#/vesta</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mf">4.4631</span> <span class="o">*</span> <span class="mf">1e5</span>
+    <span class="n">asteroid</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createCustomGravObject</span><span class="p">(</span><span class="s2">&quot;eros&quot;</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">radEquator</span><span class="o">=</span><span class="mi">16</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">asteroid</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">asteroid</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Create an ephemeris converter</span>
+    <span class="n">ephemConverter</span> <span class="o">=</span> <span class="n">ephemerisConverter</span><span class="o">.</span><span class="n">EphemerisConverter</span><span class="p">()</span>
+    <span class="n">ephemConverter</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ephemConverter&quot;</span>
+    <span class="n">ephemConverter</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bsk-Sat&quot;</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1"># Set spacecraft initial condition</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">34</span> <span class="o">*</span> <span class="mf">1e3</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.001</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">45</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rP</span><span class="p">,</span> <span class="n">vP</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">rN</span> <span class="o">=</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rP</span><span class="p">)</span>
+    <span class="n">vN</span> <span class="o">=</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vP</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.7</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>
+
+    <span class="c1"># Attach gravity to spacecraft</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Set extForceTorque module</span>
+    <span class="c1"># The control torque is read in through the messaging system</span>
+    <span class="n">extFTObject</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFTObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;externalDisturbance&quot;</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObject</span><span class="p">)</span>
+
+    <span class="c1"># Add the simple Navigation sensor module.  This sets the SC attitude, rate, position</span>
+    <span class="c1"># velocity navigation message</span>
+    <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Set hillPoint guidance module</span>
+    <span class="n">attGuidance</span> <span class="o">=</span> <span class="n">hillPoint</span><span class="o">.</span><span class="n">hillPoint</span><span class="p">()</span>
+    <span class="n">attGuidance</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;hillPoint&quot;</span>
+    <span class="n">attGuidance</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+    <span class="n">attGuidance</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemConverter</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Set the attitude tracking error evaluation module</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">sigma_R0R</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attGuidance</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Set the MRP Feedback control module</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+    <span class="c1"># Connect torque command to external torque effector</span>
+    <span class="n">extFTObject</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Prepare 100 landmarks distribution</span>
+    <span class="n">poly_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">LocalGravData</span><span class="o">.</span><span class="n">eros007790</span><span class="p">)</span>
+    <span class="n">vert_list</span><span class="p">,</span> <span class="n">face_list</span><span class="p">,</span> <span class="n">n_vert</span><span class="p">,</span> <span class="n">n_face</span> <span class="o">=</span> <span class="n">loadPolyFromFileToList</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">poly_path</span><span class="p">))</span>
+    <span class="n">n_lmk</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">pos_lmk</span><span class="p">,</span> <span class="n">normal_lmk</span> <span class="o">=</span> <span class="n">landmark_distribution</span><span class="p">(</span>
+        <span class="n">vert_list</span><span class="p">,</span> <span class="n">face_list</span><span class="p">,</span> <span class="n">n_vert</span><span class="p">,</span> <span class="n">n_face</span><span class="p">,</span> <span class="n">n_lmk</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Set the pinhole camera module</span>
+    <span class="n">camera</span> <span class="o">=</span> <span class="n">pinholeCamera</span><span class="o">.</span><span class="n">PinholeCamera</span><span class="p">()</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mi">25</span> <span class="o">*</span> <span class="mf">1e-3</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">nxPixel</span> <span class="o">=</span> <span class="mi">2048</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">nyPixel</span> <span class="o">=</span> <span class="mi">1536</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">wPixel</span> <span class="o">=</span> <span class="p">(</span><span class="mf">17.3</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2048</span>
+    <span class="n">dcm_CB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">dcm_CB</span> <span class="o">=</span> <span class="n">dcm_CB</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_lmk</span><span class="p">):</span>
+        <span class="n">camera</span><span class="o">.</span><span class="n">addLandmark</span><span class="p">(</span><span class="n">pos_lmk</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">normal_lmk</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">ephemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemConverter</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Add models to task</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">gravBodyEphem</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">ephemConverter</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">98</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">extFTObject</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">97</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">96</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attGuidance</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">95</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">94</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">93</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">92</span><span class="p">)</span>
+
+    <span class="c1"># Add data logging to task</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+    <span class="n">asteroidLog</span> <span class="o">=</span> <span class="n">ephemConverter</span><span class="o">.</span><span class="n">ephemOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">spacecraftLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">asteroidLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">spacecraftLog</span><span class="p">)</span>
+    <span class="n">landmarkLog</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_lmk</span><span class="p">):</span>
+        <span class="n">landmarkLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">landmarkOutMsgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">landmarkLog</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Create the FSW vehicle configuration message</span>
+    <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">configDataMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">configDataMsg</span><span class="p">)</span>
+
+    <span class="c1"># Initialize Simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Configure a simulation stop time and execute the simulation run</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Retrieve the logged data as numpy arrays</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spacecraftLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">)</span>
+    <span class="n">r_PN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">asteroidLog</span><span class="o">.</span><span class="n">r_BdyZero_N</span><span class="p">)</span>
+    <span class="n">v_PN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">asteroidLog</span><span class="o">.</span><span class="n">v_BdyZero_N</span><span class="p">)</span>
+    <span class="n">mrp_PN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">asteroidLog</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spacecraftLog</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spacecraftLog</span><span class="o">.</span><span class="n">v_BN_N</span><span class="p">)</span>
+    <span class="n">mrp_BN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spacecraftLog</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">pixelLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">n_lmk</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">isvisibleLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">n_lmk</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_lmk</span><span class="p">):</span>
+        <span class="n">pixelLmk</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">landmarkLog</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">pL</span>
+        <span class="n">isvisibleLmk</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">landmarkLog</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isVisible</span>
+    <span class="n">nvisibleLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">isvisibleLmk</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Compute spacecraft position and velocity w.r.t. asteroid expressed in inertial frame</span>
+    <span class="n">r_BP_N</span> <span class="o">=</span> <span class="n">r_BN_N</span> <span class="o">-</span> <span class="n">r_PN_N</span>
+    <span class="n">v_BP_N</span> <span class="o">=</span> <span class="n">v_BN_N</span> <span class="o">-</span> <span class="n">v_PN_N</span>
+
+    <span class="c1"># Compute variables of interest</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">r_BP_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">v_BP_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">mrp_BP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">r_PN_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">dcm_PC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">dcm_PH</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c1"># Compute auxiliary dcm</span>
+        <span class="n">dcm_PN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">mrp_PN</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">dcm_BN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">mrp_BN</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">dcm_BP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">dcm_BN</span><span class="p">,</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="c1"># Fill variables of interest</span>
+        <span class="n">r_BP_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r_BP_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">v_BP_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_BP_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">mrp_BP</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcm_BP</span><span class="p">)</span>
+        <span class="n">dcm_PC</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">dcm_CB</span><span class="p">,</span> <span class="n">dcm_BP</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">r_PN_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcm_PN</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r_PN_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="c1"># Fill dcm between planet and Hill frame</span>
+        <span class="n">ir</span> <span class="o">=</span> <span class="n">r_BP_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_BP_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">hv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r_BP_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">v_BP_P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">ih</span> <span class="o">=</span> <span class="n">hv</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hv</span><span class="p">)</span>
+        <span class="n">itheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">ih</span><span class="p">,</span> <span class="n">ir</span><span class="p">)</span>
+        <span class="n">dcm_PH</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ir</span>
+        <span class="n">dcm_PH</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ih</span>
+        <span class="n">dcm_PH</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">itheta</span>
+
+    <span class="c1"># Extract conditions at t0 and tf</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">r_BP_P</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">dcm0</span> <span class="o">=</span> <span class="n">dcm_PC</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">isvisibleLmk0</span> <span class="o">=</span> <span class="n">isvisibleLmk</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">rf</span> <span class="o">=</span> <span class="n">r_BP_P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">dcmf</span> <span class="o">=</span> <span class="n">dcm_PC</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">isvisibleLmkf</span> <span class="o">=</span> <span class="n">isvisibleLmk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="c1"># Showcase a batch computation</span>
+    <span class="c1"># This is useful because oftentimes dynamics simulation is computationally expensive</span>
+    <span class="c1"># Thus, experimenting with camera parameters can be detached from dynamics</span>
+    <span class="k">if</span> <span class="n">useBatch</span><span class="p">:</span>
+        <span class="c1"># Preallocate output pixels</span>
+        <span class="n">pixelBatchLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n_lmk</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="c1"># Process pinhole camera as a batch</span>
+        <span class="n">camera</span><span class="o">.</span><span class="n">processBatch</span><span class="p">(</span>
+            <span class="n">r_BP_P</span><span class="p">,</span> <span class="n">mrp_BP</span><span class="p">,</span> <span class="o">-</span><span class="n">r_PN_P</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_PN_P</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">isvisibleBatchLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">isvisibleBatchLmk</span><span class="p">)</span>
+        <span class="n">nvisibleBatchLmk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">isvisibleBatchLmk</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pixelBatchLmk</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">pixelBatchLmk</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">n_lmk</span><span class="p">]</span>
+        <span class="n">pixelBatchLmk</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">pixelBatchLmk</span><span class="p">)[:,</span> <span class="n">n_lmk</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_lmk</span><span class="p">]</span>
+
+        <span class="c1"># Ensure that results are equal as BSK sim</span>
+        <span class="n">batch_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">nvisibleBatchLmk</span> <span class="o">-</span> <span class="n">nvisibleLmk</span><span class="p">)</span>
+                <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">nvisibleLmk</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">isvisibleBatchLmk</span> <span class="o">-</span> <span class="n">isvisibleLmk</span><span class="p">)</span>
+                <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">isvisibleLmk</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pixelBatchLmk</span> <span class="o">-</span> <span class="n">pixelLmk</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pixelLmk</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">batch_diff</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Plot results of interest</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">plot_3D</span><span class="p">(</span>
+        <span class="n">t0</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vert_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">face_list</span><span class="p">),</span> <span class="n">pos_lmk</span><span class="p">,</span> <span class="n">isvisibleLmk0</span><span class="p">,</span> <span class="n">dcm0</span>
+    <span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plot_3D</span><span class="p">(</span>
+        <span class="n">tf</span><span class="p">,</span> <span class="n">rf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vert_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">face_list</span><span class="p">),</span> <span class="n">pos_lmk</span><span class="p">,</span> <span class="n">isvisibleLmkf</span><span class="p">,</span> <span class="n">dcmf</span>
+    <span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plot_pixel</span><span class="p">(</span><span class="n">pixelLmk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">isvisibleLmk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">plot_nLmk</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">nvisibleLmk</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;4&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">plot_orientation</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dcm_PH</span><span class="p">,</span> <span class="n">dcm_PC</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;5&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">batch_diff</span><span class="p">,</span> <span class="n">figureList</span></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="kc">False</span><span class="p">,</span>  <span class="c1"># useBatch</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

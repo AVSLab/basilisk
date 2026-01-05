@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: magnetometer &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="magnetometer" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">sensors</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../camera/index.html">camera</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../coarseSunSensor/index.html">coarseSunSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotorSensor/index.html">hingedRigidBodyMotorSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../imuSensor/index.html">imuSensor</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">magnetometer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleMassProps/index.html">simpleMassProps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleVoltEstimator/index.html">simpleVoltEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../starTracker/index.html">starTracker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">sensors</a></li>
+          <li class="breadcrumb-item"><a href="index.html">magnetometer</a></li>
+      <li class="breadcrumb-item active">Module: magnetometer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/sensors/magnetometer/magnetometer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-magnetometer">
+<span id="magnetometer"></span><h1>Module: magnetometer<a class="headerlink" href="#module-magnetometer" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This document describes how Three-Axis Magnetometer (TAM) devices are modeled in the Basilisk software. The purpose of this module is to implement magnetic field measurements on the sensor frame <span class="math notranslate nohighlight">\(S\)</span>.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>Assumptions made in TAM module and the corresponding limitations are shown below:</p>
+<ul class="simple">
+<li><p><strong>Magnetic Field Model Inputs</strong>: The magnetometer sensor is limited with the used magnetic field model which are individual magnetic field models complex and having their own assumptions. The reader is referred to the cited literature to learn more about the model limitations and challenges.</p></li>
+<li><p><strong>Error Inputs</strong>: Since the error models rely on user inputs, these inputs are the most likely source of error in TAM output. Instrument bias would have to be measured experimentally or an educated guess would have to be made. The Gauss-Markov noise model has well-known assumptions and is generally accepted to be a good model for this application.</p></li>
+<li><p><strong>External Disturbances</strong>: Currently, the module does not consider the external magnetic field, so it is limited to the cases where this effect is not significant. This can be overcome by using magnetic field models taking into these effects account or adding it as an additional term.</p></li>
+</ul>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>stateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>input message for spacecraft states</p></td>
+</tr>
+<tr class="row-odd"><td><p>magInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/MagneticFieldMsgPayload.html#magneticfieldmsgpayload"><span class="std std-ref">MagneticFieldMsgPayload</span></a></p></td>
+<td><p>input message for magnetic field data in inertial N frame</p></td>
+</tr>
+<tr class="row-even"><td><p>tamDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/TAMSensorMsgPayload.html#tamsensormsgpayload"><span class="std std-ref">TAMSensorMsgPayload</span></a></p></td>
+<td><p>magnetic field sensor output message in the sensor frame S</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>There are a multitude of magnetic field models. As all the magnetic field models are children of <a class="reference internal" href="../../environment/_GeneralModuleFiles/magneticFieldBase.html#magneticfieldbase"><span class="std std-ref">Module: magneticFieldBase</span></a> base class, magnetometer can be created based on any of the magnetic field model.</p>
+<section id="planet-centric-spacecraft-position-vector">
+<h3>Planet Centric Spacecraft Position Vector<a class="headerlink" href="#planet-centric-spacecraft-position-vector" title="Link to this heading"></a></h3>
+<p>For the following developments, the spacecraft location relative to the planet frame is required. Let <span class="math notranslate nohighlight">\(\boldsymbol r_{B/P}\)</span> be the spacecraft position vector relative to the planet center.
+In the simulation the spacecraft location is given relative to an inertial frame origin <span class="math notranslate nohighlight">\(\cal{O}\)</span>.
+The planet centric position vector is computed using</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol r_{B/P} = \boldsymbol r_{B/O} - \boldsymbol r_{P/O}\]</div>
+<p>If no planet ephemeris message is specified, then the planet position vector <span class="math notranslate nohighlight">\(r_{P/O}\)</span> is set to zero. Let <span class="math notranslate nohighlight">\([PN]\)</span> be the direction cosine matrix that relates the rotating planet-fixed frame relative to an inertial frame <span class="math notranslate nohighlight">\(\cal{N}\)</span>. The simulation provides the spacecraft position vector in inertial frame components. The planet centric position vector is then written in Earth-fixed frame components using</p>
+<div class="math notranslate nohighlight">
+\[{}^{\cal{P}}{{\boldsymbol r}_{B/P}} = [PN] \ {}^{\cal{N}}{{\boldsymbol r}_{B/P}}\]</div>
+</section>
+<section id="magnetic-field-models">
+<h3>Magnetic Field Models<a class="headerlink" href="#magnetic-field-models" title="Link to this heading"></a></h3>
+<p>The truth of the magnetometer measurements in sensor frame coordinates with no errors are output as:</p>
+<div class="math notranslate nohighlight">
+\[{}^{\cal{S}}{\boldsymbol B} = [SN]\ {}^{\cal{N}}{\boldsymbol B}\]</div>
+<p>where <span class="math notranslate nohighlight">\([SN]\)</span> is the direction cosine matrix from <span class="math notranslate nohighlight">\(\cal{N}\)</span> to <span class="math notranslate nohighlight">\(\cal{S}\)</span>, and <span class="math notranslate nohighlight">\({{}^\cal{N}}{ \boldsymbol B}\)</span> is the magnetic field vector of the magnetic field model in inertial frame components.</p>
+</section>
+<section id="sensor-error-modeling">
+<h3>Sensor Error Modeling<a class="headerlink" href="#sensor-error-modeling" title="Link to this heading"></a></h3>
+<p>The magnetic field vector of the magnetic field models is considered to be “truth”. So, the errors are applied on the “truth” values to simulate a real instrumentation:</p>
+<div class="math notranslate nohighlight">
+\[\boldsymbol B_{measured} = (\boldsymbol B_{truth} + \boldsymbol e_{noise} + \boldsymbol e_{bias}) f_{scale}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol e_{noise}\)</span> is the Gaussian noise, <span class="math notranslate nohighlight">\(\boldsymbol e_{bias}\)</span> is the bias applied on the magnetic field measurements, and <span class="math notranslate nohighlight">\(f_{scale}\)</span> is the scale factor applied on the measurements for linear scaling.</p>
+</section>
+<section id="saturation">
+<h3>Saturation<a class="headerlink" href="#saturation" title="Link to this heading"></a></h3>
+<p>Sensors might have specific saturation bounds for their measurements. It also prevents the sensor for giving a value less or higher than the possible hardware output. The saturated values are:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\boldsymbol B_{{sat}_{max}} = \mbox{min}(\boldsymbol B_{measured},  \mbox{maxOutput})\\\boldsymbol B_{{sat}_{min}} = \mbox{max}(\boldsymbol B_{measured},  \mbox{minOutput})\end{aligned}\end{align} \]</div>
+<p>This is the final output of the sensor module.</p>
+</section>
+<section id="fault-modeling">
+<h3>Fault Modeling<a class="headerlink" href="#fault-modeling" title="Link to this heading"></a></h3>
+<p>The magnetometer module also supports user-enabled faulty behavior. The module currently supports the following faults:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MAG_FAULT_STUCK_CURRENT</span></code> fixes the measurement to the value</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MAG_FAULT_STUCK_VALUE</span></code> is faulty behavior where the measurement sticks to a specific value</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MAG_FAULT_SPIKING</span></code> is faulty behavior where the measurement spikes
+to a specified multiplier times the actual value, with a given probability</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NOMINAL</span></code> has no faulty behavior but may still have noise and bias</p></li>
+</ul>
+<p>This module has several fault parameters that are set to their default values:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Default Module Parameters</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>faultState</p></td>
+<td><p>Sets the fault status.</p></td>
+<td><p>[<code class="docutils literal notranslate"><span class="pre">NOMINAL</span></code>, <code class="docutils literal notranslate"><span class="pre">NOMINAL</span></code>, <code class="docutils literal notranslate"><span class="pre">NOMINAL</span></code>]</p></td>
+</tr>
+<tr class="row-odd"><td><p>stuckValue</p></td>
+<td><p>Magnetometer reading at which the reading is stuck for fault mode <code class="docutils literal notranslate"><span class="pre">MAG_FAULT_STUCK_VALUE</span></code>.</p></td>
+<td><p>[0.0, 0.0, 0.0]</p></td>
+</tr>
+<tr class="row-even"><td><p>spikeProbability</p></td>
+<td><p>Probability of a spike when in fault mode <code class="docutils literal notranslate"><span class="pre">MAG_FAULT_SPIKING</span></code>. Between 0 and 1.</p></td>
+<td><p>[0.1, 0.1, 0.1]</p></td>
+</tr>
+<tr class="row-odd"><td><p>spikeAmount</p></td>
+<td><p>Sensed magnetometer multiplier when spiking for fault mode <code class="docutils literal notranslate"><span class="pre">MAG_FAULT_SPIKING</span></code>.</p></td>
+<td><p>[2.0, 2.0, 2.0]</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<section id="general-module-setup">
+<h3>General Module Setup<a class="headerlink" href="#general-module-setup" title="Link to this heading"></a></h3>
+<p>This section outlines the steps needed to add a Magnetometer module to a sim. First, one of the magnetic field models must be imported:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">magneticFieldCenteredDipole</span>
+<span class="n">magModule</span> <span class="o">=</span> <span class="n">magneticFieldCenteredDipole</span><span class="o">.</span><span class="n">MagneticFieldCenteredDipole</span><span class="p">()</span>
+<span class="n">magModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;CenteredDipole&quot;</span>
+</pre></div>
+</div>
+<p>and/or</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">magneticFieldWMM</span>
+<span class="n">magModule</span> <span class="o">=</span> <span class="n">magneticFieldWMM</span><span class="o">.</span><span class="n">MagneticFieldWMM</span><span class="p">()</span>
+<span class="n">magModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;WMM&quot;</span>
+</pre></div>
+</div>
+<p>Then, the magnetic field measurements must be imported and initialized:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">magnetometer</span>
+<span class="n">testModule</span> <span class="o">=</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">Magnetometer</span><span class="p">()</span>
+<span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;TAM_sensor&quot;</span>
+</pre></div>
+</div>
+<p>The model can  be added to a task like other simModels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testModule</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each Magnetometer module calculates the magnetic field based on the magnetic field and output state messages
+of a spacecraft. The spacecraft states are read in through the spacecraft state input message shown above.</p>
+<p>Magnetic field data is transformed from inertial to body, then to the sensor frame. The transformation
+from <span class="math notranslate nohighlight">\(\cal B\)</span> to <span class="math notranslate nohighlight">\(\cal S\)</span> can be set via <code class="docutils literal notranslate"><span class="pre">dcm_SB</span></code> using the helper function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setBodyToSensorDCM</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where (<code class="docutils literal notranslate"><span class="pre">psi</span></code>, <code class="docutils literal notranslate"><span class="pre">theta</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>) are classical 3-2-1 Euler angles that map from the body frame to the sensor frame <span class="math notranslate nohighlight">\(\cal S\)</span>.</p>
+</section>
+<section id="specifying-tam-sensor-corruptions">
+<h3>Specifying TAM Sensor Corruptions<a class="headerlink" href="#specifying-tam-sensor-corruptions" title="Link to this heading"></a></h3>
+<p>Three types of TAM sensor corruptions can be simulated.  If not specified, all these corruptions are zeroed. To add a Gaussian noise component to the output, the 3d vector <code class="docutils literal notranslate"><span class="pre">senNoiseStd</span></code> is set to non-zero values.  This is the standard deviation of Gaussian noise in Tesla.  If any <code class="docutils literal notranslate"><span class="pre">senNoiseStd</span></code> component is negative then the noise is not applied.</p>
+<p>Next, to simulate a constant bias, the variable <code class="docutils literal notranslate"><span class="pre">senBias</span></code> is set to a non-zero value. To simulate a linear scaling of the outputs, the variable <code class="docutils literal notranslate"><span class="pre">scaleFactor</span></code> is used.</p>
+<p>Finally, to set saturation values, the variables <code class="docutils literal notranslate"><span class="pre">maxOutput</span></code> and <code class="docutils literal notranslate"><span class="pre">minOutput</span></code> are used. Minimum and maximum bounds for saturation are set to large values as <span class="math notranslate nohighlight">\((-10^{200} \mbox{nT})\)</span> and <span class="math notranslate nohighlight">\((10^{200} \mbox{nT})\)</span> respectively in order not to saturate the outputs by default.</p>
+</section>
+<section id="setting-tam-sensor-faults">
+<h3>Setting TAM Sensor Faults<a class="headerlink" href="#setting-tam-sensor-faults" title="Link to this heading"></a></h3>
+<p>The fault state and parameters for each axis can be set by the user through the setter function. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">testModule</span><span class="o">.</span><span class="n">setFaultState</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">magnetometer</span><span class="o">.</span><span class="n">MAG_FAULT_STUCK_VALUE</span><span class="p">)</span>
+<span class="linenos">2</span><span class="n">testModule</span><span class="o">.</span><span class="n">stuckValue</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10000e-9</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [T] Sensor stuck at 10,000 nT on x-axis</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv415MagFaultState_t">
+<span id="_CPPv315MagFaultState_t"></span><span id="_CPPv215MagFaultState_t"></span><span class="target" id="magnetometer_8h_1afa5f67ed618803b3c23a809864f02842"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MagFaultState_t</span></span></span><a class="headerlink" href="#_CPPv415MagFaultState_t" title="Link to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15MagFaultState_t7NOMINALE">
+<span id="_CPPv3N15MagFaultState_t7NOMINALE"></span><span id="_CPPv2N15MagFaultState_t7NOMINALE"></span><span class="target" id="magnetometer_8h_1afa5f67ed618803b3c23a809864f02842ae2bd7b57b3f0bb02e66e42dbacc5c7fc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NOMINAL</span></span></span><a class="headerlink" href="#_CPPv4N15MagFaultState_t7NOMINALE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15MagFaultState_t23MAG_FAULT_STUCK_CURRENTE">
+<span id="_CPPv3N15MagFaultState_t23MAG_FAULT_STUCK_CURRENTE"></span><span id="_CPPv2N15MagFaultState_t23MAG_FAULT_STUCK_CURRENTE"></span><span class="target" id="magnetometer_8h_1afa5f67ed618803b3c23a809864f02842aa57ea4f3bb0a9693a0e464e1bf9f205b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MAG_FAULT_STUCK_CURRENT</span></span></span><a class="headerlink" href="#_CPPv4N15MagFaultState_t23MAG_FAULT_STUCK_CURRENTE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15MagFaultState_t21MAG_FAULT_STUCK_VALUEE">
+<span id="_CPPv3N15MagFaultState_t21MAG_FAULT_STUCK_VALUEE"></span><span id="_CPPv2N15MagFaultState_t21MAG_FAULT_STUCK_VALUEE"></span><span class="target" id="magnetometer_8h_1afa5f67ed618803b3c23a809864f02842aa7f9d4a2fc539cfdda95f9956240b60d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MAG_FAULT_STUCK_VALUE</span></span></span><a class="headerlink" href="#_CPPv4N15MagFaultState_t21MAG_FAULT_STUCK_VALUEE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15MagFaultState_t17MAG_FAULT_SPIKINGE">
+<span id="_CPPv3N15MagFaultState_t17MAG_FAULT_SPIKINGE"></span><span id="_CPPv2N15MagFaultState_t17MAG_FAULT_SPIKINGE"></span><span class="target" id="magnetometer_8h_1afa5f67ed618803b3c23a809864f02842ab281b1ae8c492f9fc7e0faf52a6cfc1e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MAG_FAULT_SPIKING</span></span></span><a class="headerlink" href="#_CPPv4N15MagFaultState_t17MAG_FAULT_SPIKINGE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412Magnetometer">
+<span id="_CPPv312Magnetometer"></span><span id="_CPPv212Magnetometer"></span><span id="Magnetometer"></span><span class="target" id="class_magnetometer"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Magnetometer</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv412Magnetometer" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;magnetometer.h&gt;</em></div>
+<p><a class="reference internal" href="#class_magnetometer"><span class="std std-ref">Magnetometer</span></a> sensor model that simulates magnetic field measurements with configurable noise. </p>
+<p>The magnetometer supports noise configuration through:<ul class="simple">
+<li><p>Walk bounds: Maximum allowed deviations from truth [T]</p></li>
+<li><p>Noise std: Standard deviation of measurement noise [T]</p></li>
+<li><p>AMatrix: Propagation matrix for error model (defaults to identity)</p></li>
+<li><p>Bias: Static measurement bias [T]</p></li>
+</ul>
+</p>
+<p>Example Python usage: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">magSensor</span> <span class="o">=</span> <span class="n">Magnetometer</span><span class="p">()</span>
+
+<span class="c1"># Configure noise (Tesla)</span>
+<span class="n">magSensor</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span>  <span class="c1"># Standard deviation per axis</span>
+<span class="n">magSensor</span><span class="o">.</span><span class="n">setWalkBounds</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>    <span class="c1"># Maximum error bounds</span>
+
+<span class="c1"># Optional: Set static bias (Tesla)</span>
+<span class="n">magSensor</span><span class="o">.</span><span class="n">senBias</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">]</span>
+
+<span class="c1"># Optional: Configure error propagation (default is identity)</span>
+<span class="n">magSensor</span><span class="o">.</span><span class="n">setAMatrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+</pre></div>
+</div>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer12MagnetometerEv">
+<span id="_CPPv3N12Magnetometer12MagnetometerEv"></span><span id="_CPPv2N12Magnetometer12MagnetometerEv"></span><span id="Magnetometer::Magnetometer"></span><span class="target" id="class_magnetometer_1aaa0805207e65f099d666d04768fc0f6d"></span><span class="sig-name descname"><span class="n"><span class="pre">Magnetometer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer12MagnetometerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor, setting variables to default values. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12MagnetometerD0Ev">
+<span id="_CPPv3N12MagnetometerD0Ev"></span><span id="_CPPv2N12MagnetometerD0Ev"></span><span id="Magnetometer::~Magnetometer"></span><span class="target" id="class_magnetometer_1ac8e9f1cba5ac44677d89fd052eae281c"></span><span class="sig-name descname"><span class="n"><span class="pre">~Magnetometer</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12MagnetometerD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the destructor, nothing to report here. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer5ResetE8uint64_t">
+<span id="_CPPv3N12Magnetometer5ResetE8uint64_t"></span><span id="_CPPv2N12Magnetometer5ResetE8uint64_t"></span><span id="Magnetometer::Reset__uint64_t"></span><span class="target" id="class_magnetometer_1a804b45078a8d7d59ff20f406c834eb4a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for reseting the module. </p>
+<p>This method is used to reset the module. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time from the architecture </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer11UpdateStateE8uint64_t">
+<span id="_CPPv3N12Magnetometer11UpdateStateE8uint64_t"></span><span id="_CPPv2N12Magnetometer11UpdateStateE8uint64_t"></span><span id="Magnetometer::UpdateState__uint64_t"></span><span class="target" id="class_magnetometer_1a848a9e17ed52cb29118529c50714e71e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to update state for runtime. </p>
+<p>This method is called at a specified rate by the architecture. It makes the calls to compute the current magnetic field information and write the output message for the rest of the model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time from the architecture </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer17readInputMessagesEv">
+<span id="_CPPv3N12Magnetometer17readInputMessagesEv"></span><span id="_CPPv2N12Magnetometer17readInputMessagesEv"></span><span id="Magnetometer::readInputMessages"></span><span class="target" id="class_magnetometer_1a64ed1b7622745fdf423004d0f2943d2a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to read the input messages. </p>
+<p>This method reads necessary input messages. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer17computeTrueOutputEv">
+<span id="_CPPv3N12Magnetometer17computeTrueOutputEv"></span><span id="_CPPv2N12Magnetometer17computeTrueOutputEv"></span><span id="Magnetometer::computeTrueOutput"></span><span class="target" id="class_magnetometer_1ab2106a02ce636f79cb22a090ec7a141d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTrueOutput</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer17computeTrueOutputEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to compute the true magnetic field vector. </p>
+<p>This method computes the true sensed values for the sensor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer14computeMagDataEv">
+<span id="_CPPv3N12Magnetometer14computeMagDataEv"></span><span id="_CPPv2N12Magnetometer14computeMagDataEv"></span><span id="Magnetometer::computeMagData"></span><span class="target" id="class_magnetometer_1a9032013c016fca43b0e763b5c9a37eca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeMagData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer14computeMagDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to get the magnetic field vector information. </p>
+<p>This method computes the magnetic field vector information in the sensor frame. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer17applySensorErrorsEv">
+<span id="_CPPv3N12Magnetometer17applySensorErrorsEv"></span><span id="_CPPv2N12Magnetometer17applySensorErrorsEv"></span><span id="Magnetometer::applySensorErrors"></span><span class="target" id="class_magnetometer_1aabfb35ea01b586e1b005bd4e0062e7fd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applySensorErrors</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer17applySensorErrorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to set the actual output of the sensor with errors. </p>
+<p>This method takes the true values (tamTrue_S) and converts it over to an errored value. It applies Gaussian noise, constant bias and scale factor to the truth. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer15applySaturationEv">
+<span id="_CPPv3N12Magnetometer15applySaturationEv"></span><span id="_CPPv2N12Magnetometer15applySaturationEv"></span><span id="Magnetometer::applySaturation"></span><span class="target" id="class_magnetometer_1ab09bf650aaa4340654013c4c4154cef3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applySaturation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer15applySaturationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Apply saturation effects to sensed output (floor and ceiling). </p>
+<p>This method applies saturation using the given bounds. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N12Magnetometer19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N12Magnetometer19writeOutputMessagesE8uint64_t"></span><span id="Magnetometer::writeOutputMessages__uint64_t"></span><span class="target" id="class_magnetometer_1aaa2ae24f743d95dd4d5b42155d44f76d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Clock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to write the output message to the system. </p>
+<p>This method writes the output messages. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer18setBodyToSensorDCMEddd">
+<span id="_CPPv3N12Magnetometer18setBodyToSensorDCMEddd"></span><span id="_CPPv2N12Magnetometer18setBodyToSensorDCMEddd"></span><span id="Magnetometer::setBodyToSensorDCM__double.double.double"></span><span class="target" id="class_magnetometer_1a2d1620a53a99bbe96d36a7fb142d80d4"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setBodyToSensorDCM</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">yaw</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pitch</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">roll</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer18setBodyToSensorDCMEddd" title="Link to this definition"></a><br /></dt>
+<dd><p>Utility method to configure the sensor DCM. </p>
+<p><ul class="simple">
+<li><p>This method composes the transformation matrix from Body to Sensor frame. </p></li>
+</ul>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer10setAMatrixERKN5Eigen8Matrix3dE">
+<span id="_CPPv3N12Magnetometer10setAMatrixERKN5Eigen8Matrix3dE"></span><span id="_CPPv2N12Magnetometer10setAMatrixERKN5Eigen8Matrix3dE"></span><span id="Magnetometer::setAMatrix__Eigen::Matrix3dCR"></span><span class="target" id="class_magnetometer_1a33867f798b4c479ba4fc0998af0025c8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer10setAMatrixERKN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets propagation matrix for error model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12Magnetometer10getAMatrixEv">
+<span id="_CPPv3NK12Magnetometer10getAMatrixEv"></span><span id="_CPPv2NK12Magnetometer10getAMatrixEv"></span><span id="Magnetometer::getAMatrixC"></span><span class="target" id="class_magnetometer_1a62db8bd0b76e9c62a9e77a7f7da1b813"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAMatrix</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12Magnetometer10getAMatrixEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Gets current propagation matrix </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer13setFaultStateEi15MagFaultState_t">
+<span id="_CPPv3N12Magnetometer13setFaultStateEi15MagFaultState_t"></span><span id="_CPPv2N12Magnetometer13setFaultStateEi15MagFaultState_t"></span><span id="Magnetometer::setFaultState__i.MagFaultState_t"></span><span class="target" id="class_magnetometer_1abca59f7d3b286564743fd1631c56e763"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setFaultState</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">axis</span></span>, <a class="reference internal" href="#_CPPv415MagFaultState_t" title="MagFaultState_t"><span class="n"><span class="pre">MagFaultState_t</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12Magnetometer13setFaultStateEi15MagFaultState_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets fault state for a specific axis </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12Magnetometer13getFaultStateEi">
+<span id="_CPPv3NK12Magnetometer13getFaultStateEi"></span><span id="_CPPv2NK12Magnetometer13getFaultStateEi"></span><span id="Magnetometer::getFaultState__iC"></span><span class="target" id="class_magnetometer_1a7f1e7bdb7ae6ddf908857ef55f0a04b1"></span><a class="reference internal" href="#_CPPv415MagFaultState_t" title="MagFaultState_t"><span class="n"><span class="pre">MagFaultState_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFaultState</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">axis</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12Magnetometer13getFaultStateEi" title="Link to this definition"></a><br /></dt>
+<dd><p>Gets fault state for a specific axis </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer10stateInMsgE">
+<span id="_CPPv3N12Magnetometer10stateInMsgE"></span><span id="_CPPv2N12Magnetometer10stateInMsgE"></span><span id="Magnetometer::stateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_magnetometer_1a379108a2036a6eba3b8a55d947ee6b28"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer10stateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] input message for spacecraft states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer8magInMsgE">
+<span id="_CPPv3N12Magnetometer8magInMsgE"></span><span id="_CPPv2N12Magnetometer8magInMsgE"></span><span id="Magnetometer::magInMsg__ReadFunctor:MagneticFieldMsgPayload:"></span><span class="target" id="class_magnetometer_1ab869d73800aea2ec6a72de43191cd8d9"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/MagneticFieldMsgPayload.html#_CPPv423MagneticFieldMsgPayload" title="MagneticFieldMsgPayload"><span class="n"><span class="pre">MagneticFieldMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">magInMsg</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer8magInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] input message for magnetic field data in inertial frame N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer13tamDataOutMsgE">
+<span id="_CPPv3N12Magnetometer13tamDataOutMsgE"></span><span id="_CPPv2N12Magnetometer13tamDataOutMsgE"></span><span id="Magnetometer::tamDataOutMsg__Message:TAMSensorMsgPayload:"></span><span class="target" id="class_magnetometer_1af46f9804e8f4c129b21528cdef435382"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TAMSensorMsgPayload.html#_CPPv419TAMSensorMsgPayload" title="TAMSensorMsgPayload"><span class="n"><span class="pre">TAMSensorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tamDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer13tamDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Message for TAM output data in sensor frame S </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer6dcm_SBE">
+<span id="_CPPv3N12Magnetometer6dcm_SBE"></span><span id="_CPPv2N12Magnetometer6dcm_SBE"></span><span id="Magnetometer::dcm_SB__Eigen::Matrix3d"></span><span class="target" id="class_magnetometer_1aac59777f613847a6fe71689091e0faab"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_SB</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer6dcm_SBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM from body frame to sensor frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer5tam_SE">
+<span id="_CPPv3N12Magnetometer5tam_SE"></span><span id="_CPPv2N12Magnetometer5tam_SE"></span><span id="Magnetometer::tam_S__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a658451bb173eb3fac381426b69837f22"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tam_S</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer5tam_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Magnetic field vector in sensor frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer11tamSensed_SE">
+<span id="_CPPv3N12Magnetometer11tamSensed_SE"></span><span id="_CPPv2N12Magnetometer11tamSensed_SE"></span><span id="Magnetometer::tamSensed_S__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a585b298b7d588df21752e3a981bf7a36"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tamSensed_S</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer11tamSensed_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Measurement including perturbations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer9tamTrue_SE">
+<span id="_CPPv3N12Magnetometer9tamTrue_SE"></span><span id="_CPPv2N12Magnetometer9tamTrue_SE"></span><span id="Magnetometer::tamTrue_S__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a195a0740de577960e1ca248a2ddc2f9f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tamTrue_S</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer9tamTrue_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Measurement without perturbations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer11scaleFactorE">
+<span id="_CPPv3N12Magnetometer11scaleFactorE"></span><span id="_CPPv2N12Magnetometer11scaleFactorE"></span><span id="Magnetometer::scaleFactor__double"></span><span class="target" id="class_magnetometer_1a90ff681c9b5686d96145abec95e8a766"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scaleFactor</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer11scaleFactorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Scale factor applied to sensor </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer7senBiasE">
+<span id="_CPPv3N12Magnetometer7senBiasE"></span><span id="_CPPv2N12Magnetometer7senBiasE"></span><span id="Magnetometer::senBias__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a6db077c2d4d345f724cae0ed222ab48c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">senBias</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer7senBiasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Sensor bias vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer11senNoiseStdE">
+<span id="_CPPv3N12Magnetometer11senNoiseStdE"></span><span id="_CPPv2N12Magnetometer11senNoiseStdE"></span><span id="Magnetometer::senNoiseStd__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a436d8d30b2fbf3eb1bd9d6c1dab1d0db"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">senNoiseStd</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer11senNoiseStdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Sensor noise standard deviation vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer10walkBoundsE">
+<span id="_CPPv3N12Magnetometer10walkBoundsE"></span><span id="_CPPv2N12Magnetometer10walkBoundsE"></span><span id="Magnetometer::walkBounds__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a93d046a1b1b474cba335482906c6a354"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walkBounds</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer10walkBoundsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] “3-sigma” errors to permit for states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer9maxOutputE">
+<span id="_CPPv3N12Magnetometer9maxOutputE"></span><span id="_CPPv2N12Magnetometer9maxOutputE"></span><span id="Magnetometer::maxOutput__double"></span><span class="target" id="class_magnetometer_1ae89b0a9cada1193136f832e4df4c0fa1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxOutput</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer9maxOutputE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Maximum output for saturation application </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer9minOutputE">
+<span id="_CPPv3N12Magnetometer9minOutputE"></span><span id="_CPPv2N12Magnetometer9minOutputE"></span><span id="Magnetometer::minOutput__double"></span><span class="target" id="class_magnetometer_1a84dd809e2658ab0a13ad4e8fa1c2363a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">minOutput</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer9minOutputE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Minimum output for saturation application </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer10stuckValueE">
+<span id="_CPPv3N12Magnetometer10stuckValueE"></span><span id="_CPPv2N12Magnetometer10stuckValueE"></span><span id="Magnetometer::stuckValue__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a814d7cdf84f115529d34f6d3b6ac2397"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stuckValue</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer10stuckValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[T] Value for mag sensor to get stuck at </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer16spikeProbabilityE">
+<span id="_CPPv3N12Magnetometer16spikeProbabilityE"></span><span id="_CPPv2N12Magnetometer16spikeProbabilityE"></span><span id="Magnetometer::spikeProbability__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1a9974e8f7b334dfbc5cebdcfcb8c58fb0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spikeProbability</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer16spikeProbabilityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Probability of spiking at each time step (between 0 and 1) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer11spikeAmountE">
+<span id="_CPPv3N12Magnetometer11spikeAmountE"></span><span id="_CPPv2N12Magnetometer11spikeAmountE"></span><span id="Magnetometer::spikeAmount__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1af8c111d810c3f74168cc23305b18f031"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spikeAmount</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer11spikeAmountE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Spike multiplier </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer9bskLoggerE">
+<span id="_CPPv3N12Magnetometer9bskLoggerE"></span><span id="_CPPv2N12Magnetometer9bskLoggerE"></span><span id="Magnetometer::bskLogger__BSKLogger"></span><span class="target" id="class_magnetometer_1aa228af2684279f6ec83ba304ae3b074d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer14faultStateAxisE">
+<span id="_CPPv3N12Magnetometer14faultStateAxisE"></span><span id="_CPPv2N12Magnetometer14faultStateAxisE"></span><span id="Magnetometer::faultStateAxis__MagFaultState_tA"></span><span class="target" id="class_magnetometer_1aa4f2f0dfeda4a1562f58f428ae4b805f"></span><a class="reference internal" href="#_CPPv415MagFaultState_t" title="MagFaultState_t"><span class="n"><span class="pre">MagFaultState_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">faultStateAxis</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N12Magnetometer14faultStateAxisE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Fault state variable for each axis </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer7magDataE">
+<span id="_CPPv3N12Magnetometer7magDataE"></span><span id="_CPPv2N12Magnetometer7magDataE"></span><span id="Magnetometer::magData__MagneticFieldMsgPayload"></span><span class="target" id="class_magnetometer_1a5ea9e26ef018abeb246372ec12bb84ea"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/MagneticFieldMsgPayload.html#_CPPv423MagneticFieldMsgPayload" title="MagneticFieldMsgPayload"><span class="n"><span class="pre">MagneticFieldMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">magData</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer7magDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Magnetic field in inertial N frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer12stateCurrentE">
+<span id="_CPPv3N12Magnetometer12stateCurrentE"></span><span id="_CPPv2N12Magnetometer12stateCurrentE"></span><span id="Magnetometer::stateCurrent__SCStatesMsgPayload"></span><span class="target" id="class_magnetometer_1a092381be51dba72d37cd5769a439b7d1"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCurrent</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer12stateCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current spacecraft state </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer9numStatesE">
+<span id="_CPPv3N12Magnetometer9numStatesE"></span><span id="_CPPv2N12Magnetometer9numStatesE"></span><span id="Magnetometer::numStates__uint64_t"></span><span class="target" id="class_magnetometer_1a1e9867906375448e24d1e2968a8b4235"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStates</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer9numStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of States for Gauss Markov Models </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer10noiseModelE">
+<span id="_CPPv3N12Magnetometer10noiseModelE"></span><span id="_CPPv2N12Magnetometer10noiseModelE"></span><span id="Magnetometer::noiseModel__GaussMarkov"></span><span class="target" id="class_magnetometer_1a51c337463e6ce46bd325a9b1b28be7c5"></span><a class="reference internal" href="../../../architecture/utilities/gauss_markov.html#_CPPv411GaussMarkov" title="GaussMarkov"><span class="n"><span class="pre">GaussMarkov</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseModel</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer10noiseModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gauss Markov noise generation model </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer15saturateUtilityE">
+<span id="_CPPv3N12Magnetometer15saturateUtilityE"></span><span id="_CPPv2N12Magnetometer15saturateUtilityE"></span><span id="Magnetometer::saturateUtility__Saturate"></span><span class="target" id="class_magnetometer_1a18bcd3d8de3b72ed09e03ed3c0a9b9bb"></span><a class="reference internal" href="../../../architecture/utilities/saturate.html#_CPPv48Saturate" title="Saturate"><span class="n"><span class="pre">Saturate</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saturateUtility</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer15saturateUtilityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Saturation utility </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer7AMatrixE">
+<span id="_CPPv3N12Magnetometer7AMatrixE"></span><span id="_CPPv2N12Magnetometer7AMatrixE"></span><span id="Magnetometer::AMatrix__Eigen::Matrix3d"></span><span class="target" id="class_magnetometer_1a293b5550e55c9aca3bd4d4f83aa07243"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AMatrix</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer7AMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Error propagation matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer9pastValueE">
+<span id="_CPPv3N12Magnetometer9pastValueE"></span><span id="_CPPv2N12Magnetometer9pastValueE"></span><span id="Magnetometer::pastValue__Eigen::Vector3d"></span><span class="target" id="class_magnetometer_1adcfca73fd4fe5fca5d78ab2d3b797254"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pastValue</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer9pastValueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement from last update (used only for faults) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12Magnetometer25spikeProbabilityGeneratorE">
+<span id="_CPPv3N12Magnetometer25spikeProbabilityGeneratorE"></span><span id="_CPPv2N12Magnetometer25spikeProbabilityGeneratorE"></span><span id="Magnetometer::spikeProbabilityGenerator__std::minstd_rand"></span><span class="target" id="class_magnetometer_1ab24815c829c7d49e38b5f4f74217cfa6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">minstd_rand</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spikeProbabilityGenerator</span></span></span><a class="headerlink" href="#_CPPv4N12Magnetometer25spikeProbabilityGeneratorE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="magnetometer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

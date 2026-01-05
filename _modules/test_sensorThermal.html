@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_sensorThermal &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_sensorThermal</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_sensorThermal</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        sensorThermal</span>
+<span class="c1">#   Author:             Adam Herrmann</span>
+<span class="c1">#   Creation Date:      January 12th, 2023</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">bskName</span> <span class="o">=</span> <span class="s1">&#39;Basilisk&#39;</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bskName</span><span class="p">)</span>
+
+<span class="c1"># Import all of the modules that we are going to be called in this simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>                  <span class="c1"># general support file with common unit test functions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">sensorThermal</span>                    <span class="c1"># import the module that is to be tested</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>                      <span class="c1"># import the message definitions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">astroConstants</span>
+
+
+<span class="c1"># Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># Uncomment this line if this test has an expected failure, adjust message as needed.</span>
+<span class="c1"># @pytest.mark.xfail(conditionstring)</span>
+<span class="c1"># Provide a unique test method name, starting with &#39;test_&#39;.</span>
+<span class="c1"># The following &#39;parametrize&#39; function decorator provides the parameters and expected results for each</span>
+<span class="c1"># of the multiple test runs for this test.  Note that the order in that you add the parametrize method</span>
+<span class="c1"># matters for the documentation in that it impacts the order in which the test arguments are shown.</span>
+<span class="c1"># The first parametrize arguments are shown last in the pytest argument list</span>
+<span class="c1"># Accuracy parametrization for pytest-html generation</span>
+<div class="viewcode-block" id="test_sensorThermal">
+<a class="viewcode-back" href="../Documentation/simulation/thermal/sensorThermal/_UnitTest/test_sensorThermal.html#test_sensorThermal.test_sensorThermal">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1e-6</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_sensorThermal</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test script tests the temperature modeling of a sensor with an insulated back and a power input as it</span>
+<span class="sd">    radiates to the outside environment and takes in heat from the sun. This module tests temperature change in three</span>
+<span class="sd">    separate cases:</span>
+
+<span class="sd">    - Zero: The starting temperature is zero degrees Celsius.</span>
+<span class="sd">    - Hot: The starting temperature is the converged hot temperature case at approximately 98 degrees Celsius.</span>
+<span class="sd">    - Cold: the starting temperature is the converged cold temperature case at approximately -75 degrees Celsius.</span>
+
+<span class="sd">    The thermal sensor is set to match the parameters in `scenarioSensorThermal.py`, which assumes a 2 kg aluminum</span>
+<span class="sd">    sensor with the reflectivity and absorptivity coefficients of kapton tape. The sensor is in orbit about the Earth</span>
+<span class="sd">    and is set to point directly in the direction of the sun.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        accuracy (float): absolute accuracy value used in the validation tests</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file we are checking the values of the variables</span>
+
+<span class="sd">    - ``sensorTemp``</span>
+
+<span class="sd">    which represents the temperature of the sensor. This array is compared to the ``truthTemp`` array, which contains</span>
+<span class="sd">    the true values of the temperature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">sensorThermalTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sensorThermalTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># set the simulation time variable used later on</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1">#  set device status message</span>
+    <span class="n">sensorStatusMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsgPayload</span><span class="p">()</span>
+    <span class="n">sensorStatusMsgPayload</span><span class="o">.</span><span class="n">deviceStatus</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">sensorStatusMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DeviceStatusMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sensorStatusMsgPayload</span><span class="p">)</span>
+
+    <span class="c1">#  set the spacecraft message</span>
+    <span class="n">scStateMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">scStateMsgPayload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6378</span><span class="o">*</span><span class="mf">1000.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">scStateMsgPayload</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">scStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scStateMsgPayload</span><span class="p">)</span>
+
+    <span class="c1">#  set the sun message</span>
+    <span class="n">sunMsgPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMsgPayload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span><span class="o">*</span><span class="mf">1000.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMsgPayload</span><span class="p">)</span>
+
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup the temperature modeling</span>
+    <span class="c1">#</span>
+    <span class="n">sensorThermalModel</span> <span class="o">=</span> <span class="n">sensorThermal</span><span class="o">.</span><span class="n">SensorThermal</span><span class="p">()</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s1">&#39;sensorThermalModel&#39;</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorArea</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># m^2</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorAbsorptivity</span> <span class="o">=</span> <span class="mf">0.25</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorEmissivity</span> <span class="o">=</span> <span class="mf">0.34</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorMass</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># kg</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorSpecificHeat</span> <span class="o">=</span> <span class="mi">890</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorPowerDraw</span> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># W</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">T_0</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># [ºC]</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scStateMsg</span><span class="p">)</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">sensorStatusInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sensorStatusMsg</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">sensorThermalModel</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># log data</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># log the RW temperature</span>
+    <span class="n">tempLog</span> <span class="o">=</span> <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">temperatureOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">tempLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">numTests</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># run the first test (nominal)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">numTests</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># sensorThermalModel the test conditions</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">T_0</span> <span class="o">=</span> <span class="mf">97.961</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+
+    <span class="c1"># run the second test (hot case)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">numTests</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># change the test conditions</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">T_0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">74.8505</span>
+    <span class="n">sensorThermalModel</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">simulationTime</span><span class="p">)</span>
+
+    <span class="c1"># run the second test (cold case)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">numTests</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># retrieve the logged data</span>
+    <span class="c1">#</span>
+
+    <span class="n">sensorTemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tempLog</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># set the truth vectors</span>
+    <span class="c1">#</span>
+
+    <span class="n">trueTemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0443986873</span><span class="p">,</span> <span class="mf">97.7691478</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.8506601</span><span class="p">])</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># compare the module results to the true values</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># do the comparison</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numTests</span><span class="p">):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqual</span><span class="p">(</span><span class="n">sensorTemp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">trueTemp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: Sensor Temperature Test failed test &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">testFailCount</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED&quot;</span><span class="p">)</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Run this unitTest as a stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_sensorThermal</span><span class="p">(</span>
+        <span class="kc">False</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="mf">1e-6</span>    <span class="c1"># accuracy</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

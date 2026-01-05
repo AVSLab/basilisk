@@ -1,0 +1,1133 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controller &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Controller</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Controller</h1><div class="highlight"><pre>
+<span></span>
+ <span class="c1"># ISC License</span>
+ <span class="c1">#</span>
+ <span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+ <span class="c1">#</span>
+ <span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+ <span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+ <span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+ <span class="c1">#</span>
+ <span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+ <span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+ <span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+ <span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+ <span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+ <span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+ <span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># MonteCarlo module. Please read the accompanying README.md for usage information.</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  This module is used to run a simulation with varying initial parameters.</span>
+<span class="c1"># Author:   Nathan Bellowe</span>
+<span class="c1"># Creation Date:  July. 20, 2017</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.DataWriter</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataWriter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.MonteCarlo.RetentionPolicy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetentionPolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities.simulationProgessBar</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProgressBar</span>
+
+
+<div class="viewcode-block" id="Controller">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Controller</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The MonteCarloController class is used to run a monte carlo simulation.</span>
+<span class="sd">    It is used to execute multiple runs of a simulation with varying initial parameters. Data from each run is retained</span>
+<span class="sd">    in order to analyze differences in the simulation runs and the parameters used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executionCount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ICrunFlag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varCast</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span> <span class="o">=</span> <span class="n">SimulationParameters</span><span class="p">(</span>
+            <span class="n">creationFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">executionFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">configureFunction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">retentionPolicies</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">shouldArchiveParameters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">shouldDisperseSeeds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">dispersions</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">icfilename</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Controller.setShowProgressBar">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setShowProgressBar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setShowProgressBar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        To enable or disable progress bar to show simulation progress</span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: boolean value, decide to show/hide progress bar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">showProgressBar</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="Controller.load">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.load">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="n">runDirectory</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a previously completed MonteCarlo simulation</span>
+<span class="sd">        Args:</span>
+<span class="sd">            The path to the MonteCarlo.data file that contains the archived MonteCarlo run</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">runDirectory</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/MonteCarlo.data&quot;</span>
+
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickledData</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pickledData</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading montecarlo at&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">multiProcManager</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dataOutQueue</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">multiProcManager</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dataWriter</span> <span class="o">=</span> <span class="n">DataWriter</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="Controller.setExecutionFunction">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setExecutionFunction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setExecutionFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newModule</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set an execution function that executes a simulation instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            executionFunction: (sim: SimulationBaseClass) =&gt; None</span>
+<span class="sd">                A function with one parameter, a simulation instance.</span>
+<span class="sd">                The function will be called after the creationFunction and configurationFunction in each simulation run.</span>
+<span class="sd">                It must execute the simulation.</span>
+<span class="sd">                Its return value is not used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">executionFunction</span> <span class="o">=</span> <span class="n">newModule</span></div>
+
+
+<div class="viewcode-block" id="Controller.setConfigureFunction">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setConfigureFunction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setConfigureFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newModule</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set an execution function that executes a simulation instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            executionFunction: (sim: SimulationBaseClass) =&gt; None</span>
+<span class="sd">                A function with one parameter, a simulation instance.</span>
+<span class="sd">                The function will be called after the creationFunction and configurationFunction in each simulation run.</span>
+<span class="sd">                It must execute the simulation.</span>
+<span class="sd">                Its return value is not used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">configureFunction</span> <span class="o">=</span> <span class="n">newModule</span></div>
+
+
+<div class="viewcode-block" id="Controller.setSimulationFunction">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setSimulationFunction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setSimulationFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newObject</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the function that creates the simulation instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            creationFunction: () =&gt; SimulationBaseClass</span>
+<span class="sd">                A function with no parameters, that returns a simulation instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">creationFunction</span> <span class="o">=</span> <span class="n">newObject</span></div>
+
+
+<div class="viewcode-block" id="Controller.setShouldDisperseSeeds">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setShouldDisperseSeeds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setShouldDisperseSeeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seedDisp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disperse the RNG seeds of each run in the MonteCarlo</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seedDisp: bool</span>
+<span class="sd">                Whether to disperse the RNG seeds in each run of the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldDisperseSeeds</span> <span class="o">=</span> <span class="n">seedDisp</span></div>
+
+
+<div class="viewcode-block" id="Controller.setExecutionCount">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setExecutionCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setExecutionCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newCount</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the number of runs for the MonteCarlo simulation</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            newCount: int</span>
+<span class="sd">                The number of runs to use for the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executionCount</span> <span class="o">=</span> <span class="n">newCount</span></div>
+
+
+<div class="viewcode-block" id="Controller.addDispersion">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.addDispersion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addDispersion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a dispersion to the simulation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            disp: Dispersion</span>
+<span class="sd">                The dispersion to add to the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">dispersions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">disp</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Controller.addRetentionPolicy">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.addRetentionPolicy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addRetentionPolicy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a retention policy to the simulation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            disp: RetentionPolicy</span>
+<span class="sd">                The retention policy to add to the simulation.</span>
+<span class="sd">                This defines variables to be logged and saved</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Controller.setThreadCount">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setThreadCount">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setThreadCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threads</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the number of threads to use for the monte carlo simulation</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            threads: int</span>
+<span class="sd">                Number of threads to execute the montecarlo run on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">=</span> <span class="n">threads</span></div>
+
+
+<div class="viewcode-block" id="Controller.setVerbose">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setVerbose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setVerbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use verbose output for this MonteCarlo run</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            verbose: bool</span>
+<span class="sd">                Whether to print verbose information during this MonteCarlo sim.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span></div>
+
+
+<div class="viewcode-block" id="Controller.setDispMagnitudeFile">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setDispMagnitudeFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setDispMagnitudeFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitudes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save .txt with the magnitude of each dispersion in % or sigma away from mean</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            magnitudes: bool</span>
+<span class="sd">                Whether to save extra files for analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">saveDispMag</span> <span class="o">=</span> <span class="n">magnitudes</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setShouldArchiveParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shouldArchiveParameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span> <span class="o">=</span> <span class="n">shouldArchiveParameters</span>
+
+<div class="viewcode-block" id="Controller.setArchiveDir">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setArchiveDir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setArchiveDir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirName</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set-up archives for this MonteCarlo run</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dirName: string</span>
+<span class="sd">                The name of the directory to archive runs in.</span>
+<span class="sd">                None, if no archive desired.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span> <span class="o">=</span> <span class="n">dirName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span></div>
+
+
+<div class="viewcode-block" id="Controller.setVarCast">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setVarCast">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setVarCast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varCast</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the variable type to downcast the data to</span>
+
+<span class="sd">        :param varCast: &#39;float&#39;, &#39;integer&#39;, &#39;signed&#39;, &#39;unsigned&#39; (see pandas.to_numeric documentation)</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varCast</span> <span class="o">=</span> <span class="n">varCast</span></div>
+
+
+<div class="viewcode-block" id="Controller.setICDir">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setICDir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setICDir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirName</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set-up archives containing IC data</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dirName: string</span>
+<span class="sd">                The name of the directory to archive runs in.</span>
+<span class="sd">                None, if no archive desired.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirName</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span></div>
+
+
+<div class="viewcode-block" id="Controller.setICRunFlag">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.setICRunFlag">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setICRunFlag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the number of threads to use for the monte carlo simulation</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            threads: int</span>
+<span class="sd">                Number of threads to execute the montecarlo run on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ICrunFlag</span> <span class="o">=</span> <span class="nb">bool</span></div>
+
+
+<div class="viewcode-block" id="Controller.getRetainedData">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.getRetainedData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getRetainedData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the data that was retained for a run, or list of runs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cases: int The desired case to get data from.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The retained data for that run is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ICrunFlag</span><span class="p">:</span>
+            <span class="n">oldRunDataFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">case</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.data&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">oldRunDataFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">case</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.data&quot;</span>
+
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">oldRunDataFile</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickledData</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pickledData</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="Controller.getRetainedDatas">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.getRetainedDatas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getRetainedDatas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cases</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the data that was retained for a list of runs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cases: int[] The desired cases to get data from.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A generator is returned, which will yield, in-order, the retained data for each of these cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRetainedData</span><span class="p">(</span><span class="n">case</span><span class="p">)</span>  <span class="c1"># call this method recursively, yielding the result</span></div>
+
+
+<div class="viewcode-block" id="Controller.getParameters">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.getParameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caseNumber</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the parameters used for a particular run of the montecarlo</span>
+
+<span class="sd">        :param caseNumber: The number of the run to get the parameters used for.</span>
+<span class="sd">        :type caseNumber: int</span>
+
+<span class="sd">        :return: A dictionary of the parameters of the simulation</span>
+<span class="sd">                 For example:</span>
+<span class="sd">                 {&quot;keyForSim&quot;: parameterValue, &#39;TaskList[0].TaskModels[0].RNGSeed&#39;: 1674764759}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ICrunFlag</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">caseNumber</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">caseNumber</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dispersionFile</span><span class="p">:</span>
+            <span class="n">dispersions</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dispersionFile</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">dispersions</span></div>
+
+
+<div class="viewcode-block" id="Controller.reRunCases">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.reRunCases">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reRunCases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caseList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rerun some cases from a MonteCarlo run. Does not run in parallel</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            caseList: int[]</span>
+<span class="sd">                The list of runs to repeat, a list of numbers.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            failures: int[]</span>
+<span class="sd">                The list of failed runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the list of failures</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">caseNumber</span> <span class="ow">in</span> <span class="n">caseList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rerunning&quot;</span><span class="p">,</span> <span class="n">caseNumber</span><span class="p">)</span>
+
+            <span class="n">oldRunFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">caseNumber</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">oldRunFile</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR re-running case: &quot;</span> <span class="o">+</span> <span class="n">oldRunFile</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># use old simulation parameters, modified slightly.</span>
+            <span class="n">simParams</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="p">)</span>
+            <span class="n">simParams</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">caseNumber</span>
+            <span class="c1"># don&#39;t redisperse seeds, we want to use the ones saved in the oldRunFile</span>
+            <span class="n">simParams</span><span class="o">.</span><span class="n">shouldDisperseSeeds</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># don&#39;t retain any data so remove all retention policies</span>
+            <span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">oldRunFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">runParameters</span><span class="p">:</span>
+                <span class="n">simParams</span><span class="o">.</span><span class="n">modifications</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">runParameters</span><span class="p">)</span>
+
+            <span class="c1"># execute simulation with dispersion</span>
+            <span class="n">executor</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">executor</span><span class="p">([</span><span class="n">simParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error re-executing run&quot;</span><span class="p">,</span> <span class="n">caseNumber</span><span class="p">)</span>
+                <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">caseNumber</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">failed</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed rerunning cases:&quot;</span><span class="p">,</span> <span class="n">failed</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">failed</span></div>
+
+
+<div class="viewcode-block" id="Controller.runInitialConditions">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.runInitialConditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runInitialConditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caseList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run initial conditions given in a file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            caseList: int[]</span>
+<span class="sd">                The list of runs to repeat, a list of numbers.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            failures: int[]</span>
+<span class="sd">                The list of failed runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the list of failures</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;No initial condition directory was given&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ICrunFlag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;IC run flag was not set&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Beginning simulation with </span><span class="si">{0}</span><span class="s2"> runs on </span><span class="si">{1}</span><span class="s2"> threads&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executionCount</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot run initial conditions: the directory given does not exist&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Archiving a copy of this simulation before running it in &#39;MonteCarlo.data&#39;&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">+</span> <span class="s2">&quot;MonteCarlo.data&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickleFile</span><span class="p">:</span>
+                    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pickleFile</span><span class="p">)</span>  <span class="c1"># dump this controller object into a file.</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unknown exception while trying to pickle monte-carlo-controller... </span><span class="se">\n</span><span class="s2">continuing...</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># Create Queue, but don&#39;t ever start it.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiProcManager</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiProcManager</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span> <span class="o">=</span> <span class="n">DataWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># If archiving the rerun data -- make sure not to delete the original data!</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">):</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">setLogDir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: The archive directory is set as the icDirectory. Proceeding would have overwriten all data &quot;</span> \
+                      <span class="s2">&quot;within: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">+</span> <span class="s2">&quot; with the select rerun cases! Exiting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Change the archive directory to a new location when rerunning cases.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No archive data specified; no data will be logged to dataframes&quot;</span><span class="p">)</span>
+
+        <span class="n">jobsFinished</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># keep track of what simulations have finished</span>
+
+        <span class="c1"># The simulation executor is responsible for executing simulation given a simulation&#39;s parameters</span>
+        <span class="c1"># It is called within worker threads with each worker&#39;s simulation parameters</span>
+        <span class="n">simulationExecutor</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()</span>
+        <span class="c1">#</span>
+        <span class="n">progressBar</span> <span class="o">=</span> <span class="n">SimulationProgressBar</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">caseList</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">showProgressBar</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># don&#39;t make child thread</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing sequentially...&quot;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">caseList</span><span class="p">)):</span>
+                <span class="n">simGenerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateICSims</span><span class="p">(</span><span class="n">caseList</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">sim</span> <span class="ow">in</span> <span class="n">simGenerator</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">simulationExecutor</span><span class="p">([</span><span class="n">sim</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">])</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">progressBar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">numSims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">caseList</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">&gt;</span> <span class="n">numSims</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fewer MCs spawned than processes assigned (</span><span class="si">%d</span><span class="s2"> &lt; </span><span class="si">%d</span><span class="s2">). Changing processes count to </span><span class="si">%d</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">numSims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">,</span> <span class="n">numSims</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">=</span> <span class="n">numSims</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSims</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">):</span>
+                <span class="c1"># If number of sims doesn&#39;t factor evenly into the number of processes:</span>
+                <span class="k">if</span> <span class="n">numSims</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">numSims</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">)))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="n">numSims</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">simGenerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateICSims</span><span class="p">(</span><span class="n">caseList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span>
+                <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># yields results *as* the workers finish jobs</span>
+                    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">simulationExecutor</span><span class="p">,</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">simGenerator</span><span class="p">]):</span>
+                        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># workers return True on success</span>
+                            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># add failed jobs to the list of failures</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Job&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;failed...&quot;</span><span class="p">)</span>
+
+                        <span class="n">jobsFinished</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">progressBar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">jobsFinished</span><span class="p">)</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ctrl-C was hit, closing pool&quot;</span><span class="p">)</span>
+                    <span class="c1"># failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unknown exception while running simulations:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                    <span class="c1"># failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...</span>
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="n">progressBar</span><span class="o">.</span><span class="n">markComplete</span><span class="p">()</span>
+        <span class="n">progressBar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># If the data was archiving, close the queue.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span><span class="p">:</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+               <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># if there are failures</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">failed</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed&quot;</span><span class="p">,</span> <span class="n">failed</span><span class="p">,</span> <span class="s2">&quot;saving to &#39;failures.txt&#39;&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span><span class="p">:</span>
+                <span class="c1"># write a file that contains log of failed runs</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">+</span> <span class="s2">&quot;failures.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">failFile</span><span class="p">:</span>
+                    <span class="n">failFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">failed</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">failed</span></div>
+
+
+<div class="viewcode-block" id="Controller.generateICSims">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.generateICSims">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generateICSims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caseList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator function to clone a baseSimulation for IC run</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            baseSimulation: SimulationParams</span>
+<span class="sd">                A base simulation to clone.</span>
+<span class="sd">            numSims: int[]</span>
+<span class="sd">                The desired runs to generate.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            generator&lt;SimulationParams&gt;</span>
+<span class="sd">                A generator that yields that number of cloned simulations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make a list of simulations to execute by cloning the base-simulation and</span>
+        <span class="c1"># changing each clone&#39;s index and filename to make a list of</span>
+        <span class="c1"># simulations to execute</span>
+        <span class="k">for</span> <span class="n">caseNumber</span> <span class="ow">in</span> <span class="n">caseList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running IC &quot;</span><span class="p">,</span> <span class="n">caseNumber</span><span class="p">)</span>
+
+            <span class="n">oldRunFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">caseNumber</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">oldRunFile</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR running IC case: &quot;</span> <span class="o">+</span> <span class="n">oldRunFile</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># use old simulation parameters, modified slightly.</span>
+            <span class="n">simParams</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="p">)</span>
+            <span class="n">simParams</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">caseNumber</span>
+            <span class="c1"># don&#39;t redisperse seeds, we want to use the ones saved in the oldRunFile</span>
+            <span class="n">simParams</span><span class="o">.</span><span class="n">shouldDisperseSeeds</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">simParams</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icDirectory</span> <span class="o">+</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">caseNumber</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">oldRunFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">runParameters</span><span class="p">:</span>
+                <span class="n">simParams</span><span class="o">.</span><span class="n">modifications</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">runParameters</span><span class="p">)</span>
+
+            <span class="k">yield</span> <span class="n">simParams</span></div>
+
+
+<div class="viewcode-block" id="Controller.generateSims">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.generateSims">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generateSims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simNumList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator function to clone a baseSimulation</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            baseSimulation: SimulationParams</span>
+<span class="sd">                A base simulation to clone.</span>
+<span class="sd">            numSims: int[]</span>
+<span class="sd">                The desired runs to generate.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            generator&lt;SimulationParams&gt;</span>
+<span class="sd">                A generator that yields that number of cloned simulations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># make a list of simulations to execute by cloning the base-simulation and</span>
+        <span class="c1"># changing each clone&#39;s index and filename to make a list of</span>
+        <span class="c1"># simulations to execute</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">simNumList</span><span class="p">:</span>
+            <span class="n">simClone</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="p">)</span>
+            <span class="n">simClone</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">simClone</span><span class="o">.</span><span class="n">filename</span> <span class="o">+=</span> <span class="s2">&quot;run&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="k">yield</span> <span class="n">simClone</span></div>
+
+
+<div class="viewcode-block" id="Controller.executeCallbacks">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.executeCallbacks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">executeCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">retentionPolicies</span><span class="o">=</span><span class="p">[]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute retention policy callbacks after running a monteCarlo sim.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rng: A list of simulations to execute callbacks on</span>
+<span class="sd">            retentionPolicies: the retention policies to execute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executionCount</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">retentionPolicies</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">retentionPolicies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span>
+
+        <span class="k">for</span> <span class="n">simIndex</span> <span class="ow">in</span> <span class="n">rng</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRetainedData</span><span class="p">(</span><span class="n">simIndex</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">retentionPolicy</span> <span class="ow">in</span> <span class="n">retentionPolicies</span><span class="p">:</span>
+                <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">executeCallback</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Controller.executeSimulations">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.Controller.executeSimulations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">executeSimulations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute simulations in parallel</span>
+
+<span class="sd">        :return: failed: int[]</span>
+<span class="sd">                 A list of the indices of all failed simulation runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Beginning simulation with </span><span class="si">{0}</span><span class="s2"> runs on </span><span class="si">{1}</span><span class="s2"> threads&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executionCount</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Archiving a copy of this simulation before running it in &#39;MonteCarlo.data&#39;&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">+</span> <span class="s2">&quot;MonteCarlo.data&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickleFile</span><span class="p">:</span>
+                    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pickleFile</span><span class="p">)</span>  <span class="c1"># dump this controller object into a file.</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unknown exception while trying to pickle monte-carlo-controller... </span><span class="se">\n</span><span class="s2">continuing...</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiProcManager</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiProcManager</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span> <span class="o">=</span> <span class="n">DataWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">numSims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">executionCount</span>
+
+        <span class="c1"># start data writer process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">setLogDir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">setVarCast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">varCast</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataWriter</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Avoid building a full list of all simulations to run in memory,</span>
+        <span class="c1"># instead only generating simulations right before they are needed by a waiting worker</span>
+        <span class="c1"># This is accomplished using a generator and pool.imap, -- simulations are only built</span>
+        <span class="c1"># when they are about to be passed to a worker, avoiding memory overhead of first building simulations</span>
+        <span class="c1"># There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.</span>
+        <span class="c1"># simGenerator = self.generateSims(range(numSims))</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># keep track of the indices of failed simulations</span>
+        <span class="n">jobsFinished</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># keep track of what simulations have finished</span>
+
+        <span class="c1"># The simulation executor is responsible for executing simulation given a simulation&#39;s parameters</span>
+        <span class="c1"># It is called within worker threads with each worker&#39;s simulation parameters</span>
+        <span class="n">simulationExecutor</span> <span class="o">=</span> <span class="n">SimulationExecutor</span><span class="p">()</span>
+
+        <span class="n">progressBar</span> <span class="o">=</span> <span class="n">SimulationProgressBar</span><span class="p">(</span><span class="n">numSims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">showProgressBar</span><span class="p">)</span>
+
+        <span class="c1"># The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It</span>
+        <span class="c1"># is a temporary fix to a memory leak which is assumed to be a result of the simGenerator not collecting</span>
+        <span class="c1"># garbage properly. # TODO: Find a more permenant solution to the leak.</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># don&#39;t make child thread</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing sequentially...&quot;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSims</span><span class="p">):</span>
+                <span class="n">simGenerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateSims</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">sim</span> <span class="ow">in</span> <span class="n">simGenerator</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">run_ok</span> <span class="o">=</span> <span class="n">simulationExecutor</span><span class="p">([</span><span class="n">sim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">run_ok</span><span class="p">:</span>
+                            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">progressBar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">&gt;</span> <span class="n">numSims</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fewer MCs spawned than processes assigned (</span><span class="si">%d</span><span class="s2"> &lt; </span><span class="si">%d</span><span class="s2">). Changing processes count to </span><span class="si">%d</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">numSims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">,</span> <span class="n">numSims</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">=</span> <span class="n">numSims</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numSims</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">):</span>
+                <span class="c1"># If number of sims doesn&#39;t factor evenly into the number of processes:</span>
+                <span class="k">if</span> <span class="n">numSims</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">numSims</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">)))</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="n">numSims</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">simGenerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generateSims</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="o">*</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">offset</span><span class="p">)))</span>
+                <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numProcess</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># yields results *as* the workers finish jobs</span>
+                    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">simulationExecutor</span><span class="p">,</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">simGenerator</span><span class="p">]):</span>
+                        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># workers return True on success</span>
+                            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># add failed jobs to the list of failures</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Job&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;failed...&quot;</span><span class="p">)</span>
+
+                        <span class="n">jobsFinished</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">progressBar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">jobsFinished</span><span class="p">)</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ctrl-C was hit, closing pool&quot;</span><span class="p">)</span>
+                    <span class="n">failed</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">jobsFinished</span><span class="p">,</span> <span class="n">numSims</span><span class="p">)))</span>  <span class="c1"># fail all potentially running jobs...</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unknown exception while running simulations:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                    <span class="n">failed</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">jobsFinished</span><span class="p">,</span> <span class="n">numSims</span><span class="p">)))</span>  <span class="c1"># fail all potentially running jobs...</span>
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># Wait until all data is logged from the spawned runs before proceeding with the next set.</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="n">progressBar</span><span class="o">.</span><span class="n">markComplete</span><span class="p">()</span>
+        <span class="n">progressBar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># Wait until all data logging is finished before concatenation dataframes and shutting down the pool</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+           <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataOutQueue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># if there are failures</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">failed</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed&quot;</span><span class="p">,</span> <span class="n">failed</span><span class="p">,</span> <span class="s2">&quot;saving to &#39;failures.txt&#39;&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span><span class="p">:</span>
+                <span class="c1"># write a file that contains log of failed runs</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">archiveDir</span> <span class="o">+</span> <span class="s2">&quot;failures.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">failFile</span><span class="p">:</span>
+                    <span class="n">failFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">failed</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">failed</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SimulationParameters">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.SimulationParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationParameters</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class represents the run parameters for a simulation, with information including</span>
+
+<span class="sd">     - a function that creates the simulation</span>
+<span class="sd">     - a function that executes the simulation</span>
+<span class="sd">     - the dispersions to use on that simulation</span>
+<span class="sd">     - parameters describing the data to be retained for a simulation</span>
+<span class="sd">     - whether randomized seeds should be applied to the simulation</span>
+<span class="sd">     - whether data should be archived</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creationFunction</span><span class="p">,</span> <span class="n">executionFunction</span><span class="p">,</span> <span class="n">configureFunction</span><span class="p">,</span>
+                 <span class="n">retentionPolicies</span><span class="p">,</span> <span class="n">dispersions</span><span class="p">,</span> <span class="n">shouldDisperseSeeds</span><span class="p">,</span>
+                 <span class="n">shouldArchiveParameters</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">icfilename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">modifications</span><span class="o">=</span><span class="p">{},</span>
+                 <span class="n">showProgressBar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">creationFunction</span> <span class="o">=</span> <span class="n">creationFunction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executionFunction</span> <span class="o">=</span> <span class="n">executionFunction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configureFunction</span> <span class="o">=</span> <span class="n">configureFunction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retentionPolicies</span> <span class="o">=</span> <span class="n">retentionPolicies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersions</span> <span class="o">=</span> <span class="n">dispersions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shouldDisperseSeeds</span> <span class="o">=</span> <span class="n">shouldDisperseSeeds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shouldArchiveParameters</span> <span class="o">=</span> <span class="n">shouldArchiveParameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">=</span> <span class="n">icfilename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modifications</span> <span class="o">=</span> <span class="n">modifications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersionMag</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveDispMag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showProgressBar</span> <span class="o">=</span> <span class="n">showProgressBar</span></div>
+
+
+
+
+<div class="viewcode-block" id="SimulationExecutor">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.SimulationExecutor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationExecutor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is used to execute a simulation in a worker thread.</span>
+<span class="sd">    To use, create an instance of this class, and then call the instance with the simulation parameters to run them in::</span>
+
+<span class="sd">        executor = SimulationExecutor()</span>
+<span class="sd">        simParams = SimulationParameters()</span>
+<span class="sd">        successFlag = executor(simParams)</span>
+
+<span class="sd">    This class can be used to execute a simulation on a different thread, by using this class as the processes target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In each worker process, we execute this function (by calling this object)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params [simParams, data out queue]:</span>
+<span class="sd">                A SimulationParameters object for the simulation to be executed and the output data queue</span>
+<span class="sd">                for the data writer.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            success: bool</span>
+<span class="sd">                (True, simParams.index) if simulation run was successful</span>
+<span class="sd">                (False, simParams.index) if simulation run was unsuccessful</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">simParams</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dataOutQueue</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span>  <span class="c1"># On ctrl-c ignore the signal... let the parent deal with it.</span>
+
+            <span class="c1"># must make new random seed on each new thread.</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">index</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">index</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+
+            <span class="c1"># create the users sim by calling their supplied creationFunction</span>
+            <span class="n">simInstance</span> <span class="o">=</span> <span class="n">simParams</span><span class="o">.</span><span class="n">creationFunction</span><span class="p">()</span>
+
+            <span class="c1"># build a list of the parameter and random seed modifications to make</span>
+            <span class="n">modifications</span> <span class="o">=</span> <span class="n">simParams</span><span class="o">.</span><span class="n">modifications</span>
+            <span class="n">magnitudes</span> <span class="o">=</span> <span class="n">simParams</span><span class="o">.</span><span class="n">dispersionMag</span>
+
+            <span class="c1"># we may want to disperse random seeds</span>
+            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">shouldDisperseSeeds</span><span class="p">:</span>
+                <span class="c1"># generate the random seeds for the model (but don&#39;t apply them yet)</span>
+                <span class="c1"># Note: This sets the RNGSeeds before all other modifications</span>
+                <span class="n">randomSeedDispersions</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">disperseSeeds</span><span class="p">(</span><span class="n">simInstance</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">randomSeedDispersions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">modifications</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+            <span class="c1"># used if rerunning ICs from a .json file, modifications will contain the</span>
+            <span class="c1"># RNGSeeds that need to be set before selfInit()</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">populateSeeds</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">modifications</span><span class="p">)</span>
+
+            <span class="c1"># we may want to disperse parameters</span>
+            <span class="k">for</span> <span class="n">disp</span> <span class="ow">in</span> <span class="n">simParams</span><span class="o">.</span><span class="n">dispersions</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modifications</span><span class="p">:</span>  <span class="c1"># could be using a saved parameter.</span>
+                        <span class="n">modifications</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">generateString</span><span class="p">(</span><span class="n">simInstance</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">saveDispMag</span><span class="p">:</span>
+                            <span class="n">magnitudes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">generateMagString</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="c1"># This accomodates dispersion variables that are co-dependent</span>
+                    <span class="n">disp</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">disp</span><span class="o">.</span><span class="n">numberOfSubDisps</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">getName</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modifications</span><span class="p">:</span>  <span class="c1"># could be using a saved parameter.</span>
+                            <span class="n">modifications</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">generateString</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">simInstance</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">saveDispMag</span><span class="p">:</span>
+                                <span class="n">magnitudes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp</span><span class="o">.</span><span class="n">generateMagString</span><span class="p">()</span>
+
+            <span class="c1"># if archiving, this run&#39;s parameters and random seeds are saved in its own json file</span>
+            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">shouldArchiveParameters</span><span class="p">:</span>
+                <span class="c1"># save the dispersions and random seeds for this run</span>
+                <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+                        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">modifications</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+                        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">modifications</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">saveDispMag</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;mag.txt&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfileMag</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">magnitudes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                                <span class="n">outfileMag</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;:&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">magnitudes</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">configureFunction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Configuring sim&quot;</span><span class="p">)</span>
+                <span class="n">simParams</span><span class="o">.</span><span class="n">configureFunction</span><span class="p">(</span><span class="n">simInstance</span><span class="p">)</span>
+
+            <span class="c1"># apply the dispersions and the random seeds</span>
+            <span class="k">for</span> <span class="n">variable</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">modifications</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting attribute </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> on simInstance&quot;</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+            <span class="c1"># setup data logging</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adding retained data&quot;</span><span class="p">)</span>
+                <span class="n">RetentionPolicy</span><span class="o">.</span><span class="n">addRetentionPoliciesToSim</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing simulation&quot;</span><span class="p">)</span>
+            <span class="c1"># execute the simulation, with the user-supplied executionFunction</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">simParams</span><span class="o">.</span><span class="n">executionFunction</span><span class="p">(</span><span class="n">simInstance</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="n">simParams</span><span class="o">.</span><span class="n">executionFunction</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="n">retentionFile</span> <span class="o">=</span> <span class="n">simParams</span><span class="o">.</span><span class="n">icfilename</span> <span class="o">+</span> <span class="s2">&quot;.data&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">retentionFile</span> <span class="o">=</span> <span class="n">simParams</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.data&quot;</span>
+
+                <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Retaining data for run in&quot;</span><span class="p">,</span> <span class="n">retentionFile</span><span class="p">)</span>
+
+                <span class="n">retainedData</span> <span class="o">=</span> <span class="n">RetentionPolicy</span><span class="o">.</span><span class="n">getDataForRetention</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">retentionPolicies</span><span class="p">)</span>
+                <span class="n">dataOutQueue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">retainedData</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">retentionFile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archive</span><span class="p">:</span>
+                    <span class="n">retainedData</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simParams</span><span class="o">.</span><span class="n">index</span> <span class="c1"># add run index</span>
+                    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">retainedData</span><span class="p">,</span> <span class="n">archive</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Terminating simulation&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">simParams</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Thread&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s2">&quot;finished successfully&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># this function returns true only if the simulation was successful</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in worker thread&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">simParams</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># there was an error</span>
+
+<div class="viewcode-block" id="SimulationExecutor.disperseSeeds">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.SimulationExecutor.disperseSeeds">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disperseSeeds</span><span class="p">(</span><span class="n">simInstance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds.</span>
+<span class="sd">        Example return dictionary::</span>
+
+<span class="sd">             {</span>
+<span class="sd">                &#39;.TaskList[0].TaskModels[1]&#39;: 1934586,</span>
+<span class="sd">                &#39;.TaskList[0].TaskModels[2]&#39;: 3450093,</span>
+<span class="sd">                &#39;.TaskList[1].TaskModels[0]&#39;: 2221934,</span>
+<span class="sd">                &#39;.TaskList[2].TaskModels[0]&#39;: 1123244</span>
+<span class="sd">             }</span>
+
+<span class="sd">        :param simInstance: A basilisk simulation to set random seeds on</span>
+<span class="sd">        :type simInstance: SimulationBaseClass</span>
+<span class="sd">        :return: A dictionary with the random seeds that should be applied to the sim</span>
+<span class="sd">                        &quot;&quot;&quot;</span>
+
+        <span class="n">randomSeeds</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">simInstance</span><span class="o">.</span><span class="n">TaskList</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">):</span>
+                <span class="n">taskVar</span> <span class="o">=</span> <span class="s1">&#39;TaskList[&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;].TaskModels&#39;</span> <span class="o">+</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;].RNGSeed&#39;</span>
+                <span class="n">rand</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">execStatement</span> <span class="o">=</span> <span class="s2">&quot;simInstance.&quot;</span> <span class="o">+</span> <span class="n">taskVar</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rand</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">taskVar</span><span class="p">,</span> <span class="n">rand</span><span class="p">)</span>  <span class="c1"># if this fails don&#39;t add to the list of modification</span>
+                    <span class="n">randomSeeds</span><span class="p">[</span><span class="n">taskVar</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">randomSeeds</span></div>
+
+
+<div class="viewcode-block" id="SimulationExecutor.populateSeeds">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/Controller.html#Controller.SimulationExecutor.populateSeeds">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">populateSeeds</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">modifications</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        only populate the RNG seeds of all the tasks in the sim</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            simInstance: SimulationBaseClass</span>
+<span class="sd">                A basilisk simulation to set random seeds on</span>
+<span class="sd">            modifications:</span>
+<span class="sd">                A dictionary containing RNGSeeds to be populate for the sim, among other sim modifications.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">variable</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">modifications</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;.RNGSeed&quot;</span> <span class="ow">in</span> <span class="n">variable</span><span class="p">:</span>
+                <span class="n">rngStatement</span> <span class="o">=</span> <span class="s2">&quot;simInstance.&quot;</span> <span class="o">+</span> <span class="n">variable</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">value</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

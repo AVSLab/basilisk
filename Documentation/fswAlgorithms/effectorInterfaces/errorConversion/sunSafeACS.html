@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: sunSafeACS &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="forceTorqueThrForceMapping" href="../forceTorqueThrForceMapping/index.html" />
+    <link rel="prev" title="Module: dvAttEffect" href="dvAttEffect.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedJointArrayMotor/index.html">hingedJointArrayMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../jointMotionCompensator/index.html">jointMotionCompensator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrForceMapping/index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformReference/index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torque2Dipole/index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgGimbalRateServo/index.html">vscmgGimbalRateServo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgVelocitySteering/index.html">vscmgVelocitySteering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">errorConversion</a></li>
+      <li class="breadcrumb-item active">Module: sunSafeACS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/errorConversion/sunSafeACS.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sunsafeacs">
+<span id="sunsafeacs"></span><h1>Module: sunSafeACS<a class="headerlink" href="#module-sunsafeacs" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This method takes the estimated body-observed sun vector and computes the current attitude/attitude rate errors to pass on to control.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cmdTorqueBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>attitude reference output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>thrOnTimeOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.html#thrarrayontimecmdmsgpayload"><span class="std std-ref">THRArrayOnTimeCmdMsgPayload</span></a></p></td>
+<td><p>thruster on-time output message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419SelfInit_sunSafeACSP16sunSafeACSConfig7int64_t">
+<span id="_CPPv319SelfInit_sunSafeACSP16sunSafeACSConfig7int64_t"></span><span id="_CPPv219SelfInit_sunSafeACSP16sunSafeACSConfig7int64_t"></span><span id="SelfInit_sunSafeACS__sunSafeACSConfigP.int64_t"></span><span class="target" id="sun_safe_a_c_s_8h_1a9e052bc592e0a22ec4373f13a01cd018"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_sunSafeACS</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416sunSafeACSConfig" title="sunSafeACSConfig"><span class="n"><span class="pre">sunSafeACSConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419SelfInit_sunSafeACSP16sunSafeACSConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the configData for the sun safe ACS control. It checks to ensure that the inputs are sane and then creates the output message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the sun safe control </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417Update_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t">
+<span id="_CPPv317Update_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t"></span><span id="_CPPv217Update_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t"></span><span id="Update_sunSafeACS__sunSafeACSConfigP.uint64_t.int64_t"></span><span class="target" id="sun_safe_a_c_s_8h_1a49ad7488085f693176c9d6b19edc46f8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_sunSafeACS</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416sunSafeACSConfig" title="sunSafeACSConfig"><span class="n"><span class="pre">sunSafeACSConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417Update_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the estimated body-observed sun vector and computes the current attitude/attitude rate errors to pass on to control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the sun safe ACS control </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv416Reset_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t">
+<span id="_CPPv316Reset_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t"></span><span id="_CPPv216Reset_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t"></span><span id="Reset_sunSafeACS__sunSafeACSConfigP.uint64_t.int64_t"></span><span class="target" id="sun_safe_a_c_s_8h_1a388c0b229931e58bf2285f01b0cda093"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_sunSafeACS</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416sunSafeACSConfig" title="sunSafeACSConfig"><span class="n"><span class="pre">sunSafeACSConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416Reset_sunSafeACSP16sunSafeACSConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the sun safe ACS control </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416sunSafeACSConfig">
+<span id="_CPPv316sunSafeACSConfig"></span><span id="_CPPv216sunSafeACSConfig"></span><span id="sunSafeACSConfig"></span><span class="target" id="structsun_safe_a_c_s_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunSafeACSConfig</span></span></span><a class="headerlink" href="#_CPPv416sunSafeACSConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sunSafeACS.h&gt;</em></div>
+<p>module configuration message </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16sunSafeACSConfig7thrDataE">
+<span id="_CPPv3N16sunSafeACSConfig7thrDataE"></span><span id="_CPPv2N16sunSafeACSConfig7thrDataE"></span><span id="sunSafeACSConfig::thrData__ThrustGroupData"></span><span class="target" id="structsun_safe_a_c_s_config_1a0af4e83a361c6811db853504e78f8f98"></span><a class="reference internal" href="../_GeneralModuleFiles/thrustGroupData.html#_CPPv415ThrustGroupData" title="ThrustGroupData"><span class="n"><span class="pre">ThrustGroupData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrData</span></span></span><a class="headerlink" href="#_CPPv4N16sunSafeACSConfig7thrDataE" title="Link to this definition"></a><br /></dt>
+<dd><p>Collection of thruster configuration data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16sunSafeACSConfig18cmdTorqueBodyInMsgE">
+<span id="_CPPv3N16sunSafeACSConfig18cmdTorqueBodyInMsgE"></span><span id="_CPPv2N16sunSafeACSConfig18cmdTorqueBodyInMsgE"></span><span id="sunSafeACSConfig::cmdTorqueBodyInMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="structsun_safe_a_c_s_config_1abd0f1ce59586fbe55c93b21e71002739"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdTorqueBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N16sunSafeACSConfig18cmdTorqueBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; The name of the Input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16sunSafeACSConfig9bskLoggerE">
+<span id="_CPPv3N16sunSafeACSConfig9bskLoggerE"></span><span id="_CPPv2N16sunSafeACSConfig9bskLoggerE"></span><span id="sunSafeACSConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structsun_safe_a_c_s_config_1ae681237f17d04a0f9ac6f6e35f4a9b23"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N16sunSafeACSConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dvAttEffect.html" class="btn btn-neutral float-left" title="Module: dvAttEffect" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../forceTorqueThrForceMapping/index.html" class="btn btn-neutral float-right" title="forceTorqueThrForceMapping" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

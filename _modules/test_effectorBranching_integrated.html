@@ -1,0 +1,1002 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_effectorBranching_integrated &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_effectorBranching_integrated</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_effectorBranching_integrated</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Integrated Test Script</span>
+<span class="c1">#   Purpose:            Test effector branching functionality</span>
+<span class="c1">#   Author:             Andrew Morell</span>
+<span class="c1">#   Creation Date:      September 6, 2025</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">simIncludeThruster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">svIntegrators</span><span class="p">,</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span> <span class="c1"># state effectors</span>
+    <span class="n">hingedRigidBodyStateEffector</span><span class="p">,</span>
+    <span class="n">dualHingedRigidBodyStateEffector</span><span class="p">,</span>
+    <span class="n">nHingedRigidBodyStateEffector</span><span class="p">,</span>
+    <span class="n">spinningBodyOneDOFStateEffector</span><span class="p">,</span>
+    <span class="n">spinningBodyTwoDOFStateEffector</span><span class="p">,</span>
+    <span class="n">spinningBodyNDOFStateEffector</span><span class="p">,</span>
+    <span class="n">linearTranslationOneDOFStateEffector</span><span class="p">,</span>
+    <span class="n">linearTranslationNDOFStateEffector</span><span class="p">,</span>
+    <span class="n">linearSpringMassDamper</span><span class="p">,</span>
+    <span class="n">sphericalPendulum</span><span class="p">,</span>
+    <span class="n">prescribedMotionStateEffector</span><span class="p">,</span>
+    <span class="n">reactionWheelStateEffector</span><span class="p">,</span>
+    <span class="n">vscmgStateEffector</span><span class="p">,</span>
+    <span class="n">thrusterStateEffector</span><span class="p">,</span>
+    <span class="n">fuelTank</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span> <span class="c1"># dynamic effectors</span>
+    <span class="n">extForceTorque</span><span class="p">,</span>
+    <span class="n">ExtPulsedTorque</span><span class="p">,</span>
+    <span class="n">thrusterDynamicEffector</span><span class="p">,</span>
+    <span class="n">constraintDynamicEffector</span><span class="p">,</span>
+    <span class="n">dragDynamicEffector</span><span class="p">,</span>
+    <span class="n">radiationPressure</span><span class="p">,</span>
+    <span class="n">facetSRPDynamicEffector</span><span class="p">,</span>
+    <span class="n">MtbEffector</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="c1"># uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail()</span>
+
+<span class="c1"># Note: effectors commented out as True are expected to be added in the future, effectors</span>
+<span class="c1">#       commented out as False are not expected to be added in the future</span>
+<div class="viewcode-block" id="test_effectorBranchingIntegratedTest">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/_GeneralModuleFiles/_UnitTestDynamics/test_effectorBranching_integrated.html#test_effectorBranching_integrated.test_effectorBranchingIntegratedTest">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;stateEffector, isParent&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;hingedRigidBodies&quot;</span><span class="p">,</span>             <span class="kc">True</span><span class="p">),</span>
+    <span class="c1"># (&quot;dualHingedRigidBodies&quot;,           True),</span>
+    <span class="c1"># (&quot;nHingedRigidBodies&quot;,              True),</span>
+    <span class="p">(</span><span class="s2">&quot;spinningBodiesOneDOF&quot;</span><span class="p">,</span>          <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;spinningBodiesTwoDOF&quot;</span><span class="p">,</span>          <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;spinningBodiesNDOF&quot;</span><span class="p">,</span>            <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;linearTranslationBodiesOneDOF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="c1"># (&quot;linearTranslationBodiesNDOF&quot;,     True),</span>
+    <span class="p">(</span><span class="s2">&quot;linearSpringMassDamper&quot;</span><span class="p">,</span>          <span class="kc">False</span><span class="p">),</span>
+    <span class="c1"># (&quot;sphericalPendulum&quot;,               False),</span>
+    <span class="c1"># (&quot;prescribedMotion&quot;,                False),</span>
+    <span class="c1"># (&quot;reactionWheels&quot;,                  False),</span>
+    <span class="c1"># (&quot;VSCMGs&quot;,                          False),</span>
+    <span class="c1"># (&quot;thrusterStateEffector&quot;,           False),</span>
+    <span class="c1"># (&quot;fuelTank&quot;,                        False),</span>
+<span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;dynamicEffector, isChild&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;extForceTorque&quot;</span><span class="p">,</span>            <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;extPulseTorque&quot;</span><span class="p">,</span>              <span class="kc">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;thrusterDynamicEffector&quot;</span><span class="p">,</span>   <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;constraintEffectorOneHub&quot;</span><span class="p">,</span>  <span class="kc">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;constraintEffectorNoHubs&quot;</span><span class="p">,</span>  <span class="kc">True</span><span class="p">),</span>
+    <span class="c1"># (&quot;dragEffector&quot;,                False),</span>
+    <span class="c1"># (&quot;radiationPressure&quot;,           False),</span>
+    <span class="c1"># (&quot;facetSRPDynamicEffector&quot;,     False),</span>
+    <span class="c1"># (&quot;MtbEffector&quot;,                 False),</span>
+    <span class="p">(</span><span class="s2">&quot;multiEffector&quot;</span><span class="p">,</span>             <span class="kc">True</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_effectorBranchingIntegratedTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">stateEffector</span><span class="p">,</span> <span class="n">isParent</span><span class="p">,</span> <span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">isChild</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This integrated test sets up combinations of dynamic effector attached to a state effector.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file we are checking first for branching compatibility, as not every state effector is</span>
+<span class="sd">    set up to host dependent effectors (isParent), and not every dynamic effector is set up to be</span>
+<span class="sd">    attached to a state effector (isChild). The state effector compatibility is checked when the</span>
+<span class="sd">    addDynamicEffector() method is called. The dynamic effector compatibility is checked at</span>
+<span class="sd">    simulation initialization when linkInProperties() is called.</span>
+
+<span class="sd">    A summary of which state effectors and dynamic effectors are expected to be able to act as a</span>
+<span class="sd">    parent or child effector to another is summarized in :ref:`bskPrinciples-11`.</span>
+
+<span class="sd">    Note that the constraint effector is tested in two configurations: once where one vehicle&#39;s</span>
+<span class="sd">    state effector is attached to the hub on another vehicle (``constraintEffectorOneHub``), and</span>
+<span class="sd">    once where both vehicles&#39; state effectors are attached to each other</span>
+<span class="sd">    (``constraintEffectorNoHubs``). Additionally, a test with multiple dynamic effectors attached</span>
+<span class="sd">    to a single state effector is included (``multiEffector``). Finally, at least one non-compatible</span>
+<span class="sd">    state effector and one non-compatible dynamic effector are included to check that the error</span>
+<span class="sd">    handling catches as expected.</span>
+
+<span class="sd">    Note that the center of mass of the hub is adjusted to balance the shift in total vehicle COM</span>
+<span class="sd">    due to the addition of the state effector&#39;s mass. This adjustment is calculated such that at</span>
+<span class="sd">    simulation initialization the total center of mass of the vehicle is coincident with the hub&#39;s</span>
+<span class="sd">    body frame B (r_BN_N = r_CN_N). This greatly simplifies the setup of the constraint effector</span>
+<span class="sd">    branching scenarios. This calculation is performed by calculating the parameter mr_PcB_B in each</span>
+<span class="sd">    state effector&#39;s setup method which for the state effector&#39;s series of :math:`i` bodies is:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sum_i m_{P_i} {}^{\mathcal{B}}\mathbf{r}_{Pc_i/B}</span>
+
+<span class="sd">    Where P is the state effector&#39;s designation as &quot;parent&quot;, with each of its :math:`i` segments</span>
+<span class="sd">    having segment body fixed frame :math:`\mathcal{P}_i`, origin :math:`P_i`, and segment center of</span>
+<span class="sd">    mass :math:`Pc_i`. Then used to compute the hub center of mass offset scObject.hub.r_BcB_B as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        {}^{\mathcal{B}}\mathbf{r}_{Bc/B} =</span>
+<span class="sd">        \frac{- \sum_i m_{P_i} {}^{\mathcal{B}}\mathbf{r}_{Pc_i/B}} {\sum_i m_{Bc}}</span>
+
+<span class="sd">    In the case of a permissible combination, we then check that properties are being handed</span>
+<span class="sd">    correctly from the state effector to dynamic effector.</span>
+
+<span class="sd">    These variables include:</span>
+
+<span class="sd">    - ``inertialPositionProperty``</span>
+<span class="sd">    - ``inertialVelocityProperty``</span>
+<span class="sd">    - ``inertialAttitudeProperty``</span>
+<span class="sd">    - ``inertialAngVelocityProperty``</span>
+
+<span class="sd">    Finally, we simultaneously check that a) the applied force and torque are being handed correctly</span>
+<span class="sd">    from the dynamic effector to state effector, and b) that these forces and torques are</span>
+<span class="sd">    implemented correctly in the state effector&#39;s equations of motion. We do this by isolating each</span>
+<span class="sd">    case where a state effector has the :ref:`extForceTorque` effector attached to it. Using the</span>
+<span class="sd">    explicitly defined ``forceExternal_B`` and ``torqueExternalPntB_B`` and the logged inertial</span>
+<span class="sd">    position and attitude properties of the state effector, we manually compute the total external</span>
+<span class="sd">    force on the vehicle about the combined center of mass and the accumulated delta V of the</span>
+<span class="sd">    vehicle&#39;s combined center of mass. The torque is then integrated using a trapezoid rule and</span>
+<span class="sd">    compared against the spacecraft&#39;s internally computed angular momentum.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        {}^{\mathcal{N}}\!\Delta\mathbf{H}_{C}</span>
+<span class="sd">        &amp; = \int_{t_0}^{t} {}^{\mathcal{N}}\!\boldsymbol{\tau}_{\text{ext},C}(t)\,dt \\</span>
+<span class="sd">        &amp; = \int_{t_0}^{t} \text{Pure Torque + Force Relative to COM} \\</span>
+<span class="sd">        &amp; = \int_{t_0}^{t} [\mathcal{NP}_j] {}^{\mathcal{P}_j}\!\boldsymbol{\tau}_{\text{ext},P_j}</span>
+<span class="sd">          + \left( {}^{\mathcal{N}}\mathbf{r}_{Pc_j/N}</span>
+<span class="sd">          - [\mathcal{NP}_j] {}^{\mathcal{P}_j}\mathbf{r}_{Pc_j/P_j}</span>
+<span class="sd">          - {}^{\mathcal{N}}\mathbf{r}_{C/N} \right)</span>
+<span class="sd">          \times \left( [\mathcal{NP}_j] {}^{\mathcal{P}_j}\mathbf{F}_{P_j} \right)</span>
+
+<span class="sd">    Where :math:`j` is the segment that the dynamic effector is attached to. The sim &#39;truth&#39;</span>
+<span class="sd">    :math:`{}^{\mathcal{N}}\!\Delta\mathbf{H}_{C}` (scObject.totOrbAngMomPntN_N) and</span>
+<span class="sd">    :math:`{}^{\mathcal{N}}\mathbf{r}_{C/N}` are logged from the spacecraft module. Exerted</span>
+<span class="sd">    :math:`{}^{\mathcal{P}_j}\!\boldsymbol{\tau}_{\text{ext},P_j}` and</span>
+<span class="sd">    :math:`{}^{\mathcal{P}_j}\mathbf{F}_{P_j}` are from the extForceTorque effector module.</span>
+<span class="sd">    :math:`{}^{\mathcal{N}}\mathbf{r}_{Pc_j/N}`, :math:`[\mathcal{NP}_j]`, and</span>
+<span class="sd">    :math:`{}^{\mathcal{P}_j}\mathbf{r}_{Pc_j/P_j}` come from the state effector module.</span>
+
+<span class="sd">    The accumulated delta V is compared against the internally computed delta V of the spacecraft</span>
+<span class="sd">    center of mass.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        {}^{\mathcal{N}}\!\Delta v_{accum,C} = \int_{t_0}^{t} \frac{[\mathcal{NP}_j]</span>
+<span class="sd">        {}^{\mathcal{P}_j}\mathbf{F}_{P_j}} {m_{Bc} + \sum_i m_{P_i}} dt</span>
+
+<span class="sd">    where again :math:`j` is the segment that the dynamic effector is attached to among all</span>
+<span class="sd">    :math:`i` segments. The sim &#39;truth&#39; :math:`{}^{\mathcal{N}}\!\Delta v_{accum,C}` is logged from</span>
+<span class="sd">    the spacecraft module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">effectorBranchingIntegratedTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">stateEffector</span><span class="p">,</span> <span class="n">isParent</span><span class="p">,</span> <span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">isChild</span><span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">effectorBranchingIntegratedTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">stateEffector</span><span class="p">,</span> <span class="n">isParent</span><span class="p">,</span> <span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">isChild</span><span class="p">):</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">timestep</span> <span class="o">=</span> <span class="mf">0.001</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">timestep</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Create the spacecraft object</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Set the integrator to RKF45</span>
+    <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+
+    <span class="c1"># Define mass properties of the rigid hub of the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial values for the states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+
+    <span class="c1"># Add Earth gravity to the simulation</span>
+    <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+    <span class="c1"># Create the state effector of interest</span>
+    <span class="k">if</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;spinningBodiesOneDOF&quot;</span><span class="p">:</span>
+        <span class="n">stateEff</span><span class="p">,</span> <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">setup_spinningBodiesOneDOF</span><span class="p">()</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;spinningBodiesTwoDOF&quot;</span><span class="p">:</span>
+        <span class="n">stateEff</span><span class="p">,</span> <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">setup_spinningBodiesTwoDOF</span><span class="p">()</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;spinningBodiesNDOF&quot;</span><span class="p">:</span>
+        <span class="n">stateEff</span><span class="p">,</span> <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">setup_spinningBodiesNDOF</span><span class="p">()</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="k">elif</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;hingedRigidBodies&quot;</span><span class="p">:</span>
+        <span class="n">stateEff</span><span class="p">,</span> <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">setup_hingedRigidBodyStateEffector</span><span class="p">()</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;linearTranslationBodiesOneDOF&quot;</span><span class="p">:</span>
+        <span class="n">stateEff</span><span class="p">,</span> <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">setup_translatingBodiesOneDOF</span><span class="p">()</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;linearSpringMassDamper&quot;</span><span class="p">:</span>
+        <span class="n">stateEff</span><span class="p">,</span> <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">setup_linearSpringMassDamper</span><span class="p">()</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;ERROR: Effector branching integrated test using unrecognized state effector input.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Compute r_BcB_B such that point B and initial total COM coincide</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">/</span> <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span>
+
+    <span class="c1"># Create the dynamic effector of interest</span>
+    <span class="k">if</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;extForceTorque&quot;</span><span class="p">:</span>
+        <span class="n">dynamicEff</span> <span class="o">=</span> <span class="n">setup_extForceTorque</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;extPulseTorque&quot;</span><span class="p">:</span>
+        <span class="n">dynamicEff</span> <span class="o">=</span> <span class="n">setup_extPulseTorque</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;thrusterDynamicEffector&quot;</span><span class="p">:</span>
+        <span class="n">dynamicEff</span><span class="p">,</span> <span class="n">thFactory</span> <span class="o">=</span> <span class="n">setup_thrusterDynamicEffector</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;constraintEffectorOneHub&quot;</span><span class="p">:</span>
+        <span class="n">dynamicEff</span><span class="p">,</span> <span class="n">scObjectx</span> <span class="o">=</span> <span class="n">setup_constraintEffectorOneHub</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">scObjectx</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;constraintEffectorNoHubs&quot;</span><span class="p">:</span>
+        <span class="n">dynamicEff</span><span class="p">,</span> <span class="n">scObjectx</span><span class="p">,</span> <span class="n">stateEffx</span> <span class="o">=</span> <span class="n">setup_constraintEffectorNoHubs</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;unitTask&quot;</span><span class="p">,</span> <span class="n">scObjectx</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">stateEffx</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;multiEffector&quot;</span><span class="p">:</span>
+        <span class="n">dynamicEff</span> <span class="o">=</span> <span class="p">[</span><span class="n">setup_extForceTorque</span><span class="p">(),</span> <span class="n">setup_extForceTorque</span><span class="p">()]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;ERROR: Effector branching integrated test using unrecognized dynamic effector input.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add dynamic effector to state effector</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;thrusterDynamicEffector&quot;</span><span class="p">:</span> <span class="c1"># if thruster, then use thruster factory</span>
+            <span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraftSubcomponent</span><span class="p">(</span><span class="s2">&quot;dynamicThruster&quot;</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;multiEffector&quot;</span><span class="p">:</span> <span class="c1"># if multiple effectors, loop over all to add</span>
+            <span class="k">for</span> <span class="n">dynEff</span> <span class="ow">in</span> <span class="n">dynamicEff</span><span class="p">:</span> <span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynamicEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">BasiliskError</span><span class="p">:</span>
+        <span class="c1"># check if error was meant to happen</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">isParent</span><span class="p">,</span> <span class="s2">&quot;FAILED: attempted attaching to a compatible state effector, but errored&quot;</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check if error wasn&#39;t meant to happen</span>
+        <span class="k">assert</span> <span class="n">isParent</span><span class="p">,</span> <span class="s2">&quot;FAILED: attached to an incompatible state effector without erroring&quot;</span>
+
+    <span class="c1"># Add state effector to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">stateEff</span><span class="p">)</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;multiEffector&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">dynEff</span> <span class="ow">in</span> <span class="n">dynamicEff</span><span class="p">:</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dynEff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">)</span>
+
+    <span class="c1"># Log the spacecraft state message</span>
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+
+    <span class="c1"># Log the effector&#39;s inertial properties</span>
+    <span class="k">if</span> <span class="n">segment</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">inertialPropLog</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stateEff</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inertialPropLog</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stateEff</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)[</span><span class="n">segment</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">inertialPropLog</span><span class="p">)</span>
+
+    <span class="c1"># Add energy and momentum variables to log</span>
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotEnergy&quot;</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">BasiliskError</span><span class="p">:</span>
+        <span class="c1"># check if error was meant to happen</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">isChild</span><span class="p">,</span> <span class="s2">&quot;FAILED: attempted to attach a compatible dynamic effector, but errored&quot;</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check if error wasn&#39;t meant to happen</span>
+        <span class="k">assert</span> <span class="n">isChild</span><span class="p">,</span> <span class="s2">&quot;FAILED: attached an incompatible dynamic effector without erroring&quot;</span>
+
+    <span class="c1"># Check that properties are being handed correctly from state effector to dynamic effector</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;spinningBodiesNDOF&quot;</span> <span class="ow">or</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;linearTranslationBodiesOneDOF&quot;</span>
+        <span class="ow">or</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;linearTranslationBodiesNDOF&quot;</span><span class="p">):</span>
+        <span class="c1"># Newer effector classes keep all variables private and so we check with the dynParamManager</span>
+        <span class="n">positionName</span> <span class="o">=</span> <span class="n">getModernStateEffInertialPropName</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">)</span>
+        <span class="n">velocityName</span> <span class="o">=</span> <span class="n">getModernStateEffInertialPropName</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;Velocity&quot;</span><span class="p">)</span>
+        <span class="n">attitudeName</span> <span class="o">=</span> <span class="n">getModernStateEffInertialPropName</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;Attitude&quot;</span><span class="p">)</span>
+        <span class="n">angvelocityName</span> <span class="o">=</span> <span class="n">getModernStateEffInertialPropName</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;AngVelocity&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># older effector classes have public variable names that are simply checked directly</span>
+        <span class="n">positionName</span> <span class="o">=</span> <span class="n">getStateEffInertialPropName</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">)</span>
+        <span class="n">velocityName</span> <span class="o">=</span> <span class="n">getStateEffInertialPropName</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;Velocity&quot;</span><span class="p">)</span>
+        <span class="n">attitudeName</span> <span class="o">=</span> <span class="n">getStateEffInertialPropName</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;Attitude&quot;</span><span class="p">)</span>
+        <span class="n">angvelocityName</span> <span class="o">=</span> <span class="n">getStateEffInertialPropName</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="s2">&quot;AngVelocity&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">getDynEffInertialPropName</span><span class="p">(</span><span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">,</span> <span class="s2">&quot;Position&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">positionName</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;FAILED: inertialPositionProperty not handed correctly between state and dynamic effectors&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">getDynEffInertialPropName</span><span class="p">(</span><span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">,</span> <span class="s2">&quot;Velocity&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">velocityName</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;FAILED: inertialVelocityProperty not handed correctly between state and dynamic effectors&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">getDynEffInertialPropName</span><span class="p">(</span><span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">,</span> <span class="s2">&quot;Attitude&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">attitudeName</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;FAILED: inertialAttitudeProperty not handed correctly between state and dynamic effectors&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">getDynEffInertialPropName</span><span class="p">(</span><span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">,</span> <span class="s2">&quot;AngVelocity&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">angvelocityName</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;FAILED: inertialAngVelocityProperty not handed correctly between state and dynamic effectors&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim for a few timesteps to confirm execution without error</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stopTime</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Continue to check state effector EOMs using pure force &amp; torque</span>
+    <span class="k">if</span> <span class="n">dynamicEffector</span> <span class="o">!=</span> <span class="s2">&quot;extForceTorque&quot;</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Grab conservation quantities to compare against</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span>  <span class="c1"># total rotational angular momentum about the total vehicle COM</span>
+    <span class="n">totAccumDV_N</span> <span class="o">=</span> <span class="n">datLog</span><span class="o">.</span><span class="n">TotalAccumDV_CN_N</span> <span class="c1"># total accumulated deltaV of the total vehicle COM</span>
+
+    <span class="c1"># Grab effector&#39;s inertial position</span>
+    <span class="k">if</span> <span class="n">stateEffector</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;hingedRigidBodies&quot;</span><span class="p">,</span> <span class="s2">&quot;dualHingedRigidBodies&quot;</span><span class="p">,</span> <span class="s2">&quot;nHingedRigidBodies&quot;</span><span class="p">]:</span>
+        <span class="n">r_ScN_N_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">inertialPropLog</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inertialPropLog</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)):</span>
+            <span class="n">sigmai_SN</span> <span class="o">=</span> <span class="n">inertialPropLog</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># MRP at timestep i and S is the parent frame not B</span>
+            <span class="n">dcm_NS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmai_SN</span><span class="p">))</span>
+            <span class="n">r_ScN_N_log</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">inertialPropLog</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">dcm_NS</span> <span class="o">@</span> <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r_ScN_N_log</span> <span class="o">=</span> <span class="n">inertialPropLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+
+    <span class="c1"># Grab effector&#39;s attitude properties</span>
+    <span class="n">sigma_SN_log</span> <span class="o">=</span> <span class="n">inertialPropLog</span><span class="o">.</span><span class="n">sigma_BN</span>
+
+    <span class="c1"># Compute conservation quantities using the state and dynamic effector&#39;s logged properties</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">rotAngMom_N</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># length of log minus 1 as the inertial property log lags by a timestep</span>
+    <span class="n">extTorque</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">dV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">dcm_NS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_SN_log</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]))</span>
+        <span class="c1"># Compute the total accumulated deltaV</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dV</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dV</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dV</span><span class="p">[</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">dcm_NS</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dynamicEff</span><span class="o">.</span><span class="n">extForce_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+                       <span class="o">/</span> <span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span><span class="p">)</span> <span class="o">*</span> <span class="n">timestep</span><span class="p">)</span>
+        <span class="c1"># Compute the total external torque on the vehicle</span>
+        <span class="k">if</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;linearTranslationBodiesOneDOF&quot;</span> <span class="ow">or</span> <span class="n">stateEffector</span> <span class="o">==</span> <span class="s2">&quot;linearTranslationBodiesNDOF&quot;</span><span class="p">:</span>
+            <span class="n">extTorque</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dcm_NS</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dynamicEff</span><span class="o">.</span><span class="n">extTorquePntB_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                                <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r_ScN_N_log</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">dcm_NS</span>
+                                <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                                <span class="o">-</span> <span class="n">datLog</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">[</span><span class="n">idx</span><span class="p">,:],</span> <span class="n">dcm_NS</span>
+                                <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dynamicEff</span><span class="o">.</span><span class="n">extForce_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extTorque</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dcm_NS</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dynamicEff</span><span class="o">.</span><span class="n">extTorquePntB_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                                <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">r_ScN_N_log</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">dcm_NS</span>
+                                <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                                <span class="o">-</span> <span class="n">datLog</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">[</span><span class="n">idx</span><span class="p">,:],</span> <span class="n">dcm_NS</span>
+                                <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dynamicEff</span><span class="o">.</span><span class="n">extForce_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+
+    <span class="c1"># Integrate the torque to find accumulated change in angular momentum</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">timestep</span>
+    <span class="n">y_avg</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">extTorque</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">extTorque</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">y_avg</span> <span class="o">*</span> <span class="n">dx</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dH</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">integral</span><span class="p">))</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span><span class="o">-</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">idx</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dH_{truth,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">dH</span><span class="p">[:,</span><span class="n">idx</span><span class="p">],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dH_{test,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rotAngMom_N</span><span class="o">-</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dH_{truth, magnitude}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dH</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dH_{test, magnitude}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [sec]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Relative Difference $\Delta$H&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Total Rotational Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">totAccumDV_N</span><span class="p">[:,</span><span class="n">idx</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dV_{truth,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">dV</span><span class="p">[:,</span><span class="n">idx</span><span class="p">],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dV_{test,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">totAccumDV_N</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dV_{truth, magnitude}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dV</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$dV_{test, magnitude}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [sec]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Accumulated $\Delta$V&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Total COM DeltaV&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">rotAngMom_N</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span><span class="o">-</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">dH</span><span class="p">[:,</span><span class="n">idx</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [sec]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Truth - Test $\Delta$H&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Total Rotational Angular Momentum Change&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datLog</span><span class="o">.</span><span class="n">times</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">totAccumDV_N</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">dV</span><span class="p">[:,</span><span class="n">idx</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [sec]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Truth - Test $\Delta$V&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Total COM DeltaV Accumulated&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check angular momentum difference against sim truth</span>
+    <span class="n">angMom_accuracy</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="c1"># np.testing.assert_allclose(np.linalg.norm(rotAngMom_N[:-1,:]-rotAngMom_N[0,:] - dH, axis=1), 0, atol=angMom_accuracy,</span>
+    <span class="c1">#                            err_msg=&quot;angular momentum difference beyond accuracy limits&quot;)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">-</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">dH</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">angMom_accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;angular momentum difference beyond accuracy limits&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check deltaV difference against sim truth</span>
+    <span class="n">deltaV_accuracy</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="c1"># np.testing.assert_allclose(np.linalg.norm(totAccumDV_N[:-1,:] - dV, axis=1), 0, atol=deltaV_accuracy,</span>
+    <span class="c1">#                            err_msg=&quot;deltaV difference beyond accuracy limits&quot;)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">totAccumDV_N</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">dV</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">deltaV_accuracy</span><span class="p">,</span>
+                               <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;deltaV difference beyond accuracy limits&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">getDynEffInertialPropName</span><span class="p">(</span><span class="n">dynamicEffector</span><span class="p">,</span> <span class="n">dynamicEff</span><span class="p">,</span> <span class="n">propType</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;multiEffector&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dynamicEff</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;getPropName_inertial</span><span class="si">{</span><span class="n">propType</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)()</span>
+    <span class="k">elif</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;constraintEffectorOneHub&quot;</span> <span class="ow">or</span> <span class="n">dynamicEffector</span> <span class="o">==</span> <span class="s2">&quot;constraintEffectorNoHubs&quot;</span><span class="p">:</span>
+        <span class="n">propList</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dynamicEff</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;getPropName_inertial</span><span class="si">{</span><span class="n">propType</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)()</span>
+        <span class="k">return</span> <span class="n">propList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dynamicEff</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;getPropName_inertial</span><span class="si">{</span><span class="n">propType</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">getStateEffInertialPropName</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="n">propType</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">segment</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stateEff</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nameOfInertial</span><span class="si">{</span><span class="n">propType</span><span class="si">}</span><span class="s2">Property&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">segment</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stateEff</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;nameOfInertial</span><span class="si">{</span><span class="n">propType</span><span class="si">}</span><span class="s2">Property2&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">segment</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">propName</span> <span class="o">=</span> <span class="n">stateEff</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;Inertial&quot;</span> <span class="o">+</span> <span class="n">propType</span> <span class="o">+</span> <span class="s2">&quot;1_4&quot;</span>
+            <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">propName</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">BasiliskError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;notHandedCorrectly&quot;</span>
+        <span class="k">return</span> <span class="n">propName</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">getModernStateEffInertialPropName</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">segment</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="n">propType</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">segment</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">propName</span> <span class="o">=</span> <span class="n">stateEff</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;Inertial&quot;</span> <span class="o">+</span> <span class="n">propType</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span>
+            <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">propName</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">segment</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">propName</span> <span class="o">=</span> <span class="n">stateEff</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot;Inertial&quot;</span> <span class="o">+</span> <span class="n">propType</span> <span class="o">+</span> <span class="s2">&quot;1_4&quot;</span>
+            <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="n">propName</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">BasiliskError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;notHandedCorrectly&quot;</span>
+    <span class="k">return</span> <span class="n">propName</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_extForceTorque</span><span class="p">():</span>
+    <span class="n">extFT</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">extTorquePntB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">extFT</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;extForceTorque&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">extFT</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_extPulseTorque</span><span class="p">():</span>
+    <span class="n">extPT</span> <span class="o">=</span> <span class="n">ExtPulsedTorque</span><span class="o">.</span><span class="n">ExtPulsedTorque</span><span class="p">()</span>
+    <span class="n">extPT</span><span class="o">.</span><span class="n">countOnPulse</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">extPT</span><span class="o">.</span><span class="n">countOff</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">extPT</span><span class="o">.</span><span class="n">pulsedTorqueExternalPntB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">extPT</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;extPulseTorque&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">extPT</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_thrusterDynamicEffector</span><span class="p">():</span>
+    <span class="n">thruster</span> <span class="o">=</span> <span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">()</span>
+    <span class="n">thFactory</span> <span class="o">=</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">()</span>
+    <span class="n">thFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;MOOG_Monarc_22_6&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">thrMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsgPayload</span><span class="p">(</span><span class="n">OnTimeRequest</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">thrMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THRArrayOnTimeCmdMsg</span><span class="p">()</span>
+    <span class="n">thrMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">thrMsgData</span><span class="p">)</span>
+    <span class="n">thruster</span><span class="o">.</span><span class="n">cmdsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">thrMsg</span><span class="p">)</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">thruster</span><span class="p">,</span> <span class="n">thFactory</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_constraintEffector</span><span class="p">(</span><span class="n">scObject1</span><span class="p">):</span>
+    <span class="n">scObject2</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject2</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody2&quot;</span>
+
+    <span class="c1"># Sync dynamics integration across both spacecraft</span>
+    <span class="n">scObject1</span><span class="o">.</span><span class="n">syncDynamicsIntegration</span><span class="p">(</span><span class="n">scObject2</span><span class="p">)</span>
+
+    <span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject2</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">600.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="n">scObject2</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">scObject1</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span>
+
+    <span class="k">return</span> <span class="n">scObject2</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_constraintEffectorOneHub</span><span class="p">(</span><span class="n">scObjecty</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">):</span>
+    <span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constraintEffectorOneHub&quot;</span>
+
+    <span class="n">scObjectx</span> <span class="o">=</span> <span class="n">setup_constraintEffector</span><span class="p">(</span><span class="n">scObjecty</span><span class="p">)</span>
+
+    <span class="c1"># Attached to the state effector of spacecraft y and the hub of spacecraft x</span>
+    <span class="n">r_P1Bx_Bx</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># attachment point on spacecraft x&#39;s hub Bx</span>
+    <span class="n">r_P2S_S</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span> <span class="c1"># attachment point on spacecraft y&#39;s state effector frame S</span>
+    <span class="n">r_P2P1_BxInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># connect arm between attachment points, in the S frame</span>
+
+    <span class="c1"># assume r_BcB_B for spacecraft y is set s.t. r_CN_N = r_BN_N and all frames start aligned</span>
+    <span class="n">r_BxN_N_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span><span class="p">)</span> <span class="o">+</span> <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">+</span> <span class="n">r_P2S_S</span> <span class="o">-</span> <span class="n">r_P2P1_BxInit</span> <span class="o">-</span> <span class="n">r_P1Bx_Bx</span>
+
+    <span class="c1"># let C be the frame at the combined COM of the two vehicles</span>
+    <span class="n">r_CN_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span><span class="p">)</span> <span class="o">+</span> <span class="n">r_BxN_N_0</span>
+              <span class="o">*</span> <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span>
+              <span class="o">+</span> <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">)</span>
+    <span class="n">r_ByC_N</span> <span class="o">=</span> <span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">-</span> <span class="n">r_CN_N</span>
+    <span class="n">r_BxC_N</span> <span class="o">=</span> <span class="n">r_BxN_N_0</span> <span class="o">-</span> <span class="n">r_CN_N</span>
+
+    <span class="c1"># Set the initial values for spacecraft states, augmenting angular velocity</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_BxN_N_0</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">r_BxC_N</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span>
+    <span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">r_ByC_N</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="c1"># Create the constraint effector module</span>
+    <span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="c1"># Set up the constraint effector</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constraintEffector&quot;</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P1B1_B1</span><span class="p">(</span><span class="n">r_P1Bx_Bx</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2B2_B2</span><span class="p">(</span><span class="n">r_P2S_S</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2P1_B1Init</span><span class="p">(</span><span class="n">r_P2P1_BxInit</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">1E1</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+
+    <span class="c1"># Add constraints to both spacecraft</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">constraintEffector</span><span class="p">,</span> <span class="n">scObjectx</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_constraintEffectorNoHubs</span><span class="p">(</span><span class="n">scObjecty</span><span class="p">,</span> <span class="n">stateEffPropsy</span><span class="p">):</span>
+    <span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constraintEffectorNoHub&quot;</span>
+
+    <span class="n">scObjectx</span> <span class="o">=</span> <span class="n">setup_constraintEffector</span><span class="p">(</span><span class="n">scObjecty</span><span class="p">)</span>
+
+    <span class="n">stateEffx</span><span class="p">,</span> <span class="n">stateEffPropsx</span> <span class="o">=</span> <span class="n">setup_spinningBodiesOneDOF</span><span class="p">()</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">stateEffx</span><span class="p">)</span>
+
+    <span class="c1"># Attached to the state effector of spacecraft y and the state effector of spacecraft x</span>
+    <span class="n">r_P1Sx_Sx</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># attachment point on spacecraft x&#39;s state effector frame Sx</span>
+    <span class="n">r_P2Sy_Sy</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span> <span class="c1"># attachment point on spacecraft y&#39;s state effector frame Sy</span>
+    <span class="n">r_P2P1_SxInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># connect arm between attachment points, in the Sx frame</span>
+
+    <span class="c1"># assume r_BcB_B for spacecraft x &amp; y are set s.t. r_CN_N = r_BN_N and all frames start aligned</span>
+    <span class="n">r_BxN_N_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span><span class="p">)</span> <span class="o">+</span> <span class="n">stateEffPropsy</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">+</span> <span class="n">r_P2Sy_Sy</span> <span class="o">-</span> <span class="n">r_P2P1_SxInit</span> <span class="o">-</span> <span class="n">r_P1Sx_Sx</span> <span class="o">-</span> <span class="n">stateEffPropsx</span><span class="o">.</span><span class="n">r_PB_B</span>
+
+    <span class="c1"># let C be the frame at the combined COM of the two vehicles</span>
+    <span class="n">r_CN_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="n">stateEffPropsy</span><span class="o">.</span><span class="n">totalMass</span><span class="p">)</span>
+              <span class="o">+</span> <span class="n">r_BxN_N_0</span> <span class="o">*</span> <span class="p">(</span><span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="n">stateEffPropsx</span><span class="o">.</span><span class="n">totalMass</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span>
+              <span class="o">+</span> <span class="n">stateEffPropsy</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">+</span> <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">+</span> <span class="n">stateEffPropsx</span><span class="o">.</span><span class="n">totalMass</span><span class="p">)</span>
+    <span class="n">r_ByC_N</span> <span class="o">=</span> <span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">-</span> <span class="n">r_CN_N</span>
+    <span class="n">r_BxC_N</span> <span class="o">=</span> <span class="n">r_BxN_N_0</span> <span class="o">-</span> <span class="n">r_CN_N</span>
+
+    <span class="c1"># Set the initial values for spacecraft states, augmenting angular velocity</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="n">stateEffPropsx</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">/</span> <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_BxN_N_0</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">r_BxC_N</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span>
+    <span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObjecty</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">r_ByC_N</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="c1"># Create the constraint effector module</span>
+    <span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="c1"># Set up the constraint effector</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constraintEffector&quot;</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P1B1_B1</span><span class="p">(</span><span class="n">r_P1Sx_Sx</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2B2_B2</span><span class="p">(</span><span class="n">r_P2Sy_Sy</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setR_P2P1_B1Init</span><span class="p">(</span><span class="n">r_P2P1_SxInit</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">1E1</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+
+    <span class="c1"># Add constraints to both spacecraft</span>
+    <span class="n">scObjectx</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">constraintEffector</span><span class="p">,</span> <span class="n">scObjectx</span><span class="p">,</span> <span class="n">stateEffx</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_spinningBodiesOneDOF</span><span class="p">():</span>
+    <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyOneDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyOneDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of spinning body</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">IPntSc_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S0B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_ScS_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">sHat_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpinningBody&quot;</span>
+
+    <span class="c1"># Compute COM offset contribution, to be divided by the hub mass</span>
+    <span class="n">mr_ScB_B</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S0B</span><span class="p">)</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_ScS_S</span><span class="p">)</span> <span class="o">*</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass</span>
+
+    <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">stateEffectorProperties</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="n">mr_ScB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_SB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_ScS_S</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span> <span class="o">=</span> <span class="s2">&quot;spinningBodyConfigLogOutMsg&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_spinningBodiesTwoDOF</span><span class="p">():</span>
+    <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyTwoDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyTwoDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of spinning body</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass1</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass2</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">IS1PntSc1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">IS2PntSc2_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S10B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S20S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc1S1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc2S2_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S1B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S2S1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">s1Hat_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">s2Hat_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta1DotInit</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta2DotInit</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">k1</span> <span class="o">=</span> <span class="mf">1000.0</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">k2</span> <span class="o">=</span> <span class="mf">500.0</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">c1</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">c2</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpinningBody&quot;</span>
+
+    <span class="c1"># Compute COM offset contribution, to be divided by the hub mass</span>
+    <span class="n">mr_ScB_B</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span> <span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S1B_B</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S10B</span><span class="p">)</span> <span class="o">@</span>
+                   <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc1S1_S1</span><span class="p">)</span> <span class="o">*</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass1</span> <span class="o">+</span> <span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S1B_B</span> <span class="o">+</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S10B</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S2S1_S1</span> <span class="o">+</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S20S1</span><span class="p">)</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc2S2_S2</span><span class="p">)</span> <span class="p">)</span>
+                   <span class="o">*</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass2</span><span class="p">)</span>
+
+    <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">stateEffectorProperties</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass1</span> <span class="o">+</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass2</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="n">mr_ScB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S1B_B</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S10B</span><span class="p">)</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S2S1_S1</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc2S2_S2</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span> <span class="o">=</span> <span class="s2">&quot;spinningBodyConfigLogOutMsgs&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_spinningBodiesNDOF</span><span class="p">():</span>
+    <span class="n">spinningBodyEffector</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyNDOFStateEffector</span><span class="p">()</span>
+    <span class="n">numberOfSegments</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># 3 segments of 2DOF joints is really 6 spinning bodies here</span>
+    <span class="n">massSubPanel</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="n">numberOfSegments</span>
+    <span class="n">lengthSubPanel</span> <span class="o">=</span> <span class="mf">18.0</span> <span class="o">/</span> <span class="n">numberOfSegments</span>
+    <span class="n">widthSubPanel</span> <span class="o">=</span>  <span class="mf">3.0</span>
+    <span class="n">thicknessSubPanel</span> <span class="o">=</span> <span class="mf">0.3</span>
+    <span class="n">r_ScB_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">dcm_SB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+    <span class="n">mr_ScB_B</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numberOfSegments</span><span class="p">):</span>
+        <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBody</span><span class="p">()</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setISPntSc_S</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                   <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                   <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setDCM_S0P</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_ScS_S</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">lengthSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">thicknessSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">lengthSubPanel</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setSHat_S</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setThetaDotInit</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">spinningBodyEffector</span><span class="o">.</span><span class="n">addSpinningBody</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">)</span>
+        <span class="n">r_ScB_B</span> <span class="o">+=</span> <span class="n">dcm_SB</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getR_SP_P</span><span class="p">()</span>
+        <span class="n">dcm_SB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2C</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">getThetaInit</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">getSHat_S</span><span class="p">()))</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getDCM_S0P</span><span class="p">()</span> <span class="o">@</span> <span class="n">dcm_SB</span>
+
+        <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBody</span><span class="p">()</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">massSubPanel</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setISPntSc_S</span><span class="p">([[</span><span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">lengthSubPanel</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thicknessSubPanel</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                   <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">widthSubPanel</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thicknessSubPanel</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                                   <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">massSubPanel</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">widthSubPanel</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">lengthSubPanel</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setDCM_S0P</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_ScS_S</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">lengthSubPanel</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setSHat_S</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setThetaDotInit</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">spinningBodyEffector</span><span class="o">.</span><span class="n">addSpinningBody</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">)</span>
+        <span class="n">dcm_SB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2C</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">getThetaInit</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spinningBody</span><span class="o">.</span><span class="n">getSHat_S</span><span class="p">()))</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getDCM_S0P</span><span class="p">()</span> <span class="o">@</span> <span class="n">dcm_SB</span>
+
+        <span class="c1"># Compute COM offset contribution, to be divided by the hub mass</span>
+        <span class="n">mr_ScB_B</span> <span class="o">-=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getMass</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_ScB_B</span> <span class="o">+</span> <span class="n">dcm_SB</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getR_ScS_S</span><span class="p">())</span>
+
+    <span class="n">spinningBodyEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spinningBody&quot;</span>
+
+    <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">stateEffectorProperties</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="n">massSubPanel</span> <span class="o">*</span> <span class="n">numberOfSegments</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="n">mr_ScB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="n">r_ScB_B</span> <span class="o">-</span> <span class="n">dcm_SB</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">@</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getR_ScS_S</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">getR_ScS_S</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span> <span class="o">=</span> <span class="s2">&quot;spinningBodyConfigLogOutMsgs&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">spinningBodyEffector</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_hingedRigidBodyStateEffector</span><span class="p">():</span>
+    <span class="n">hingedBody</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of HRB</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">]]</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">]]</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">hingedBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;HingedRigidBody&quot;</span>
+
+    <span class="c1"># Compute COM offset contribution, to be divided by the hub mass</span>
+    <span class="n">dcm_SH</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">euler2</span><span class="p">(</span><span class="n">hingedBody</span><span class="o">.</span><span class="n">thetaInit</span><span class="p">)</span>
+    <span class="n">s1_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">mr_ScB_B</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">hingedBody</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">hingedBody</span><span class="o">.</span><span class="n">dcm_HB</span><span class="p">)</span> <span class="o">@</span>
+                 <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dcm_SH</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">hingedBody</span><span class="o">.</span><span class="n">d</span> <span class="o">*</span> <span class="n">s1_hat</span><span class="p">)))</span> <span class="o">*</span> <span class="n">hingedBody</span><span class="o">.</span><span class="n">mass</span>
+
+    <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">stateEffectorProperties</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="n">hingedBody</span><span class="o">.</span><span class="n">mass</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="n">mr_ScB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="n">hingedBody</span><span class="o">.</span><span class="n">r_HB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">hingedBody</span><span class="o">.</span><span class="n">d</span> <span class="o">*</span> <span class="n">s1_hat</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span> <span class="o">=</span> <span class="s2">&quot;hingedRigidBodyConfigLogOutMsg&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">hingedBody</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_translatingBodiesOneDOF</span><span class="p">():</span>
+    <span class="n">translatingBody</span> <span class="o">=</span> <span class="n">linearTranslationOneDOFStateEffector</span><span class="o">.</span><span class="n">LinearTranslationOneDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of translating body</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setFHat_B</span><span class="p">([[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_F0B_B</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">([[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]])</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setDCM_FB</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;linearTranslation&quot;</span>
+
+    <span class="n">mr_ScB_B</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">translatingBody</span><span class="o">.</span><span class="n">getR_F0B_B</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">translatingBody</span><span class="o">.</span><span class="n">getDCM_FB</span><span class="p">())</span> <span class="o">@</span>
+                 <span class="p">(</span><span class="n">translatingBody</span><span class="o">.</span><span class="n">getR_FcF_F</span><span class="p">()</span> <span class="o">+</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">getRhoInit</span><span class="p">()</span> <span class="o">*</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">translatingBody</span><span class="o">.</span><span class="n">getFHat_B</span><span class="p">())))</span> <span class="o">*</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">getMass</span><span class="p">()</span>
+
+    <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">stateEffectorProperties</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">getMass</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="n">mr_ScB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">getR_F0B_B</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PcP_P</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">getR_FcF_F</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">inertialPropLogName</span> <span class="o">=</span> <span class="s2">&quot;translatingBodyConfigLogOutMsg&quot;</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">translatingBody</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_linearSpringMassDamper</span><span class="p">():</span>
+    <span class="n">linearSpring</span> <span class="o">=</span> <span class="n">linearSpringMassDamper</span><span class="o">.</span><span class="n">LinearSpringMassDamper</span><span class="p">()</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">massInit</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">pHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">rhoInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">rhoDotInit</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">linearSpring</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;linearSpringMassDamper&quot;</span>
+
+    <span class="c1"># Compute COM offset contribution, to be divided by the hub mass</span>
+    <span class="n">mr_ScB_B</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">linearSpring</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">+</span> <span class="n">linearSpring</span><span class="o">.</span><span class="n">rhoInit</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">linearSpring</span><span class="o">.</span><span class="n">pHat_B</span><span class="p">))</span> <span class="o">*</span> <span class="n">linearSpring</span><span class="o">.</span><span class="n">massInit</span>
+
+    <span class="n">stateEffProps</span> <span class="o">=</span> <span class="n">stateEffectorProperties</span><span class="p">()</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="n">linearSpring</span><span class="o">.</span><span class="n">massInit</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="n">mr_ScB_B</span>
+    <span class="n">stateEffProps</span><span class="o">.</span><span class="n">r_PB_B</span> <span class="o">=</span> <span class="n">linearSpring</span><span class="o">.</span><span class="n">r_PB_B</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">linearSpring</span><span class="p">,</span> <span class="n">stateEffProps</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">stateEffectorProperties</span><span class="p">:</span>
+    <span class="c1"># to be used in joint COM calculation</span>
+    <span class="n">totalMass</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># total mass of the effector (sum of all linkages)</span>
+    <span class="n">mr_PcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span> <span class="c1"># sum(m_i * r_SiB_B) for i linkages, see rst documentation</span>
+    <span class="n">r_PB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span> <span class="c1"># frame origin for linkage that dynEff will be attached to</span>
+    <span class="c1"># to be used in checking equations of motion</span>
+    <span class="n">inertialPropLogName</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="c1"># name of inertial property output log message</span>
+    <span class="n">r_PcP_P</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span> <span class="c1"># individual COM for linkage that dynEff will be attached to</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">effectorBranchingIntegratedTest</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;hingedRigidBodies&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;extForceTorque&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced: Effector Module Branching &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Integrated Example Scripts" href="../../examples/index.html" />
+    <link rel="prev" title="Advanced: Handling BasiliskException in Simulations" href="bskPrinciples-10.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-0.html">What is Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-1.html">Basilisk Process and Task Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2.html">Adding Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2a.html">Execution of Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2b.html">Seeing the Order of Process, Task and Module Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-3.html">Connecting Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-4.html">Recording Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5.html">Creating Stand-Alone Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6.html">Setting and Recording Module Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-7.html">Advanced: Redirecting Module Output to Stand-Alone Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-8.html">Advanced: Enabling and Disabling Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-9.html">Advanced: Using <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-10.html">Advanced: Handling <code class="docutils literal notranslate"><span class="pre">BasiliskException</span></code> in Simulations</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Advanced: Effector Module Branching</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#allowable-configurations">Allowable Configurations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setup">Setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+      <li class="breadcrumb-item active">Advanced: Effector Module Branching</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/bskPrinciples/bskPrinciples-11.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-effector-module-branching">
+<span id="bskprinciples-11"></span><h1>Advanced: Effector Module Branching<a class="headerlink" href="#advanced-effector-module-branching" title="Link to this heading"></a></h1>
+<p>Module branching in Basilisk enables the attachment of compatible dynamic effectors on state
+effectors as an alternative to attaching them directly to the hub. For example, a gimballed thruster
+can be modeled as a <code class="docutils literal notranslate"><span class="pre">thrusterDynamicEffector</span></code> attached to a <code class="docutils literal notranslate"><span class="pre">spinningBodyTwoDOFStateEffector</span></code>,
+or a robotic docking arm can be modeled as a <code class="docutils literal notranslate"><span class="pre">constraintDynamicEffector</span></code> attached to a 7-DOF
+revolute <code class="docutils literal notranslate"><span class="pre">spinningBodyNDOFStateEffector</span></code>. Multiple dynamic effectors can be attached to a state
+effector as well, for example applying both drag and SRP to a solar panel.</p>
+<p>Further details on how to set up new state effectors and dynamic effector modules for branching can
+be found in <a class="reference internal" href="../makingModules/advancedTopics/effectorBranching.html#effectorbranching"><span class="std std-ref">Enabling Branching of Basilisk Effectors</span></a>. Integrated testing of effector branching is elaborated on in
+<a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/_UnitTestDynamics/test_effectorBranching_integrated.html#test-effectorbranching-integrated"><span class="std std-ref">test_effectorBranching_integrated</span></a>.</p>
+<section id="allowable-configurations">
+<h2>Allowable Configurations<a class="headerlink" href="#allowable-configurations" title="Link to this heading"></a></h2>
+<p>The currently supported configurations of state effectors compatible as “parent” effectors and
+dynamic effectors compatible as “child” effectors is summarized in the table below. Green shows
+currently supported configurations, yellow shows configurations expected to be supported in the
+future, and red shows configurations not planned to be supported. Additionally, blue shows the
+special case of prescribed effector branching explained in <a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">Module: prescribedMotionStateEffector</span></a>.</p>
+<style>
+  /* Responsive wrapper */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1em 0;
+  }
+
+  /* Table base */
+  table.effector-compat {
+    border-collapse: collapse;
+    table-layout: fixed;              /* consistent sizing across browsers */
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+  }
+
+  /* Cells */
+  table.effector-compat th,
+  table.effector-compat td {
+    border: 1px solid #777;
+    padding: 6px 8px;
+  }
+
+  /* Header cells */
+  table.effector-compat thead th {
+    background-color: #e5e5e5;
+    color: #222;
+    font-weight: bold;
+  }
+
+  /* Second column (row labels) */
+  table.effector-compat td.label {
+    background-color: #f5f5f5;
+    color: #222;
+    font-weight: bold;
+    white-space: normal;          /* allow wrapping */
+    overflow-wrap: anywhere;      /* wrap long words */
+    text-align: left;             /* readability */
+  }
+
+  /* Rotated column headers (use inner wrapper, not the <th> itself) */
+  table.effector-compat th.rotate {
+    vertical-align: middle;
+    background-color: #d9d9d9;
+    padding: 0;                   /* inner span handles spacing */
+    height: 140px;                /* stable header height */
+    width: 38px;                  /* narrow columns for tall text */
+  }
+  @supports (writing-mode: vertical-rl) {
+    table.effector-compat th.rotate > .rotate-inner {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);  /* bottom → top like original */
+      display: inline-block;
+      white-space: nowrap;
+      padding: 8px 4px;
+      line-height: 1.1;
+    }
+  }
+  @supports not (writing-mode: vertical-rl) {
+    table.effector-compat th.rotate > .rotate-inner {
+      display: inline-block;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      white-space: nowrap;
+      padding: 8px 4px;
+      line-height: 1.1;
+    }
+  }
+
+  /* FIRST COLUMN (vertical "Parent Effectors") — rotate-only, no writing-mode */
+  table.effector-compat td.vlabel {
+    position: relative;     /* anchor for absolute child */
+    padding: 0;
+    text-align: center;
+    overflow: hidden;       /* keep content inside the cell */
+  }
+  table.effector-compat td.vlabel .rotate-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);  /* center + rotate */
+    transform-origin: center;
+    display: block;
+    white-space: nowrap;
+    line-height: 1;
+    padding: 6px 4px;
+    font-weight: bold;
+    color: #222;
+  }
+  @supports (writing-mode: vertical-rl) {
+    table.effector-compat td.vlabel .rotate-inner {
+      writing-mode: initial !important;
+      text-orientation: initial !important;
+    }
+  }
+
+  /* Column widths via <colgroup> */
+  table.effector-compat col.col-vert  { width: 32px; }   /* first column */
+  table.effector-compat col.col-label { width: 280px; }  /* second column */
+  table.effector-compat col.col-data  { width: 32px; }   /* each data column */
+
+  /* Color palette */
+  table.effector-compat td.green  { background-color: #90ee90; }
+  table.effector-compat td.yellow { background-color: #fff59d; }
+  table.effector-compat td.red    { background-color: #ff9999; }
+  table.effector-compat td.blue   { background-color: #9ec5fe; }
+
+  /* Caption */
+  table.effector-compat caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    font-size: 1.05em;
+  }
+</style>
+
+<div class="table-wrapper">
+<table class="effector-compat">
+  <caption>Effector Branching Compatibility</caption>
+
+  <!-- IMPORTANT: <colgroup> must be AFTER caption, BEFORE thead -->
+  <colgroup>
+    <col class="col-vert">            <!-- 1st column: vertical label -->
+    <col class="col-label">           <!-- 2nd column: wider, wraps -->
+    <col class="col-data" span="16">  <!-- 16 child-effector columns -->
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th rowspan="2" colspan="2"></th>
+      <th colspan="16">Children Effectors</th>
+    </tr>
+    <tr>
+      <th class="rotate"><span class="rotate-inner">Thruster Dynamic Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">Thruster State Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">Constraint Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">Drag Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">External Force Torque</span></th>
+      <th class="rotate"><span class="rotate-inner">SRP Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">Fuel Tank Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">Gravity Effector</span></th>
+      <th class="rotate"><span class="rotate-inner">Spinning Bodies</span></th>
+      <th class="rotate"><span class="rotate-inner">Translating Bodies</span></th>
+      <th class="rotate"><span class="rotate-inner">Hinged Rigid Bodies</span></th>
+      <th class="rotate"><span class="rotate-inner">Prescribed Bodies</span></th>
+      <th class="rotate"><span class="rotate-inner">Linear Spring Mass Damper</span></th>
+      <th class="rotate"><span class="rotate-inner">Spherical Pendulum</span></th>
+      <th class="rotate"><span class="rotate-inner">Reaction Wheel</span></th>
+      <th class="rotate"><span class="rotate-inner">VSCMG</span></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td rowspan="9" class="label vlabel">
+        <span class="rotate-inner">Parent Effectors</span>
+      </td>
+      <td class="label">Spinning Bodies 1DOF</td>
+      <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+      <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Spinning Bodies 2DOF</td>
+      <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+      <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Spinning Bodies NDOF</td>
+      <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+      <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Hinged Rigid Bodies</td>
+      <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+      <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Dual Hinged Rigid Bodies</td>
+      <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">N Hinged Rigid Bodies</td>
+      <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Linear Translating Bodies 1DOF</td>
+      <td class="green"></td><td class="yellow"></td><td class="green"></td><td class="yellow"></td>
+      <td class="green"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Linear Translating Bodies NDOF</td>
+      <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="yellow"></td><td class="yellow"></td><td class="yellow"></td><td class="yellow"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+      <td class="red"></td><td class="red"></td><td class="red"></td><td class="red"></td>
+    </tr>
+    <tr>
+      <td class="label">Prescribed Motion</td>
+      <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
+      <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
+      <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
+      <td class="blue"></td><td class="blue"></td><td class="blue"></td><td class="blue"></td>
+    </tr>
+  </tbody>
+</table>
+</div></section>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h2>
+<p>Attaching a dynamic effector on a state effector is performed the same way as attaching a dynamic
+effector to the hub, but instead called with the state effector. Given a setup as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+<span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+<span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+
+<span class="n">stateEff</span> <span class="o">=</span> <span class="n">spinningBodyOneDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyOneDOFStateEffector</span><span class="p">()</span>
+<span class="n">dynEff</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+
+<span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">stateEff</span><span class="p">)</span>
+
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dynEff</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, effectors are attached to the hub using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dynEff</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Dynamic effector’s can instead be attached to a state effector as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or in the case of a multi-degree-of-freedom parent effector, additionally specify which segment to
+attach the dynamic effector to as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stateEff</span> <span class="o">=</span> <span class="n">spinningBodyTwoDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyTwoDOFStateEffector</span><span class="p">()</span>
+<span class="n">segment</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Where segment is the integer number of the segement to be attached to, with 1 being the segment
+attached to the hub, increasing outward from the hub. For example, spinningBodyOneDOFStateEffector
+will always attach to segment 1, attaching to the second to last segment of a 7DOF robotic arm would
+be segment 6. Note that in either case the dynamic effector is still added to the sim task.</p>
+<p>However, some effectors use alternative methods for adding to a spacecraft. For example, the
+attachment of a <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">Module: thrusterDynamicEffector</span></a> set using the <a class="reference internal" href="../../Documentation/utilities/simIncludeThruster.html#simincludethruster"><span class="std std-ref">simIncludeThruster</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thrusterSet</span> <span class="o">=</span> <span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">()</span>
+<span class="n">thFactory</span> <span class="o">=</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">()</span>
+<span class="n">thFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;MOOG_Monarc_22_6&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="n">thrModelTag</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Would instead be attached using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraftSubcomponent</span><span class="p">(</span><span class="n">thrModelTag</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Additionally, the <a class="reference internal" href="../../Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.html#constraintdynamiceffector"><span class="std std-ref">Module: constraintDynamicEffector</span></a> requires attachment to two parents. It works with
+either a hub attached to the state effector of another vehicle, or the attachment of two different
+state effectors to one another.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject2</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+<span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+
+<span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+<span class="n">scObject2</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bskPrinciples-10.html" class="btn btn-neutral float-left" title="Advanced: Handling BasiliskException in Simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../examples/index.html" class="btn btn-neutral float-right" title="Integrated Example Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

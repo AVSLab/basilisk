@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioMomentumDumping &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioSepMomentumManagement" href="scenarioSepMomentumManagement.html" />
+    <link rel="prev" title="scenarioAttitudeFeedback2T_TH" href="scenarioAttitudeFeedback2T_TH.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-regulation-control">Attitude Regulation Control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-guidance">Attitude Guidance</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#attitude-control-with-actuators">Attitude Control with Actuators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#attitude-steering-control">Attitude Steering Control</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioMomentumDumping</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioMomentumDumping.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariomomentumdumping">
+<span id="id1"></span><h1>scenarioMomentumDumping<a class="headerlink" href="#scenariomomentumdumping" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioMomentumDumping"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This script shows how to perform momentum dumping when the momentum accumulated on the reaction wheels
+is above a user-defined threshold. In this case, such threshold is set at 80 Nms. The dumping is performed
+by a set of 8 thrusters that can provide control about the three principal axes of the spacecraft.
+To perform the momentum dumping, three concatenated modules are used:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../Documentation/fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.html#thrmomentummanagement"><span class="std std-ref">Module: thrMomentumManagement</span></a>: computes the amount of momentum to be dumped, based on current stored momentum
+and the user-defined threshold. It is important to notice that, for the three concatenated modules to work
+correctly, this first module cannot be run at simulation time <span class="math notranslate nohighlight">\(t = 0\)</span>. In this script, the method
+<code class="docutils literal notranslate"><span class="pre">Reset</span></code> is called on <a class="reference internal" href="../Documentation/fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.html#thrmomentummanagement"><span class="std std-ref">Module: thrMomentumManagement</span></a> at <span class="math notranslate nohighlight">\(t = 10\)</span> s, which coincides to the time at which
+the first desaturating impulse is fired.</p></li>
+<li><p><a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.html#thrforcemapping"><span class="std std-ref">Module: thrForceMapping</span></a>: maps the amout of momentum to be dumped into impulses that must be delivered by each
+thruster. This module is originally implemented to map a requested torque into forces imparted by the thrusters,
+but it can be applied in this case as well, because the math is the same. The only caveat is that, in this case,
+the output should not be scaled by the thruster maximum torque capability, since the desired output is an impulse
+and not a torque. To deactivate the output scaling, the <code class="docutils literal notranslate"><span class="pre">angErrThresh</span></code> input variable for this module must be
+set to a value larger than <span class="math notranslate nohighlight">\(\pi\)</span>, as specified in the module documentation.</p></li>
+<li><p><a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrMomentumDumping/thrMomentumDumping.html#thrmomentumdumping"><span class="std std-ref">Module: thrMomentumDumping</span></a>: computes the thruster on-times required to deliver the desired impulse. A
+<code class="docutils literal notranslate"><span class="pre">maxCounterValue</span></code> of 100 is used in this example to allow the spacecraft to maneuver back to the desired attitude
+after each time the thrusters fire.</p></li>
+</ul>
+<p>For this script to work as intended, it is necessary to run the flight software and the dynamics at two different
+frequencies. In this example, the simulation time step for the flight software is 1 second, whereas for the dynamics
+it is 0.1 seconds. This is necessary because the <a class="reference internal" href="../Documentation/fswAlgorithms/effectorInterfaces/thrMomentumDumping/thrMomentumDumping.html#thrmomentumdumping"><span class="std std-ref">Module: thrMomentumDumping</span></a> automatically uses the task time step as
+control period for the firing. However, if the dynamics is integrated at the same frequency, this does not give
+enough time resolution to appreciate the variation in the momentum.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioMomentumDumping</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<p>In this examples, the spacecraft is already at the desired attitude, but the four reaction wheels are saturated (the total
+angular momentum exceeds the threshold). The desaturation happens at <span class="math notranslate nohighlight">\(t = 10\)</span> when the <a class="reference internal" href="../Documentation/fswAlgorithms/attControl/thrMomentumManagement/thrMomentumManagement.html#thrmomentummanagement"><span class="std std-ref">Module: thrMomentumManagement</span></a> is
+reset. Three firings are sufficient to dump the momentum below the set threshold. The following figures illustrate the change
+in momentum for the four wheels <span class="math notranslate nohighlight">\(H_i\)</span> for <span class="math notranslate nohighlight">\(i = 1,...,4\)</span> and the total angular momentum <span class="math notranslate nohighlight">\(\|H\|\)</span>, and the
+attitude errors, as functions of time, with respect to the desired target attitude.</p>
+<img alt="../_images/scenarioMomentumDumping3.svg" class="align-center" src="../_images/scenarioMomentumDumping3.svg" />
+<img alt="../_images/scenarioMomentumDumping1.svg" class="align-center" src="../_images/scenarioMomentumDumping1.svg" />
+<p>The plots show that the momentum is dumped below the threshold. Also, the desired attitude is recovered between the first and
+second firing, and after the third, but between the second and the third there is not enough time for the spacecraft to slew
+back to that attitude.</p>
+<p>The next two plots show the amount of impulse [Ns] requested for each thruster, and the times during which each thruster is
+operational. As expected, 100 control times pass between each firing: because the control time coincides with the flight
+software simulation time step of 1 s, this means that firings are 100 seconds apart.</p>
+<img alt="../_images/scenarioMomentumDumping5.svg" class="align-center" src="../_images/scenarioMomentumDumping5.svg" />
+<img alt="../_images/scenarioMomentumDumping7.svg" class="align-center" src="../_images/scenarioMomentumDumping7.svg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_DH">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_DH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataDH</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_DH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_DH" title="Link to this definition"></a></dt>
+<dd><p>Plot the body angular velocity rate tracking errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_OnTimeRequest">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_OnTimeRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOnTime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numTh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_OnTimeRequest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_OnTimeRequest" title="Link to this definition"></a></dt>
+<dd><p>Plot the thruster on time requests.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_attitude_error">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_attitude_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataSigmaBR</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_attitude_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_attitude_error" title="Link to this definition"></a></dt>
+<dd><p>Plot the attitude errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_rate_error">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_rate_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOmegaBR</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_rate_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_rate_error" title="Link to this definition"></a></dt>
+<dd><p>Plot the body angular velocity rate tracking errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_rw_momenta">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_rw_momenta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOmegaRw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numRW</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_rw_momenta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_rw_momenta" title="Link to this definition"></a></dt>
+<dd><p>Plot the RW momenta.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_rw_speeds">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_rw_speeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOmegaRW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numRW</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_rw_speeds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_rw_speeds" title="Link to this definition"></a></dt>
+<dd><p>Plot the RW spin rates.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_thrForce">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_thrForce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataThr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numTh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_thrForce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_thrForce" title="Link to this definition"></a></dt>
+<dd><p>Plot the Thruster force values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioMomentumDumping.plot_thrImpulse">
+<span class="sig-prename descclassname"><span class="pre">scenarioMomentumDumping.</span></span><span class="sig-name descname"><span class="pre">plot_thrImpulse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeDataFSW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataMap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numTh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioMomentumDumping.html#plot_thrImpulse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioMomentumDumping.plot_thrImpulse" title="Link to this definition"></a></dt>
+<dd><p>Plot the Thruster force values.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioAttitudeFeedback2T_TH.html" class="btn btn-neutral float-left" title="scenarioAttitudeFeedback2T_TH" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioSepMomentumManagement.html" class="btn btn-neutral float-right" title="scenarioSepMomentumManagement" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

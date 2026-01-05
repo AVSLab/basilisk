@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: formationBarycenter &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="formationBarycenter" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">formationFlying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../etSphericalControl/index.html">etSphericalControl</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">formationBarycenter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillStateConverter/index.html">hillStateConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillToAttRef/index.html">hillToAttRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanOEFeedback/index.html">meanOEFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftPointing/index.html">spacecraftPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftReconfig/index.html">spacecraftReconfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">formationFlying</a></li>
+          <li class="breadcrumb-item"><a href="index.html">formationBarycenter</a></li>
+      <li class="breadcrumb-item active">Module: formationBarycenter</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/formationFlying/formationBarycenter/formationBarycenter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-formationbarycenter">
+<span id="formationbarycenter"></span><h1>Module: formationBarycenter<a class="headerlink" href="#module-formationbarycenter" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes the barycenter of a swarm of satellites. The barycenter can either be computed in the regular cartesian way (using a weighted average of the position and velocity vectors)
+or using the weighted average of the orbital elements. Both output two navigation messages that describe the position and velocity of the barycenter. The output messages contain the same
+information, although one is a C++ message and the other is a C-wrapped message.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scNavInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>vector of spacecraft navigation input messages.  These are set through <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>scPayloadInMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>vector of spacecraft payload input messages.  These are set through <code class="docutils literal notranslate"><span class="pre">addSpacecraftToModel()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>transOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>barycenter information C++ output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>transOutMsgC</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>barycenter information C-wrapped output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>This module computes the barycenter of a swarm of spacecraft. For the cartesian method, a simple center of mass calculation is made for the position and velocity vectors.
+Let <span class="math notranslate nohighlight">\(\textbf{x}\)</span> represent either the position or the velocity vectors. The corresponding weighted average is:</p>
+<div class="math notranslate nohighlight">
+\[\bar{\textbf{x}} = \dfrac{1}{m_{total}}\sum_{i}m_i\textbf{x}_i,\]</div>
+<p>where <span class="math notranslate nohighlight">\(m_{total}=\sum_{i}m_i\)</span>.</p>
+<p>For the orbital elements averaging, the process is similar. However, the position and velocity vectors of each spacecraft must first be converted to orbital elements. Once
+that is done, we take the average of each orbital element <span class="math notranslate nohighlight">\(oe\)</span> as such:</p>
+<div class="math notranslate nohighlight">
+\[\bar{oe} = \dfrac{1}{m_{total}}\sum_{i}m_ioe_i\]</div>
+<p>This formula is only valid for semi-major axis (a), eccentricity (e) and inclination (i). For the other angular orbital elements, a problem with angle wrapping can occur
+when the angles are close to zero. For example, if two spacecraft of equal mass have a true anomaly of 10 and 350 degrees, the previous averaging formula would suggest
+that the mean should be 180 degrees, when in fact it should be 0. To solve this problem, a different formula is used for RAAN (<span class="math notranslate nohighlight">\(\Omega\)</span>), AoP (<span class="math notranslate nohighlight">\(\omega\)</span>)
+and true anomaly (f):</p>
+<div class="math notranslate nohighlight">
+\[\bar{\alpha} = \texttt{atan2}\left(\sum_{i}m_i\sin\alpha_i, \sum_{i}m_i\cos\alpha_i\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\bar{\alpha}\)</span> is the averaged angular orbital element. The set of <span class="math notranslate nohighlight">\(\bar{oe}\)</span> are then converted back into position and velocity vectors.</p>
+<p>As stated before, the module outputs both a C++ and C-wrapped navigation messages. Both contain the same payload.</p>
+</section>
+<section id="model-assumptions-and-limitations">
+<h2>Model Assumptions and Limitations<a class="headerlink" href="#model-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>This code makes the following assumptions:</p>
+<ul class="simple">
+<li><p><strong>Gravitational parameter is known</strong></p></li>
+</ul>
+<p>This code has the following limitations:</p>
+<ul class="simple">
+<li><p><strong>Equatorial singularities</strong>: when using orbital element averaging, near equatorial orbits may have induce a singularity in the ascending node.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section contains conceptual overviews of the code and clear examples for the prospective user.</p>
+<section id="module-setup">
+<h3>Module Setup<a class="headerlink" href="#module-setup" title="Link to this heading"></a></h3>
+<p>The temperature module is created in python using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">barycenterModule</span> <span class="o">=</span> <span class="n">formationBarycenter</span><span class="o">.</span><span class="n">FormationBarycenter</span><span class="p">()</span>
+<span class="linenos">2</span><span class="n">barycenterModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s1">&#39;barycenter&#39;</span>
+</pre></div>
+</div>
+<p>A sample setup is done using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Configure spacecraft state input messages</span>
+<span class="linenos"> 2</span><span class="n">scNavMsgData1</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+<span class="linenos"> 3</span><span class="n">scNavMsgData1</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">rN1</span>
+<span class="linenos"> 4</span><span class="n">scNavMsgData1</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">vN1</span>
+<span class="linenos"> 5</span><span class="n">scNavMsg1</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scNavMsgData1</span><span class="p">)</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="n">scNavMsgData2</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsgPayload</span><span class="p">()</span>
+<span class="linenos"> 8</span><span class="n">scNavMsgData2</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">rN2</span>
+<span class="linenos"> 9</span><span class="n">scNavMsgData2</span><span class="o">.</span><span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">vN2</span>
+<span class="linenos">10</span><span class="n">scNavMsg2</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavTransMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scNavMsgData2</span><span class="p">)</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="c1"># Configure spacecraft mass input messages</span>
+<span class="linenos">13</span><span class="n">scPayloadMsgData1</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+<span class="linenos">14</span><span class="n">scPayloadMsgData1</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="linenos">15</span><span class="n">scPayloadMsg1</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPayloadMsgData1</span><span class="p">)</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="n">scPayloadMsgData2</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+<span class="linenos">18</span><span class="n">scPayloadMsgData2</span><span class="o">.</span><span class="n">massSC</span> <span class="o">=</span> <span class="mi">150</span>
+<span class="linenos">19</span><span class="n">scPayloadMsg2</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scPayloadMsgData2</span><span class="p">)</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="c1"># add spacecraft input messages to module</span>
+<span class="linenos">22</span><span class="n">barycenterModule</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scNavMsg1</span><span class="p">,</span> <span class="n">scPayloadMsg1</span><span class="p">)</span>
+<span class="linenos">23</span><span class="n">barycenterModule</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scNavMsg2</span><span class="p">,</span> <span class="n">scPayloadMsg2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>No further setup is needed for the cartesian method. If the user wants to use orbital elements, the following additional code is needed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">barycenterModule</span><span class="o">.</span><span class="n">useOrbitalElements</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="linenos">2</span><span class="n">barycenterModule</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv419FormationBarycenter">
+<span id="_CPPv319FormationBarycenter"></span><span id="_CPPv219FormationBarycenter"></span><span id="FormationBarycenter"></span><span class="target" id="class_formation_barycenter"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FormationBarycenter</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv419FormationBarycenter" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;formationBarycenter.h&gt;</em></div>
+<p>This module computes the barycenter of a swarm of satellites, either using cartesian coordinates or orbital elements. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter19FormationBarycenterEv">
+<span id="_CPPv3N19FormationBarycenter19FormationBarycenterEv"></span><span id="_CPPv2N19FormationBarycenter19FormationBarycenterEv"></span><span id="FormationBarycenter::FormationBarycenter"></span><span class="target" id="class_formation_barycenter_1aa43f26005a988926a554d84adffedb81"></span><span class="sig-name descname"><span class="n"><span class="pre">FormationBarycenter</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter19FormationBarycenterEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenterD0Ev">
+<span id="_CPPv3N19FormationBarycenterD0Ev"></span><span id="_CPPv2N19FormationBarycenterD0Ev"></span><span id="FormationBarycenter::~FormationBarycenter"></span><span class="target" id="class_formation_barycenter_1a208d5e468b05f5a90490ab38d429d414"></span><span class="sig-name descname"><span class="n"><span class="pre">~FormationBarycenter</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenterD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter8SelfInitEv">
+<span id="_CPPv3N19FormationBarycenter8SelfInitEv"></span><span id="_CPPv2N19FormationBarycenter8SelfInitEv"></span><span id="FormationBarycenter::SelfInit"></span><span class="target" id="class_formation_barycenter_1a2e2b8ade93cfe54e6555c4797887a650"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method self initializes the C-wrapped output message. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter5ResetE8uint64_t">
+<span id="_CPPv3N19FormationBarycenter5ResetE8uint64_t"></span><span id="_CPPv2N19FormationBarycenter5ResetE8uint64_t"></span><span id="FormationBarycenter::Reset__uint64_t"></span><span class="target" id="class_formation_barycenter_1a9cd10535574dc3d0e4a17c801e4e35a7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter11UpdateStateE8uint64_t">
+<span id="_CPPv3N19FormationBarycenter11UpdateStateE8uint64_t"></span><span id="_CPPv2N19FormationBarycenter11UpdateStateE8uint64_t"></span><span id="FormationBarycenter::UpdateState__uint64_t"></span><span class="target" id="class_formation_barycenter_1abc3214aabec3005f4485fbfe5a18abff"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter17ReadInputMessagesEv">
+<span id="_CPPv3N19FormationBarycenter17ReadInputMessagesEv"></span><span id="_CPPv2N19FormationBarycenter17ReadInputMessagesEv"></span><span id="FormationBarycenter::ReadInputMessages"></span><span class="target" id="class_formation_barycenter_1ad3836d95ae02848babb42668e149eb5e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter17ReadInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads the input messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter20addSpacecraftToModelEP7MessageI18NavTransMsgPayloadEP7MessageI23VehicleConfigMsgPayloadE">
+<span id="_CPPv3N19FormationBarycenter20addSpacecraftToModelEP7MessageI18NavTransMsgPayloadEP7MessageI23VehicleConfigMsgPayloadE"></span><span id="_CPPv2N19FormationBarycenter20addSpacecraftToModelEP7MessageI18NavTransMsgPayloadEP7MessageI23VehicleConfigMsgPayloadE"></span><span id="FormationBarycenter::addSpacecraftToModel__Message:NavTransMsgPayload:P.Message:VehicleConfigMsgPayload:P"></span><span class="target" id="class_formation_barycenter_1ae0c40ccca0c29512829cb1f04f30a5f3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpacecraftToModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScNavMsg</span></span>, <a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">tmpScPayloadMsg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter20addSpacecraftToModelEP7MessageI18NavTransMsgPayloadEP7MessageI23VehicleConfigMsgPayloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scNav and scPayload messages name to the vector of names to be subscribed to. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter17computeBaricenterEv">
+<span id="_CPPv3N19FormationBarycenter17computeBaricenterEv"></span><span id="_CPPv2N19FormationBarycenter17computeBaricenterEv"></span><span id="FormationBarycenter::computeBaricenter"></span><span class="target" id="class_formation_barycenter_1a612bb904bd7f624a5ef506ed6e206b60"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBaricenter</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter17computeBaricenterEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Does the barycenter calculations </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter18WriteOutputMessageE8uint64_t">
+<span id="_CPPv3N19FormationBarycenter18WriteOutputMessageE8uint64_t"></span><span id="_CPPv2N19FormationBarycenter18WriteOutputMessageE8uint64_t"></span><span id="FormationBarycenter::WriteOutputMessage__uint64_t"></span><span class="target" id="class_formation_barycenter_1ab4fc5c8afc9b1083f70df9eeeb19ff44"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WriteOutputMessage</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19FormationBarycenter18WriteOutputMessageE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>writes the output messages </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter11scNavInMsgsE">
+<span id="_CPPv3N19FormationBarycenter11scNavInMsgsE"></span><span id="_CPPv2N19FormationBarycenter11scNavInMsgsE"></span><span id="FormationBarycenter::scNavInMsgs__std::vector:ReadFunctor:NavTransMsgPayload::"></span><span class="target" id="class_formation_barycenter_1ad92ff8aa5603337099274be554c9dbd3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scNavInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter11scNavInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft navigation input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter15scPayloadInMsgsE">
+<span id="_CPPv3N19FormationBarycenter15scPayloadInMsgsE"></span><span id="_CPPv2N19FormationBarycenter15scPayloadInMsgsE"></span><span id="FormationBarycenter::scPayloadInMsgs__std::vector:ReadFunctor:VehicleConfigMsgPayload::"></span><span class="target" id="class_formation_barycenter_1ae52fa83f062590fe0eaacf99dfdb4adc"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scPayloadInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter15scPayloadInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft payload input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter11transOutMsgE">
+<span id="_CPPv3N19FormationBarycenter11transOutMsgE"></span><span id="_CPPv2N19FormationBarycenter11transOutMsgE"></span><span id="FormationBarycenter::transOutMsg__Message:NavTransMsgPayload:"></span><span class="target" id="class_formation_barycenter_1a2b95a545bf2ccf34cc0746993239910d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter11transOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>translation navigation output msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter12transOutMsgCE">
+<span id="_CPPv3N19FormationBarycenter12transOutMsgCE"></span><span id="_CPPv2N19FormationBarycenter12transOutMsgCE"></span><span id="FormationBarycenter::transOutMsgC__NavTransMsg_C"></span><span class="target" id="class_formation_barycenter_1ae5d2e5ae49307940bbba5daaf0af2050"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transOutMsgC</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter12transOutMsgCE" title="Link to this definition"></a><br /></dt>
+<dd><p>C-wrapped translation navigation output msg, zeroed. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter18useOrbitalElementsE">
+<span id="_CPPv3N19FormationBarycenter18useOrbitalElementsE"></span><span id="_CPPv2N19FormationBarycenter18useOrbitalElementsE"></span><span id="FormationBarycenter::useOrbitalElements__b"></span><span class="target" id="class_formation_barycenter_1a34d283520f30c43356a39c9b1fed32bc"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useOrbitalElements</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter18useOrbitalElementsE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag that determines whether to use cartesian or orbital elementd weighted averaging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter2muE">
+<span id="_CPPv3N19FormationBarycenter2muE"></span><span id="_CPPv2N19FormationBarycenter2muE"></span><span id="FormationBarycenter::mu__double"></span><span class="target" id="class_formation_barycenter_1a12c043cf7cf09ebc777291b4cf65bb83"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>gravitational parameter to be used with orbital elements averaging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter9bskLoggerE">
+<span id="_CPPv3N19FormationBarycenter9bskLoggerE"></span><span id="_CPPv2N19FormationBarycenter9bskLoggerE"></span><span id="FormationBarycenter::bskLogger__BSKLogger"></span><span class="target" id="class_formation_barycenter_1ad1a0e0fde4a16e013e016a29b513a227"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter11scNavBufferE">
+<span id="_CPPv3N19FormationBarycenter11scNavBufferE"></span><span id="_CPPv2N19FormationBarycenter11scNavBufferE"></span><span id="FormationBarycenter::scNavBuffer__std::vector:NavTransMsgPayload:"></span><span class="target" id="class_formation_barycenter_1acec79878a5e7f376fb4f122a99a45722"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scNavBuffer</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter11scNavBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of spacecraft navigation info </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter15scPayloadBufferE">
+<span id="_CPPv3N19FormationBarycenter15scPayloadBufferE"></span><span id="_CPPv2N19FormationBarycenter15scPayloadBufferE"></span><span id="FormationBarycenter::scPayloadBuffer__std::vector:VehicleConfigMsgPayload:"></span><span class="target" id="class_formation_barycenter_1a7c14dec9b0ce85cd02811ccfff37e9fb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scPayloadBuffer</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter15scPayloadBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer of spacecraft payload </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19FormationBarycenter14transOutBufferE">
+<span id="_CPPv3N19FormationBarycenter14transOutBufferE"></span><span id="_CPPv2N19FormationBarycenter14transOutBufferE"></span><span id="FormationBarycenter::transOutBuffer__NavTransMsgPayload"></span><span class="target" id="class_formation_barycenter_1a33cc9b452f6b1a119a66b18e6daa7c0a"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transOutBuffer</span></span></span><a class="headerlink" href="#_CPPv4N19FormationBarycenter14transOutBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>buffer for the output message </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="formationBarycenter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

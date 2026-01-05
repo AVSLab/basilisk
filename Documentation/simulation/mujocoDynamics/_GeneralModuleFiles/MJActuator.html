@@ -1,0 +1,512 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: MJActuator &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: MJBody" href="MJBody.html" />
+    <link rel="prev" title="_GeneralModuleFiles" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: MJActuator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJActuator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mjactuator">
+<span id="mjactuator"></span><h1>Module: MJActuator<a class="headerlink" href="#module-mjactuator" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416MJActuatorObject">
+<span id="_CPPv316MJActuatorObject"></span><span id="_CPPv216MJActuatorObject"></span><span id="MJActuatorObject"></span><span class="target" id="class_m_j_actuator_object"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuatorObject</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="MJObject.html#_CPPv4I0E8MJObject" title="MJObject"><span class="n"><span class="pre">MJObject</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">mjsActuator</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv416MJActuatorObject" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJActuator.h&gt;</em></div>
+<p>A class representing a MuJoCo actuator object. </p>
+<p>MuJoCo actuators, and thus also <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code>, are single-input single-output. This means that the force/torque produced by the actuator is determined by a single degree of freedom. However, in simulation we usually want to control force and torque along multiple dimensions. Thus, we use <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref"><span class="pre">MJActuator</span></span></a></code>, which is a collection of <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code>.</p>
+<p>This class wraps a MuJoCo actuator object and provides functionality to update its control value. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJActuatorObject10updateCtrlEP6mjDatad">
+<span id="_CPPv3N16MJActuatorObject10updateCtrlEP6mjDatad"></span><span id="_CPPv2N16MJActuatorObject10updateCtrlEP6mjDatad"></span><span id="MJActuatorObject::updateCtrl__mjDataP.double"></span><span class="target" id="class_m_j_actuator_object_1afeaa9fbaa24b1e7ea75d5f219f347c67"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateCtrl</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">mjData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16MJActuatorObject10updateCtrlEP6mjDatad" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the control value of the actuator in the simulation data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Pointer to the MuJoCo simulation data. </p></li>
+<li><p><strong>value</strong> – The control value to set. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv410MJActuator">
+<span id="_CPPv310MJActuator"></span><span id="_CPPv210MJActuator"></span><span id="MJActuator"></span><span class="target" id="class_m_j_actuator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><a class="headerlink" href="#_CPPv410MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJActuator.h&gt;</em></div>
+<p>Base class representing a MuJoCo actuator. </p>
+<p>This class represents a general actuator composed of one or more <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code> instances. It provides methods for configuring the actuator and updating its control values.</p>
+<p><code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code> and MuJoCo actuators are single-input single-output, which means that they can be controlled with only one degree of freedom. For convenience, subclasses of <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref"><span class="pre">MJActuator</span></span></a></code> represent a useful collection of these 1-dof actuators. See <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>, and <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>. </p>
+<p>Subclassed by <a class="reference internal" href="#class_m_j_force_actuator"><span class="std std-ref">MJForceActuator</span></a>, <a class="reference internal" href="#class_m_j_force_torque_actuator"><span class="std std-ref">MJForceTorqueActuator</span></a>, <a class="reference internal" href="#class_m_j_single_actuator"><span class="std std-ref">MJSingleActuator</span></a>, <a class="reference internal" href="#class_m_j_torque_actuator"><span class="std std-ref">MJTorqueActuator</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE">
+<span id="_CPPv3N10MJActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="_CPPv2N10MJActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="MJActuator::MJActuator__ss.std::vector:MJActuatorObject:RR"></span><span class="target" id="class_m_j_actuator_1a126f3ebe730f1c28cee4e68ffcd82921"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">subActuators</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10MJActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a> with a specified name and actuator objects. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>subActuators</strong> – A vector of <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code> representing the individual actuator parts. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator10MJActuatorERK10MJActuator">
+<span id="_CPPv3N10MJActuator10MJActuatorERK10MJActuator"></span><span id="_CPPv2N10MJActuator10MJActuatorERK10MJActuator"></span><span id="MJActuator::MJActuator__MJActuatorCR"></span><span class="target" id="class_m_j_actuator_1ad34e558450395b9aebcb8434b956ee97"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N10MJActuator10MJActuatorERK10MJActuator" title="MJActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N10MJActuator10MJActuatorERK10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator10MJActuatorERR10MJActuator">
+<span id="_CPPv3N10MJActuator10MJActuatorERR10MJActuator"></span><span id="_CPPv2N10MJActuator10MJActuatorERR10MJActuator"></span><span id="MJActuator::MJActuator__MJActuatorRR"></span><span class="target" id="class_m_j_actuator_1a878637ea0d96feb257e6a7defcbe60e4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N10MJActuator10MJActuatorERR10MJActuator" title="MJActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N10MJActuator10MJActuatorERR10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuatoraSERK10MJActuator">
+<span id="_CPPv3N10MJActuatoraSERK10MJActuator"></span><span id="_CPPv2N10MJActuatoraSERK10MJActuator"></span><span id="MJActuator::assign-operator__MJActuatorCR"></span><span class="target" id="class_m_j_actuator_1addc0935ea4d22926653b9b31b0610cc2"></span><a class="reference internal" href="#_CPPv410MJActuator" title="MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410MJActuator" title="MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N10MJActuatoraSERK10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuatoraSERR10MJActuator">
+<span id="_CPPv3N10MJActuatoraSERR10MJActuator"></span><span id="_CPPv2N10MJActuatoraSERR10MJActuator"></span><span id="MJActuator::assign-operator__MJActuatorRR"></span><span class="target" id="class_m_j_actuator_1ac31b0841f07e3c69e9c6ed912141cdbc"></span><a class="reference internal" href="#_CPPv410MJActuator" title="MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv410MJActuator" title="MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N10MJActuatoraSERR10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuatorD0Ev">
+<span id="_CPPv3N10MJActuatorD0Ev"></span><span id="_CPPv2N10MJActuatorD0Ev"></span><span id="MJActuator::~MJActuator"></span><span class="target" id="class_m_j_actuator_1a21d9db8e7453fa62008c83f0d765387f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~MJActuator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10MJActuatorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Virtual destructor for <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator7getNameEv">
+<span id="_CPPv3N10MJActuator7getNameEv"></span><span id="_CPPv2N10MJActuator7getNameEv"></span><span id="MJActuator::getName"></span><span class="target" id="class_m_j_actuator_1adb11d27fe391e0b9c16d8f9a57204999"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10MJActuator7getNameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Gets the name of the actuator. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The name of the actuator. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator9configureEPK7mjModel">
+<span id="_CPPv3N10MJActuator9configureEPK7mjModel"></span><span id="_CPPv2N10MJActuator9configureEPK7mjModel"></span><span id="MJActuator::configure__mjModelCP"></span><span class="target" id="class_m_j_actuator_1aedb263636c00b2f0cd50e78c7ac2ec62"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">configure</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">mjModel</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">model</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10MJActuator9configureEPK7mjModel" title="Link to this definition"></a><br /></dt>
+<dd><p>Configures the actuator within a given MuJoCo model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – Pointer to the MuJoCo model used for configuration. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator10updateCtrlEP6mjData">
+<span id="_CPPv3N10MJActuator10updateCtrlEP6mjData"></span><span id="_CPPv2N10MJActuator10updateCtrlEP6mjData"></span><span id="MJActuator::updateCtrl__mjDataP"></span><span class="target" id="class_m_j_actuator_1a831c6ab8d0fb4201c5fef7cba6780924"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateCtrl</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">mjData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10MJActuator10updateCtrlEP6mjData" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the control value of the actuator(s) in the MuJoCo data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Pointer to the MuJoCo simulation data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator19readControlMessagesEv">
+<span id="_CPPv3N10MJActuator19readControlMessagesEv"></span><span id="_CPPv2N10MJActuator19readControlMessagesEv"></span><span id="MJActuator::readControlMessages"></span><span class="target" id="class_m_j_actuator_1a43dcf63630b8bda884667d727254e8a5"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readControlMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N10MJActuator19readControlMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads control messages for the actuator. </p>
+<p>This pure virtual function must be implemented by derived classes to read specific control messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A vector of control values. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator4nameE">
+<span id="_CPPv3N10MJActuator4nameE"></span><span id="_CPPv2N10MJActuator4nameE"></span><span id="MJActuator::name__ss"></span><span class="target" id="class_m_j_actuator_1a451a9de266198846a674b2882fb2abce"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><a class="headerlink" href="#_CPPv4N10MJActuator4nameE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the actuator. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N10MJActuator12subActuatorsE">
+<span id="_CPPv3N10MJActuator12subActuatorsE"></span><span id="_CPPv2N10MJActuator12subActuatorsE"></span><span id="MJActuator::subActuators__std::vector:MJActuatorObject:"></span><span class="target" id="class_m_j_actuator_1a4dfc4d120b212afdb91be16cfb3f0160"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">subActuators</span></span></span><a class="headerlink" href="#_CPPv4N10MJActuator12subActuatorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>The individual actuator objects. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416MJSingleActuator">
+<span id="_CPPv316MJSingleActuator"></span><span id="_CPPv216MJSingleActuator"></span><span id="MJSingleActuator"></span><span class="target" id="class_m_j_single_actuator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJSingleActuator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16MJSingleActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="MJSingleActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><a class="headerlink" href="#_CPPv416MJSingleActuator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJActuator.h&gt;</em></div>
+<p>Class representing a 1-degree-of-freedom actuator. </p>
+<p>This actuator type has 1 control degree of freedom. This can be useful to represent forces applied to linear joints, torques applied to revolute joints, or forces/torques applied along a fixed direction.</p>
+<p>This class is designed to handle one <code class="docutils literal notranslate"><span class="pre">SingleActuatorMsgPayload</span></code> message to control the force / torque magnitude applied. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJSingleActuator19readControlMessagesEv">
+<span id="_CPPv3N16MJSingleActuator19readControlMessagesEv"></span><span id="_CPPv2N16MJSingleActuator19readControlMessagesEv"></span><span id="MJSingleActuator::readControlMessages"></span><span class="target" id="class_m_j_single_actuator_1a170dc7243c20c69a17444b5af90a8023"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readControlMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N16MJSingleActuator19readControlMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads control messages for a single actuator. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A vector containing the control value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJSingleActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE">
+<span id="_CPPv3N16MJSingleActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="_CPPv2N16MJSingleActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="MJSingleActuator::MJActuator__ss.std::vector:MJActuatorObject:RR"></span><span class="target" id="class_m_j_single_actuator_1a126f3ebe730f1c28cee4e68ffcd82921"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">subActuators</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16MJSingleActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJSingleActuator10MJActuatorERK10MJActuator">
+<span id="_CPPv3N16MJSingleActuator10MJActuatorERK10MJActuator"></span><span id="_CPPv2N16MJSingleActuator10MJActuatorERK10MJActuator"></span><span id="MJSingleActuator::MJActuator__MJActuatorCR"></span><span class="target" id="class_m_j_single_actuator_1ad34e558450395b9aebcb8434b956ee97"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16MJSingleActuator10MJActuatorERK10MJActuator" title="MJSingleActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16MJSingleActuator10MJActuatorERK10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJSingleActuator10MJActuatorERR10MJActuator">
+<span id="_CPPv3N16MJSingleActuator10MJActuatorERR10MJActuator"></span><span id="_CPPv2N16MJSingleActuator10MJActuatorERR10MJActuator"></span><span id="MJSingleActuator::MJActuator__MJActuatorRR"></span><span class="target" id="class_m_j_single_actuator_1a878637ea0d96feb257e6a7defcbe60e4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N16MJSingleActuator10MJActuatorERR10MJActuator" title="MJSingleActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16MJSingleActuator10MJActuatorERR10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJSingleActuator13actuatorInMsgE">
+<span id="_CPPv3N16MJSingleActuator13actuatorInMsgE"></span><span id="_CPPv2N16MJSingleActuator13actuatorInMsgE"></span><span id="MJSingleActuator::actuatorInMsg__ReadFunctor:SingleActuatorMsgPayload:"></span><span class="target" id="class_m_j_single_actuator_1a0b13b4b84f50b84aef089a2266176f8b"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SingleActuatorMsgPayload.html#_CPPv424SingleActuatorMsgPayload" title="SingleActuatorMsgPayload"><span class="n"><span class="pre">SingleActuatorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">actuatorInMsg</span></span></span><a class="headerlink" href="#_CPPv4N16MJSingleActuator13actuatorInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Functor to read actuator control messages. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415MJForceActuator">
+<span id="_CPPv315MJForceActuator"></span><span id="_CPPv215MJForceActuator"></span><span id="MJForceActuator"></span><span class="target" id="class_m_j_force_actuator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJForceActuator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N15MJForceActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="MJForceActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><a class="headerlink" href="#_CPPv415MJForceActuator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJActuator.h&gt;</em></div>
+<p>Class representing an actuator that can exert an arbitrary force vector. </p>
+<p>This actuator has 3 degrees of freedom. To achieve this, it’s composed of three 1-degree-of-freedom <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code>, each applying a force along perpendicular directions.</p>
+<p>This class is designed to handle one <code class="docutils literal notranslate"><span class="pre">ForceAtSiteMsgPayload</span></code> message to control the force vector applied. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15MJForceActuator19readControlMessagesEv">
+<span id="_CPPv3N15MJForceActuator19readControlMessagesEv"></span><span id="_CPPv2N15MJForceActuator19readControlMessagesEv"></span><span id="MJForceActuator::readControlMessages"></span><span class="target" id="class_m_j_force_actuator_1a265e6bcef2a06a33b6527c9e55812897"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readControlMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15MJForceActuator19readControlMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads force control messages for the actuator. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A vector containing the force control values. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15MJForceActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE">
+<span id="_CPPv3N15MJForceActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="_CPPv2N15MJForceActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="MJForceActuator::MJActuator__ss.std::vector:MJActuatorObject:RR"></span><span class="target" id="class_m_j_force_actuator_1a126f3ebe730f1c28cee4e68ffcd82921"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">subActuators</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15MJForceActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15MJForceActuator10MJActuatorERK10MJActuator">
+<span id="_CPPv3N15MJForceActuator10MJActuatorERK10MJActuator"></span><span id="_CPPv2N15MJForceActuator10MJActuatorERK10MJActuator"></span><span id="MJForceActuator::MJActuator__MJActuatorCR"></span><span class="target" id="class_m_j_force_actuator_1ad34e558450395b9aebcb8434b956ee97"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N15MJForceActuator10MJActuatorERK10MJActuator" title="MJForceActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N15MJForceActuator10MJActuatorERK10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15MJForceActuator10MJActuatorERR10MJActuator">
+<span id="_CPPv3N15MJForceActuator10MJActuatorERR10MJActuator"></span><span id="_CPPv2N15MJForceActuator10MJActuatorERR10MJActuator"></span><span id="MJForceActuator::MJActuator__MJActuatorRR"></span><span class="target" id="class_m_j_force_actuator_1a878637ea0d96feb257e6a7defcbe60e4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N15MJForceActuator10MJActuatorERR10MJActuator" title="MJForceActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N15MJForceActuator10MJActuatorERR10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MJForceActuator10forceInMsgE">
+<span id="_CPPv3N15MJForceActuator10forceInMsgE"></span><span id="_CPPv2N15MJForceActuator10forceInMsgE"></span><span id="MJForceActuator::forceInMsg__ReadFunctor:ForceAtSiteMsgPayload:"></span><span class="target" id="class_m_j_force_actuator_1af3f318361300ef6a0444a3a89059e1ce"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#_CPPv421ForceAtSiteMsgPayload" title="ForceAtSiteMsgPayload"><span class="n"><span class="pre">ForceAtSiteMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15MJForceActuator10forceInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Functor to read force control messages. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416MJTorqueActuator">
+<span id="_CPPv316MJTorqueActuator"></span><span id="_CPPv216MJTorqueActuator"></span><span id="MJTorqueActuator"></span><span class="target" id="class_m_j_torque_actuator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJTorqueActuator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16MJTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="MJTorqueActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><a class="headerlink" href="#_CPPv416MJTorqueActuator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJActuator.h&gt;</em></div>
+<p>Class representing an actuator that can exert an arbitrary torque vector. </p>
+<p>This actuator has 3 degrees of freedom. To achieve this, it’s composed of three 1-degree-of-freedom <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code>, each applying a torque along perpendicular directions.</p>
+<p>This class is designed to handle one <code class="docutils literal notranslate"><span class="pre">TorqueAtSiteMsgPayload</span></code> message to control the torque vector applied. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJTorqueActuator19readControlMessagesEv">
+<span id="_CPPv3N16MJTorqueActuator19readControlMessagesEv"></span><span id="_CPPv2N16MJTorqueActuator19readControlMessagesEv"></span><span id="MJTorqueActuator::readControlMessages"></span><span class="target" id="class_m_j_torque_actuator_1a51a5b62ed5bbcf1bcbb52983a767ab97"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readControlMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N16MJTorqueActuator19readControlMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads torque control messages for the actuator. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A vector containing the torque control values. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE">
+<span id="_CPPv3N16MJTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="_CPPv2N16MJTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="MJTorqueActuator::MJActuator__ss.std::vector:MJActuatorObject:RR"></span><span class="target" id="class_m_j_torque_actuator_1a126f3ebe730f1c28cee4e68ffcd82921"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">subActuators</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16MJTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJTorqueActuator10MJActuatorERK10MJActuator">
+<span id="_CPPv3N16MJTorqueActuator10MJActuatorERK10MJActuator"></span><span id="_CPPv2N16MJTorqueActuator10MJActuatorERK10MJActuator"></span><span id="MJTorqueActuator::MJActuator__MJActuatorCR"></span><span class="target" id="class_m_j_torque_actuator_1ad34e558450395b9aebcb8434b956ee97"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N16MJTorqueActuator10MJActuatorERK10MJActuator" title="MJTorqueActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16MJTorqueActuator10MJActuatorERK10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJTorqueActuator10MJActuatorERR10MJActuator">
+<span id="_CPPv3N16MJTorqueActuator10MJActuatorERR10MJActuator"></span><span id="_CPPv2N16MJTorqueActuator10MJActuatorERR10MJActuator"></span><span id="MJTorqueActuator::MJActuator__MJActuatorRR"></span><span class="target" id="class_m_j_torque_actuator_1a878637ea0d96feb257e6a7defcbe60e4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N16MJTorqueActuator10MJActuatorERR10MJActuator" title="MJTorqueActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N16MJTorqueActuator10MJActuatorERR10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16MJTorqueActuator11torqueInMsgE">
+<span id="_CPPv3N16MJTorqueActuator11torqueInMsgE"></span><span id="_CPPv2N16MJTorqueActuator11torqueInMsgE"></span><span id="MJTorqueActuator::torqueInMsg__ReadFunctor:TorqueAtSiteMsgPayload:"></span><span class="target" id="class_m_j_torque_actuator_1ad13c4505940b8c771aef079303a863a6"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.html#_CPPv422TorqueAtSiteMsgPayload" title="TorqueAtSiteMsgPayload"><span class="n"><span class="pre">TorqueAtSiteMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torqueInMsg</span></span></span><a class="headerlink" href="#_CPPv4N16MJTorqueActuator11torqueInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Functor to read torque control messages. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv421MJForceTorqueActuator">
+<span id="_CPPv321MJForceTorqueActuator"></span><span id="_CPPv221MJForceTorqueActuator"></span><span id="MJForceTorqueActuator"></span><span class="target" id="class_m_j_force_torque_actuator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJForceTorqueActuator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21MJForceTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="MJForceTorqueActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><a class="headerlink" href="#_CPPv421MJForceTorqueActuator" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJActuator.h&gt;</em></div>
+<p>Class representing an actuator that can exert an arbitrary force and torque vectors. </p>
+<p>This actuator has 6 degrees of freedom. To achieve this, it’s composed of size 1-degree-of-freedom <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_actuator_object"><span class="std std-ref"><span class="pre">MJActuatorObject</span></span></a></code>, each applying a force and torque along perpendicular directions.</p>
+<p>This class is designed to handle one <code class="docutils literal notranslate"><span class="pre">ForceAtSiteMsgPayload</span></code> and one <code class="docutils literal notranslate"><span class="pre">TorqueAtSiteMsgPayload</span></code> messages to control the force and torque vectors applied. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21MJForceTorqueActuator19readControlMessagesEv">
+<span id="_CPPv3N21MJForceTorqueActuator19readControlMessagesEv"></span><span id="_CPPv2N21MJForceTorqueActuator19readControlMessagesEv"></span><span id="MJForceTorqueActuator::readControlMessages"></span><span class="target" id="class_m_j_force_torque_actuator_1a2493dc7a74290f9070f573f78489f3d8"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readControlMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N21MJForceTorqueActuator19readControlMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reads force and torque control messages for the actuator. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A vector containing the force and torque control values. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21MJForceTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE">
+<span id="_CPPv3N21MJForceTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="_CPPv2N21MJForceTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE"></span><span id="MJForceTorqueActuator::MJActuator__ss.std::vector:MJActuatorObject:RR"></span><span class="target" id="class_m_j_force_torque_actuator_1a126f3ebe730f1c28cee4e68ffcd82921"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">name</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv416MJActuatorObject" title="MJActuatorObject"><span class="n"><span class="pre">MJActuatorObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">subActuators</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21MJForceTorqueActuator10MJActuatorENSt6stringERRNSt6vectorI16MJActuatorObjectEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21MJForceTorqueActuator10MJActuatorERK10MJActuator">
+<span id="_CPPv3N21MJForceTorqueActuator10MJActuatorERK10MJActuator"></span><span id="_CPPv2N21MJForceTorqueActuator10MJActuatorERK10MJActuator"></span><span id="MJForceTorqueActuator::MJActuator__MJActuatorCR"></span><span class="target" id="class_m_j_force_torque_actuator_1ad34e558450395b9aebcb8434b956ee97"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21MJForceTorqueActuator10MJActuatorERK10MJActuator" title="MJForceTorqueActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N21MJForceTorqueActuator10MJActuatorERK10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21MJForceTorqueActuator10MJActuatorERR10MJActuator">
+<span id="_CPPv3N21MJForceTorqueActuator10MJActuatorERR10MJActuator"></span><span id="_CPPv2N21MJForceTorqueActuator10MJActuatorERR10MJActuator"></span><span id="MJForceTorqueActuator::MJActuator__MJActuatorRR"></span><span class="target" id="class_m_j_force_torque_actuator_1a878637ea0d96feb257e6a7defcbe60e4"></span><span class="sig-name descname"><span class="n"><span class="pre">MJActuator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N21MJForceTorqueActuator10MJActuatorERR10MJActuator" title="MJForceTorqueActuator::MJActuator"><span class="n"><span class="pre">MJActuator</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N21MJForceTorqueActuator10MJActuatorERR10MJActuator" title="Link to this definition"></a><br /></dt>
+<dd><p>Use the same constructor as <a class="reference internal" href="#class_m_j_actuator"><span class="std std-ref">MJActuator</span></a></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21MJForceTorqueActuator10forceInMsgE">
+<span id="_CPPv3N21MJForceTorqueActuator10forceInMsgE"></span><span id="_CPPv2N21MJForceTorqueActuator10forceInMsgE"></span><span id="MJForceTorqueActuator::forceInMsg__ReadFunctor:ForceAtSiteMsgPayload:"></span><span class="target" id="class_m_j_force_torque_actuator_1a53fea061c42c1888e6ce85bc4c38ba7d"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ForceAtSiteMsgPayload.html#_CPPv421ForceAtSiteMsgPayload" title="ForceAtSiteMsgPayload"><span class="n"><span class="pre">ForceAtSiteMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forceInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21MJForceTorqueActuator10forceInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Functor to read force control messages. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21MJForceTorqueActuator11torqueInMsgE">
+<span id="_CPPv3N21MJForceTorqueActuator11torqueInMsgE"></span><span id="_CPPv2N21MJForceTorqueActuator11torqueInMsgE"></span><span id="MJForceTorqueActuator::torqueInMsg__ReadFunctor:TorqueAtSiteMsgPayload:"></span><span class="target" id="class_m_j_force_torque_actuator_1aa421453c6618424f22dbb4f5abb25ea1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.html#_CPPv422TorqueAtSiteMsgPayload" title="TorqueAtSiteMsgPayload"><span class="n"><span class="pre">TorqueAtSiteMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">torqueInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21MJForceTorqueActuator11torqueInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Functor to read torque control messages. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_GeneralModuleFiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MJBody.html" class="btn btn-neutral float-right" title="Module: MJBody" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

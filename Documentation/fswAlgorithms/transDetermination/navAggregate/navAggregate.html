@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: navAggregate &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="navAggregate" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">transDetermination</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../chebyPosEphem/index.html">chebyPosEphem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dvAccumulation/index.html">dvAccumulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemDifference/index.html">ephemDifference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemNavConverter/index.html">ephemNavConverter</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">navAggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../oeStateEphem/index.html">oeStateEphem</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">transDetermination</a></li>
+          <li class="breadcrumb-item"><a href="index.html">navAggregate</a></li>
+      <li class="breadcrumb-item active">Module: navAggregate</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/transDetermination/navAggregate/navAggregate.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-navaggregate">
+<span id="navaggregate"></span><h1>Module: navAggregate<a class="headerlink" href="#module-navaggregate" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module takes in a series of navigation messages and constructs a navigation output message using a select subset of information from the input messages.  For more information see the
+<a class="reference download internal" download="" href="../../../../_downloads/f907e9acbf1c6bfaf5373a8686750476/Basilisk-navAggregate-2019-02-21.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-navaggregate"></span><img alt="../../../../_images/moduleImgNavAggregate.svg" src="../../../../_images/moduleImgNavAggregate.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">navAggregate()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navAttOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>blended attitude navigation output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>navTransOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>blended translation navigation output message</p></td>
+</tr>
+<tr class="row-even"><td><p>navAttInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>attitude navigation input message stored inside the <code class="docutils literal notranslate"><span class="pre">AggregateAttInput</span></code> structure</p></td>
+</tr>
+<tr class="row-odd"><td><p>navTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>translation navigation input message stored inside the <code class="docutils literal notranslate"><span class="pre">AggregateTransInput</span></code> structure</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.MAX_AGG_NAV_MSG">
+<span class="target" id="nav_aggregate_8h_1a56538ab247e11d45e2e7aad6d966c34c"></span><span class="sig-name descname"><span class="n"><span class="pre">MAX_AGG_NAV_MSG</span></span></span><a class="headerlink" href="#c.MAX_AGG_NAV_MSG" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421SelfInit_aggregateNavP16NavAggregateData7int64_t">
+<span id="_CPPv321SelfInit_aggregateNavP16NavAggregateData7int64_t"></span><span id="_CPPv221SelfInit_aggregateNavP16NavAggregateData7int64_t"></span><span id="SelfInit_aggregateNav__NavAggregateDataP.int64_t"></span><span class="target" id="nav_aggregate_8h_1a5bbc89f6ceed2ca83d114ddcb5b0d4d8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_aggregateNav</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416NavAggregateData" title="NavAggregateData"><span class="n"><span class="pre">NavAggregateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421SelfInit_aggregateNavP16NavAggregateData7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the configData for the nav aggregation algorithm. It initializes the output messages in the messaging system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the Nav aggregation interface </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419Update_aggregateNavP16NavAggregateData8uint64_t7int64_t">
+<span id="_CPPv319Update_aggregateNavP16NavAggregateData8uint64_t7int64_t"></span><span id="_CPPv219Update_aggregateNavP16NavAggregateData8uint64_t7int64_t"></span><span id="Update_aggregateNav__NavAggregateDataP.uint64_t.int64_t"></span><span class="target" id="nav_aggregate_8h_1a7787828d097d74946cdc9c577279b9af"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_aggregateNav</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416NavAggregateData" title="NavAggregateData"><span class="n"><span class="pre">NavAggregateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419Update_aggregateNavP16NavAggregateData8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the navigation message snippets created by the various navigation components in the FSW and aggregates them into a single complete navigation message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the aggregate nav module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418Reset_aggregateNavP16NavAggregateData8uint64_t7int64_t">
+<span id="_CPPv318Reset_aggregateNavP16NavAggregateData8uint64_t7int64_t"></span><span id="_CPPv218Reset_aggregateNavP16NavAggregateData8uint64_t7int64_t"></span><span id="Reset_aggregateNav__NavAggregateDataP.uint64_t.int64_t"></span><span class="target" id="nav_aggregate_8h_1a432b8feb1a6b1e97e2a622ba4a7353e7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_aggregateNav</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416NavAggregateData" title="NavAggregateData"><span class="n"><span class="pre">NavAggregateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418Reset_aggregateNavP16NavAggregateData8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This resets the module to original states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417AggregateAttInput">
+<span id="_CPPv317AggregateAttInput"></span><span id="_CPPv217AggregateAttInput"></span><span id="AggregateAttInput"></span><span class="target" id="struct_aggregate_att_input"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AggregateAttInput</span></span></span><a class="headerlink" href="#_CPPv417AggregateAttInput" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;navAggregate.h&gt;</em></div>
+<p>structure containing the attitude navigation message name, ID and local buffer </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17AggregateAttInput11navAttInMsgE">
+<span id="_CPPv3N17AggregateAttInput11navAttInMsgE"></span><span id="_CPPv2N17AggregateAttInput11navAttInMsgE"></span><span id="AggregateAttInput::navAttInMsg__NavAttMsg_C"></span><span class="target" id="struct_aggregate_att_input_1a451b2ec03374e4f1af51c24a1d5982b6"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navAttInMsg</span></span></span><a class="headerlink" href="#_CPPv4N17AggregateAttInput11navAttInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude navigation input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17AggregateAttInput10msgStorageE">
+<span id="_CPPv3N17AggregateAttInput10msgStorageE"></span><span id="_CPPv2N17AggregateAttInput10msgStorageE"></span><span id="AggregateAttInput::msgStorage__NavAttMsgPayload"></span><span class="target" id="struct_aggregate_att_input_1a3352475f446cff5a48f79319d873fb4a"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#_CPPv416NavAttMsgPayload" title="NavAttMsgPayload"><span class="n"><span class="pre">NavAttMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">msgStorage</span></span></span><a class="headerlink" href="#_CPPv4N17AggregateAttInput10msgStorageE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Local buffer to store nav message </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419AggregateTransInput">
+<span id="_CPPv319AggregateTransInput"></span><span id="_CPPv219AggregateTransInput"></span><span id="AggregateTransInput"></span><span class="target" id="struct_aggregate_trans_input"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AggregateTransInput</span></span></span><a class="headerlink" href="#_CPPv419AggregateTransInput" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;navAggregate.h&gt;</em></div>
+<p>structure containing the translational navigation message name, ID and local buffer </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19AggregateTransInput13navTransInMsgE">
+<span id="_CPPv3N19AggregateTransInput13navTransInMsgE"></span><span id="_CPPv2N19AggregateTransInput13navTransInMsgE"></span><span id="AggregateTransInput::navTransInMsg__NavTransMsg_C"></span><span class="target" id="struct_aggregate_trans_input_1a6999a5cc8181e19e88be66b9a61e080c"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N19AggregateTransInput13navTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>translation navigation input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19AggregateTransInput10msgStorageE">
+<span id="_CPPv3N19AggregateTransInput10msgStorageE"></span><span id="_CPPv2N19AggregateTransInput10msgStorageE"></span><span id="AggregateTransInput::msgStorage__NavTransMsgPayload"></span><span class="target" id="struct_aggregate_trans_input_1ac8e4d0efc25c8953fa44c26c346ce406"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">msgStorage</span></span></span><a class="headerlink" href="#_CPPv4N19AggregateTransInput10msgStorageE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Local buffer to store nav message </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv416NavAggregateData">
+<span id="_CPPv316NavAggregateData"></span><span id="_CPPv216NavAggregateData"></span><span id="NavAggregateData"></span><span class="target" id="struct_nav_aggregate_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NavAggregateData</span></span></span><a class="headerlink" href="#_CPPv416NavAggregateData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;navAggregate.h&gt;</em></div>
+<p>Top level structure for the aggregagted navigation message module. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData7attMsgsE">
+<span id="_CPPv3N16NavAggregateData7attMsgsE"></span><span id="_CPPv2N16NavAggregateData7attMsgsE"></span><span id="NavAggregateData::attMsgs__AggregateAttInputA"></span><span class="target" id="struct_nav_aggregate_data_1ac3aa1520b675c9a2a02888c0cbb884f0"></span><a class="reference internal" href="#_CPPv417AggregateAttInput" title="AggregateAttInput"><span class="n"><span class="pre">AggregateAttInput</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attMsgs</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_AGG_NAV_MSG</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData7attMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The incoming nav message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData9transMsgsE">
+<span id="_CPPv3N16NavAggregateData9transMsgsE"></span><span id="_CPPv2N16NavAggregateData9transMsgsE"></span><span id="NavAggregateData::transMsgs__AggregateTransInputA"></span><span class="target" id="struct_nav_aggregate_data_1a2bff827034214fd847d48297673b4664"></span><a class="reference internal" href="#_CPPv419AggregateTransInput" title="AggregateTransInput"><span class="n"><span class="pre">AggregateTransInput</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transMsgs</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_AGG_NAV_MSG</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData9transMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The incoming nav message buffer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData12navAttOutMsgE">
+<span id="_CPPv3N16NavAggregateData12navAttOutMsgE"></span><span id="_CPPv2N16NavAggregateData12navAttOutMsgE"></span><span id="NavAggregateData::navAttOutMsg__NavAttMsg_C"></span><span class="target" id="struct_nav_aggregate_data_1ab4bbffeec0d1fd6c16f1bb7e21ddb431"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navAttOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData12navAttOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>blended attitude navigation output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData14navTransOutMsgE">
+<span id="_CPPv3N16NavAggregateData14navTransOutMsgE"></span><span id="_CPPv2N16NavAggregateData14navTransOutMsgE"></span><span id="NavAggregateData::navTransOutMsg__NavTransMsg_C"></span><span class="target" id="struct_nav_aggregate_data_1aafaf70c3d9d4d02ddff09764f4589749"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData14navTransOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>blended translation navigation output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData10attTimeIdxE">
+<span id="_CPPv3N16NavAggregateData10attTimeIdxE"></span><span id="_CPPv2N16NavAggregateData10attTimeIdxE"></span><span id="NavAggregateData::attTimeIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a61809bfe08bd0d73181690d66928c10e"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attTimeIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData10attTimeIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for attitude message time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData12transTimeIdxE">
+<span id="_CPPv3N16NavAggregateData12transTimeIdxE"></span><span id="_CPPv2N16NavAggregateData12transTimeIdxE"></span><span id="NavAggregateData::transTimeIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a733c3553d7bf5b31c09544e52ae626ed"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transTimeIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData12transTimeIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for translation message time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData6attIdxE">
+<span id="_CPPv3N16NavAggregateData6attIdxE"></span><span id="_CPPv2N16NavAggregateData6attIdxE"></span><span id="NavAggregateData::attIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a717efd9c2854fdd7279cf5edb2fb7d8b"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData6attIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for inertial MRP </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData7rateIdxE">
+<span id="_CPPv3N16NavAggregateData7rateIdxE"></span><span id="_CPPv2N16NavAggregateData7rateIdxE"></span><span id="NavAggregateData::rateIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a7fc28fd606690bb104599171b530a787"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rateIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData7rateIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for attitude rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData6posIdxE">
+<span id="_CPPv3N16NavAggregateData6posIdxE"></span><span id="_CPPv2N16NavAggregateData6posIdxE"></span><span id="NavAggregateData::posIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a9de3c8d693c1a75505dc76330593b16b"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">posIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData6posIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for inertial position </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData6velIdxE">
+<span id="_CPPv3N16NavAggregateData6velIdxE"></span><span id="_CPPv2N16NavAggregateData6velIdxE"></span><span id="NavAggregateData::velIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a11f206f45aca86b4c2888cd3aeda087d"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">velIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData6velIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for inertial velocity </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData5dvIdxE">
+<span id="_CPPv3N16NavAggregateData5dvIdxE"></span><span id="_CPPv2N16NavAggregateData5dvIdxE"></span><span id="NavAggregateData::dvIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a9a92e543a94d8c6d6532792e76f2a4cc"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData5dvIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for accumulated DV </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData6sunIdxE">
+<span id="_CPPv3N16NavAggregateData6sunIdxE"></span><span id="_CPPv2N16NavAggregateData6sunIdxE"></span><span id="NavAggregateData::sunIdx__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a21cb7c887b622a71235f670b918e6df1"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sunIdx</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData6sunIdxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The index of the message to use for sun pointing </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData11attMsgCountE">
+<span id="_CPPv3N16NavAggregateData11attMsgCountE"></span><span id="_CPPv2N16NavAggregateData11attMsgCountE"></span><span id="NavAggregateData::attMsgCount__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a8a89e68f7f097e59b158a5726d93f0dd"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attMsgCount</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData11attMsgCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The total number of messages available as inputs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData13transMsgCountE">
+<span id="_CPPv3N16NavAggregateData13transMsgCountE"></span><span id="_CPPv2N16NavAggregateData13transMsgCountE"></span><span id="NavAggregateData::transMsgCount__uint32_t"></span><span class="target" id="struct_nav_aggregate_data_1a996e4919dcadd41c0843821ae21532d2"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transMsgCount</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData13transMsgCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The total number of messages available as inputs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N16NavAggregateData9bskLoggerE">
+<span id="_CPPv3N16NavAggregateData9bskLoggerE"></span><span id="_CPPv2N16NavAggregateData9bskLoggerE"></span><span id="NavAggregateData::bskLogger__BSKLoggerP"></span><span class="target" id="struct_nav_aggregate_data_1a8f1efab12303597e5eb6daaa6447030d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N16NavAggregateData9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="navAggregate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

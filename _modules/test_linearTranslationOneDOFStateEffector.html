@@ -1,0 +1,931 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_linearTranslationOneDOFStateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_linearTranslationOneDOFStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_linearTranslationOneDOFStateEffector</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2024, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        translatingBodies</span>
+<span class="c1">#   Author:             Peter Johnson</span>
+<span class="c1">#   Creation Date:      March 6, 2024</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">linearTranslationOneDOFStateEffector</span><span class="p">,</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+
+<span class="c1"># uncomment this line if this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail()</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+
+
+<span class="c1"># tests are paramterized by four functions</span>
+<div class="viewcode-block" id="test_translatingBody">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesOneDOF/_UnitTest/test_linearTranslationOneDOFStateEffector.html#test_linearTranslationOneDOFStateEffector.test_translatingBody">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;translatingBodyNoInput&quot;</span>
+    <span class="p">,</span> <span class="s2">&quot;translatingBodyLockFlag&quot;</span>
+    <span class="p">,</span> <span class="s2">&quot;translatingBodyCommandedForce&quot;</span>
+    <span class="p">,</span> <span class="s2">&quot;translatingBodyRhoReference&quot;</span>
+                                      <span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_translatingBody</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This unit test sets up a spacecraft with a single-axis translating rigid body attached to a rigid hub. The position</span>
+<span class="sd">    of the boom axis is arbitrary. The scenario includes gravity acting on both the spacecraft and the effector.</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file we are checking the principles of conservation of energy and angular momentum. Both the orbital and</span>
+<span class="sd">    rotational energy and angular momentum must be maintained when conservative forces like gravity are present.</span>
+<span class="sd">    Therefore, the values of the variables</span>
+
+<span class="sd">    - ``finalOrbAngMom``</span>
+<span class="sd">    - ``finalOrbEnergy``</span>
+<span class="sd">    - ``finalRotAngMom``</span>
+<span class="sd">    - ``finalRotEnergy``</span>
+
+<span class="sd">    should be constant when tested against their initial values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function &#39;</span><span class="si">{</span><span class="n">function</span><span class="si">}</span><span class="s2">&#39; not found in global scope&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;translatingBodyCommandedForce&quot;</span><span class="p">:</span>
+        <span class="n">func</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;translatingBodyRhoReference&quot;</span><span class="p">:</span>
+        <span class="n">func</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func</span><span class="p">(</span><span class="n">show_plots</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># rho ref and cmd force are zero, no lock flag</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">translatingBodyNoInput</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Create the spacecraft module</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Define mass properties of the rigid hub of the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial values for the states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+
+    <span class="c1"># Create a linear translating effector</span>
+    <span class="n">translatingBody</span> <span class="o">=</span> <span class="n">linearTranslationOneDOFStateEffector</span><span class="o">.</span><span class="n">LinearTranslationOneDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of translating body</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">rhoInit</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">rhoDotInit</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">fHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_FcF_F</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_F0B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]]</span>
+    <span class="n">IPntFc_F</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]]</span>
+    <span class="n">dcm_FB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># set parameters above</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="n">rhoInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="n">rhoDotInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setFHat_B</span><span class="p">(</span><span class="n">fHat_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">(</span><span class="n">r_FcF_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_F0B_B</span><span class="p">(</span><span class="n">r_F0B_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">(</span><span class="n">IPntFc_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setDCM_FB</span><span class="p">(</span><span class="n">dcm_FB</span><span class="p">)</span>
+
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;translatingBody&quot;</span>
+
+    <span class="c1"># Add translating body to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">translatingBody</span><span class="p">)</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">translatingBody</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Add Earth gravity to the simulation</span>
+    <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>  <span class="c1"># meters!</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+    <span class="c1"># Log the spacecraft state message</span>
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+
+    <span class="c1"># Add energy and momentum variables to log</span>
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotEnergy&quot;</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Add states to log</span>
+    <span class="n">rhoData</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">translatingBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">rhoData</span><span class="p">)</span>
+
+    <span class="c1"># Setup and run the simulation</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mi">25000</span> <span class="o">*</span> <span class="n">testProcessRate</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged variables</span>
+    <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span>
+    <span class="n">rotEnergy</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotEnergy</span>
+    <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rho</span>
+    <span class="n">rhoDot</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rhoDot</span>
+
+    <span class="c1"># Set up the conservation quantities</span>
+    <span class="n">timeSec</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e-9</span>
+    <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialRotEnergy</span> <span class="o">=</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalRotEnergy</span> <span class="o">=</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span> <span class="o">-</span> <span class="n">initialOrbEnergy</span><span class="p">)</span> <span class="o">/</span> <span class="n">initialOrbEnergy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Energy&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotEnergy</span> <span class="o">-</span> <span class="n">initialRotEnergy</span><span class="p">)</span> <span class="o">/</span> <span class="n">initialRotEnergy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Energy&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rhoDot</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rhoDot&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Testing setup</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-13</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="n">initialOrbEnergy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital energy is not constant.&quot;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalRotEnergy</span><span class="p">,</span> <span class="n">initialRotEnergy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Rotational energy is not constant.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="n">initialOrbAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital angular momentum is not constant.&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="n">initialRotAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Rotational angular momentum is not constant.&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># rho ref and cmd force are zero, lock flag is enabled</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">translatingBodyLockFlag</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Create the spacecraft module</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Define mass properties of the rigid hub of the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial values for the states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+
+    <span class="c1"># Create a linear translating effector</span>
+    <span class="n">translatingBody</span> <span class="o">=</span> <span class="n">linearTranslationOneDOFStateEffector</span><span class="o">.</span><span class="n">LinearTranslationOneDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of translating body</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">rhoInit</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">rhoDotInit</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_FcF_F</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_F0B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]]</span>
+    <span class="n">IPntFc_F</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]]</span>
+    <span class="n">dcm_FB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># set parameters above</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="n">rhoInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="n">rhoDotInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setFHat_B</span><span class="p">(</span><span class="n">fHat_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">(</span><span class="n">r_FcF_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_F0B_B</span><span class="p">(</span><span class="n">r_F0B_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">(</span><span class="n">IPntFc_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setDCM_FB</span><span class="p">(</span><span class="n">dcm_FB</span><span class="p">)</span>
+
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;translatingBody&quot;</span>
+
+    <span class="c1"># Add translating body to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">translatingBody</span><span class="p">)</span>
+
+    <span class="c1"># create lock message</span>
+    <span class="n">lockArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayEffectorLockMsgPayload</span><span class="p">()</span>
+    <span class="n">lockArray</span><span class="o">.</span><span class="n">effectorLockFlag</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">lockMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayEffectorLockMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lockArray</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">motorLockInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lockMsg</span><span class="p">)</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">translatingBody</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Add Earth gravity to the simulation</span>
+    <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>  <span class="c1"># meters!</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+    <span class="c1"># Log the spacecraft state message</span>
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+
+    <span class="c1"># Add energy and momentum variables to log</span>
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotEnergy&quot;</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Add states to log</span>
+    <span class="n">rhoData</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">translatingBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">rhoData</span><span class="p">)</span>
+
+    <span class="c1"># Setup and run the simulation</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mi">25000</span> <span class="o">*</span> <span class="n">testProcessRate</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged variables</span>
+    <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span>
+    <span class="n">rotEnergy</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotEnergy</span>
+    <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rho</span>
+    <span class="n">rhoDot</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rhoDot</span>
+
+    <span class="c1"># Set up the conservation quantities</span>
+    <span class="n">timeSec</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e-9</span>
+    <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialRotEnergy</span> <span class="o">=</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalRotEnergy</span> <span class="o">=</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span> <span class="o">-</span> <span class="n">initialOrbEnergy</span><span class="p">)</span> <span class="o">/</span> <span class="n">initialOrbEnergy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Energy&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotEnergy</span> <span class="o">-</span> <span class="n">initialRotEnergy</span><span class="p">)</span> <span class="o">/</span> <span class="n">initialRotEnergy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Energy&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rhoDot</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rhoDot&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Testing setup</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-13</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="n">initialOrbEnergy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital energy is not constant.&quot;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalRotEnergy</span><span class="p">,</span> <span class="n">initialRotEnergy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Rotational energy is not constant.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="n">initialOrbAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital angular momentum is not constant.&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="n">initialRotAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Rotational angular momentum is not constant.&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># cmd force is nonzero, rho ref is zero, no lock flag</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">translatingBodyCommandedForce</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">cmdForce</span><span class="p">):</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Create the spacecraft module</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Define mass properties of the rigid hub of the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial values for the states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+
+    <span class="c1"># Create a linear translating effector</span>
+    <span class="n">translatingBody</span> <span class="o">=</span> <span class="n">linearTranslationOneDOFStateEffector</span><span class="o">.</span><span class="n">LinearTranslationOneDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of translating body</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">rhoInit</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">rhoDotInit</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">fHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_FcF_F</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_F0B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]]</span>
+    <span class="n">IPntFc_F</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]]</span>
+    <span class="n">dcm_FB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># set parameters above</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="n">rhoInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="n">rhoDotInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setFHat_B</span><span class="p">(</span><span class="n">fHat_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">(</span><span class="n">r_FcF_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_F0B_B</span><span class="p">(</span><span class="n">r_F0B_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">(</span><span class="n">IPntFc_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setDCM_FB</span><span class="p">(</span><span class="n">dcm_FB</span><span class="p">)</span>
+
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;translatingBody&quot;</span>
+
+    <span class="c1"># Add translating body to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">translatingBody</span><span class="p">)</span>
+
+    <span class="c1"># Create the force cmd force message</span>
+    <span class="n">cmdArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorForceMsgPayload</span><span class="p">()</span>
+    <span class="n">cmdArray</span><span class="o">.</span><span class="n">motorForce</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmdForce</span><span class="p">]</span>  <span class="c1"># [Nm]</span>
+    <span class="n">cmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorForceMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmdArray</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">motorForceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">translatingBody</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Add Earth gravity to the simulation</span>
+    <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>  <span class="c1"># meters!</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+    <span class="c1"># Log the spacecraft state message</span>
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+
+    <span class="c1"># Add energy and momentum variables to log</span>
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Add states to log</span>
+    <span class="n">rhoData</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">translatingBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">rhoData</span><span class="p">)</span>
+
+    <span class="c1"># Setup and run the simulation</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mi">25000</span> <span class="o">*</span> <span class="n">testProcessRate</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged variables</span>
+    <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span>
+    <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rho</span>
+    <span class="n">rhoDot</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rhoDot</span>
+
+    <span class="c1"># Set up the conservation quantities</span>
+    <span class="n">timeSec</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e-9</span>
+    <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span> <span class="o">-</span> <span class="n">initialOrbEnergy</span><span class="p">)</span> <span class="o">/</span> <span class="n">initialOrbEnergy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Energy&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rhoDot</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rhoDot&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Testing setup</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-13</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="n">initialOrbEnergy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital energy is not constant.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="n">initialOrbAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital angular momentum is not constant.&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="n">initialRotAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Rotational angular momentum is not constant.&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># rho ref is nonzero, cmd force is zero and lock flag is false</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">translatingBodyRhoReference</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">rhoRef</span><span class="p">):</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>  <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># Create the spacecraft module</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;spacecraftBody&quot;</span>
+
+    <span class="c1"># Define mass properties of the rigid hub of the spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial values for the states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span> <span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span> <span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span> <span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+
+    <span class="c1"># Create a linear translating effector</span>
+    <span class="n">translatingBody</span> <span class="o">=</span> <span class="n">linearTranslationOneDOFStateEffector</span><span class="o">.</span><span class="n">LinearTranslationOneDOFStateEffector</span><span class="p">()</span>
+
+    <span class="c1"># Define properties of translating body</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">rhoInit</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">rhoDotInit</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">fHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_FcF_F</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">r_F0B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]]</span>
+    <span class="n">IPntFc_F</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">]]</span>
+    <span class="n">dcm_FB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">100.0</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">30</span>
+
+    <span class="c1"># set parameters above</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoInit</span><span class="p">(</span><span class="n">rhoInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setRhoDotInit</span><span class="p">(</span><span class="n">rhoDotInit</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setFHat_B</span><span class="p">(</span><span class="n">fHat_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_FcF_F</span><span class="p">(</span><span class="n">r_FcF_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setR_F0B_B</span><span class="p">(</span><span class="n">r_F0B_B</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setIPntFc_F</span><span class="p">(</span><span class="n">IPntFc_F</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">setDCM_FB</span><span class="p">(</span><span class="n">dcm_FB</span><span class="p">)</span>
+
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;translatingBody&quot;</span>
+
+    <span class="c1"># Add translating body to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">translatingBody</span><span class="p">)</span>
+
+    <span class="c1"># Create the reference message</span>
+    <span class="n">translationRef</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsgPayload</span><span class="p">()</span>
+    <span class="n">translationRef</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rhoRef</span>
+    <span class="n">translationRef</span><span class="o">.</span><span class="n">rhoDot</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">translationRefMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">LinearTranslationRigidBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">translationRef</span><span class="p">)</span>
+    <span class="n">translatingBody</span><span class="o">.</span><span class="n">translatingBodyRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">translationRefMsg</span><span class="p">)</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">translatingBody</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># Add Earth gravity to the simulation</span>
+    <span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">&quot;earth_planet_data&quot;</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span>  <span class="c1"># meters!</span>
+    <span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGravBody</span><span class="p">])</span>
+
+    <span class="c1"># Log the spacecraft state message</span>
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+
+    <span class="c1"># Add energy and momentum variables to log</span>
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">&quot;totOrbAngMomPntN_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totRotAngMomPntC_N&quot;</span><span class="p">,</span> <span class="s2">&quot;totOrbEnergy&quot;</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Add states to log</span>
+    <span class="n">rhoData</span> <span class="o">=</span> <span class="n">translatingBody</span><span class="o">.</span><span class="n">translatingBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">rhoData</span><span class="p">)</span>
+
+    <span class="c1"># Setup and run the simulation</span>
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mi">30000</span> <span class="o">*</span> <span class="n">testProcessRate</span>  <span class="c1"># needs a little more time to settle to the correct angle</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTime</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract the logged variables</span>
+    <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span>
+    <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rho</span>
+    <span class="n">rhoDot</span> <span class="o">=</span> <span class="n">rhoData</span><span class="o">.</span><span class="n">rhoDot</span>
+
+    <span class="c1"># Set up the conservation quantities</span>
+    <span class="n">timeSec</span> <span class="o">=</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e-9</span>
+    <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">finalAngle</span> <span class="o">=</span> <span class="n">rho</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span> <span class="o">-</span> <span class="n">initialOrbEnergy</span><span class="p">)</span> <span class="o">/</span> <span class="n">initialOrbEnergy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Orbital Energy&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">timeSec</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Difference&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rotational Angular Momentum&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rho&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeSec</span><span class="p">,</span> <span class="n">rhoDot</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;rhoDot&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Testing setup</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-13</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalAngle</span><span class="p">,</span> <span class="n">rhoRef</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Angle doesn&#39;t settle to reference angle.&quot;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="n">initialOrbEnergy</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital energy is not constant.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="n">initialOrbAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Orbital angular momentum is not constant.&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="n">initialRotAngMom_N</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Rotational angular momentum is not constant.&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">translatingBodyNoInput</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># translatingBodyLockFlag(True)</span>
+    <span class="c1"># translatingBodyCommandedForce(True, 1)</span>
+    <span class="c1"># translatingBodyRhoReference(True, 0.5)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

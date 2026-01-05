@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: thrForceMapping &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="thrForceMapping" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">effectorInterfaces</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dipoleMapping/index.html">dipoleMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../errorConversion/index.html">errorConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../forceTorqueThrForceMapping/index.html">forceTorqueThrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedJointArrayMotor/index.html">hingedJointArrayMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyPIDMotor/index.html">hingedRigidBodyPIDMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../jointMotionCompensator/index.html">jointMotionCompensator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedRot2DOF/index.html">prescribedRot2DOF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorTorque/index.html">rwMotorTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwMotorVoltage/index.html">rwMotorVoltage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rwNullSpace/index.html">rwNullSpace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../solarArrayReference/index.html">solarArrayReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringRemainder/index.html">thrFiringRemainder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrFiringSchmitt/index.html">thrFiringSchmitt</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">thrForceMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumDumping/index.html">thrMomentumDumping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrustRWDesat/index.html">thrustRWDesat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformReference/index.html">thrusterPlatformReference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrusterPlatformState/index.html">thrusterPlatformState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torque2Dipole/index.html">torque2Dipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torqueScheduler/index.html">torqueScheduler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgGimbalRateServo/index.html">vscmgGimbalRateServo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../vscmgVelocitySteering/index.html">vscmgVelocitySteering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">effectorInterfaces</a></li>
+          <li class="breadcrumb-item"><a href="index.html">thrForceMapping</a></li>
+      <li class="breadcrumb-item active">Module: thrForceMapping</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-thrforcemapping">
+<span id="thrforcemapping"></span><h1>Module: thrForceMapping<a class="headerlink" href="#module-thrforcemapping" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module is reads in a desired attitude control torque vector and maps it onto a set of thrusters.</p>
+<p>The module works for both on-pulsing (nominal thruster state is off such as with RCS thrusters) and off-pulsing (nominal thruster state in such as with DV thrusters). More information can be found in the
+<a class="reference download internal" download="" href="../../../../_downloads/08506e6912e34f1b4e5c825981ee6e93/Basilisk-ThrusterForces-20160627.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>thrForceCmdOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayCmdForceMsgPayload.html#thrarraycmdforcemsgpayload"><span class="std std-ref">THRArrayCmdForceMsgPayload</span></a></p></td>
+<td><p>thruster force output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmdTorqueInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>commanded attitude control torque vector input message</p></td>
+</tr>
+<tr class="row-even"><td><p>thrConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayConfigMsgPayload.html#thrarrayconfigmsgpayload"><span class="std std-ref">THRArrayConfigMsgPayload</span></a></p></td>
+<td><p>Thruster array configuration input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>vehConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>spacecraft configuration input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424SelfInit_thrForceMappingP21thrForceMappingConfig7int64_t">
+<span id="_CPPv324SelfInit_thrForceMappingP21thrForceMappingConfig7int64_t"></span><span id="_CPPv224SelfInit_thrForceMappingP21thrForceMappingConfig7int64_t"></span><span id="SelfInit_thrForceMapping__thrForceMappingConfigP.int64_t"></span><span class="target" id="thr_force_mapping_8h_1abb2077cc763233d156c0e3275939de75"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_thrForceMapping</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421thrForceMappingConfig" title="thrForceMappingConfig"><span class="n"><span class="pre">thrForceMappingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424SelfInit_thrForceMappingP21thrForceMappingConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>self init method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Update_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t">
+<span id="_CPPv322Update_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t"></span><span id="_CPPv222Update_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t"></span><span id="Update_thrForceMapping__thrForceMappingConfigP.uint64_t.int64_t"></span><span class="target" id="thr_force_mapping_8h_1a9b8dd68aabba0b5a1a2079093ee00286"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_thrForceMapping</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421thrForceMappingConfig" title="thrForceMappingConfig"><span class="n"><span class="pre">thrForceMappingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Update_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>The module takes a body frame torque vector and projects it onto available RCS or DV thrusters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Reset_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t">
+<span id="_CPPv321Reset_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t"></span><span id="_CPPv221Reset_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t"></span><span id="Reset_thrForceMapping__thrForceMappingConfigP.uint64_t.int64_t"></span><span class="target" id="thr_force_mapping_8h_1a5667991a10cd532d897e91b458c90bed"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_thrForceMapping</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421thrForceMappingConfig" title="thrForceMappingConfig"><span class="n"><span class="pre">thrForceMappingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Reset_thrForceMappingP21thrForceMappingConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv412substractMinPd8uint32_t">
+<span id="_CPPv312substractMinPd8uint32_t"></span><span id="_CPPv212substractMinPd8uint32_t"></span><span id="substractMin__doubleP.uint32_t"></span><span class="target" id="thr_force_mapping_8h_1a7dbdd0083ddbd1626d60405070a1d265"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">substractMin</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">F</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412substractMinPd8uint32_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Take a stack of force values find the smallest value, and subtract if from all force values. Here the smallest values will become zero, while other forces increase. This assumes that the thrusters are aligned such that if all thrusters are firing, then no torque or force is applied. This ensures only positive force values are computed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420findMinimumNormForceP21thrForceMappingConfigAL3E_A11MAX_EFF_CNT_dAL3E_d8uint32_tA11MAX_EFF_CNT_d">
+<span id="_CPPv320findMinimumNormForceP21thrForceMappingConfigAL3E_A11MAX_EFF_CNT_dAL3E_d8uint32_tA11MAX_EFF_CNT_d"></span><span id="_CPPv220findMinimumNormForceP21thrForceMappingConfigA3_AMAX_EFF_CNT_dA3_d8uint32_tAMAX_EFF_CNT_d"></span><span id="findMinimumNormForce__thrForceMappingConfigP.doubleAA.doubleA.uint32_t.doubleA"></span><span class="target" id="thr_force_mapping_8h_1ac738f26c9fa95f8f422c80b02a2ea9b7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">findMinimumNormForce</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421thrForceMappingConfig" title="thrForceMappingConfig"><span class="n"><span class="pre">thrForceMappingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">D</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Lr_B</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numForces</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">F</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420findMinimumNormForceP21thrForceMappingConfigAL3E_A11MAX_EFF_CNT_dAL3E_d8uint32_tA11MAX_EFF_CNT_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Use a least square inverse to determine the smallest set of thruster forces that yield the desired torque vector. Note that this routine does not constrain yet the forces to be either positive or negative </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419computeTorqueAngErrAL3E_A11MAX_EFF_CNT_dAL3E_d8uint32_tdA11MAX_EFF_CNT_dA11MAX_EFF_CNT_d">
+<span id="_CPPv319computeTorqueAngErrAL3E_A11MAX_EFF_CNT_dAL3E_d8uint32_tdA11MAX_EFF_CNT_dA11MAX_EFF_CNT_d"></span><span id="_CPPv219computeTorqueAngErrA3_AMAX_EFF_CNT_dA3_d8uint32_tdAMAX_EFF_CNT_dAMAX_EFF_CNT_d"></span><span id="computeTorqueAngErr__doubleAA.doubleA.uint32_t.double.doubleA.doubleA"></span><span class="target" id="thr_force_mapping_8h_1a654337d0d932770c2760250dd5479a5f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTorqueAngErr</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">D</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">BLr</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numForces</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">epsilon</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">F</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">FMag</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419computeTorqueAngErrAL3E_A11MAX_EFF_CNT_dAL3E_d8uint32_tdA11MAX_EFF_CNT_dA11MAX_EFF_CNT_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Determine the angle between the desired torque vector and the actual torque vector. </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421thrForceMappingConfig">
+<span id="_CPPv321thrForceMappingConfig"></span><span id="_CPPv221thrForceMappingConfig"></span><span id="thrForceMappingConfig"></span><span class="target" id="structthr_force_mapping_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrForceMappingConfig</span></span></span><a class="headerlink" href="#_CPPv421thrForceMappingConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;thrForceMapping.h&gt;</em></div>
+<p>Data structure for module to map a command torque onto thruster forces. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig13controlAxes_BE">
+<span id="_CPPv3N21thrForceMappingConfig13controlAxes_BE"></span><span id="_CPPv2N21thrForceMappingConfig13controlAxes_BE"></span><span id="thrForceMappingConfig::controlAxes_B__doubleA"></span><span class="target" id="structthr_force_mapping_config_1a3c89e043cd55a82879f0ae24cd0e0858"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">controlAxes_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig13controlAxes_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] array of the control unit axes </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig11rThruster_BE">
+<span id="_CPPv3N21thrForceMappingConfig11rThruster_BE"></span><span id="_CPPv2N21thrForceMappingConfig11rThruster_BE"></span><span id="thrForceMappingConfig::rThruster_B__doubleAA"></span><span class="target" id="structthr_force_mapping_config_1a030a0e25d93f7499bfe517761edb0c3c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rThruster_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig11rThruster_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] local copy of the thruster locations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig12gtThruster_BE">
+<span id="_CPPv3N21thrForceMappingConfig12gtThruster_BE"></span><span id="_CPPv2N21thrForceMappingConfig12gtThruster_BE"></span><span id="thrForceMappingConfig::gtThruster_B__doubleAA"></span><span class="target" id="structthr_force_mapping_config_1a43aafab92b73a287dde8fe17ead3cc68"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gtThruster_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig12gtThruster_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] local copy of the thruster force unit direction vectors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig12thrForceSignE">
+<span id="_CPPv3N21thrForceMappingConfig12thrForceSignE"></span><span id="_CPPv2N21thrForceMappingConfig12thrForceSignE"></span><span id="thrForceMappingConfig::thrForceSign__int32_t"></span><span class="target" id="structthr_force_mapping_config_1a718991f4d453866504ed445c902e67f8"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrForceSign</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig12thrForceSignE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] Flag indicating if pos (+1) or negative (-1) thruster solutions are found </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig12angErrThreshE">
+<span id="_CPPv3N21thrForceMappingConfig12angErrThreshE"></span><span id="_CPPv2N21thrForceMappingConfig12angErrThreshE"></span><span id="thrForceMappingConfig::angErrThresh__double"></span><span class="target" id="structthr_force_mapping_config_1a64d3912009b4d7ffd9905f34fb85b616"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">angErrThresh</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig12angErrThreshE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] Angular error at which thruster forces are scaled to not be super-saturated </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig7epsilonE">
+<span id="_CPPv3N21thrForceMappingConfig7epsilonE"></span><span id="_CPPv2N21thrForceMappingConfig7epsilonE"></span><span id="thrForceMappingConfig::epsilon__double"></span><span class="target" id="structthr_force_mapping_config_1ab81af19fd0ad4c53e7c63ea6dbc0eddf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">epsilon</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig7epsilonE" title="Link to this definition"></a><br /></dt>
+<dd><p>variable specifying what is considered a small number </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig10use2ndLoopE">
+<span id="_CPPv3N21thrForceMappingConfig10use2ndLoopE"></span><span id="_CPPv2N21thrForceMappingConfig10use2ndLoopE"></span><span id="thrForceMappingConfig::use2ndLoop__uint32_t"></span><span class="target" id="structthr_force_mapping_config_1a7b228496e06e6f6fb62f77afa6d1f35f"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">use2ndLoop</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig10use2ndLoopE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] flag indicating if the 2nd least squares fitting loop should be used (1) or not used (0 - default) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig14numControlAxesE">
+<span id="_CPPv3N21thrForceMappingConfig14numControlAxesE"></span><span id="_CPPv2N21thrForceMappingConfig14numControlAxesE"></span><span id="thrForceMappingConfig::numControlAxes__uint32_t"></span><span class="target" id="structthr_force_mapping_config_1abd5b2a40949903738c94fef117b5b633"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numControlAxes</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig14numControlAxesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] counter indicating how many orthogonal axes are controlled </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig12numThrustersE">
+<span id="_CPPv3N21thrForceMappingConfig12numThrustersE"></span><span id="_CPPv2N21thrForceMappingConfig12numThrustersE"></span><span id="thrForceMappingConfig::numThrusters__uint32_t"></span><span class="target" id="structthr_force_mapping_config_1a910235a7921687eebd5590ceeadd01d1"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numThrusters</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig12numThrustersE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] The number of thrusters available on vehicle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig13outTorqAngErrE">
+<span id="_CPPv3N21thrForceMappingConfig13outTorqAngErrE"></span><span id="_CPPv2N21thrForceMappingConfig13outTorqAngErrE"></span><span id="thrForceMappingConfig::outTorqAngErr__double"></span><span class="target" id="structthr_force_mapping_config_1a222b11f0a99155286d7751678084c798"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">outTorqAngErr</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig13outTorqAngErrE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r] Angular error of effector torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig10thrForcMagE">
+<span id="_CPPv3N21thrForceMappingConfig10thrForcMagE"></span><span id="_CPPv2N21thrForceMappingConfig10thrForcMagE"></span><span id="thrForceMappingConfig::thrForcMag__doubleA"></span><span class="target" id="structthr_force_mapping_config_1a21fdd9f40eea1a1e48aa17a2075fa32b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrForcMag</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">MAX_EFF_CNT</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig10thrForcMagE" title="Link to this definition"></a><br /></dt>
+<dd><p>vector of thruster force magnitudes </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig17thrForceCmdOutMsgE">
+<span id="_CPPv3N21thrForceMappingConfig17thrForceCmdOutMsgE"></span><span id="_CPPv2N21thrForceMappingConfig17thrForceCmdOutMsgE"></span><span id="thrForceMappingConfig::thrForceCmdOutMsg__THRArrayCmdForceMsg_C"></span><span class="target" id="structthr_force_mapping_config_1a8f7902a61ae46505bf3196db583cf966"></span><span class="n"><span class="pre">THRArrayCmdForceMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrForceCmdOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig17thrForceCmdOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the output thruster force message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig14cmdTorqueInMsgE">
+<span id="_CPPv3N21thrForceMappingConfig14cmdTorqueInMsgE"></span><span id="_CPPv2N21thrForceMappingConfig14cmdTorqueInMsgE"></span><span id="thrForceMappingConfig::cmdTorqueInMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="structthr_force_mapping_config_1a602b2198cbb414a167adc5739b538658"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdTorqueInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig14cmdTorqueInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the vehicle control (Lr) Input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig14thrConfigInMsgE">
+<span id="_CPPv3N21thrForceMappingConfig14thrConfigInMsgE"></span><span id="_CPPv2N21thrForceMappingConfig14thrConfigInMsgE"></span><span id="thrForceMappingConfig::thrConfigInMsg__THRArrayConfigMsg_C"></span><span class="target" id="structthr_force_mapping_config_1a2477b35d5e7960c56229ebf1b794813f"></span><span class="n"><span class="pre">THRArrayConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig14thrConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the thruster cluster Input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig14vehConfigInMsgE">
+<span id="_CPPv3N21thrForceMappingConfig14vehConfigInMsgE"></span><span id="_CPPv2N21thrForceMappingConfig14vehConfigInMsgE"></span><span id="thrForceMappingConfig::vehConfigInMsg__VehicleConfigMsg_C"></span><span class="target" id="structthr_force_mapping_config_1a7df4c295976feef6b15ac8c9012069ce"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig14vehConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>The name of the Input message. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig2scE">
+<span id="_CPPv3N21thrForceMappingConfig2scE"></span><span id="_CPPv2N21thrForceMappingConfig2scE"></span><span id="thrForceMappingConfig::sc__VehicleConfigMsgPayload"></span><span class="target" id="structthr_force_mapping_config_1abaf273686fe564876e83bf9a601e69c8"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sc</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig2scE" title="Link to this definition"></a><br /></dt>
+<dd><p>spacecraft configuration message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21thrForceMappingConfig9bskLoggerE">
+<span id="_CPPv3N21thrForceMappingConfig9bskLoggerE"></span><span id="_CPPv2N21thrForceMappingConfig9bskLoggerE"></span><span id="thrForceMappingConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structthr_force_mapping_config_1af398b3a2d1bf077c58bfac44ed0eb59a"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21thrForceMappingConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="thrForceMapping" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

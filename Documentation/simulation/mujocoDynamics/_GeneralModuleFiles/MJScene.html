@@ -1,0 +1,902 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: MJScene &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: MJSite" href="MJSite.html" />
+    <link rel="prev" title="Module: MJQPosStateData" href="MJQPosStateData.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: MJScene</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mjscene">
+<span id="mjscene"></span><h1>Module: MJScene<a class="headerlink" href="#module-mjscene" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv47MJScene">
+<span id="_CPPv37MJScene"></span><span id="_CPPv27MJScene"></span><span id="MJScene"></span><span class="target" id="class_m_j_scene"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MJScene</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/dynamicObject.html#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><a class="headerlink" href="#_CPPv47MJScene" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;MJScene.h&gt;</em></div>
+<p>Represents a dynamic object that solves multi-body dynamics through MuJoCo. </p>
+<p>The <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene"><span class="std std-ref"><span class="pre">MJScene</span></span></a></code> class defines a multi-body system where bodies are connected by joints, allowing forces and torques to act at specific points or joints. The state of the system is advanced in time through integration, with forward kinematics transforming joint states into body positions and orientations. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene7MJSceneENSt6stringERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N7MJScene7MJSceneENSt6stringERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N7MJScene7MJSceneENSt6stringERKNSt6vectorINSt6stringEEE"></span><span id="MJScene::MJScene__ss.std::vector:ss:CR"></span><span class="target" id="class_m_j_scene_1a405bd10aa69269b3ad88082ea2992ce3"></span><span class="sig-name descname"><span class="n"><span class="pre">MJScene</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">xmlString</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">files</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene7MJSceneENSt6stringERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an <a class="reference internal" href="#class_m_j_scene"><span class="std std-ref">MJScene</span></a> object using an XML string. </p>
+<p>For a detailed reference on the XML format, see: <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/XMLreference.html">https://mujoco.readthedocs.io/en/stable/XMLreference.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xmlString</strong> – The XML string defining the MuJoCo model. </p></li>
+<li><p><strong>files</strong> – Optional additional files for the model. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene7MJSceneERK7MJScene">
+<span id="_CPPv3N7MJScene7MJSceneERK7MJScene"></span><span id="_CPPv2N7MJScene7MJSceneERK7MJScene"></span><span id="MJScene::MJScene__MJSceneCR"></span><span class="target" id="class_m_j_scene_1a974ebf85a5b41b0b803aa46e94d96efa"></span><span class="sig-name descname"><span class="n"><span class="pre">MJScene</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7MJScene7MJSceneERK7MJScene" title="MJScene::MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N7MJScene7MJSceneERK7MJScene" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene7MJSceneERR7MJScene">
+<span id="_CPPv3N7MJScene7MJSceneERR7MJScene"></span><span id="_CPPv2N7MJScene7MJSceneERR7MJScene"></span><span id="MJScene::MJScene__MJSceneRR"></span><span class="target" id="class_m_j_scene_1a7ee3b34a86511c974b21366a39cb6b38"></span><span class="sig-name descname"><span class="n"><span class="pre">MJScene</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N7MJScene7MJSceneERR7MJScene" title="MJScene::MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N7MJScene7MJSceneERR7MJScene" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJSceneaSERK7MJScene">
+<span id="_CPPv3N7MJSceneaSERK7MJScene"></span><span id="_CPPv2N7MJSceneaSERK7MJScene"></span><span id="MJScene::assign-operator__MJSceneCR"></span><span class="target" id="class_m_j_scene_1a06e4680d277f40eabbbbfd61ad1f1816"></span><a class="reference internal" href="#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N7MJSceneaSERK7MJScene" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJSceneaSERR7MJScene">
+<span id="_CPPv3N7MJSceneaSERR7MJScene"></span><span id="_CPPv2N7MJSceneaSERR7MJScene"></span><span id="MJScene::assign-operator__MJSceneRR"></span><span class="target" id="class_m_j_scene_1a5cea4651bebc7bba92551fe801466b1b"></span><a class="reference internal" href="#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N7MJSceneaSERR7MJScene" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene7getBodyERKNSt6stringE">
+<span id="_CPPv3N7MJScene7getBodyERKNSt6stringE"></span><span id="_CPPv2N7MJScene7getBodyERKNSt6stringE"></span><span id="MJScene::getBody__ssCR"></span><span class="target" id="class_m_j_scene_1ac1e2c46e8857a7d41852bc9d70d17f8c"></span><a class="reference internal" href="MJBody.html#_CPPv46MJBody" title="MJBody"><span class="n"><span class="pre">MJBody</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getBody</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene7getBodyERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a body by name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the body. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the body does not exist. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJBody.html#class_m_j_body"><span class="std std-ref"><span class="pre">MJBody</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene7getSiteERKNSt6stringE">
+<span id="_CPPv3N7MJScene7getSiteERKNSt6stringE"></span><span id="_CPPv2N7MJScene7getSiteERKNSt6stringE"></span><span id="MJScene::getSite__ssCR"></span><span class="target" id="class_m_j_scene_1af85179795e3fada281a61bbda16133d0"></span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getSite</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene7getSiteERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a site by name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the site. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the site does not exist. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJSite.html#class_m_j_site"><span class="std std-ref"><span class="pre">MJSite</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene11getEqualityERKNSt6stringE">
+<span id="_CPPv3N7MJScene11getEqualityERKNSt6stringE"></span><span id="_CPPv2N7MJScene11getEqualityERKNSt6stringE"></span><span id="MJScene::getEquality__ssCR"></span><span class="target" id="class_m_j_scene_1afecf991c6717af7ce4f93aa03a8eba36"></span><a class="reference internal" href="MJEquality.html#_CPPv410MJEquality" title="MJEquality"><span class="n"><span class="pre">MJEquality</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getEquality</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene11getEqualityERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves an equality constraint by name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the equality constraint. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the equality does not exist. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJEquality.html#class_m_j_equality"><span class="std std-ref"><span class="pre">MJEquality</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17getSingleActuatorERKNSt6stringE">
+<span id="_CPPv3N7MJScene17getSingleActuatorERKNSt6stringE"></span><span id="_CPPv2N7MJScene17getSingleActuatorERKNSt6stringE"></span><span id="MJScene::getSingleActuator__ssCR"></span><span class="target" id="class_m_j_scene_1acfde543bd91f83eaf440f94c4fd2ed4c"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene17getSingleActuatorERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a single-input actuator by name. </p>
+<p>See the documentation on <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the actuator. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene16getForceActuatorERKNSt6stringE">
+<span id="_CPPv3N7MJScene16getForceActuatorERKNSt6stringE"></span><span id="_CPPv2N7MJScene16getForceActuatorERKNSt6stringE"></span><span id="MJScene::getForceActuator__ssCR"></span><span class="target" id="class_m_j_scene_1aaa802b5a7d2f93425fd2709d103b2ea4"></span><a class="reference internal" href="MJActuator.html#_CPPv415MJForceActuator" title="MJForceActuator"><span class="n"><span class="pre">MJForceActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getForceActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene16getForceActuatorERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a force actuator by name. </p>
+<p>See the documentation on <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the actuator. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17getTorqueActuatorERKNSt6stringE">
+<span id="_CPPv3N7MJScene17getTorqueActuatorERKNSt6stringE"></span><span id="_CPPv2N7MJScene17getTorqueActuatorERKNSt6stringE"></span><span id="MJScene::getTorqueActuator__ssCR"></span><span class="target" id="class_m_j_scene_1afd94908de25ea67c9687620b6d06ea69"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJTorqueActuator" title="MJTorqueActuator"><span class="n"><span class="pre">MJTorqueActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getTorqueActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene17getTorqueActuatorERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a torque actuator by name. </p>
+<p>See the documentation on <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the actuator. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22getForceTorqueActuatorERKNSt6stringE">
+<span id="_CPPv3N7MJScene22getForceTorqueActuatorERKNSt6stringE"></span><span id="_CPPv2N7MJScene22getForceTorqueActuatorERKNSt6stringE"></span><span id="MJScene::getForceTorqueActuator__ssCR"></span><span class="target" id="class_m_j_scene_1a367dc4d1d6b05318de50f37a5f6d3fb2"></span><a class="reference internal" href="MJActuator.html#_CPPv421MJForceTorqueActuator" title="MJForceTorqueActuator"><span class="n"><span class="pre">MJForceTorqueActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getForceTorqueActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene22getForceTorqueActuatorERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves a force-torque actuator by name. </p>
+<p>See the documentation on <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the actuator. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22addJointSingleActuatorERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N7MJScene22addJointSingleActuatorERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N7MJScene22addJointSingleActuatorERKNSt6stringERKNSt6stringE"></span><span id="MJScene::addJointSingleActuator__ssCR.ssCR"></span><span class="target" id="class_m_j_scene_1a80d766bcbb6925595452866700c0f520"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addJointSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">joint</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene22addJointSingleActuatorERKNSt6stringERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a single-input actuator acting on a joint (<code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>). </p>
+<p>This actuator will impart a force and/or torque at the given joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>joint</strong> – The joint to attach the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the created <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22addJointSingleActuatorERKNSt6stringERK7MJJoint">
+<span id="_CPPv3N7MJScene22addJointSingleActuatorERKNSt6stringERK7MJJoint"></span><span id="_CPPv2N7MJScene22addJointSingleActuatorERKNSt6stringERK7MJJoint"></span><span id="MJScene::addJointSingleActuator__ssCR.MJJointCR"></span><span class="target" id="class_m_j_scene_1aae71d6c818980242a790bfb3bf7e67bc"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addJointSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJJoint.html#_CPPv47MJJoint" title="MJJoint"><span class="n"><span class="pre">MJJoint</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">joint</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene22addJointSingleActuatorERKNSt6stringERK7MJJoint" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a single-input actuator acting on a joint (<code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>). </p>
+<p>This actuator will impart a force and/or torque at the given joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>joint</strong> – The joint to attach the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the created <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE">
+<span id="_CPPv3N7MJScene17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE"></span><span id="_CPPv2N7MJScene17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE"></span><span id="MJScene::addSingleActuator__ssCR.ssCR.Eigen::Vector6dCR"></span><span class="target" id="class_m_j_scene_1acb71c3faee070f1bc6d3ac4c17c9e767"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJSpec.html#_CPPv4N5Eigen8Vector6dE" title="Eigen::Vector6d"><span class="n"><span class="pre">Vector6d</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">gear</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene17addSingleActuatorERKNSt6stringERKNSt6stringERKN5Eigen8Vector6dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a single-input actuator (<code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>). </p>
+<p>This actuator will impart a force and/or torque at the given site.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">gear</span></code> argument defines how the single input of the actuator (the control value of this actuator is a single value) maps into a force and/or torque. For example:</p>
+<p><ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gear={1,0,0,0,0,0}</span></code> and <code class="docutils literal notranslate"><span class="pre">ctrl=10</span></code>, the actuator will impart 10 N of force along the X-axis of the <code class="docutils literal notranslate"><span class="pre">site</span></code> reference frame.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gear={1,0,0,0,1,0}</span></code> and <code class="docutils literal notranslate"><span class="pre">ctrl=10</span></code>, the actuator will impart 10 N of force along the X-axis of the <code class="docutils literal notranslate"><span class="pre">site</span></code> reference frame and 10 Nm of torque along the Y-axis of the same reference frame.</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site to attach the actuator. </p></li>
+<li><p><strong>gear</strong> – The gear parameters for the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the created <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17addSingleActuatorERKNSt6stringERK6MJSiteRKN5Eigen8Vector6dE">
+<span id="_CPPv3N7MJScene17addSingleActuatorERKNSt6stringERK6MJSiteRKN5Eigen8Vector6dE"></span><span id="_CPPv2N7MJScene17addSingleActuatorERKNSt6stringERK6MJSiteRKN5Eigen8Vector6dE"></span><span id="MJScene::addSingleActuator__ssCR.MJSiteCR.Eigen::Vector6dCR"></span><span class="target" id="class_m_j_scene_1a478aebce90e59755b04e4b9c248b99c4"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJSingleActuator" title="MJSingleActuator"><span class="n"><span class="pre">MJSingleActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addSingleActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="MJSpec.html#_CPPv4N5Eigen8Vector6dE" title="Eigen::Vector6d"><span class="n"><span class="pre">Vector6d</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">gear</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene17addSingleActuatorERKNSt6stringERK6MJSiteRKN5Eigen8Vector6dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a single-input actuator (<code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>). </p>
+<p>This actuator will impart a force and/or torque at the given site.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">gear</span></code> argument defines how the single input of the actuator (the control value of this actuator is a single value) maps into a force and/or torque. For example:</p>
+<p><ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gear={1,0,0,0,0,0}</span></code> and <code class="docutils literal notranslate"><span class="pre">ctrl=10</span></code>, the actuator will impart 10 N of force along the X-axis of the <code class="docutils literal notranslate"><span class="pre">site</span></code> reference frame.</p></li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">gear={1,0,0,0,1,0}</span></code> and <code class="docutils literal notranslate"><span class="pre">ctrl=10</span></code>, the actuator will impart 10 N of force along the X-axis of the <code class="docutils literal notranslate"><span class="pre">site</span></code> reference frame and 10 Nm of torque along the Y-axis of the same reference frame.</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site to attach the actuator. </p></li>
+<li><p><strong>gear</strong> – The gear parameters for the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the created <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_single_actuator"><span class="std std-ref"><span class="pre">MJSingleActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene16addForceActuatorERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N7MJScene16addForceActuatorERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N7MJScene16addForceActuatorERKNSt6stringERKNSt6stringE"></span><span id="MJScene::addForceActuator__ssCR.ssCR"></span><span class="target" id="class_m_j_scene_1a68c1c319cd3d60987574774890db83b4"></span><a class="reference internal" href="MJActuator.html#_CPPv415MJForceActuator" title="MJForceActuator"><span class="n"><span class="pre">MJForceActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addForceActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene16addForceActuatorERKNSt6stringERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a force actuator to the scene. </p>
+<p>This actuator can impart an arbitrary force vector at the given site.</p>
+<p>This actuator takes three input controls: the force magnitude along each axis of the site’s reference frame (<code class="docutils literal notranslate"><span class="pre">[f_x,</span> <span class="pre">f_y,</span> <span class="pre">f_z]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site associated with the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the newly added <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene16addForceActuatorERKNSt6stringERK6MJSite">
+<span id="_CPPv3N7MJScene16addForceActuatorERKNSt6stringERK6MJSite"></span><span id="_CPPv2N7MJScene16addForceActuatorERKNSt6stringERK6MJSite"></span><span id="MJScene::addForceActuator__ssCR.MJSiteCR"></span><span class="target" id="class_m_j_scene_1a49c9822827f8544141f5c46b42f41575"></span><a class="reference internal" href="MJActuator.html#_CPPv415MJForceActuator" title="MJForceActuator"><span class="n"><span class="pre">MJForceActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addForceActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene16addForceActuatorERKNSt6stringERK6MJSite" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a force actuator to the scene. </p>
+<p>This actuator can impart an arbitrary force vector at the given site.</p>
+<p>This actuator takes three input controls: the force magnitude along each axis of the site’s reference frame (<code class="docutils literal notranslate"><span class="pre">[f_x,</span> <span class="pre">f_y,</span> <span class="pre">f_z]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site associated with the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the newly added <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_actuator"><span class="std std-ref"><span class="pre">MJForceActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17addTorqueActuatorERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N7MJScene17addTorqueActuatorERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N7MJScene17addTorqueActuatorERKNSt6stringERKNSt6stringE"></span><span id="MJScene::addTorqueActuator__ssCR.ssCR"></span><span class="target" id="class_m_j_scene_1aff7c0f7af814b788c0577dac9147f994"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJTorqueActuator" title="MJTorqueActuator"><span class="n"><span class="pre">MJTorqueActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addTorqueActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene17addTorqueActuatorERKNSt6stringERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a torque actuator to the scene. </p>
+<p>This actuator can impart an arbitrary torque vector at the given site.</p>
+<p>This actuator takes three input controls: the torque magnitude along each axis of the site’s reference frame (<code class="docutils literal notranslate"><span class="pre">[t_x,</span> <span class="pre">t_y,</span> <span class="pre">t_z]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site associated with the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the newly added <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17addTorqueActuatorERKNSt6stringERK6MJSite">
+<span id="_CPPv3N7MJScene17addTorqueActuatorERKNSt6stringERK6MJSite"></span><span id="_CPPv2N7MJScene17addTorqueActuatorERKNSt6stringERK6MJSite"></span><span id="MJScene::addTorqueActuator__ssCR.MJSiteCR"></span><span class="target" id="class_m_j_scene_1a9f0186dc5239611669c2273be867f592"></span><a class="reference internal" href="MJActuator.html#_CPPv416MJTorqueActuator" title="MJTorqueActuator"><span class="n"><span class="pre">MJTorqueActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addTorqueActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene17addTorqueActuatorERKNSt6stringERK6MJSite" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a torque actuator to the scene. </p>
+<p>This actuator can impart an arbitrary torque vector at the given site.</p>
+<p>This actuator takes three input controls: the torque magnitude along each axis of the site’s reference frame (<code class="docutils literal notranslate"><span class="pre">[t_x,</span> <span class="pre">t_y,</span> <span class="pre">t_z]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site associated with the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the newly added <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_torque_actuator"><span class="std std-ref"><span class="pre">MJTorqueActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22addForceTorqueActuatorERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N7MJScene22addForceTorqueActuatorERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N7MJScene22addForceTorqueActuatorERKNSt6stringERKNSt6stringE"></span><span id="MJScene::addForceTorqueActuator__ssCR.ssCR"></span><span class="target" id="class_m_j_scene_1a68917b823a8dd1681757d3689e10c318"></span><a class="reference internal" href="MJActuator.html#_CPPv421MJForceTorqueActuator" title="MJForceTorqueActuator"><span class="n"><span class="pre">MJForceTorqueActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addForceTorqueActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene22addForceTorqueActuatorERKNSt6stringERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a force-torque actuator to the scene. </p>
+<p>This actuator can impart an arbitrary force and torque vectors at the given site.</p>
+<p>This actuator takes six input controls: the force and torque magnitude along each axis of the site’s reference frame (<code class="docutils literal notranslate"><span class="pre">[f_x,</span> <span class="pre">f_y,</span> <span class="pre">f_z,</span> <span class="pre">t_x,</span> <span class="pre">t_y,</span> <span class="pre">t_z]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site associated with the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the newly added <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22addForceTorqueActuatorERKNSt6stringERK6MJSite">
+<span id="_CPPv3N7MJScene22addForceTorqueActuatorERKNSt6stringERK6MJSite"></span><span id="_CPPv2N7MJScene22addForceTorqueActuatorERKNSt6stringERK6MJSite"></span><span id="MJScene::addForceTorqueActuator__ssCR.MJSiteCR"></span><span class="target" id="class_m_j_scene_1ab870e60b3e97c8d6560bdfbbd8ae08be"></span><a class="reference internal" href="MJActuator.html#_CPPv421MJForceTorqueActuator" title="MJForceTorqueActuator"><span class="n"><span class="pre">MJForceTorqueActuator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">addForceTorqueActuator</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="MJSite.html#_CPPv46MJSite" title="MJSite"><span class="n"><span class="pre">MJSite</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">site</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene22addForceTorqueActuatorERKNSt6stringERK6MJSite" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a force-torque actuator to the scene. </p>
+<p>This actuator can impart an arbitrary force and torque vectors at the given site.</p>
+<p>This actuator takes six input controls: the force and torque magnitude along each axis of the site’s reference frame (<code class="docutils literal notranslate"><span class="pre">[f_x,</span> <span class="pre">f_y,</span> <span class="pre">f_z,</span> <span class="pre">t_x,</span> <span class="pre">t_y,</span> <span class="pre">t_z]</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the actuator. </p></li>
+<li><p><strong>site</strong> – The site associated with the actuator. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A reference to the newly added <code class="docutils literal notranslate"><a class="reference internal" href="MJActuator.html#class_m_j_force_torque_actuator"><span class="std std-ref"><span class="pre">MJForceTorqueActuator</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22AddModelToDynamicsTaskEP8SysModel7int32_t">
+<span id="_CPPv3N7MJScene22AddModelToDynamicsTaskEP8SysModel7int32_t"></span><span id="_CPPv2N7MJScene22AddModelToDynamicsTaskEP8SysModel7int32_t"></span><span id="MJScene::AddModelToDynamicsTask__SysModelP.int32_t"></span><span class="target" id="class_m_j_scene_1a67659da6c3b41e343e420ca17e55ddf2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AddModelToDynamicsTask</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">priority</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene22AddModelToDynamicsTaskEP8SysModel7int32_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a model to the dynamics task. </p>
+<p>The dynamics task of this dynamical object is called once per integrator sub-step (so, it will be called 4 times if using the RK4 integrator, for example). Models in the dynamics task typically compute and apply forces and torques on the system that depend on the simulation time or the state of the multi-body.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">SysModel</span></code> added to the dynamics task should be memoryless. That is, any output message computed should depend strictly on input messages and the current time/states. It should save values internally with the expectation of using them in further calls to <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1a1bc8e71ba20bcfe2104059611648edc0"><span class="std std-ref"><span class="pre">UpdateState</span></span></a></code>. The reason for this is that <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1a1bc8e71ba20bcfe2104059611648edc0"><span class="std std-ref"><span class="pre">UpdateState</span></span></a></code> may be called at arbitrary simulation times, and not necessarily in order or with consistent time steps.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The system model to add. </p></li>
+<li><p><strong>priority</strong> – The priority of the model in the task list. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene30AddFwdKinematicsToDynamicsTaskE7int32_t">
+<span id="_CPPv3N7MJScene30AddFwdKinematicsToDynamicsTaskE7int32_t"></span><span id="_CPPv2N7MJScene30AddFwdKinematicsToDynamicsTaskE7int32_t"></span><span id="MJScene::AddFwdKinematicsToDynamicsTask__int32_t"></span><span class="target" id="class_m_j_scene_1add10130d931f8088bed6036c2f3d7ea8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AddFwdKinematicsToDynamicsTask</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">priority</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene30AddFwdKinematicsToDynamicsTaskE7int32_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds forward kinematics to the dynamics task. </p>
+<p>The state of the multi-body is given by the state of its joints. However, we are usually interested in positions/velocities of sites. Forward kinematics is the process through which joint states are transformed to site position/velocities. A forward dynamics calculation is done by a special ‘forward-kinematics’ model.</p>
+<p>The dynamics task of an <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene"><span class="std std-ref"><span class="pre">MJScene</span></span></a></code> comes preloaded with a ‘forward-kinematics’ model at priority <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1add9018f8ccfb26d60b3198a0de70b03e"><span class="std std-ref"><span class="pre">MJScene::FWD_KINEMATICS_PRIORITY</span></span></a></code> (100). This high tolerance means that, usually, whatever joint state is present at the start of the dynamics task, it will be transformed into site position/velocity such that subsequent models can query this information.</p>
+<p>Advance usage of this class might update the joint state of the multi-body midway though its dynamics task. For example, this can be used to simulate joints with prescribed states (not implemented at the moment). In this case, one would have to add an additional forward-kinematics models such that this updated joint state is transformed into site position/velocity information and thus subsequent models query the correct information.</p>
+<p>A safe practice is to always add forward-kinematics models after updating the joint state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>priority</strong> – The priority of the forward kinematics in the task list. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene8SelfInitEv">
+<span id="_CPPv3N7MJScene8SelfInitEv"></span><span id="_CPPv2N7MJScene8SelfInitEv"></span><span id="MJScene::SelfInit"></span><span class="target" id="class_m_j_scene_1a3637488a5f06a5c033f200d51c8c830f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene8SelfInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Calls <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1a3637488a5f06a5c033f200d51c8c830f"><span class="std std-ref"><span class="pre">SelfInit</span></span></a></code> on all system models in the dynamics task. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene5ResetE8uint64_t">
+<span id="_CPPv3N7MJScene5ResetE8uint64_t"></span><span id="_CPPv2N7MJScene5ResetE8uint64_t"></span><span id="MJScene::Reset__uint64_t"></span><span class="target" id="class_m_j_scene_1a71537d037c843dc0b99aef9214d63c3f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Calls <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1a71537d037c843dc0b99aef9214d63c3f"><span class="std std-ref"><span class="pre">Reset</span></span></a></code> on all system models in the dynamics task and calls <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1a36ff1241ad601922dc5efb301ec5449a"><span class="std std-ref"><span class="pre">initializeDynamics</span></span></a></code>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene18initializeDynamicsEv">
+<span id="_CPPv3N7MJScene18initializeDynamicsEv"></span><span id="_CPPv2N7MJScene18initializeDynamicsEv"></span><span id="MJScene::initializeDynamics"></span><span class="target" id="class_m_j_scene_1a36ff1241ad601922dc5efb301ec5449a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeDynamics</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene18initializeDynamicsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Registers the dynamic states and recompiles the MuJoCo model. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene11UpdateStateE8uint64_t">
+<span id="_CPPv3N7MJScene11UpdateStateE8uint64_t"></span><span id="_CPPv2N7MJScene11UpdateStateE8uint64_t"></span><span id="MJScene::UpdateState__uint64_t"></span><span class="target" id="class_m_j_scene_1a1bc8e71ba20bcfe2104059611648edc0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Integrates the dynamics up to the given time and writes output messages. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTime</strong> – The current simulation time. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17equationsOfMotionEdd">
+<span id="_CPPv3N7MJScene17equationsOfMotionEdd"></span><span id="_CPPv2N7MJScene17equationsOfMotionEdd"></span><span id="MJScene::equationsOfMotion__double.double"></span><span class="target" id="class_m_j_scene_1adb11f4bbc43ef81cb3f15f63a7be5a52"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equationsOfMotion</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene17equationsOfMotionEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the equations of motion for the system. </p>
+<p>This evaluates the dynamics task for the given time, which should update the control values of actuators, the positions of constrained joints… These information is translated, through MuJoCo, into first derivatives of the joint states and the mass of bodies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – The current simulation time in seconds. </p></li>
+<li><p><strong>timeStep</strong> – The integration time step. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene14preIntegrationE8uint64_t">
+<span id="_CPPv3N7MJScene14preIntegrationE8uint64_t"></span><span id="_CPPv2N7MJScene14preIntegrationE8uint64_t"></span><span id="MJScene::preIntegration__uint64_t"></span><span class="target" id="class_m_j_scene_1a077670e98391ad367e43a6baca5cde8e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTimeNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene14preIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Prepares the system before actual integration. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTimeNanos</strong> – The current simulation time. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene15postIntegrationE8uint64_t">
+<span id="_CPPv3N7MJScene15postIntegrationE8uint64_t"></span><span id="_CPPv2N7MJScene15postIntegrationE8uint64_t"></span><span id="MJScene::postIntegration__uint64_t"></span><span class="target" id="class_m_j_scene_1a2531b5671c2b275005eeb9f9f0d4fee2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTimeNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N7MJScene15postIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Finalizes the system after integration. </p>
+<p>This performs forward kinematics on the final integrated states. It may also perform an extra call to the equations of motion if the <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1aaf2904cab3f1c735683cdd38263294ae"><span class="std std-ref"><span class="pre">extraEoMCall</span></span></a></code> flag is <code class="docutils literal notranslate"><span class="pre">true</span></code>. This can be useful if users want to record simulation values that are computed during the dynamics task depending on the final state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callTimeNanos</strong> – The current simulation time. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene29markAsNeedingToRecompileModelEv">
+<span id="_CPPv3N7MJScene29markAsNeedingToRecompileModelEv"></span><span id="_CPPv2N7MJScene29markAsNeedingToRecompileModelEv"></span><span id="MJScene::markAsNeedingToRecompileModel"></span><span class="target" id="class_m_j_scene_1a818b12d7c5661e24f2befade7eaaf2b8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">markAsNeedingToRecompileModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene29markAsNeedingToRecompileModelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Marks the model as needing recompilation. </p>
+<p>This should be called everytime one performs an action that renders the existing MuJoCo model stale, such as when adding/deleting bodies/sites/actuators… </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene24areMujocoModelConstStaleEv">
+<span id="_CPPv3N7MJScene24areMujocoModelConstStaleEv"></span><span id="_CPPv2N7MJScene24areMujocoModelConstStaleEv"></span><span id="MJScene::areMujocoModelConstStale"></span><span class="target" id="class_m_j_scene_1ab4b1f838a6f26b33635672e7ddce238b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">areMujocoModelConstStale</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene24areMujocoModelConstStaleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks if MuJoCo model constants are stale. </p>
+<p>MuJoCo model constants are values that are computed once and cached on the MuJoCo model from other ‘constant’ values input by the user. In MuJoCo, the mass of bodies is a ‘constant’, thus updating it requires us to recompute the dependent ‘constants’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the model constants are stale. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene27markMujocoModelConstAsStaleEv">
+<span id="_CPPv3N7MJScene27markMujocoModelConstAsStaleEv"></span><span id="_CPPv2N7MJScene27markMujocoModelConstAsStaleEv"></span><span id="MJScene::markMujocoModelConstAsStale"></span><span class="target" id="class_m_j_scene_1af0549501149e0527d4e1b315dbe982ee"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">markMujocoModelConstAsStale</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene27markMujocoModelConstAsStaleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Marks MuJoCo model constants as stale. </p>
+<p>Should be called everytime the mass of a body is updated.</p>
+<p>See <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1ab4b1f838a6f26b33635672e7ddce238b"><span class="std std-ref"><span class="pre">areMujocoModelConstStale</span></span></a></code>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene18areKinematicsStaleEv">
+<span id="_CPPv3N7MJScene18areKinematicsStaleEv"></span><span id="_CPPv2N7MJScene18areKinematicsStaleEv"></span><span id="MJScene::areKinematicsStale"></span><span class="target" id="class_m_j_scene_1a5457d5e097f6c68d3b7b2bc57237ad2c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">areKinematicsStale</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene18areKinematicsStaleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks if forward kinematics are stale. </p>
+<p>Kinematics (the position/velocity of bodies and sites) are stale when the joint state of the muli-body changes (since the former depends on the latter).</p>
+<p>If kinematics are stale, this means that the current values in the site position/velocity are not up to date with the current joint states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if forward kinematics are stale. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene21markKinematicsAsStaleEv">
+<span id="_CPPv3N7MJScene21markKinematicsAsStaleEv"></span><span id="_CPPv2N7MJScene21markKinematicsAsStaleEv"></span><span id="MJScene::markKinematicsAsStale"></span><span class="target" id="class_m_j_scene_1a0a441e9c6e5cc050fc4fcb64131d0290"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">markKinematicsAsStale</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene21markKinematicsAsStaleEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Marks forward kinematics as stale. </p>
+<p>Should be called every time the position or velocity of a joint is updated. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene26writeFwdKinematicsMessagesE8uint64_t">
+<span id="_CPPv3N7MJScene26writeFwdKinematicsMessagesE8uint64_t"></span><span id="_CPPv2N7MJScene26writeFwdKinematicsMessagesE8uint64_t"></span><span id="MJScene::writeFwdKinematicsMessages__uint64_t"></span><span class="target" id="class_m_j_scene_1ac2c53b68c973df2f6cff1162a060c730"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeFwdKinematicsMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene26writeFwdKinematicsMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes forward kinematics output messages. </p>
+<p>Writes the site state output messages with the current values stored in the MuJoCo data.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This does NOT update the MuJoCo data itself, so the written messages may still be stale! If you want to forward the kinematics AND write the messages, call <code class="docutils literal notranslate"><a class="reference internal" href="MJFwdKinematics.html#class_m_j_fwd_kinematics_1a1c73d89939b8ed15f4082ad7f48a07c2"><span class="std std-ref"><span class="pre">MJFwdKinematics::fwdKinematics</span></span></a></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene10saveToFileENSt6stringE">
+<span id="_CPPv3N7MJScene10saveToFileENSt6stringE"></span><span id="_CPPv2N7MJScene10saveToFileENSt6stringE"></span><span id="MJScene::saveToFile__ss"></span><span class="target" id="class_m_j_scene_1a47be47ade3645581eb1cff07e82a7a1c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saveToFile</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">filename</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene10saveToFileENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Saves the current MuJoCo model to a file. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The name of the file to save the model. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene14getMujocoModelEv">
+<span id="_CPPv3N7MJScene14getMujocoModelEv"></span><span id="_CPPv2N7MJScene14getMujocoModelEv"></span><span id="MJScene::getMujocoModel"></span><span class="target" id="class_m_j_scene_1a683d04c0373dedbfe9e2306b9ffa4edc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">mjModel</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getMujocoModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene14getMujocoModelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the MuJoCo model. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the MuJoCo model. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene13getMujocoDataEv">
+<span id="_CPPv3N7MJScene13getMujocoDataEv"></span><span id="_CPPv2N7MJScene13getMujocoDataEv"></span><span id="MJScene::getMujocoData"></span><span class="target" id="class_m_j_scene_1af8bc1d7ffb8a9406742adc218b708da6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">mjData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getMujocoData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene13getMujocoDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the MuJoCo data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the MuJoCo data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene12getQposStateEv">
+<span id="_CPPv3N7MJScene12getQposStateEv"></span><span id="_CPPv2N7MJScene12getQposStateEv"></span><span id="MJScene::getQposState"></span><span class="target" id="class_m_j_scene_1a096ba36a8b95ae814634ead948607604"></span><a class="reference internal" href="MJQPosStateData.html#_CPPv415MJQPosStateData" title="MJQPosStateData"><span class="n"><span class="pre">MJQPosStateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getQposState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene12getQposStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the position state data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the state has not been initialized. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to <code class="docutils literal notranslate"><a class="reference internal" href="MJQPosStateData.html#class_m_j_q_pos_state_data"><span class="std std-ref"><span class="pre">MJQPosStateData</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene12getQvelStateEv">
+<span id="_CPPv3N7MJScene12getQvelStateEv"></span><span id="_CPPv2N7MJScene12getQvelStateEv"></span><span id="MJScene::getQvelState"></span><span class="target" id="class_m_j_scene_1abd0a3a2d1657a7010e32daa708ccfb3c"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getQvelState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene12getQvelStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the velocity state data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the state has not been initialized. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to <code class="docutils literal notranslate"><span class="pre">StateData</span></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene11getActStateEv">
+<span id="_CPPv3N7MJScene11getActStateEv"></span><span id="_CPPv2N7MJScene11getActStateEv"></span><span id="MJScene::getActState"></span><span class="target" id="class_m_j_scene_1ac8e203018f90e9de17d4eec8cc7e2b58"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getActState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene11getActStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Retrieves the actuation state data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the state has not been initialized. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pointer to <code class="docutils literal notranslate"><span class="pre">StateData</span></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene25printMujocoModelDebugInfoERKNSt6stringE">
+<span id="_CPPv3N7MJScene25printMujocoModelDebugInfoERKNSt6stringE"></span><span id="_CPPv2N7MJScene25printMujocoModelDebugInfoERKNSt6stringE"></span><span id="MJScene::printMujocoModelDebugInfo__ssCR"></span><span class="target" id="class_m_j_scene_1a6da8a12028789d2d0be5b26a5e5e7647"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">printMujocoModelDebugInfo</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">path</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene25printMujocoModelDebugInfoERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Prints MuJoCo model debug information to a file. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – The file path for debug output. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN7MJScene11logAndThrowEvRKNSt6stringE">
+<span id="_CPPv3I0EN7MJScene11logAndThrowERKNSt6stringE"></span><span id="_CPPv2I0EN7MJScene11logAndThrowERKNSt6stringE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">invalid_argument</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_m_j_scene_1a9315b29a2ec956e704a2cbd14275be15"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logAndThrow</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">error</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7MJScene11logAndThrowEvRKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Logs an error message on the BKLogger and throws an exception. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – The type of the exception to throw. </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>error</strong> – The error message. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene12extraEoMCallE">
+<span id="_CPPv3N7MJScene12extraEoMCallE"></span><span id="_CPPv2N7MJScene12extraEoMCallE"></span><span id="MJScene::extraEoMCall__b"></span><span class="target" id="class_m_j_scene_1aaf2904cab3f1c735683cdd38263294ae"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extraEoMCall</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N7MJScene12extraEoMCallE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag to run the equations of motion after integration. </p>
+<p>If <code class="docutils literal notranslate"><span class="pre">true</span></code>, calls <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1adb11f4bbc43ef81cb3f15f63a7be5a52"><span class="std std-ref"><span class="pre">equationsOfMotion</span></span></a></code> once after integration has finished, thus using the appropriate states. This won’t impact the dynamics of the object. However, it will re-compute any messages output by the dynamics task with the final, proper, state, which can be useful if users want to record messages output by the models in this task. It will also recompute the derivative of the states, which again can be useful if recording accelerations. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene11stateOutMsgE">
+<span id="_CPPv3N7MJScene11stateOutMsgE"></span><span id="_CPPv2N7MJScene11stateOutMsgE"></span><span id="MJScene::stateOutMsg__Message:MJSceneStateMsgPayload:"></span><span class="target" id="class_m_j_scene_1ab737a87580388014a3e9f90e30883497"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.html#_CPPv422MJSceneStateMsgPayload" title="MJSceneStateMsgPayload"><span class="n"><span class="pre">MJSceneStateMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene11stateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>Message with all the the scene’s position, velocity, and actuators states. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene8fromFileERKNSt6stringE">
+<span id="_CPPv3N7MJScene8fromFileERKNSt6stringE"></span><span id="_CPPv2N7MJScene8fromFileERKNSt6stringE"></span><span id="MJScene::fromFile__ssCR"></span><span class="target" id="class_m_j_scene_1a5c02e1a909e59d37502ae05663cdbbec"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv47MJScene" title="MJScene"><span class="n"><span class="pre">MJScene</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fromFile</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fileName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene8fromFileERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates an <a class="reference internal" href="#class_m_j_scene"><span class="std std-ref">MJScene</span></a> object from a file. </p>
+<p>The file’s content are read, then passed to the constructor of this class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fileName</strong> – The name of the file containing the MuJoCo XML. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An <a class="reference internal" href="#class_m_j_scene"><span class="std std-ref">MJScene</span></a> object. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-attributes">Public Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene23FWD_KINEMATICS_PRIORITYE">
+<span id="_CPPv3N7MJScene23FWD_KINEMATICS_PRIORITYE"></span><span id="_CPPv2N7MJScene23FWD_KINEMATICS_PRIORITYE"></span><span id="MJScene::FWD_KINEMATICS_PRIORITY__iC"></span><span class="target" id="class_m_j_scene_1add9018f8ccfb26d60b3198a0de70b03e"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FWD_KINEMATICS_PRIORITY</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">10000</span></span><a class="headerlink" href="#_CPPv4N7MJScene23FWD_KINEMATICS_PRIORITYE" title="Link to this definition"></a><br /></dt>
+<dd><p>Priority for default forward kinematics model. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene28updateMujocoArraysFromStatesEv">
+<span id="_CPPv3N7MJScene28updateMujocoArraysFromStatesEv"></span><span id="_CPPv2N7MJScene28updateMujocoArraysFromStatesEv"></span><span id="MJScene::updateMujocoArraysFromStates"></span><span class="target" id="class_m_j_scene_1a26eb353b009743d534bd87a23b445cb0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateMujocoArraysFromStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene28updateMujocoArraysFromStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates MuJoCo structs from the Basilisk <code class="docutils literal notranslate"><span class="pre">StateData</span></code> objects. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N7MJScene24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N7MJScene24writeOutputStateMessagesE8uint64_t"></span><span id="MJScene::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_m_j_scene_1a90cb8a3047153bd7625dd8d7d80c4d5e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7MJScene24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Writes the values of the position, velocity, and actuators states to the <code class="docutils literal notranslate"><a class="reference internal" href="#class_m_j_scene_1ab737a87580388014a3e9f90e30883497"><span class="std std-ref"><span class="pre">stateOutMsg</span></span></a></code> messages. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene4specE">
+<span id="_CPPv3N7MJScene4specE"></span><span id="_CPPv2N7MJScene4specE"></span><span id="MJScene::spec__MJSpec"></span><span class="target" id="class_m_j_scene_1ae951c9743e41bfe1ba236334097712bf"></span><a class="reference internal" href="MJSpec.html#_CPPv46MJSpec" title="MJSpec"><span class="n"><span class="pre">MJSpec</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spec</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene4specE" title="Link to this definition"></a><br /></dt>
+<dd><p><code class="docutils literal notranslate"><a class="reference internal" href="MJSpec.html#class_m_j_spec"><span class="std std-ref"><span class="pre">MJSpec</span></span></a></code> (MuJoCo model specification wrapper) associated with this scene. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene17mjModelConstStaleE">
+<span id="_CPPv3N7MJScene17mjModelConstStaleE"></span><span id="_CPPv2N7MJScene17mjModelConstStaleE"></span><span id="MJScene::mjModelConstStale__b"></span><span class="target" id="class_m_j_scene_1ac8fc6087ccfb832dedda729ec071dc73"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mjModelConstStale</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N7MJScene17mjModelConstStaleE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag indicating stale model constants. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene22forwardKinematicsStaleE">
+<span id="_CPPv3N7MJScene22forwardKinematicsStaleE"></span><span id="_CPPv2N7MJScene22forwardKinematicsStaleE"></span><span id="MJScene::forwardKinematicsStale__b"></span><span class="target" id="class_m_j_scene_1ae982d6476c4ff40bc228ed782ede7d93"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">forwardKinematicsStale</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N7MJScene22forwardKinematicsStaleE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag indicating stale forward kinematics. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene12dynamicsTaskE">
+<span id="_CPPv3N7MJScene12dynamicsTaskE"></span><span id="_CPPv2N7MJScene12dynamicsTaskE"></span><span id="MJScene::dynamicsTask__SysModelTask"></span><span class="target" id="class_m_j_scene_1aeca977748cfa74540bb4e36cd95532c3"></span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model_task.html#_CPPv412SysModelTask" title="SysModelTask"><span class="n"><span class="pre">SysModelTask</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dynamicsTask</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene12dynamicsTaskE" title="Link to this definition"></a><br /></dt>
+<dd><p>Task managing models involved in the dynamics of this scene. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene13ownedSysModelE">
+<span id="_CPPv3N7MJScene13ownedSysModelE"></span><span id="_CPPv2N7MJScene13ownedSysModelE"></span><span id="MJScene::ownedSysModel__std::vector:std::unique_ptr:SysModel::"></span><span class="target" id="class_m_j_scene_1a39f2e153250259129012731f47516f4f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ownedSysModel</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene13ownedSysModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>System models that should be cleared on this scene destruction. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene9qposStateE">
+<span id="_CPPv3N7MJScene9qposStateE"></span><span id="_CPPv2N7MJScene9qposStateE"></span><span id="MJScene::qposState__MJQPosStateDataP"></span><span class="target" id="class_m_j_scene_1ad95e593976000844ed582f2ec9e3708e"></span><a class="reference internal" href="MJQPosStateData.html#_CPPv415MJQPosStateData" title="MJQPosStateData"><span class="n"><span class="pre">MJQPosStateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qposState</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene9qposStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Position state data. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene9qvelStateE">
+<span id="_CPPv3N7MJScene9qvelStateE"></span><span id="_CPPv2N7MJScene9qvelStateE"></span><span id="MJScene::qvelState__StateDataP"></span><span class="target" id="class_m_j_scene_1a7e40a8fe7e520ac5c203188790fe1b0e"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qvelState</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene9qvelStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Velocity state data. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7MJScene8actStateE">
+<span id="_CPPv3N7MJScene8actStateE"></span><span id="_CPPv2N7MJScene8actStateE"></span><span id="MJScene::actState__StateDataP"></span><span class="target" id="class_m_j_scene_1aa6e58d806cd69c3bb9647d35689d3ac6"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">actState</span></span></span><a class="headerlink" href="#_CPPv4N7MJScene8actStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Actuator state data. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="MJQPosStateData.html" class="btn btn-neutral float-left" title="Module: MJQPosStateData" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MJSite.html" class="btn btn-neutral float-right" title="Module: MJSite" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

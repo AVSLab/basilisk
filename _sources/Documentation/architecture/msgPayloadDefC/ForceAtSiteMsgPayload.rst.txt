@@ -1,0 +1,8 @@
+.. _ForceAtSiteMsgPayload:
+
+ForceAtSiteMsgPayload
+=============================
+
+.. autodoxygenfile:: ForceAtSiteMsgPayload.h
+   :project: msgPayloadDefC
+

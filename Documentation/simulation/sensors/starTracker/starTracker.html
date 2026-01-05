@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: starTracker &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="starTracker" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">sensors</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../camera/index.html">camera</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../coarseSunSensor/index.html">coarseSunSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotorSensor/index.html">hingedRigidBodyMotorSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../imuSensor/index.html">imuSensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../magnetometer/index.html">magnetometer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleMassProps/index.html">simpleMassProps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleVoltEstimator/index.html">simpleVoltEstimator</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">starTracker</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">sensors</a></li>
+          <li class="breadcrumb-item"><a href="index.html">starTracker</a></li>
+      <li class="breadcrumb-item active">Module: starTracker</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/sensors/starTracker/starTracker.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-startracker">
+<span id="startracker"></span><h1>Module: starTracker<a class="headerlink" href="#module-startracker" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Sensor model to simulate a Star Tracker.</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/2c95b2874982d639fa15c35fa5548ceb/Basilisk-star_tracker-20161101.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.
+The corruption types are outlined in this
+<a class="reference download internal" download="" href="../../../../_downloads/204bfc07b7abb616e1ab5b8d9cbd464e/BasiliskCorruptions.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scStateInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>sc input state message</p></td>
+</tr>
+<tr class="row-odd"><td><p>sensorOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/STSensorMsgPayload.html#stsensormsgpayload"><span class="std std-ref">STSensorMsgPayload</span></a></p></td>
+<td><p>sensor output state message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv411StarTracker">
+<span id="_CPPv311StarTracker"></span><span id="_CPPv211StarTracker"></span><span id="StarTracker"></span><span class="target" id="class_star_tracker"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StarTracker</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv411StarTracker" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;starTracker.h&gt;</em></div>
+<p>Star tracker sensor model that simulates quaternion measurements with configurable noise. </p>
+<p>The star tracker supports noise configuration through:<ul class="simple">
+<li><p>Walk bounds: Maximum allowed deviations from truth [rad]</p></li>
+<li><p>PMatrix: Noise covariance matrix (diagonal elements = noiseStd)</p></li>
+<li><p>AMatrix: Propagation matrix for error model (defaults to identity)</p></li>
+</ul>
+</p>
+<p>Example Python usage: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">starTracker</span> <span class="o">=</span> <span class="n">StarTracker</span><span class="p">()</span>
+
+<span class="c1"># Configure noise (rad)</span>
+<span class="n">noiseStd</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1"># Standard deviation</span>
+<span class="n">PMatrix</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">9</span>  <span class="c1"># 3x3 matrix</span>
+<span class="n">PMatrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">PMatrix</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">PMatrix</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="n">noiseStd</span>
+<span class="n">starTracker</span><span class="o">.</span><span class="n">PMatrix</span> <span class="o">=</span> <span class="n">PMatrix</span>
+
+<span class="c1"># Set maximum error bounds (rad)</span>
+<span class="n">starTracker</span><span class="o">.</span><span class="n">setWalkBounds</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">])</span>
+</pre></div>
+</div>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker11StarTrackerEv">
+<span id="_CPPv3N11StarTracker11StarTrackerEv"></span><span id="_CPPv2N11StarTracker11StarTrackerEv"></span><span id="StarTracker::StarTracker"></span><span class="target" id="class_star_tracker_1a6bfcf306429c53e7a82f91fb20a337f6"></span><span class="sig-name descname"><span class="n"><span class="pre">StarTracker</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker11StarTrackerEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTrackerD0Ev">
+<span id="_CPPv3N11StarTrackerD0Ev"></span><span id="_CPPv2N11StarTrackerD0Ev"></span><span id="StarTracker::~StarTracker"></span><span class="target" id="class_star_tracker_1a563a58094cb14d0d628e936561e3e266"></span><span class="sig-name descname"><span class="n"><span class="pre">~StarTracker</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTrackerD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker11UpdateStateE8uint64_t">
+<span id="_CPPv3N11StarTracker11UpdateStateE8uint64_t"></span><span id="_CPPv2N11StarTracker11UpdateStateE8uint64_t"></span><span id="StarTracker::UpdateState__uint64_t"></span><span class="target" id="class_star_tracker_1a1e8c23bb7af37f4b643ab7849499a438"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>update module states </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker5ResetE8uint64_t">
+<span id="_CPPv3N11StarTracker5ResetE8uint64_t"></span><span id="_CPPv2N11StarTracker5ResetE8uint64_t"></span><span id="StarTracker::Reset__uint64_t"></span><span class="target" id="class_star_tracker_1a8bf8e110c448aad1d292df154fea0ead"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method for reseting the module. </p>
+<p>This method is used to reset the module. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time from the architecture </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker17readInputMessagesEv">
+<span id="_CPPv3N11StarTracker17readInputMessagesEv"></span><span id="_CPPv2N11StarTracker17readInputMessagesEv"></span><span id="StarTracker::readInputMessages"></span><span class="target" id="class_star_tracker_1ae92a145b84958e494ae3867befd0fe5e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>read input messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N11StarTracker19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N11StarTracker19writeOutputMessagesE8uint64_t"></span><span id="StarTracker::writeOutputMessages__uint64_t"></span><span class="target" id="class_star_tracker_1a3e73646aa5efa1dae64778da863af757"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Clock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>write output messages </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker19computeSensorErrorsEv">
+<span id="_CPPv3N11StarTracker19computeSensorErrorsEv"></span><span id="_CPPv2N11StarTracker19computeSensorErrorsEv"></span><span id="StarTracker::computeSensorErrors"></span><span class="target" id="class_star_tracker_1a95122a38f5d5a1f2d0c8a4e3e5d3d6d3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSensorErrors</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker19computeSensorErrorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>compute sensor errors </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker17applySensorErrorsEv">
+<span id="_CPPv3N11StarTracker17applySensorErrorsEv"></span><span id="_CPPv2N11StarTracker17applySensorErrorsEv"></span><span id="StarTracker::applySensorErrors"></span><span class="target" id="class_star_tracker_1a0917fb4a9905310fba22b9cb5246e43f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">applySensorErrors</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker17applySensorErrorsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>apply sensor errors </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker17computeTrueOutputEv">
+<span id="_CPPv3N11StarTracker17computeTrueOutputEv"></span><span id="_CPPv2N11StarTracker17computeTrueOutputEv"></span><span id="StarTracker::computeTrueOutput"></span><span class="target" id="class_star_tracker_1a91749f415eca30bed3dad3cc6f7241e6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeTrueOutput</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker17computeTrueOutputEv" title="Link to this definition"></a><br /></dt>
+<dd><p>compute true output values </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker17computeQuaternionEPdP18STSensorMsgPayload">
+<span id="_CPPv3N11StarTracker17computeQuaternionEPdP18STSensorMsgPayload"></span><span id="_CPPv2N11StarTracker17computeQuaternionEPdP18STSensorMsgPayload"></span><span id="StarTracker::computeQuaternion__doubleP.STSensorMsgPayloadP"></span><span class="target" id="class_star_tracker_1a77e43b3604a0070f4368caae3dacae8b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeQuaternion</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sigma</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/STSensorMsgPayload.html#_CPPv418STSensorMsgPayload" title="STSensorMsgPayload"><span class="n"><span class="pre">STSensorMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sensorValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker17computeQuaternionEPdP18STSensorMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>compute quaternion from MRPs </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sigma</strong> – </p></li>
+<li><p><strong>sensorValues</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker10setAMatrixERKN5Eigen8MatrixXdE">
+<span id="_CPPv3N11StarTracker10setAMatrixERKN5Eigen8MatrixXdE"></span><span id="_CPPv2N11StarTracker10setAMatrixERKN5Eigen8MatrixXdE"></span><span id="StarTracker::setAMatrix__Eigen::MatrixXdCR"></span><span class="target" id="class_star_tracker_1a688a6ac1d21db0ad7566e5ebd03dec45"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">propMatrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker10setAMatrixERKN5Eigen8MatrixXdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Setter for <code class="docutils literal notranslate"><span class="pre">AMatrix</span></code> used for error propagation </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>propMatrix</strong> – Matrix to set </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11StarTracker10getAMatrixEv">
+<span id="_CPPv3NK11StarTracker10getAMatrixEv"></span><span id="_CPPv2NK11StarTracker10getAMatrixEv"></span><span id="StarTracker::getAMatrixC"></span><span class="target" id="class_star_tracker_1a905c20eb9f78f83e8558f159ddb49269"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getAMatrix</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11StarTracker10getAMatrixEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Getter for <code class="docutils literal notranslate"><span class="pre">AMatrix</span></code> used for error propagation </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current matrix </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker13setWalkBoundsERKN5Eigen8Vector3dE">
+<span id="_CPPv3N11StarTracker13setWalkBoundsERKN5Eigen8Vector3dE"></span><span id="_CPPv2N11StarTracker13setWalkBoundsERKN5Eigen8Vector3dE"></span><span id="StarTracker::setWalkBounds__Eigen::Vector3dCR"></span><span class="target" id="class_star_tracker_1a66b6ea56d9fc6b511b86f5080842cf21"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setWalkBounds</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">bounds</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11StarTracker13setWalkBoundsERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets walk bounds [rad] </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11StarTracker13getWalkBoundsEv">
+<span id="_CPPv3NK11StarTracker13getWalkBoundsEv"></span><span id="_CPPv2NK11StarTracker13getWalkBoundsEv"></span><span id="StarTracker::getWalkBoundsC"></span><span class="target" id="class_star_tracker_1a3eea3a87f2393ae83a20a2937fb3596a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getWalkBounds</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11StarTracker13getWalkBoundsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Gets current walk bounds [rad] </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker13sensorTimeTagE">
+<span id="_CPPv3N11StarTracker13sensorTimeTagE"></span><span id="_CPPv2N11StarTracker13sensorTimeTagE"></span><span id="StarTracker::sensorTimeTag__uint64_t"></span><span class="target" id="class_star_tracker_1ab11eb1071e41550f931b6d9e46b5b8f2"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensorTimeTag</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker13sensorTimeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Current time tag for sensor out </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker12scStateInMsgE">
+<span id="_CPPv3N11StarTracker12scStateInMsgE"></span><span id="_CPPv2N11StarTracker12scStateInMsgE"></span><span id="StarTracker::scStateInMsg__ReadFunctor:SCStatesMsgPayload:"></span><span class="target" id="class_star_tracker_1aa93294d3a53b64fc631167bfbb7e14fa"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scStateInMsg</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker12scStateInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sc input state message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker12sensorOutMsgE">
+<span id="_CPPv3N11StarTracker12sensorOutMsgE"></span><span id="_CPPv2N11StarTracker12sensorOutMsgE"></span><span id="StarTracker::sensorOutMsg__Message:STSensorMsgPayload:"></span><span class="target" id="class_star_tracker_1aa67dc48679d32be212c95a7f682c6c7f"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/STSensorMsgPayload.html#_CPPv418STSensorMsgPayload" title="STSensorMsgPayload"><span class="n"><span class="pre">STSensorMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensorOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker12sensorOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sensor output state message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker7PMatrixE">
+<span id="_CPPv3N11StarTracker7PMatrixE"></span><span id="_CPPv2N11StarTracker7PMatrixE"></span><span id="StarTracker::PMatrix__Eigen::Matrix3d"></span><span class="target" id="class_star_tracker_1a1c5fc3098b40389f6d10186254e0c959"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PMatrix</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker7PMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker10walkBoundsE">
+<span id="_CPPv3N11StarTracker10walkBoundsE"></span><span id="_CPPv2N11StarTracker10walkBoundsE"></span><span id="StarTracker::walkBounds__Eigen::Vector3d"></span><span class="target" id="class_star_tracker_1a01a71019104991b76797451b55143941"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walkBounds</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker10walkBoundsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] “3-sigma” errors to permit for states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker9navErrorsE">
+<span id="_CPPv3N11StarTracker9navErrorsE"></span><span id="_CPPv2N11StarTracker9navErrorsE"></span><span id="StarTracker::navErrors__Eigen::Vector3d"></span><span class="target" id="class_star_tracker_1a30a0ae3119b53a7e4b71966f5820d59f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navErrors</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker9navErrorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current navigation errors applied to truth </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker6dcm_CBE">
+<span id="_CPPv3N11StarTracker6dcm_CBE"></span><span id="_CPPv2N11StarTracker6dcm_CBE"></span><span id="StarTracker::dcm_CB__doubleAA"></span><span class="target" id="class_star_tracker_1a75d0a127c7a5e0fdaa7d64a356c448af"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_CB</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N11StarTracker6dcm_CBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Transformation matrix from body to case </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker10trueValuesE">
+<span id="_CPPv3N11StarTracker10trueValuesE"></span><span id="_CPPv2N11StarTracker10trueValuesE"></span><span id="StarTracker::trueValues__STSensorMsgPayload"></span><span class="target" id="class_star_tracker_1a86f57e03073156351e80038e0e89b495"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/STSensorMsgPayload.html#_CPPv418STSensorMsgPayload" title="STSensorMsgPayload"><span class="n"><span class="pre">STSensorMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">trueValues</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker10trueValuesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] total measurement without perturbations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker12sensedValuesE">
+<span id="_CPPv3N11StarTracker12sensedValuesE"></span><span id="_CPPv2N11StarTracker12sensedValuesE"></span><span id="StarTracker::sensedValues__STSensorMsgPayload"></span><span class="target" id="class_star_tracker_1a3dce0faf87593b34d6ebdff16d971832"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/STSensorMsgPayload.html#_CPPv418STSensorMsgPayload" title="STSensorMsgPayload"><span class="n"><span class="pre">STSensorMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sensedValues</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker12sensedValuesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] total measurement including perturbations </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker9mrpErrorsE">
+<span id="_CPPv3N11StarTracker9mrpErrorsE"></span><span id="_CPPv2N11StarTracker9mrpErrorsE"></span><span id="StarTracker::mrpErrors__doubleA"></span><span class="target" id="class_star_tracker_1a0d2562621a821bea85794757bc1648c3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mrpErrors</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N11StarTracker9mrpErrorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Errors to be applied to the input MRP set indicating whether </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker7scStateE">
+<span id="_CPPv3N11StarTracker7scStateE"></span><span id="_CPPv2N11StarTracker7scStateE"></span><span id="StarTracker::scState__SCStatesMsgPayload"></span><span class="target" id="class_star_tracker_1a1bb3e61a557f6b36932c6766f571feec"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scState</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker7scStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Module variable where the input State Data message is stored </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker9bskLoggerE">
+<span id="_CPPv3N11StarTracker9bskLoggerE"></span><span id="_CPPv2N11StarTracker9bskLoggerE"></span><span id="StarTracker::bskLogger__BSKLogger"></span><span class="target" id="class_star_tracker_1ae60ef6dbc52ec2f59fe242514b447ead"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker7AMatrixE">
+<span id="_CPPv3N11StarTracker7AMatrixE"></span><span id="_CPPv2N11StarTracker7AMatrixE"></span><span id="StarTracker::AMatrix__Eigen::Matrix3d"></span><span class="target" id="class_star_tracker_1a8ee8bbcce3c6d6d2e6b79becaa6f542c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AMatrix</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker7AMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] AMatrix that we use for error propagation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StarTracker10errorModelE">
+<span id="_CPPv3N11StarTracker10errorModelE"></span><span id="_CPPv2N11StarTracker10errorModelE"></span><span id="StarTracker::errorModel__GaussMarkov"></span><span class="target" id="class_star_tracker_1a1041e0cb89a4580c51f21d616801b653"></span><a class="reference internal" href="../../../architecture/utilities/gauss_markov.html#_CPPv411GaussMarkov" title="GaussMarkov"><span class="n"><span class="pre">GaussMarkov</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">errorModel</span></span></span><a class="headerlink" href="#_CPPv4N11StarTracker10errorModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gauss-markov error states </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="starTracker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

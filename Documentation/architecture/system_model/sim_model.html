@@ -1,0 +1,606 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sim_model &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="sys_process" href="sys_process.html" />
+    <link rel="prev" title="system_model" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">system_model</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">sim_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_process.html">sys_process</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_UnitTest/index.html">_UnitTest</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">system_model</a></li>
+      <li class="breadcrumb-item active">sim_model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/system_model/sim_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sim-model">
+<span id="id1"></span><h1>sim_model<a class="headerlink" href="#sim-model" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv418SimThreadExecution">
+<span id="_CPPv318SimThreadExecution"></span><span id="_CPPv218SimThreadExecution"></span><span id="SimThreadExecution"></span><span class="target" id="class_sim_thread_execution"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SimThreadExecution</span></span></span><a class="headerlink" href="#_CPPv418SimThreadExecution" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sim_model.h&gt;</em></div>
+<p>This class handles the management of a given “thread” of execution and provides the main mechanism for running concurrent jobs inside BSK. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution18SimThreadExecutionEv">
+<span id="_CPPv3N18SimThreadExecution18SimThreadExecutionEv"></span><span id="_CPPv2N18SimThreadExecution18SimThreadExecutionEv"></span><span id="SimThreadExecution::SimThreadExecution"></span><span class="target" id="class_sim_thread_execution_1a0352a5d53bfd22ca73228556ecbfa56b"></span><span class="sig-name descname"><span class="n"><span class="pre">SimThreadExecution</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution18SimThreadExecutionEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution18SimThreadExecutionE8uint64_t8uint64_t">
+<span id="_CPPv3N18SimThreadExecution18SimThreadExecutionE8uint64_t8uint64_t"></span><span id="_CPPv2N18SimThreadExecution18SimThreadExecutionE8uint64_t8uint64_t"></span><span id="SimThreadExecution::SimThreadExecution__uint64_t.uint64_t"></span><span class="target" id="class_sim_thread_execution_1aec803441c32dcbac20a9de9121f3d629"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SimThreadExecution</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">threadIdent</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution18SimThreadExecutionE8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor for a given sim thread. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecutionD0Ev">
+<span id="_CPPv3N18SimThreadExecutionD0Ev"></span><span id="_CPPv2N18SimThreadExecutionD0Ev"></span><span id="SimThreadExecution::~SimThreadExecution"></span><span class="target" id="class_sim_thread_execution_1a6871b8c00cd68dded753f3283f100f62"></span><span class="sig-name descname"><span class="n"><span class="pre">~SimThreadExecution</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecutionD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor for given sim thread. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution17updateNewStopTimeE8uint64_t">
+<span id="_CPPv3N18SimThreadExecution17updateNewStopTimeE8uint64_t"></span><span id="_CPPv2N18SimThreadExecution17updateNewStopTimeE8uint64_t"></span><span id="SimThreadExecution::updateNewStopTime__uint64_t"></span><span class="target" id="class_sim_thread_execution_1ac1f6d49823e06607ef90bdd2e51c80c8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateNewStopTime</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newStopNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution17updateNewStopTimeE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to update a new simulation stop time. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution16clearProcessListEv">
+<span id="_CPPv3N18SimThreadExecution16clearProcessListEv"></span><span id="_CPPv2N18SimThreadExecution16clearProcessListEv"></span><span id="SimThreadExecution::clearProcessList"></span><span class="target" id="class_sim_thread_execution_1a437b10e6cacdb05f105c7d7f51c69650"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearProcessList</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution16clearProcessListEv" title="Link to this definition"></a><br /></dt>
+<dd><p>clear the process list </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18SimThreadExecution17selfInitProcessesEv">
+<span id="_CPPv3NK18SimThreadExecution17selfInitProcessesEv"></span><span id="_CPPv2NK18SimThreadExecution17selfInitProcessesEv"></span><span id="SimThreadExecution::selfInitProcessesC"></span><span class="target" id="class_sim_thread_execution_1aab31d8e5179f14ca0079c123b17e4ec0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">selfInitProcesses</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18SimThreadExecution17selfInitProcessesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used by the “child” thread to walk through all of its tasks and processes and initialize them serially. Note that other threads can also be initializing their systems simultaneously. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18SimThreadExecution18crossInitProcessesEv">
+<span id="_CPPv3NK18SimThreadExecution18crossInitProcessesEv"></span><span id="_CPPv2NK18SimThreadExecution18crossInitProcessesEv"></span><span id="SimThreadExecution::crossInitProcessesC"></span><span class="target" id="class_sim_thread_execution_1a2455ce1f6ace0e4cecd97be4aa0271f8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">crossInitProcesses</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18SimThreadExecution18crossInitProcessesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is vestigial and should probably be removed once MT message movement has been completed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution14resetProcessesEv">
+<span id="_CPPv3N18SimThreadExecution14resetProcessesEv"></span><span id="_CPPv2N18SimThreadExecution14resetProcessesEv"></span><span id="SimThreadExecution::resetProcesses"></span><span class="target" id="class_sim_thread_execution_1a3984b22554c81447b49db7abc2f152e7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetProcesses</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution14resetProcessesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows the “child” thread to reset both its timing/scheduling, as well as all of its allocated tasks/modules when commanded. This is always called during init, but can be called during runtime as well. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution13addNewProcessEP10SysProcess">
+<span id="_CPPv3N18SimThreadExecution13addNewProcessEP10SysProcess"></span><span id="_CPPv2N18SimThreadExecution13addNewProcessEP10SysProcess"></span><span id="SimThreadExecution::addNewProcess__SysProcessP"></span><span class="target" id="class_sim_thread_execution_1a6db496d5d6acf2f1e7b9aacd82fd93de"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addNewProcess</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="sys_process.html#_CPPv410SysProcess" title="SysProcess"><span class="n"><span class="pre">SysProcess</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newProc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution13addNewProcessEP10SysProcess" title="Link to this definition"></a><br /></dt>
+<dd><p>This method pops a new process onto the execution stack for the “child” thread. It allows the user to put specific processes onto specific threads if that is desired. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18SimThreadExecution9procCountEv">
+<span id="_CPPv3NK18SimThreadExecution9procCountEv"></span><span id="_CPPv2NK18SimThreadExecution9procCountEv"></span><span id="SimThreadExecution::procCountC"></span><span class="target" id="class_sim_thread_execution_1af39aca42fdc45b17c8cc6e42e75b6693"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">procCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18SimThreadExecution9procCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Gets the current “thread-count” in the system. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18SimThreadExecution12threadActiveEv">
+<span id="_CPPv3NK18SimThreadExecution12threadActiveEv"></span><span id="_CPPv2NK18SimThreadExecution12threadActiveEv"></span><span id="SimThreadExecution::threadActiveC"></span><span class="target" id="class_sim_thread_execution_1abafbd2ccd3e2612f400a40082ec127d7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadActive</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18SimThreadExecution12threadActiveEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Tells the caller if the thread is currently allocated processes and is in execution. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution11threadReadyEv">
+<span id="_CPPv3N18SimThreadExecution11threadReadyEv"></span><span id="_CPPv2N18SimThreadExecution11threadReadyEv"></span><span id="SimThreadExecution::threadReady"></span><span class="target" id="class_sim_thread_execution_1a24d4fb7186480135066b347ab2a18d19"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadReady</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution11threadReadyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Allows the system to put the thread into a running state. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution10waitOnInitEv">
+<span id="_CPPv3N18SimThreadExecution10waitOnInitEv"></span><span id="_CPPv2N18SimThreadExecution10waitOnInitEv"></span><span id="SimThreadExecution::waitOnInit"></span><span class="target" id="class_sim_thread_execution_1acbb9bbbf0cb9203c1655e3b7aaf6ff17"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">waitOnInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution10waitOnInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Once threads are released for execution, this method ensures that they finish their startup before the system starts to go through its initialization activities. It’s very similar to the locking process, but provides different functionality. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution8postInitEv">
+<span id="_CPPv3N18SimThreadExecution8postInitEv"></span><span id="_CPPv2N18SimThreadExecution8postInitEv"></span><span id="SimThreadExecution::postInit"></span><span class="target" id="class_sim_thread_execution_1a40245432fadd460de18913b6db87bb2e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution8postInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows the startup activities to alert the parent thread once they have cleared their construction phase and are ready to go through initialization. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18SimThreadExecution11threadValidEv">
+<span id="_CPPv3NK18SimThreadExecution11threadValidEv"></span><span id="_CPPv2NK18SimThreadExecution11threadValidEv"></span><span id="SimThreadExecution::threadValidC"></span><span class="target" id="class_sim_thread_execution_1a50760ce1e7af8ca017040c20cc3ce2b1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadValid</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18SimThreadExecution11threadValidEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Determines if the thread is currently usable or if it has been requested to shutdown. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution10killThreadEv">
+<span id="_CPPv3N18SimThreadExecution10killThreadEv"></span><span id="_CPPv2N18SimThreadExecution10killThreadEv"></span><span id="SimThreadExecution::killThread"></span><span class="target" id="class_sim_thread_execution_1a7825e45a15e5f1e11af4ce252bb5417f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">killThread</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution10killThreadEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Politely asks the thread to no longer be alive. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution10lockThreadEv">
+<span id="_CPPv3N18SimThreadExecution10lockThreadEv"></span><span id="_CPPv2N18SimThreadExecution10lockThreadEv"></span><span id="SimThreadExecution::lockThread"></span><span class="target" id="class_sim_thread_execution_1a7b6b683e14c44451042f528506f0be42"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lockThread</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution10lockThreadEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides a synchronization mechanism for the “child” thread ensuring that it can be held at a fixed point after it finishes the execution of a given frame until it is released by the “parent” thread. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution12unlockThreadEv">
+<span id="_CPPv3N18SimThreadExecution12unlockThreadEv"></span><span id="_CPPv2N18SimThreadExecution12unlockThreadEv"></span><span id="SimThreadExecution::unlockThread"></span><span class="target" id="class_sim_thread_execution_1a45a709d8bde76c6be42a807988160418"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unlockThread</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution12unlockThreadEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides an entry point for the “parent” thread to release the child thread for a single frame’s execution. It is intended to only be called from the parent thread. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution10lockParentEv">
+<span id="_CPPv3N18SimThreadExecution10lockParentEv"></span><span id="_CPPv2N18SimThreadExecution10lockParentEv"></span><span id="SimThreadExecution::lockParent"></span><span class="target" id="class_sim_thread_execution_1a14670530672acc6509b11d538d2f1e8a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lockParent</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution10lockParentEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides a forced synchronization on the “parent” thread so that the parent and all other threads in the system can be forced to wait at a known time until this thread has finished its execution for that time. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution12unlockParentEv">
+<span id="_CPPv3N18SimThreadExecution12unlockParentEv"></span><span id="_CPPv2N18SimThreadExecution12unlockParentEv"></span><span id="SimThreadExecution::unlockParent"></span><span class="target" id="class_sim_thread_execution_1a5087446d12c59af56c0dcefc52c58c0e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">unlockParent</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution12unlockParentEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides an entry point for the “child” thread to unlock the parent thread after it has finished its execution in a frame. That way the parent and all of its other children have to wait for this child to finish its execution. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution13StepUntilStopEv">
+<span id="_CPPv3N18SimThreadExecution13StepUntilStopEv"></span><span id="_CPPv2N18SimThreadExecution13StepUntilStopEv"></span><span id="SimThreadExecution::StepUntilStop"></span><span class="target" id="class_sim_thread_execution_1abd78120803f5811d2a166097f0a6fb94"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StepUntilStop</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution13StepUntilStopEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Step simulation until stop time uint64_t reached. </p>
+<p>This method steps the simulation until the specified stop time and stop priority have been reached. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution19SingleStepProcessesE7int64_t">
+<span id="_CPPv3N18SimThreadExecution19SingleStepProcessesE7int64_t"></span><span id="_CPPv2N18SimThreadExecution19SingleStepProcessesE7int64_t"></span><span id="SimThreadExecution::SingleStepProcesses__int64_t"></span><span class="target" id="class_sim_thread_execution_1ae726d77b8faf40c0bb7ec5d85187da7a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SingleStepProcesses</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stopPri</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18SimThreadExecution19SingleStepProcessesE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Step only the next Task in the simulation. </p>
+<p>This method steps all of the processes forward to the current time. It also increments the internal simulation time appropriately as the simulation processes are triggered </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stopPri</strong> – The priority level below which the sim won’t go </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18SimThreadExecution19moveProcessMessagesEv">
+<span id="_CPPv3NK18SimThreadExecution19moveProcessMessagesEv"></span><span id="_CPPv2NK18SimThreadExecution19moveProcessMessagesEv"></span><span id="SimThreadExecution::moveProcessMessagesC"></span><span class="target" id="class_sim_thread_execution_1a11c7cd0c523ac1c96f7d23e74a21722f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">moveProcessMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18SimThreadExecution19moveProcessMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is currently vestigial and needs to be populated once the message sharing process between different threads is handled. TODO: Make this method move messages safely between threads </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution12CurrentNanosE">
+<span id="_CPPv3N18SimThreadExecution12CurrentNanosE"></span><span id="_CPPv2N18SimThreadExecution12CurrentNanosE"></span><span id="SimThreadExecution::CurrentNanos__uint64_t"></span><span class="target" id="class_sim_thread_execution_1aab96b5f499ad6e30a12e8b0af1f4a690"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CurrentNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution12CurrentNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Current sim time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution12NextTaskTimeE">
+<span id="_CPPv3N18SimThreadExecution12NextTaskTimeE"></span><span id="_CPPv2N18SimThreadExecution12NextTaskTimeE"></span><span id="SimThreadExecution::NextTaskTime__uint64_t"></span><span class="target" id="class_sim_thread_execution_1aa2431425f698a55249673e02dcd4c805"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NextTaskTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution12NextTaskTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] time for the next Task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution18currentThreadNanosE">
+<span id="_CPPv3N18SimThreadExecution18currentThreadNanosE"></span><span id="_CPPv2N18SimThreadExecution18currentThreadNanosE"></span><span id="SimThreadExecution::currentThreadNanos__uint64_t"></span><span class="target" id="class_sim_thread_execution_1a1b34399826b6adfe35ba8455c295b693"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentThreadNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution18currentThreadNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current simulation time available at thread. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution15stopThreadNanosE">
+<span id="_CPPv3N18SimThreadExecution15stopThreadNanosE"></span><span id="_CPPv2N18SimThreadExecution15stopThreadNanosE"></span><span id="SimThreadExecution::stopThreadNanos__uint64_t"></span><span class="target" id="class_sim_thread_execution_1af9cc6342ad99dd16580b6ae84715d300"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stopThreadNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution15stopThreadNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current stop conditions for the thread. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution18stopThreadPriorityE">
+<span id="_CPPv3N18SimThreadExecution18stopThreadPriorityE"></span><span id="_CPPv2N18SimThreadExecution18stopThreadPriorityE"></span><span id="SimThreadExecution::stopThreadPriority__int64_t"></span><span class="target" id="class_sim_thread_execution_1a8f7271e229e8f16d8840231137b1964a"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stopThreadPriority</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution18stopThreadPriorityE" title="Link to this definition"></a><br /></dt>
+<dd><p>Current stop priority for thread. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution8threadIDE">
+<span id="_CPPv3N18SimThreadExecution8threadIDE"></span><span id="_CPPv2N18SimThreadExecution8threadIDE"></span><span id="SimThreadExecution::threadID__uint64_t"></span><span class="target" id="class_sim_thread_execution_1a3a56138fc7e0df51cdf62f9b8aa407fd"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution8threadIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>Identifier for thread. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution13threadContextE">
+<span id="_CPPv3N18SimThreadExecution13threadContextE"></span><span id="_CPPv2N18SimThreadExecution13threadContextE"></span><span id="SimThreadExecution::threadContext__std::threadP"></span><span class="target" id="class_sim_thread_execution_1a6e8642516dc592c80917fc730204327e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">thread</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">threadContext</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution13threadContextE" title="Link to this definition"></a><br /></dt>
+<dd><p>std::thread data for concurrent execution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution16nextProcPriorityE">
+<span id="_CPPv3N18SimThreadExecution16nextProcPriorityE"></span><span id="_CPPv2N18SimThreadExecution16nextProcPriorityE"></span><span id="SimThreadExecution::nextProcPriority__int64_t"></span><span class="target" id="class_sim_thread_execution_1ab5a87bc91b39ed07eb855b760bca2df1"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nextProcPriority</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution16nextProcPriorityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Priority level for the next process </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution11selfInitNowE">
+<span id="_CPPv3N18SimThreadExecution11selfInitNowE"></span><span id="_CPPv2N18SimThreadExecution11selfInitNowE"></span><span id="SimThreadExecution::selfInitNow__b"></span><span class="target" id="class_sim_thread_execution_1a169db192ab9b7e54076ad2a304ea80e9"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">selfInitNow</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution11selfInitNowE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag requesting self init. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution12crossInitNowE">
+<span id="_CPPv3N18SimThreadExecution12crossInitNowE"></span><span id="_CPPv2N18SimThreadExecution12crossInitNowE"></span><span id="SimThreadExecution::crossInitNow__b"></span><span class="target" id="class_sim_thread_execution_1a8dd24f0258370dea1238854129ca6574"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">crossInitNow</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution12crossInitNowE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag requesting cross-init. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution8resetNowE">
+<span id="_CPPv3N18SimThreadExecution8resetNowE"></span><span id="_CPPv2N18SimThreadExecution8resetNowE"></span><span id="SimThreadExecution::resetNow__b"></span><span class="target" id="class_sim_thread_execution_1a385c3bf1681dbc863b3b401237d0c6e5"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetNow</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution8resetNowE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag requesting that the thread execute reset. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution15threadExceptionE">
+<span id="_CPPv3N18SimThreadExecution15threadExceptionE"></span><span id="_CPPv2N18SimThreadExecution15threadExceptionE"></span><span id="SimThreadExecution::threadException__std::exception_ptr"></span><span class="target" id="class_sim_thread_execution_1ae2fb915a33b6903441900ff9d8e2131b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">exception_ptr</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadException</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution15threadExceptionE" title="Link to this definition"></a><br /></dt>
+<dd><p>Exception pointer for thread errors </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution13threadRunningE">
+<span id="_CPPv3N18SimThreadExecution13threadRunningE"></span><span id="_CPPv2N18SimThreadExecution13threadRunningE"></span><span id="SimThreadExecution::threadRunning__b"></span><span class="target" id="class_sim_thread_execution_1a40d95a53c47a514226f7536ad11f14c8"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadRunning</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution13threadRunningE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag that will allow for easy concurrent locking. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution15terminateThreadE">
+<span id="_CPPv3N18SimThreadExecution15terminateThreadE"></span><span id="_CPPv2N18SimThreadExecution15terminateThreadE"></span><span id="SimThreadExecution::terminateThread__b"></span><span class="target" id="class_sim_thread_execution_1a880f7d0002f483faefdd1ee91a77d2f8"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">terminateThread</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution15terminateThreadE" title="Link to this definition"></a><br /></dt>
+<dd><p>Flag that indicates that it is time to take thread down. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution16parentThreadLockE">
+<span id="_CPPv3N18SimThreadExecution16parentThreadLockE"></span><span id="_CPPv2N18SimThreadExecution16parentThreadLockE"></span><span id="SimThreadExecution::parentThreadLock__BSKSemaphore"></span><span class="target" id="class_sim_thread_execution_1aaf9f88693d86054ad60e461b59842ab9"></span><a class="reference internal" href="../utilities/bskSemaphore.html#_CPPv412BSKSemaphore" title="BSKSemaphore"><span class="n"><span class="pre">BSKSemaphore</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentThreadLock</span></span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution16parentThreadLockE" title="Link to this definition"></a><br /></dt>
+<dd><p>Lock that ensures parent thread won’t proceed. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution14selfThreadLockE">
+<span id="_CPPv3N18SimThreadExecution14selfThreadLockE"></span><span id="_CPPv2N18SimThreadExecution14selfThreadLockE"></span><span id="SimThreadExecution::selfThreadLock__BSKSemaphore"></span><span class="target" id="class_sim_thread_execution_1a3ccdebbc7e3d9adfd265c40ff9a11560"></span><a class="reference internal" href="../utilities/bskSemaphore.html#_CPPv412BSKSemaphore" title="BSKSemaphore"><span class="n"><span class="pre">BSKSemaphore</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">selfThreadLock</span></span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution14selfThreadLockE" title="Link to this definition"></a><br /></dt>
+<dd><p>Lock that ensures this thread only reaches allowed time. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution11processListE">
+<span id="_CPPv3N18SimThreadExecution11processListE"></span><span id="_CPPv2N18SimThreadExecution11processListE"></span><span id="SimThreadExecution::processList__std::vector:SysProcessP:"></span><span class="target" id="class_sim_thread_execution_1a55315681672438579f2dc04ad27ef20d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="sys_process.html#_CPPv410SysProcess" title="SysProcess"><span class="n"><span class="pre">SysProcess</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">processList</span></span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution11processListE" title="Link to this definition"></a><br /></dt>
+<dd><p>List of processes associated with thread. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution13initReadyLockE">
+<span id="_CPPv3N18SimThreadExecution13initReadyLockE"></span><span id="_CPPv2N18SimThreadExecution13initReadyLockE"></span><span id="SimThreadExecution::initReadyLock__std::mutex"></span><span class="target" id="class_sim_thread_execution_1a757d1ce0d7341c32d1244badefd30acb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">mutex</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initReadyLock</span></span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution13initReadyLockE" title="Link to this definition"></a><br /></dt>
+<dd><p>Lock function to ensure runtime locks are configured. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18SimThreadExecution11initHoldVarE">
+<span id="_CPPv3N18SimThreadExecution11initHoldVarE"></span><span id="_CPPv2N18SimThreadExecution11initHoldVarE"></span><span id="SimThreadExecution::initHoldVar__std::condition_variable"></span><span class="target" id="class_sim_thread_execution_1ac9d126e756dd900f52907ca7a958e02c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">condition_variable</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initHoldVar</span></span></span><a class="headerlink" href="#_CPPv4N18SimThreadExecution11initHoldVarE" title="Link to this definition"></a><br /></dt>
+<dd><p>Conditional variable used to prevent race conditions. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv48SimModel">
+<span id="_CPPv38SimModel"></span><span id="_CPPv28SimModel"></span><span id="SimModel"></span><span class="target" id="class_sim_model"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SimModel</span></span></span><a class="headerlink" href="#_CPPv48SimModel" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sim_model.h&gt;</em></div>
+<p>The top-level container for an entire simulation. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel8SimModelEv">
+<span id="_CPPv3N8SimModel8SimModelEv"></span><span id="_CPPv2N8SimModel8SimModelEv"></span><span id="SimModel::SimModel"></span><span class="target" id="class_sim_model_1a611b900776f23877a3eab1cde6f1c803"></span><span class="sig-name descname"><span class="n"><span class="pre">SimModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel8SimModelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>The <a class="reference internal" href="#class_sim_model"><span class="std std-ref">SimModel</span></a> constructor. </p>
+<p>This Constructor is used to initialize the top-level sim model. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModelD0Ev">
+<span id="_CPPv3N8SimModelD0Ev"></span><span id="_CPPv2N8SimModelD0Ev"></span><span id="SimModel::~SimModel"></span><span class="target" id="class_sim_model_1a510e5563113c7b34235f8ac8f6f17690"></span><span class="sig-name descname"><span class="n"><span class="pre">~SimModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModelD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#class_sim_model"><span class="std std-ref">SimModel</span></a> destructorS. </p>
+<p>Nothing to destroy really </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel18selfInitSimulationEv">
+<span id="_CPPv3N8SimModel18selfInitSimulationEv"></span><span id="_CPPv2N8SimModel18selfInitSimulationEv"></span><span id="SimModel::selfInitSimulation"></span><span class="target" id="class_sim_model_1a4054d6b12154b29ae31fd19e24182ad0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">selfInitSimulation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel18selfInitSimulationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to initialize all added Tasks. </p>
+<p>This method goes through all of the processes in the simulation, all of the tasks within each process, and all of the models within each task and self-inits them. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK8SimModel19resetInitSimulationEv">
+<span id="_CPPv3NK8SimModel19resetInitSimulationEv"></span><span id="_CPPv2NK8SimModel19resetInitSimulationEv"></span><span id="SimModel::resetInitSimulationC"></span><span class="target" id="class_sim_model_1a1a0e8247e4c436c5c8ed4da8bd6379f4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetInitSimulation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK8SimModel19resetInitSimulationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Method to reset all added tasks. </p>
+<p>This method goes through all of the processes in the simulation, all of the tasks within each process, and all of the models within each task and resets them. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel13StepUntilStopE8uint64_t7int64_t">
+<span id="_CPPv3N8SimModel13StepUntilStopE8uint64_t7int64_t"></span><span id="_CPPv2N8SimModel13StepUntilStopE8uint64_t7int64_t"></span><span id="SimModel::StepUntilStop__uint64_t.int64_t"></span><span class="target" id="class_sim_model_1a5c3116c212cd092d06a80fcb8623951d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StepUntilStop</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">SimStopTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stopPri</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel13StepUntilStopE8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Step simulation until stop time uint64_t reached. </p>
+<p>This method steps the simulation until the specified stop time and stop priority have been reached. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SimStopTime</strong> – Nanoseconds to step the simulation for </p></li>
+<li><p><strong>stopPri</strong> – The priority level below which the sim won’t go </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel19SingleStepProcessesE7int64_t">
+<span id="_CPPv3N8SimModel19SingleStepProcessesE7int64_t"></span><span id="_CPPv2N8SimModel19SingleStepProcessesE7int64_t"></span><span id="SimModel::SingleStepProcesses__int64_t"></span><span class="target" id="class_sim_model_1ae18704e320e709c850574423501be333"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SingleStepProcesses</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stopPri</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel19SingleStepProcessesE7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Step only the next Task in the simulation. </p>
+<p>This method steps all of the processes forward to the current time. It also increments the internal simulation time appropriately as the simulation processes are triggered </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stopPri</strong> – The priority level below which the sim won’t go </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel13addNewProcessEP10SysProcess">
+<span id="_CPPv3N8SimModel13addNewProcessEP10SysProcess"></span><span id="_CPPv2N8SimModel13addNewProcessEP10SysProcess"></span><span id="SimModel::addNewProcess__SysProcessP"></span><span class="target" id="class_sim_model_1ab8b9e34277edf0f2126700686c4faedc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addNewProcess</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="sys_process.html#_CPPv410SysProcess" title="SysProcess"><span class="n"><span class="pre">SysProcess</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newProc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel13addNewProcessEP10SysProcess" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows the user to attach a process to the simulation for execution. Note that the priority level of the process determines what order it gets called in: higher priorities are called before lower priorities. If priorities are the same, the proc added first goes first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>newProc</strong> – the new process to be added </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel18addProcessToThreadEP10SysProcess8uint64_t">
+<span id="_CPPv3N8SimModel18addProcessToThreadEP10SysProcess8uint64_t"></span><span id="_CPPv2N8SimModel18addProcessToThreadEP10SysProcess8uint64_t"></span><span id="SimModel::addProcessToThread__SysProcessP.uint64_t"></span><span class="target" id="class_sim_model_1a1d613ac2d851eb3620f2117485e59c6e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addProcessToThread</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="sys_process.html#_CPPv410SysProcess" title="SysProcess"><span class="n"><span class="pre">SysProcess</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newProc</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">threadSel</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel18addProcessToThreadEP10SysProcess8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method allows the user to specifically place a given process onto a specific thread index based on the currently active thread-pool. This is the mechanism that a user has to specifically spread out processing in a way that makes the best sense to them. Otherwise it happens in the round-robin manner described in the allocate-remaining-processes method. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>newProc</strong> – The process that needs to get emplaced on the specified thread </p></li>
+<li><p><strong>threadSel</strong> – The thread index in the thread-pool that the process gets added to </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel15ResetSimulationEv">
+<span id="_CPPv3N8SimModel15ResetSimulationEv"></span><span id="_CPPv2N8SimModel15ResetSimulationEv"></span><span id="SimModel::ResetSimulation"></span><span class="target" id="class_sim_model_1a882a554253a92500efe21ab01a7e84fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResetSimulation</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel15ResetSimulationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset simulation back to zero. </p>
+<p>This method is used to reset a simulation to time 0. It sets all process and tasks back to the initial call times. It clears all message logs. However, it does not clear all message buffers and does not reset individual models. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK8SimModel21clearProcsFromThreadsEv">
+<span id="_CPPv3NK8SimModel21clearProcsFromThreadsEv"></span><span id="_CPPv2NK8SimModel21clearProcsFromThreadsEv"></span><span id="SimModel::clearProcsFromThreadsC"></span><span class="target" id="class_sim_model_1af4031d5a282afb29759af30a94fdcb99"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearProcsFromThreads</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK8SimModel21clearProcsFromThreadsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method removes all of the active processes from the “thread pool” that has been established. It is needed during init and if sims are restarted or threads need to be reallocated. Otherwise it is basically a no-op. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel12resetThreadsE8uint64_t">
+<span id="_CPPv3N8SimModel12resetThreadsE8uint64_t"></span><span id="_CPPv2N8SimModel12resetThreadsE8uint64_t"></span><span id="SimModel::resetThreads__uint64_t"></span><span class="target" id="class_sim_model_1aaceb5cecd0a4d8f10dcfcdff69fe609c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetThreads</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">threadCount</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel12resetThreadsE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides an easy mechanism for allowing the user to change the number of concurrent threads that will be executing in a given simulation. You tell the method how many threads you want in the system, it clears out any existing thread data, and then allocates fresh threads for the runtime. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>threadCount</strong> – number of threads </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel13deleteThreadsEv">
+<span id="_CPPv3N8SimModel13deleteThreadsEv"></span><span id="_CPPv2N8SimModel13deleteThreadsEv"></span><span id="SimModel::deleteThreads"></span><span class="target" id="class_sim_model_1a5e4106f716aa07e4421ef9333e44b98f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deleteThreads</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel13deleteThreadsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method walks through all of the child threads that have been created in the system, detaches them from the architecture, and then cleans up any memory that has been allocated to them in the architecture. It just ensures clean shutdown of any existing runtime stuff. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel20assignRemainingProcsEv">
+<span id="_CPPv3N8SimModel20assignRemainingProcsEv"></span><span id="_CPPv2N8SimModel20assignRemainingProcsEv"></span><span id="SimModel::assignRemainingProcs"></span><span class="target" id="class_sim_model_1afa896824d31f013c277ec37753468437"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">assignRemainingProcs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8SimModel20assignRemainingProcsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides a seamless allocation of processes onto active threads for any processes that haven’t already been placed onto a thread. If the user has allocated N threads, this method just walks through those threads and pops all of the processes onto those threads in a round-robin fashion. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK8SimModel14getThreadCountEv">
+<span id="_CPPv3NK8SimModel14getThreadCountEv"></span><span id="_CPPv2NK8SimModel14getThreadCountEv"></span><span id="SimModel::getThreadCountC"></span><span class="target" id="class_sim_model_1a3abd547d494410d6dc4aa10507b8dcca"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getThreadCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK8SimModel14getThreadCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>returns the number of threads used </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel9bskLoggerE">
+<span id="_CPPv3N8SimModel9bskLoggerE"></span><span id="_CPPv2N8SimModel9bskLoggerE"></span><span id="SimModel::bskLogger__BSKLogger"></span><span class="target" id="class_sim_model_1aed9344a56834846e01ab06d1bba4c872"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N8SimModel9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel11processListE">
+<span id="_CPPv3N8SimModel11processListE"></span><span id="_CPPv2N8SimModel11processListE"></span><span id="SimModel::processList__std::vector:SysProcessP:"></span><span class="target" id="class_sim_model_1ad7f062d45c8f806b53988a829b1359c0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="sys_process.html#_CPPv410SysProcess" title="SysProcess"><span class="n"><span class="pre">SysProcess</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">processList</span></span></span><a class="headerlink" href="#_CPPv4N8SimModel11processListE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; List of processes we’ve created </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel10threadListE">
+<span id="_CPPv3N8SimModel10threadListE"></span><span id="_CPPv2N8SimModel10threadListE"></span><span id="SimModel::threadList__std::vector:SimThreadExecutionP:"></span><span class="target" id="class_sim_model_1af934c33478a2b9f0747957847e9b63d6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv418SimThreadExecution" title="SimThreadExecution"><span class="n"><span class="pre">SimThreadExecution</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">threadList</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N8SimModel10threadListE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Array of threads that we’re running on </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel14SimulationNameE">
+<span id="_CPPv3N8SimModel14SimulationNameE"></span><span id="_CPPv2N8SimModel14SimulationNameE"></span><span id="SimModel::SimulationName__ss"></span><span class="target" id="class_sim_model_1a95b4d0fa3d0dacf77d77a7f7e8f8d863"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SimulationName</span></span></span><a class="headerlink" href="#_CPPv4N8SimModel14SimulationNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Identifier for Sim </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel12CurrentNanosE">
+<span id="_CPPv3N8SimModel12CurrentNanosE"></span><span id="_CPPv2N8SimModel12CurrentNanosE"></span><span id="SimModel::CurrentNanos__uint64_t"></span><span class="target" id="class_sim_model_1a660408e1fa80f3f10511a7c7607f96e8"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CurrentNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N8SimModel12CurrentNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Current sim time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel12NextTaskTimeE">
+<span id="_CPPv3N8SimModel12NextTaskTimeE"></span><span id="_CPPv2N8SimModel12NextTaskTimeE"></span><span id="SimModel::NextTaskTime__uint64_t"></span><span class="target" id="class_sim_model_1a2195fb8d34f3b792973235188696f0ab"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NextTaskTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N8SimModel12NextTaskTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] time for the next Task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N8SimModel16nextProcPriorityE">
+<span id="_CPPv3N8SimModel16nextProcPriorityE"></span><span id="_CPPv2N8SimModel16nextProcPriorityE"></span><span id="SimModel::nextProcPriority__int64_t"></span><span class="target" id="class_sim_model_1a41140caca6d27ed1ec5ca53d826c3f2e"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nextProcPriority</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N8SimModel16nextProcPriorityE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Priority level for the next process </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="system_model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sys_process.html" class="btn btn-neutral float-right" title="sys_process" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

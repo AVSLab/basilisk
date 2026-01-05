@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAttitudeFeedbackRW &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioAttitudeFeedbackRW</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioAttitudeFeedbackRW</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. raw:: html</span>
+
+<span class="sd">    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/wyDw7NEanqk&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the Earth.</span>
+<span class="sd">This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to</span>
+<span class="sd">illustrate how the Reaction Wheel (RW) state effector can be added to the rigid :ref:`spacecraft` hub,</span>
+<span class="sd">and what flight algorithm module is used to control these RWs.</span>
+
+<span class="sd">The first setup runs the RW control to produce a desired set of RW motor torques</span>
+<span class="sd">which are then connected directly to the RW device input states.  The second setup illustrates</span>
+<span class="sd">how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioAttitudeFeedbackRW.py</span>
+
+<span class="sd">The simulation layout is shown in the following illustration.  A single simulation process is created</span>
+<span class="sd">which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm</span>
+<span class="sd">modules.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioAttitudeFeedbackRW.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">When the simulation completes several plots are shown for the MRP attitude history, the rate</span>
+<span class="sd">tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.</span>
+
+<span class="sd">The fundamental simulation setup is the same as the one used in</span>
+<span class="sd">:ref:`scenarioAttitudeFeedback`.</span>
+<span class="sd">The dynamics simulation is setup using a :ref:`Spacecraft` module to which an Earth gravity</span>
+<span class="sd">effector is attached.  The simple navigation module is still used to output the inertial attitude,</span>
+<span class="sd">angular rate, as well as position and velocity message. The simulation is setup to run in a single</span>
+<span class="sd">process again.  If the flight algorithms and simulation tasks are to run at different rates, then see</span>
+<span class="sd">:ref:`scenarioAttitudeFeedback2T` on how to setup a 2 thread simulation.</span>
+
+<span class="sd">How to Add RW Devices to the Spacecraft Simulation</span>
+<span class="sd">--------------------------------------------------</span>
+
+<span class="sd">For the spacecraft simulation side of this script, the new element is adding RW effectors to the</span>
+<span class="sd">the rigid spacecraft hub.  The support macro ``simIncludeRW.py`` provides several convenient tools to facilitate</span>
+<span class="sd">this simulated RW setup process.  This script allows the user to readily create RWs from a database of</span>
+<span class="sd">public RW specifications, customize them if needed, and add them to the :ref:`spacecraft` module.</span>
+
+<span class="sd">The first task is to create a fresh instance of the RW factory class ``rwFactory()``.  This factory is able</span>
+<span class="sd">to create a list of RW devices, and return copies that can easily be manipulated and customized if needed.</span>
+<span class="sd">The next step in this code is to store the correct ``RWModel`` state.  This can be either a balanced wheel,</span>
+<span class="sd">a wheel with a simple jitter model, or a wheel with a fully coupled model.</span>
+
+
+<span class="sd">The next step in this simulation setup is to use create() to include a particular RW devices.</span>
+<span class="sd">The `rwFactory` class in :ref:`simIncludeRW` contains several</span>
+<span class="sd">public specifications of RW devices which can be accessed by specifying the wheel name, ``Honeywell_HR16``</span>
+<span class="sd">in this case.  The  2nd required argument is the spin axis :math:`\hat{\mathbf g}_B`.  It is a unit</span>
+<span class="sd">vector expressed in the :math:`\cal B`-frame.  The remaining arguments are all optional.  In this simulation</span>
+<span class="sd">each RW is given a different initial RW spin :math:`\Omega`</span>
+<span class="sd">in units of RPMs.  The 3rd RW specifies the body-relative location of the RW center of mass.  The</span>
+<span class="sd">other two RWs use a default value which is a zero vector.</span>
+<span class="sd">This last position vector is only used if an off-balanced RW device is being modeled.</span>
+
+<span class="sd">Each RW device has several default options that can be customized if needed.  For example,</span>
+<span class="sd">the ``Honeywell_HR16`` comes in three different momentum storage configurations.  When calling the</span>
+<span class="sd">`create()` command, the desired storage capacity must be specified through the ``maxMomentum`` argument.</span>
+
+<span class="sd">The following table provides a comprehensive list of all the optional arguments of the ``create()``</span>
+<span class="sd">command.  This table list the arguments, default values, as well as expected units.</span>
+
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">|  Argument           | Units | Type     | Description                            | Default            |</span>
+<span class="sd">+=====================+=======+==========+========================================+====================+</span>
+<span class="sd">| RWModel             |       | String   | flag indicating the RW dynamical model.| ``BalancedWheels`` |</span>
+<span class="sd">|                     |       |          | Options are ``BalancedWheels``,        |                    |</span>
+<span class="sd">|                     |       |          | ``JitterSimple`` and                   |                    |</span>
+<span class="sd">|                     |       |          | ``JitterFullyCoupled``                 |                    |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| Omega               | RPM   | Float    | initial Wheel speed                    | 0.0                |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| maxMomentum         | Nms   | Float    | maximum RW angular momentum storage    | 0.0                |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| useRWfriction       |       | Bool     | flag to turn on RW wheel friction      | False              |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| useMinTorque        |       | Bool     | flag to turn on a min. RW torque       | False              |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| useMaxTorque        |       | Bool     | flag to turn on RW torque saturation   | True               |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| linearFrictionRatio |       | Float    | Coulomb static friction value to model | -1 (Off)           |</span>
+<span class="sd">|                     |       |          | stickage, negative values turn off this|                    |</span>
+<span class="sd">|                     |       |          | feature                                |                    |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| rWB_B               | m     | Float(3) | RW center of mass location relative to | [0.0, 0.0, 0.0]    |</span>
+<span class="sd">|                     |       |          | B, in :math`\cal B`-frame components   |                    |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+<span class="sd">| label               |       | String   | unique device label, must be not exceed| RWi                |</span>
+<span class="sd">|                     |       |          | 10 characters.  If not provided, the   |                    |</span>
+<span class="sd">|                     |       |          | function will auto-generate names using|                    |</span>
+<span class="sd">|                     |       |          | RWi where i is the RW wheel index      |                    |</span>
+<span class="sd">|                     |       |          | starting with 1.                       |                    |</span>
+<span class="sd">+---------------------+-------+----------+----------------------------------------+--------------------+</span>
+
+<span class="sd">The command ``addToSpacecraft()`` adds all the created RWs to the :ref:`spacecraft` module.  The final step</span>
+<span class="sd">is as always to add the vector of RW effectors (called ``rwStateEffector`` above) to the list of simulation</span>
+<span class="sd">tasks.  However, note that the dynamic effector should be evaluated before the :ref:`spacecraft` module,</span>
+<span class="sd">which is why it is being added with a higher priority than the ``scObject`` task.  Generally speaking</span>
+<span class="sd">we should have the execution order::</span>
+
+<span class="sd">    effectors -&gt; dynamics -&gt; sensors</span>
+
+
+<span class="sd">If you want to configure or customize the RWs, the ``rwFactor()`` class is very convenient. Assume you want</span>
+<span class="sd">to override the default value of the maximum RW speed from 6000RPM to 10,000RPM.  After declaring the RW</span>
+<span class="sd">and keeping a copy named RW1, ``Omega_max`` stage is changed using::</span>
+
+<span class="sd">    RW1.Omega_max = 10000.0*macros.RPM</span>
+
+<span class="sd">These changes must be made before adding the RWs to the spacecraft.  If the `RW1` handler is not</span>
+<span class="sd">stored when the RW is create, any setup RW devices can be recalled through the device label.</span>
+<span class="sd">For example, the above modification could also be done with::</span>
+
+<span class="sd">    rwFactory.rwList[&#39;RW1&#39;].Omega_max = 10000.0*macros.RPM</span>
+
+<span class="sd">Flight Algorithm Changes to Control RWs</span>
+<span class="sd">---------------------------------------</span>
+
+<span class="sd">The general flight algorithm setup is the same as in the earlier simulation script. Here we</span>
+<span class="sd">use again the :ref:`inertial3D` guidance module, the :ref:`attTrackingError` module to evaluate the</span>
+<span class="sd">tracking error states, and the :ref:`mrpFeedback` module to provide the desired :math:`{\mathbf L}_r`</span>
+<span class="sd">control torque vector.  In this simulation we want the MRP attitude control module to take</span>
+<span class="sd">advantage of the RW spin information.  This is achieved by adding the 2 extra lines::</span>
+
+<span class="sd">    mrpControl.rwParamsInMsg.subscribeTo(rwParamMsg)</span>
+<span class="sd">    mrpControl.rwSpeedsInMsg.subscribeTo(rwSpeedsMsg)</span>
+
+<span class="sd">The first line specifies the RW configuration flight message name, and the second name</span>
+<span class="sd">connects the RW speed output message as an input message to this control module.  This simulates</span>
+<span class="sd">the RW speed information being sensed and returned to this algorithm.  This message names</span>
+<span class="sd">are not provided, then the BSK control modules automatically turn off any RW gyroscopic</span>
+<span class="sd">compensation.</span>
+
+<span class="sd">Instead of directly simulating this control torque vector, new</span>
+<span class="sd">algorithm modules are required to first map :math:`{\mathbf L}_r` on the set of RW motor torques</span>
+<span class="sd">:math:`u_B`.  This is achieved by adding the :ref:`rwMotorTorque` module.</span>
+<span class="sd">Note that the output vector of RW motor torques :math:`u_B` is set to connect with</span>
+<span class="sd">the RW state effector command input message.  Further, this module inputs the typical</span>
+<span class="sd">vehicle configuration message, as well as a message containing the flight algorithm</span>
+<span class="sd">information of the RW devices.  This torque mapping module can map the full 3D :math:`{\mathbf L}_r`</span>
+<span class="sd">vector onto RW motor torques, or only a subset.  This is specified through the ``controlAxes_B`` variable</span>
+<span class="sd">which specifies up to 3 orthogonal axes to be controlled.  In this simulation the full 3D vector is</span>
+<span class="sd">mapped onto motor torques.</span>
+
+<span class="sd">The flight algorithm needs to know how many RW devices are on the spacecraft and what their</span>
+<span class="sd">spin axis :math:`\hat{\mathbf g}_B` are.  This is set through a flight software message that is read</span>
+<span class="sd">in by flight algorithm modules that need this info.  Two options are shown in the code how to achieve this.</span>
+
+<span class="sd">First, the required flight RW configuration message can be written using</span>
+<span class="sd">a separate support macros called ``fswSetupRW.py``.</span>
+<span class="sd">The a ``clearSetup()`` should be called first to clear out any pre-existing RW devices from an</span>
+<span class="sd">earlier simulation run.  Next, the script above uses the same RW information as what the simulation</span>
+<span class="sd">uses.  In this configuration we are simulating perfect RW device knowledge.  If imperfect RW knowledge</span>
+<span class="sd">is to be simulated, then the user would input the desired flight states rather than the true</span>
+<span class="sd">simulation states.  The support macro ``writeConfigMessage()`` creates the required RW flight configuration</span>
+<span class="sd">message.</span>
+
+<span class="sd">Second, the ``rwFactory`` class method ``getConfigMessage()`` can be used to extract the desired</span>
+<span class="sd">:ref:`RWArrayConfigMsgPayload` message.  Using this approach an exact copy is ensured between the FSW and</span>
+<span class="sd">simulation RW configuration states, but it is less convenient in introduce differences.</span>
+
+<span class="sd">Setting up an Analog RW Interface Module</span>
+<span class="sd">----------------------------------------</span>
+
+<span class="sd">The scenario illustrates how to setup a RW analog I/O module.  This is illustrated in the updated</span>
+<span class="sd">flow diagram illustration.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioAttitudeFeedbackRWc2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The default interface voltage output name will connect with the default RW</span>
+<span class="sd">input message name.  Naturally, these can be customized if needed.  The one parameter</span>
+<span class="sd">that must be set is the voltage to torque conversion gain of the electric motor being modeled.</span>
+
+<span class="sd">On the FSW side, the commanded motor torques must be directed towards a new module that converts</span>
+<span class="sd">the required torque to a commanded voltage.  The first step is to re-direct the</span>
+<span class="sd">rWMotorTorque() output to not directly be the input to the RW SIM devices, but rather the</span>
+<span class="sd">input to the RW voltage command module:</span>
+
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, useJitterSimple = False, useRWVoltageIO = False</span>
+
+<span class="sd">Note that in the RW motor torque plot both the required control torque :math:`\hat u_B` and the true</span>
+<span class="sd">motor torque :math:`u_B` are shown.  This illustrates that with this maneuver the RW devices are being</span>
+<span class="sd">saturated, and the attitude still eventually stabilizes.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW100.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW200.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW300.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, useJitterSimple = True, useRWVoltageIO = False</span>
+
+<span class="sd">Here the simple RW jitter model is engaged for each of the RWs. Change this option before the RW is created.</span>
+<span class="sd">As this is set before any of the RW created in this</span>
+<span class="sd">scenario, all the RWs have jitter engaged if this &#39;`useJitterSimple`&#39; flag is set.</span>
+<span class="sd">The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to</span>
+<span class="sd">the balanced RW case.  But there is a distinct numerical difference.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW110.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW210.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW310.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, useJitterSimple = False, useRWVoltageIO = True</span>
+
+<span class="sd">Here the simple RW jitter model is engaged for each of the RWs. Change this option before the RW is created.</span>
+<span class="sd">As this is set before any of the RW created in this</span>
+<span class="sd">scenario, all the RWs have jitter engaged if this &#39;`useJitterSimple`&#39; flag is set.</span>
+<span class="sd">The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to</span>
+<span class="sd">the balanced RW case.  But there is a distinct numerical difference.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW101.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW201.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAttitudeFeedbackRW301.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Integrated test of the spacecraft(), RWs, simpleNav() and</span>
+<span class="c1">#           mrpFeedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit</span>
+<span class="c1">#           while using the RWs to do the attitude control actuation.</span>
+<span class="c1"># Author:   Hanspeter Schaub</span>
+<span class="c1"># Creation Date:  Jan. 7, 2017</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1"># The path to the location of Basilisk</span>
+<span class="c1"># Used to get the location of supporting data.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">mrpFeedback</span><span class="p">,</span> <span class="n">attTrackingError</span><span class="p">,</span>
+                                    <span class="n">inertial3D</span><span class="p">,</span> <span class="n">rwMotorTorque</span><span class="p">,</span> <span class="n">rwMotorVoltage</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactionWheelStateEffector</span><span class="p">,</span> <span class="n">motorVoltageInterface</span><span class="p">,</span> <span class="n">simpleNav</span><span class="p">,</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">fswSetupRW</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span>
+                                <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simIncludeGravBody</span><span class="p">,</span>
+                                <span class="n">simIncludeRW</span><span class="p">,</span> <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">vizSupport</span><span class="p">)</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="c1"># Plotting functions</span>
+<div class="viewcode-block" id="plot_attitude_error">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_attitude_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the attitude errors.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\sigma_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Attitude Error $\sigma_{B/R}$&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_rw_cmd_torque">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_rw_cmd_torque">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rw_cmd_torque</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">,</span> <span class="n">numRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the RW command torques.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="s1">&#39;--&#39;</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\hat u_{s,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Motor Torque (Nm)&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_rw_motor_torque">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_rw_motor_torque">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rw_motor_torque</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">,</span> <span class="n">dataRW</span><span class="p">,</span> <span class="n">numRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the RW actual motor torques.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="s1">&#39;--&#39;</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\hat u_{s,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataRW</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$u_{s,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Motor Torque (Nm)&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_rate_error">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_rate_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the body angular velocity rate tracking errors.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_{BR,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate Tracking Error (rad/s) &#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_rw_speeds">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_rw_speeds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">,</span> <span class="n">numRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the RW spin rates.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\Omega_{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Speed (RPM) &#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_rw_voltages">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.plot_rw_voltages">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rw_voltages</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataVolt</span><span class="p">,</span> <span class="n">numRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the RW voltage inputs.&quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataVolt</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">numRW</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$V_{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;RW Voltage (V)&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioAttitudeFeedbackRW.html#scenarioAttitudeFeedbackRW.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">useJitterSimple</span><span class="p">,</span> <span class="n">useRWVoltageIO</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        useJitterSimple (bool): Specify if the RW simple jitter model should be included</span>
+<span class="sd">        useRWVoltageIO (bool): Specify if the RW voltage interface should be simulated.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># set the simulation time variable used later on</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">.1</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bsk-Sat&quot;</span>
+    <span class="c1"># define the simulation inertia</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mf">900.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span>
+         <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">600.</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># kg - spacecraft mass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># m - position vector of body-fixed point B relative to CM</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">np2EigenMatrix3d</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="c1"># setup Earth Gravity Body</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># add RW devices</span>
+    <span class="c1">#</span>
+    <span class="c1"># Make a fresh RW factory instance, this is critical to run multiple times</span>
+    <span class="n">rwFactory</span> <span class="o">=</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">()</span>
+
+    <span class="c1"># store the RW dynamical model type</span>
+    <span class="n">varRWModel</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">BalancedWheels</span>
+    <span class="k">if</span> <span class="n">useJitterSimple</span><span class="p">:</span>
+        <span class="n">varRWModel</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">JitterSimple</span>
+
+    <span class="c1"># create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments</span>
+    <span class="n">RW1</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">100.</span>  <span class="c1"># RPM</span>
+                           <span class="p">,</span> <span class="n">RWModel</span><span class="o">=</span><span class="n">varRWModel</span>
+                           <span class="p">)</span>
+    <span class="n">RW2</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">200.</span>  <span class="c1"># RPM</span>
+                           <span class="p">,</span> <span class="n">RWModel</span><span class="o">=</span><span class="n">varRWModel</span>
+                           <span class="p">)</span>
+    <span class="n">RW3</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;Honeywell_HR16&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">maxMomentum</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">300.</span>  <span class="c1"># RPM</span>
+                           <span class="p">,</span> <span class="n">rWB_B</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>  <span class="c1"># meters</span>
+                           <span class="p">,</span> <span class="n">RWModel</span><span class="o">=</span><span class="n">varRWModel</span>
+                           <span class="p">)</span>
+    <span class="c1"># In this simulation the RW objects RW1, RW2 or RW3 are not modified further.  However, you can over-ride</span>
+    <span class="c1"># any values generate in the `.create()` process using for example RW1.Omega_max = 100. to change the</span>
+    <span class="c1"># maximum wheel speed.</span>
+
+    <span class="n">numRW</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">getNumOfDevices</span><span class="p">()</span>
+
+    <span class="c1"># create RW object container and tie to spacecraft object</span>
+    <span class="n">rwStateEffector</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">ReactionWheelStateEffector</span><span class="p">()</span>
+    <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;RW_cluster&quot;</span>
+    <span class="n">rwFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span> <span class="n">rwStateEffector</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># add RW object array to the simulation process.  This is required for the UpdateState() method</span>
+    <span class="c1"># to be called which logs the RW states</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwStateEffector</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useRWVoltageIO</span><span class="p">:</span>
+        <span class="n">rwVoltageIO</span> <span class="o">=</span> <span class="n">motorVoltageInterface</span><span class="o">.</span><span class="n">MotorVoltageInterface</span><span class="p">()</span>
+        <span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwVoltageInterface&quot;</span>
+
+        <span class="c1"># set module parameters(s)</span>
+        <span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">setGains</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span> <span class="o">/</span> <span class="mf">10.</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># [Nm/V] conversion gain</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwVoltageIO</span><span class="p">)</span>
+
+    <span class="c1"># add the simple Navigation sensor module.  This sets the SC attitude, rate, position</span>
+    <span class="c1"># velocity navigation message</span>
+    <span class="n">sNavObject</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNavObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the FSW algorithm tasks</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># setup inertial3D guidance module</span>
+    <span class="n">inertial3DObj</span> <span class="o">=</span> <span class="n">inertial3D</span><span class="o">.</span><span class="n">inertial3D</span><span class="p">()</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;inertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">inertial3DObj</span><span class="p">)</span>
+    <span class="n">inertial3DObj</span><span class="o">.</span><span class="n">sigma_R0N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>  <span class="c1"># set the desired inertial orientation</span>
+
+    <span class="c1"># setup the attitude tracking error evaluation module</span>
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;attErrorInertial3D&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+
+    <span class="c1"># setup the MRP Feedback control module</span>
+    <span class="n">mrpControl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;mrpFeedback&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">mrpControl</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">3.5</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># make value negative to turn off integral feedback</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">mrpControl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+    <span class="c1"># add module that maps the Lr control torque into the RW motor torques</span>
+    <span class="n">rwMotorTorqueObj</span> <span class="o">=</span> <span class="n">rwMotorTorque</span><span class="o">.</span><span class="n">rwMotorTorque</span><span class="p">()</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorTorque&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwMotorTorqueObj</span><span class="p">)</span>
+
+    <span class="c1"># Make the RW control all three body axes</span>
+    <span class="n">controlAxes_B</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="p">]</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">controlAxes_B</span> <span class="o">=</span> <span class="n">controlAxes_B</span>
+
+    <span class="k">if</span> <span class="n">useRWVoltageIO</span><span class="p">:</span>
+        <span class="n">fswRWVoltage</span> <span class="o">=</span> <span class="n">rwMotorVoltage</span><span class="o">.</span><span class="n">rwMotorVoltage</span><span class="p">()</span>
+        <span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;rwMotorVoltage&quot;</span>
+
+        <span class="c1"># Add test module to runtime call list</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">fswRWVoltage</span><span class="p">)</span>
+
+        <span class="c1"># set module parameters</span>
+        <span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">VMin</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Volts</span>
+        <span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">VMax</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># Volts</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span><span class="p">)</span>
+    <span class="n">rwMotorLog</span> <span class="o">=</span> <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">attErrorLog</span> <span class="o">=</span> <span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">snTransLog</span> <span class="o">=</span> <span class="n">sNavObject</span><span class="o">.</span><span class="n">transOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwMotorLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attErrorLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">snTransLog</span><span class="p">)</span>
+
+    <span class="c1"># To log the RW information, the following code is used:</span>
+    <span class="n">mrpLog</span> <span class="o">=</span> <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">mrpLog</span><span class="p">)</span>
+
+    <span class="c1"># A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged</span>
+    <span class="c1"># here to be plotted later on.  However, RW specific messages are also being created which</span>
+    <span class="c1"># contain a wealth of information.  The vector of messages is ordered as they were added.  This</span>
+    <span class="c1"># allows us to log RW specific information such as the actual RW motor torque being applied.</span>
+    <span class="n">rwLogs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">rwLogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwOutMsgs</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwLogs</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">useRWVoltageIO</span><span class="p">:</span>
+        <span class="n">rwVoltLog</span> <span class="o">=</span> <span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">voltageOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">rwVoltLog</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># create simulation messages</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># create the FSW vehicle configuration message</span>
+    <span class="c1"># use the same inertia in the FSW algorithm as in the simulation</span>
+    <span class="n">vehicleConfigOut</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">ISCPntB_B</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehicleConfigOut</span><span class="p">)</span>
+
+    <span class="c1"># Two options are shown to setup the FSW RW configuration message.</span>
+    <span class="c1"># First case: The FSW RW configuration message</span>
+    <span class="c1"># uses the same RW states in the FSW algorithm as in the simulation.  In the following code</span>
+    <span class="c1"># the fswSetupRW helper functions are used to individually add the RW states.  The benefit of this</span>
+    <span class="c1"># method of the second method below is that it is easy to vary the FSW parameters slightly from the</span>
+    <span class="c1"># simulation parameters.  In this script the second method is used, while the fist method is included</span>
+    <span class="c1"># to show both options.</span>
+    <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rw</span> <span class="ow">in</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">rwList</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">EigenVector3d2np</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">gsHat_B</span><span class="p">),</span> <span class="n">rw</span><span class="o">.</span><span class="n">Js</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">fswRwParamMsg1</span> <span class="o">=</span> <span class="n">fswSetupRW</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span>
+
+    <span class="c1"># Second case: If the exact same RW configuration states are to be used by the simulation and fsw, then the</span>
+    <span class="c1"># following helper function is convenient to extract the fsw RW configuration message from the</span>
+    <span class="c1"># rwFactory setup earlier.</span>
+    <span class="n">fswRwParamMsg2</span> <span class="o">=</span> <span class="n">rwFactory</span><span class="o">.</span><span class="n">getConfigMessage</span><span class="p">()</span>
+    <span class="n">fswRwParamMsg</span> <span class="o">=</span> <span class="n">fswRwParamMsg2</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   set initial Spacecraft States</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">10000000.0</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m   - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m/s - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>  <span class="c1"># sigma_CN_B</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.001</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.03</span><span class="p">]]</span>  <span class="c1"># rad/s - omega_CN_B</span>
+
+    <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following lines</span>
+    <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span>
+                                              <span class="c1"># , saveFile=fileName</span>
+                                              <span class="p">,</span> <span class="n">rwEffectorList</span><span class="o">=</span><span class="n">rwStateEffector</span>
+                                              <span class="p">)</span>
+    <span class="c1"># link messages</span>
+    <span class="n">sNavObject</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObject</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+    <span class="n">attError</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">inertial3DObj</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attError</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+    <span class="n">mrpControl</span><span class="o">.</span><span class="n">rwSpeedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="p">)</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+    <span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">mrpControl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">useRWVoltageIO</span><span class="p">:</span>
+        <span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">torqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">)</span>
+        <span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">rwParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRwParamMsg</span><span class="p">)</span>
+        <span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">motorVoltageInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">fswRWVoltage</span><span class="o">.</span><span class="n">voltageOutMsg</span><span class="p">)</span>
+        <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwVoltageIO</span><span class="o">.</span><span class="n">motorTorqueOutMsg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rwStateEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwMotorTorqueObj</span><span class="o">.</span><span class="n">rwMotorTorqueOutMsg</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="n">dataUsReq</span> <span class="o">=</span> <span class="n">rwMotorLog</span><span class="o">.</span><span class="n">motorTorque</span>
+    <span class="n">dataSigmaBR</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">sigma_BR</span>
+    <span class="n">dataOmegaBR</span> <span class="o">=</span> <span class="n">attErrorLog</span><span class="o">.</span><span class="n">omega_BR_B</span>
+    <span class="n">dataPos</span> <span class="o">=</span> <span class="n">snTransLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">dataOmegaRW</span> <span class="o">=</span> <span class="n">mrpLog</span><span class="o">.</span><span class="n">wheelSpeeds</span>
+
+    <span class="n">dataRW</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRW</span><span class="p">):</span>
+        <span class="n">dataRW</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rwLogs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">u_current</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">useRWVoltageIO</span><span class="p">:</span>
+        <span class="n">dataVolt</span> <span class="o">=</span> <span class="n">rwVoltLog</span><span class="o">.</span><span class="n">voltage</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">rwMotorLog</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+
+    <span class="n">plot_attitude_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataSigmaBR</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useJitterSimple</span><span class="p">))</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useRWVoltageIO</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plot_rw_motor_torque</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataUsReq</span><span class="p">,</span> <span class="n">dataRW</span><span class="p">,</span> <span class="n">numRW</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useJitterSimple</span><span class="p">))</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useRWVoltageIO</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plot_rate_error</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaBR</span><span class="p">)</span>
+    <span class="n">plot_rw_speeds</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataOmegaRW</span><span class="p">,</span> <span class="n">numRW</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useJitterSimple</span><span class="p">))</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useRWVoltageIO</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">useRWVoltageIO</span><span class="p">:</span>
+        <span class="n">plot_rw_voltages</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">dataVolt</span><span class="p">,</span> <span class="n">numRW</span><span class="p">)</span>
+        <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;4&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useJitterSimple</span><span class="p">))</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">useRWVoltageIO</span><span class="p">))</span>
+        <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="kc">False</span><span class="p">,</span>  <span class="c1"># useJitterSimple</span>
+        <span class="kc">True</span>  <span class="c1"># useRWVoltageIO</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,570 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioDebrisReorbitET &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioDebrisReorbitET</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioDebrisReorbitET</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">Demonstrates a basic debris reorbit scenario from geostationary orbit using the Electrostatic Tractor (ET) concept and how to visualize the simulation</span>
+<span class="sd">data in :ref:`Vizard &lt;vizard&gt;`. This scenario shows how to use the :ref:`etSphericalControl` module for ET relative</span>
+<span class="sd">motion control and also illustrates the usage of the :ref:`msmForceTorque` to calculate the electrostatic forces with the Multi-Sphere Method (MSM). This simulation simply uses a single sphere to represent each spacecraft. The servicing satellite is charged to a positive electric potential, while the other satellite (the debris) is uncontrolled and charged to a negative potential. The purpose of this script is to show an explicit method to</span>
+<span class="sd">setup the ET reorbit simulation, and also show how to store the Basilisk simulation data to be able to visualize</span>
+<span class="sd">both satellite&#39;s motions within the :ref:`Vizard &lt;vizard&gt;` application.</span>
+
+<span class="sd">The script is found in the folder ``src/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioDebrisReorbitET.py</span>
+
+<span class="sd">The simulation layout is shown in the following illustration.  A single simulation process is created</span>
+<span class="sd">which contains both the servicer spacecraft and the associated Flight Software (FSW) algorithm</span>
+<span class="sd">module, as well as the debris object.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioDebrisReorbitET.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">When the simulation completes several plots are shown for the separation distance of the two satellites, the inertial position of both spacecraft, and the semi-major axis change of the debris.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDebrisReorbitET1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDebrisReorbitET2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioDebrisReorbitET3.svg</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Basic simulation showing a servicer that reorbits a debris using electrostatic forces.</span>
+<span class="c1"># Author:   Julian Hammerl</span>
+<span class="c1"># Creation Date:  May 20, 2021</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">etSphericalControl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">simpleNav</span><span class="p">,</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">extForceTorque</span><span class="p">,</span> <span class="n">msmForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span>
+                                <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simIncludeGravBody</span><span class="p">,</span>
+                                <span class="n">unitTestSupport</span><span class="p">,</span> <span class="n">vizSupport</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizInterface</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># The path to the location of Basilisk</span>
+<span class="c1"># Used to get the location of supporting data.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioDebrisReorbitET.html#scenarioDebrisReorbitET.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setup parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">dynTaskName</span> <span class="o">=</span> <span class="s2">&quot;dynTask&quot;</span>
+    <span class="n">dynProcessName</span> <span class="o">=</span> <span class="s2">&quot;dynProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">dynProcessName</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">300.0</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># initialize servicer spacecraft object and set properties</span>
+    <span class="n">scObjectServicer</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;Servicer&quot;</span>
+    <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [kg] servicer mass</span>
+
+    <span class="c1"># initialize servicer spacecraft object and set properties</span>
+    <span class="n">scObjectDebris</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObjectDebris</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;DebrisSat&quot;</span>
+    <span class="n">scObjectDebris</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">2000.0</span>  <span class="c1"># kg</span>
+
+    <span class="c1"># add spacecraftPlus object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObjectServicer</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">scObjectDebris</span><span class="p">)</span>
+
+    <span class="c1"># Create VehicleConfig messages including the S/C mass (for etSphericalControl)</span>
+    <span class="n">servicerConfigOutData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">massSC</span><span class="o">=</span><span class="n">scObjectServicer</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">)</span>
+    <span class="n">servicerVehicleConfigMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">servicerConfigOutData</span><span class="p">)</span>
+
+    <span class="n">debrisConfigOutData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">(</span><span class="n">massSC</span><span class="o">=</span><span class="n">scObjectDebris</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span><span class="p">)</span>
+    <span class="n">debrisVehicleConfigMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">debrisConfigOutData</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="c1"># setup Earth Gravity Body</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># attach gravity model to spaceCraftPlus</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObjectServicer</span><span class="p">)</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObjectDebris</span><span class="p">)</span>
+
+    <span class="c1"># setup MSM module</span>
+    <span class="n">MSMmodule</span> <span class="o">=</span> <span class="n">msmForceTorque</span><span class="o">.</span><span class="n">MsmForceTorque</span><span class="p">()</span>
+    <span class="n">MSMmodule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;msmForceTorqueTag&quot;</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">MSMmodule</span><span class="p">)</span>
+
+    <span class="c1"># define electric potentials</span>
+    <span class="n">voltServicerInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VoltMsgPayload</span><span class="p">(</span><span class="n">voltage</span><span class="o">=</span><span class="mf">25000.</span><span class="p">)</span>
+  <span class="c1"># [V] servicer potential</span>
+    <span class="n">voltServicerInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VoltMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">voltServicerInMsgData</span><span class="p">)</span>
+
+    <span class="n">voltDebrisInMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VoltMsgPayload</span><span class="p">(</span><span class="n">voltage</span><span class="o">=-</span><span class="mf">25000.</span><span class="p">)</span>
+  <span class="c1"># [V] debris potential</span>
+    <span class="n">voltDebrisInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VoltMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">voltDebrisInMsgData</span><span class="p">)</span>
+
+    <span class="c1"># create a list of sphere body-fixed locations and associated radii</span>
+    <span class="n">spPosListServicer</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]</span>  <span class="c1"># one sphere located at origin of body frame</span>
+    <span class="n">rListServicer</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.</span><span class="p">]</span>  <span class="c1"># radius of sphere is 5m</span>
+    <span class="n">spPosListDebris</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]</span>  <span class="c1"># one sphere located at origin of body frame</span>
+    <span class="n">rListDebris</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.</span><span class="p">]</span>  <span class="c1"># radius of sphere is 4m</span>
+
+    <span class="c1"># add spacecraft to state</span>
+    <span class="n">MSMmodule</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObjectServicer</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">(</span><span class="n">rListServicer</span><span class="p">),</span>
+                                   <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">npList2EigenXdVector</span><span class="p">(</span><span class="n">spPosListServicer</span><span class="p">))</span>
+    <span class="n">MSMmodule</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObjectDebris</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">,</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">(</span><span class="n">rListDebris</span><span class="p">),</span>
+                                   <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">npList2EigenXdVector</span><span class="p">(</span><span class="n">spPosListDebris</span><span class="p">))</span>
+
+    <span class="c1"># subscribe input messages to module</span>
+    <span class="n">MSMmodule</span><span class="o">.</span><span class="n">voltInMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">voltServicerInMsg</span><span class="p">)</span>
+    <span class="n">MSMmodule</span><span class="o">.</span><span class="n">voltInMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">voltDebrisInMsg</span><span class="p">)</span>
+
+    <span class="c1"># setup extForceTorque module for Servicer</span>
+    <span class="c1"># the electrostatic force from the MSM module is read in through the messaging system</span>
+    <span class="n">extFTObjectServicer</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFTObjectServicer</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;eForceServicer&quot;</span>
+    <span class="n">extFTObjectServicer</span><span class="o">.</span><span class="n">cmdForceInertialInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">MSMmodule</span><span class="o">.</span><span class="n">eForceOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObjectServicer</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">extFTObjectServicer</span><span class="p">)</span>
+
+    <span class="c1"># setup extForceTorque module for Debris</span>
+    <span class="c1"># the electrostatic force from the MSM module is read in through the messaging system</span>
+    <span class="n">extFTObjectDebris</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFTObjectDebris</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;eForceDebris&quot;</span>
+    <span class="n">extFTObjectDebris</span><span class="o">.</span><span class="n">cmdForceInertialInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">MSMmodule</span><span class="o">.</span><span class="n">eForceOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">scObjectDebris</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObjectDebris</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">extFTObjectDebris</span><span class="p">)</span>
+
+    <span class="c1"># setup extForceTorque module</span>
+    <span class="c1"># the control force from the ET relative motion control module is read in through the messaging system</span>
+    <span class="n">extFTObjectServicerControl</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extFTObjectServicerControl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;controlServicer&quot;</span>
+    <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFTObjectServicerControl</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">extFTObjectServicerControl</span><span class="p">)</span>
+
+    <span class="c1"># add the simple Navigation sensor module.  This sets the SC attitude, rate, position</span>
+    <span class="c1"># velocity navigation message</span>
+    <span class="n">sNavObjectServicer</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObjectServicer</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation&quot;</span>
+    <span class="n">sNavObjectServicer</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObjectServicer</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">sNavObjectServicer</span><span class="p">)</span>
+
+    <span class="n">sNavObjectDebris</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+    <span class="n">sNavObjectDebris</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SimpleNavigation3&quot;</span>
+    <span class="n">sNavObjectDebris</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObjectDebris</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">sNavObjectDebris</span><span class="p">)</span>
+
+    <span class="c1"># ----- fsw ----- #</span>
+    <span class="n">fswProcessName</span> <span class="o">=</span> <span class="s2">&quot;fswProcess&quot;</span>
+    <span class="n">fswTaskName</span> <span class="o">=</span> <span class="s2">&quot;fswTask&quot;</span>
+    <span class="n">fswProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">fswProcessName</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fswTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">300.0</span><span class="p">)</span>
+    <span class="n">fswProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">fswTimeStep</span><span class="p">))</span>
+
+    <span class="c1"># setup ET Relative Motion Control module</span>
+    <span class="n">etSphericalControlObj</span> <span class="o">=</span> <span class="n">etSphericalControl</span><span class="o">.</span><span class="n">etSphericalControl</span><span class="p">()</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;ETcontrol&quot;</span>
+
+    <span class="c1"># connect required messages</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">servicerTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObjectServicer</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>  <span class="c1"># servicer translation</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">debrisTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObjectDebris</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>  <span class="c1"># debris translation</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">servicerAttInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNavObjectServicer</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>  <span class="c1"># servicer attitude</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">servicerVehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">servicerVehicleConfigMsg</span><span class="p">)</span>  <span class="c1"># servicer mass</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">debrisVehicleConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">debrisVehicleConfigMsg</span><span class="p">)</span>  <span class="c1"># debris mass</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">eForceInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">MSMmodule</span><span class="o">.</span><span class="n">eForceOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># eForce on servicer (for feed-forward)</span>
+
+    <span class="c1"># set module parameters</span>
+    <span class="c1"># feedback gain matrices</span>
+    <span class="n">Ki</span> <span class="o">=</span> <span class="mf">4e-7</span>
+    <span class="n">Pi</span> <span class="o">=</span> <span class="mf">1.85</span> <span class="o">*</span> <span class="n">Ki</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ki</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                                <span class="mf">0.0</span><span class="p">,</span> <span class="n">Ki</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                                <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Ki</span><span class="p">]</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="n">Pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                                <span class="mf">0.0</span><span class="p">,</span> <span class="n">Pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                                <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Pi</span><span class="p">]</span>
+    <span class="c1"># desired relative position in spherical coordinates (reference state)</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">L_r</span> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># separation distance</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">theta_r</span> <span class="o">=</span> <span class="mf">0.</span>  <span class="c1"># in-plane rotation angle</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">phi_r</span> <span class="o">=</span> <span class="mf">0.</span>  <span class="c1"># out-of-plane rotation angle</span>
+    <span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>  <span class="c1"># gravitational parameter</span>
+
+    <span class="c1"># add module to fsw task</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">fswTaskName</span><span class="p">,</span> <span class="n">etSphericalControlObj</span><span class="p">)</span>
+    <span class="c1"># connect output control thrust force with external force on servicer</span>
+    <span class="n">extFTObjectServicerControl</span><span class="o">.</span><span class="n">cmdForceInertialInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">etSphericalControlObj</span><span class="o">.</span><span class="n">forceInertialOutMsg</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   set initial Spacecraft States</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the servicer orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">42164.</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># [m] geostationary orbit</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">r_SN</span><span class="p">,</span> <span class="n">v_SN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_SN</span>  <span class="c1"># m</span>
+    <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">v_SN</span>  <span class="c1"># m/s</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">r_SN</span><span class="p">,</span> <span class="n">v_SN</span><span class="p">)</span>
+
+    <span class="c1"># setup debris object states</span>
+    <span class="n">r_DS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># relative position of debris, 50m behind servicer in along-track direction</span>
+    <span class="n">r_DN</span> <span class="o">=</span> <span class="n">r_DS</span> <span class="o">+</span> <span class="n">r_SN</span>
+    <span class="n">v_DN</span> <span class="o">=</span> <span class="n">v_SN</span>
+    <span class="n">scObjectDebris</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">r_DN</span>  <span class="c1"># m</span>
+    <span class="n">scObjectDebris</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">v_DN</span>  <span class="c1"># m/s</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">n</span>  <span class="c1"># orbit period</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">simulationTime</span> <span class="o">//</span> <span class="p">(</span><span class="n">numDataPoints</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">dataRecS</span> <span class="o">=</span> <span class="n">scObjectServicer</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">dataRecD</span> <span class="o">=</span> <span class="n">scObjectDebris</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">dataRecS</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">dynTaskName</span><span class="p">,</span> <span class="n">dataRecD</span><span class="p">)</span>
+
+    <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following lines</span>
+    <span class="c1"># to save the BSK data to a file, uncomment the saveFile line below</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="c1"># setup MSM information</span>
+        <span class="n">msmInfoServicer</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiShapeInfo</span><span class="p">()</span>
+        <span class="n">msmInfoServicer</span><span class="o">.</span><span class="n">msmChargeInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">MSMmodule</span><span class="o">.</span><span class="n">chargeMsmOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">msmServicerList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rad</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">spPosListServicer</span><span class="p">,</span> <span class="n">rListServicer</span><span class="p">):</span>
+            <span class="n">msmServicer</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiShape</span><span class="p">()</span>
+            <span class="n">msmServicer</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">pos</span>
+            <span class="n">msmServicer</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="p">[</span><span class="n">rad</span><span class="p">,</span> <span class="n">rad</span><span class="p">,</span> <span class="n">rad</span><span class="p">]</span>
+            <span class="n">msmServicer</span><span class="o">.</span><span class="n">isOn</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">msmServicer</span><span class="o">.</span><span class="n">maxValue</span> <span class="o">=</span> <span class="mf">30e-6</span>  <span class="c1"># Coulomb</span>
+            <span class="n">msmServicer</span><span class="o">.</span><span class="n">currentValue</span> <span class="o">=</span> <span class="mf">4e-6</span>  <span class="c1"># Coulomb</span>
+            <span class="n">msmServicerList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msmServicer</span><span class="p">)</span>
+        <span class="n">msmInfoServicer</span><span class="o">.</span><span class="n">msmList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiShapeVector</span><span class="p">(</span><span class="n">msmServicerList</span><span class="p">)</span>
+
+        <span class="n">msmInfoDebris</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiShapeInfo</span><span class="p">()</span>
+        <span class="n">msmInfoDebris</span><span class="o">.</span><span class="n">msmChargeInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">MSMmodule</span><span class="o">.</span><span class="n">chargeMsmOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">msmDebrisList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rad</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">spPosListDebris</span><span class="p">,</span> <span class="n">rListDebris</span><span class="p">):</span>
+            <span class="n">msmDebris</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiShape</span><span class="p">()</span>
+            <span class="n">msmDebris</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">pos</span>
+            <span class="n">msmDebris</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="p">[</span><span class="n">rad</span><span class="p">,</span> <span class="n">rad</span><span class="p">,</span> <span class="n">rad</span><span class="p">]</span>
+            <span class="n">msmDebris</span><span class="o">.</span><span class="n">isOn</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">msmDebris</span><span class="o">.</span><span class="n">maxValue</span> <span class="o">=</span> <span class="mf">30e-6</span>  <span class="c1"># Coulomb</span>
+            <span class="n">msmDebris</span><span class="o">.</span><span class="n">currentValue</span> <span class="o">=</span> <span class="mf">4e-6</span>  <span class="c1"># Coulomb</span>
+            <span class="n">msmDebris</span><span class="o">.</span><span class="n">neutralOpacity</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># opacity value between 0 and 255</span>
+            <span class="n">msmDebrisList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msmDebris</span><span class="p">)</span>
+        <span class="n">msmInfoDebris</span><span class="o">.</span><span class="n">msmList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiShapeVector</span><span class="p">(</span><span class="n">msmDebrisList</span><span class="p">)</span>
+
+        <span class="c1"># Check MultiSphere deprecation</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">BSKDeprecationWarning</span><span class="p">)</span>
+        <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiSphere</span><span class="p">()</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiSphereInfo</span><span class="p">()</span>
+        <span class="n">vizInterface</span><span class="o">.</span><span class="n">MultiSphereVector</span><span class="p">()</span>
+
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">dynTaskName</span><span class="p">,</span> <span class="p">[</span><span class="n">scObjectServicer</span><span class="p">,</span> <span class="n">scObjectDebris</span><span class="p">]</span>
+                                                  <span class="c1"># , saveFile=fileName</span>
+                                                  <span class="p">,</span> <span class="n">msmInfoList</span><span class="o">=</span><span class="p">[</span><span class="n">msmInfoServicer</span><span class="p">,</span> <span class="n">msmInfoDebris</span><span class="p">]</span>
+                                                  <span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="n">posDataS</span> <span class="o">=</span> <span class="n">dataRecS</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velDataS</span> <span class="o">=</span> <span class="n">dataRecS</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">posDataD</span> <span class="o">=</span> <span class="n">dataRecD</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velDataD</span> <span class="o">=</span> <span class="n">dataRecD</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">dataRecS</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotOrbits</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">posDataS</span><span class="p">,</span> <span class="n">velDataS</span><span class="p">,</span> <span class="n">posDataD</span><span class="p">,</span> <span class="n">velDataD</span><span class="p">,</span> <span class="n">oe</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">earth</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotOrbits</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">posDataS</span><span class="p">,</span> <span class="n">velDataS</span><span class="p">,</span> <span class="n">posDataD</span><span class="p">,</span> <span class="n">velDataD</span><span class="p">,</span> <span class="n">oe</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">planet</span><span class="p">):</span>
+    <span class="c1"># draw the inertial position vector components</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
+    <span class="n">relPosData</span> <span class="o">=</span> <span class="n">posDataS</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">posDataD</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">relPosMagn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">relPosData</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">/</span> <span class="n">P</span><span class="p">,</span> <span class="n">relPosMagn</span><span class="p">[:])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [orbits]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Separation [m]&#39;</span><span class="p">)</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># draw orbit in perifocal frame</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="c1"># draw the planet</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">planetColor</span> <span class="o">=</span> <span class="s1">&#39;#008800&#39;</span>
+    <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+    <span class="c1"># draw the actual orbit</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posDataS</span><span class="p">)):</span>
+        <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">posDataS</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">velDataS</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span><span class="p">)</span>
+        <span class="n">fData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">f</span> <span class="o">+</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="c1"># draw the full osculating orbit from the initial conditions</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fData</span><span class="p">)):</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#555555&#39;</span>
+             <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$x$ Cord. [km]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$y$ Cord. [km]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
+    <span class="n">aData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posDataS</span><span class="p">)):</span>
+        <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">posDataD</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">velDataD</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">aData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeData</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span> <span class="o">/</span> <span class="n">P</span><span class="p">,</span> <span class="p">(</span><span class="n">aData</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#aa0000&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [orbits]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Increase of semi-major axis [km]&#39;</span><span class="p">)</span>
+
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;3&quot;</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

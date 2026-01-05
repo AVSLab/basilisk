@@ -1,0 +1,856 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: dualHingedRigidBodyStateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="dualHingedRigidBodies" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">dualHingedRigidBodies</a></li>
+      <li class="breadcrumb-item active">Module: dualHingedRigidBodyStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dualhingedrigidbodystateeffector">
+<span id="dualhingedrigidbodystateeffector"></span><h1>Module: dualHingedRigidBodyStateEffector<a class="headerlink" href="#module-dualhingedrigidbodystateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Class to represent a solar array of two panels. The first panel is hinged on a single axis to the spacecraft body. The second panel is hinged to the first panel by a parallel axis on the opposite end of the first panel from the spacecraft body.)</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-dualhingedrigidbodystateeffector"></span><img alt="../../../../_images/moduleIODualHingedRigidBodyStateEffector.svg" src="../../../../_images/moduleIODualHingedRigidBodyStateEffector.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">DualHingedRigidBodyStateEffector()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>motorTorqueInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#arraymotortorquemsgpayload"><span class="std std-ref">ArrayMotorTorqueMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message of the two hinge motor torque values</p></td>
+</tr>
+<tr class="row-odd"><td><p>dualHingedRigidBodyOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#hingedrigidbodymsgpayload"><span class="std std-ref">HingedRigidBodyMsgPayload</span></a></p></td>
+<td><p>vector of output message containing the panel 1 and 2 hinge state angle and angle rate</p></td>
+</tr>
+<tr class="row-even"><td><p>dualHingedRigidBodyConfigLogOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>vector of output messages containing the panel 1 and 2 inertial position and attitude states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The module <a class="reference download internal" download="" href="../../../../_downloads/9e8f2513fd1dea6dd8bc35ca6429efa3/Basilisk-DUALHINGEDRIGIDBODYSTATEEFFECTOR-20180102.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Module</span> <span class="pre">Description</span></code></a> contains further information on this module’s function, as well as testing.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the dualHingedRigidBodyStateEffector class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dualHingedRigidBodyStateEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instantiation of a Dual Hinged Rigid body:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">panel1</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define all physical parameters for a Dual Hinged Rigid Body. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IPntS1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Do this for all of the parameters for a Dual Hinged Rigid Body seen in the public variables in the .h file.</p>
+</li>
+<li><p>Define the initial conditions of the states:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">panel1</span><span class="o">.</span><span class="n">theta1Init</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span>
+<span class="n">panel1</span><span class="o">.</span><span class="n">theta1DotInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">panel1</span><span class="o">.</span><span class="n">theta2Init</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span>
+<span class="n">panel1</span><span class="o">.</span><span class="n">theta2DotInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define a unique name for each state:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">panel1</span><span class="o">.</span><span class="n">nameOfTheta1State</span> <span class="o">=</span> <span class="s2">&quot;dualHingedRigidBodyTheta1&quot;</span>
+<span class="n">panel1</span><span class="o">.</span><span class="n">nameOfTheta1DotState</span> <span class="o">=</span> <span class="s2">&quot;dualHingedRigidBodyThetaDot1&quot;</span>
+<span class="n">panel1</span><span class="o">.</span><span class="n">nameOfTheta2State</span> <span class="o">=</span> <span class="s2">&quot;dualHingedRigidBodyTheta2&quot;</span>
+<span class="n">panel1</span><span class="o">.</span><span class="n">nameOfTheta2DotState</span> <span class="o">=</span> <span class="s2">&quot;dualHingedRigidBodyThetaDot2&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define an optional motor torque input message with <code class="docutils literal notranslate"><span class="pre">panel1.motorTorqueInMsg</span></code></p></li>
+<li><p>The module creates two output messages with the panel angular states.
+The messages are stored in the vector <code class="docutils literal notranslate"><span class="pre">dualHingedRigidBodyOutMsgs</span></code>.</p></li>
+<li><p>The module creates two output messages with each panel inertial position and attitude states.
+The messages are stored in the vector <code class="docutils literal notranslate"><span class="pre">dualHingedRigidBodyConfigLogOutMsgs</span></code>.</p></li>
+<li><p>Add the panel to your spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel1</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">panel1</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv432DualHingedRigidBodyStateEffector">
+<span id="_CPPv332DualHingedRigidBodyStateEffector"></span><span id="_CPPv232DualHingedRigidBodyStateEffector"></span><span id="DualHingedRigidBodyStateEffector"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DualHingedRigidBodyStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv432DualHingedRigidBodyStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;dualHingedRigidBodyStateEffector.h&gt;</em></div>
+<p>dual hinged rigid body state effector </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector32DualHingedRigidBodyStateEffectorEv">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector32DualHingedRigidBodyStateEffectorEv"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector32DualHingedRigidBodyStateEffectorEv"></span><span id="DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a9d3ef4d1cbddb199dd9c3831fffa1cc8"></span><span class="sig-name descname"><span class="n"><span class="pre">DualHingedRigidBodyStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector32DualHingedRigidBodyStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffectorD0Ev">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffectorD0Ev"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffectorD0Ev"></span><span id="DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a9814d97a46fe4d3e9b283cc0b1f2c3b3"></span><span class="sig-name descname"><span class="n"><span class="pre">~DualHingedRigidBodyStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector14registerStatesER15DynParamManager"></span><span id="DualHingedRigidBodyStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ad07b07304133709b1d3a1362531de62f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector12linkInStatesER15DynParamManager"></span><span id="DualHingedRigidBodyStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aae80a63e47cd5846138a922a27ae3f11"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector23updateEffectorMassPropsEd"></span><span id="DualHingedRigidBodyStateEffector::updateEffectorMassProps__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a76c05b9641d3bc2fb4d090bca0ebd786"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="DualHingedRigidBodyStateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aedd3df5b1d83c85dfcf05f66c623b789"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Back-sub contributions </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="DualHingedRigidBodyStateEffector::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a913511bbf36eab4a97670416abfe0778"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Energy and momentum calculations </p>
+<p>This method is for calculating the contributions of the DHRB state effector to the energy and momentum of the s/c </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="DualHingedRigidBodyStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1adc6711d8a69cef1e67954082a766af00"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Method for each stateEffector to calculate derivatives </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector5ResetE8uint64_t">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector5ResetE8uint64_t"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector5ResetE8uint64_t"></span><span id="DualHingedRigidBodyStateEffector::Reset__uint64_t"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a0eaf61a89ca797be54d38dbae572680b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11UpdateStateE8uint64_t"></span><span id="DualHingedRigidBodyStateEffector::UpdateState__uint64_t"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a3b1adf198bcc879c1f3c3b2d962dc32b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used so that the simulation will ask DHRB to update messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in nanoseconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="DualHingedRigidBodyStateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a3cb81133378d1a0a9bc3042c9205ae87"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the computed theta states and outputs them to the m messaging system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentClock</strong> – The current simulation time (used for time stamping) </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector5mass1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector5mass1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector5mass1E"></span><span id="DualHingedRigidBodyStateEffector::mass1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a34394e617edf0746df7390ea24ecc7f6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector5mass1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] mass of 1st hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector5mass2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector5mass2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector5mass2E"></span><span id="DualHingedRigidBodyStateEffector::mass2__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1afa178ff7debdd790e5076c8fc32bf067"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector5mass2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] mass of 2nd hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2d1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2d1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2d1E"></span><span id="DualHingedRigidBodyStateEffector::d1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aad27f68e07dd2d975efaa2ab5dd1e543"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2d1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] distance from hinge point H1 to hinged rigid body center of mass S1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2d2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2d2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2d2E"></span><span id="DualHingedRigidBodyStateEffector::d2__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a6478497a91193b42f6bb914cb3380926"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2d2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] distance from hinge point H2 to hinged rigid body center of mass S2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2l1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2l1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2l1E"></span><span id="DualHingedRigidBodyStateEffector::l1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a685638dd97394d0e3a96055ab78aab9a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2l1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] distance from hinge point H1 to hinged point H2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2k1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2k1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2k1E"></span><span id="DualHingedRigidBodyStateEffector::k1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a931d5fc5b82c7d644ed564e95ee33a81"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2k1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m/rad] torsional spring constant of hinge </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2k2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2k2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2k2E"></span><span id="DualHingedRigidBodyStateEffector::k2__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1af335eff2ef4cc9a7f2a09e44bd21ab0d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2k2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m/rad] torsional spring constant of hinge </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2c1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2c1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2c1E"></span><span id="DualHingedRigidBodyStateEffector::c1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a905bcb68e8d221365647b07782a3b947"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2c1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m-s/rad] rotational damping coefficient of hinge </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2c2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2c2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2c2E"></span><span id="DualHingedRigidBodyStateEffector::c2__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ada672b3d61d4ffc3244f076c03c4bb01"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2c2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m-s/rad] rotational damping coefficient of hinge </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector10theta1InitE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector10theta1InitE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector10theta1InitE"></span><span id="DualHingedRigidBodyStateEffector::theta1Init__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a9c2cfaaed47f6048f90f19792d097024"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta1Init</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector10theta1InitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Initial hinged rigid body angle for first panel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector13theta1DotInitE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector13theta1DotInitE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector13theta1DotInitE"></span><span id="DualHingedRigidBodyStateEffector::theta1DotInit__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a1d8058d5b5956c365d908876e2500750"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta1DotInit</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector13theta1DotInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Initial hinged rigid body angle rate for first panel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector10theta2InitE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector10theta2InitE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector10theta2InitE"></span><span id="DualHingedRigidBodyStateEffector::theta2Init__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a50b4b627537d55a97091d85d8b54e155"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta2Init</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector10theta2InitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] Initial hinged rigid body angle for second panel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector13theta2DotInitE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector13theta2DotInitE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector13theta2DotInitE"></span><span id="DualHingedRigidBodyStateEffector::theta2DotInit__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a26560c20c448fbf6020dd24643bcaa35"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta2DotInit</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector13theta2DotInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] Initial hinged rigid body angle rate for second panel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector9IPntS1_S1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector9IPntS1_S1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector9IPntS1_S1E"></span><span id="DualHingedRigidBodyStateEffector::IPntS1_S1__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ac8c3a7cbdbf852b125c6dff21ed33a63"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPntS1_S1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector9IPntS1_S1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of hinged rigid body about point S in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector9IPntS2_S2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector9IPntS2_S2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector9IPntS2_S2E"></span><span id="DualHingedRigidBodyStateEffector::IPntS2_S2__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a08079a76870897ec4fc1222e51577290"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPntS2_S2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector9IPntS2_S2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of hinged rigid body about point S in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7r_H1B_BE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7r_H1B_BE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7r_H1B_BE"></span><span id="DualHingedRigidBodyStateEffector::r_H1B_B__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a52d85db22c363ab5775f60ce61317d11"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_H1B_B</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7r_H1B_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from body frame origin to Hinge location </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7dcm_H1BE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7dcm_H1BE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7dcm_H1BE"></span><span id="DualHingedRigidBodyStateEffector::dcm_H1B__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ad61a840e393c030c3a9b1ce99e73848d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_H1B</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7dcm_H1BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM from body frame to hinge frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector9thetaH2S1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector9thetaH2S1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector9thetaH2S1E"></span><span id="DualHingedRigidBodyStateEffector::thetaH2S1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a68c57716f90353bdac525bd259fb7e7e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaH2S1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector9thetaH2S1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] theta offset of H2 frame with respect to S1 frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector17nameOfTheta1StateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector17nameOfTheta1StateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector17nameOfTheta1StateE"></span><span id="DualHingedRigidBodyStateEffector::nameOfTheta1State__ss"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a6d7a7c54fb29d05058293f6506d9af63"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfTheta1State</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector17nameOfTheta1StateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Identifier for the theta state data container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector20nameOfTheta1DotStateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector20nameOfTheta1DotStateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector20nameOfTheta1DotStateE"></span><span id="DualHingedRigidBodyStateEffector::nameOfTheta1DotState__ss"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a48da65861e52e036e31fea037b280924"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfTheta1DotState</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector20nameOfTheta1DotStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Identifier for the thetaDot state data container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector17nameOfTheta2StateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector17nameOfTheta2StateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector17nameOfTheta2StateE"></span><span id="DualHingedRigidBodyStateEffector::nameOfTheta2State__ss"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ac6e30f98e0096c478b518da7709f6ee3"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfTheta2State</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector17nameOfTheta2StateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Identifier for the theta state data container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector20nameOfTheta2DotStateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector20nameOfTheta2DotStateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector20nameOfTheta2DotStateE"></span><span id="DualHingedRigidBodyStateEffector::nameOfTheta2DotState__ss"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ad84f5f9eefe3a4ec3b13b7eeb1e04776"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfTheta2DotState</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector20nameOfTheta2DotStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Identifier for the thetaDot state data container </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector9bskLoggerE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector9bskLoggerE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector9bskLoggerE"></span><span id="DualHingedRigidBodyStateEffector::bskLogger__BSKLogger"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a4f69ac948d3b73c88d509cfa4fa507c3"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector16motorTorqueInMsgE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector16motorTorqueInMsgE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector16motorTorqueInMsgE"></span><span id="DualHingedRigidBodyStateEffector::motorTorqueInMsg__ReadFunctor:ArrayMotorTorqueMsgPayload:"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a9285038418fe060747dd15ebd56353a1"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#_CPPv426ArrayMotorTorqueMsgPayload" title="ArrayMotorTorqueMsgPayload"><span class="n"><span class="pre">ArrayMotorTorqueMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorTorqueInMsg</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector16motorTorqueInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; (optional) motor torque input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector26dualHingedRigidBodyOutMsgsE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector26dualHingedRigidBodyOutMsgsE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector26dualHingedRigidBodyOutMsgsE"></span><span id="DualHingedRigidBodyStateEffector::dualHingedRigidBodyOutMsgs__std::vector:Message:HingedRigidBodyMsgPayload:P:"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aea02d20622dfaec23c57c08b782b7c30"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#_CPPv425HingedRigidBodyMsgPayload" title="HingedRigidBodyMsgPayload"><span class="n"><span class="pre">HingedRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dualHingedRigidBodyOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector26dualHingedRigidBodyOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; state output message vector for all panels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector35dualHingedRigidBodyConfigLogOutMsgsE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector35dualHingedRigidBodyConfigLogOutMsgsE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector35dualHingedRigidBodyConfigLogOutMsgsE"></span><span id="DualHingedRigidBodyStateEffector::dualHingedRigidBodyConfigLogOutMsgs__std::vector:Message:SCStatesMsgPayload:P:"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a631c8beb917311dfdeed3669f551c714"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dualHingedRigidBodyConfigLogOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector35dualHingedRigidBodyConfigLogOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>panel state config log message vector for all panels </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector26computePanelInertialStatesEv">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector26computePanelInertialStatesEv"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector26computePanelInertialStatesEv"></span><span id="DualHingedRigidBodyStateEffector::computePanelInertialStates"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a6422dd99338078164ee720c4f03048d4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePanelInertialStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector26computePanelInertialStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the panel states relative to the inertial frame </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector29prependSpacecraftNameToStatesEv">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector29prependSpacecraftNameToStatesEv"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector29prependSpacecraftNameToStatesEv"></span><span id="DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ad91a512297ca24cd804a6234b9e11418"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prependSpacecraftNameToStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector29prependSpacecraftNameToStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7r_H1P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7r_H1P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7r_H1P_PE"></span><span id="DualHingedRigidBodyStateEffector::r_H1P_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a6849c8d4264e596a554c94e479b7393c"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_H1P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7r_H1P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from primary body frame P origin to Hinge 1 location. If a single spacecraft body is modeled than P is the same as B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7dcm_H1PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7dcm_H1PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7dcm_H1PE"></span><span id="DualHingedRigidBodyStateEffector::dcm_H1P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a525da453070d03df7e1bed5fa5ef357f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_H1P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7dcm_H1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; DCM from primary body frame to hinge 1 frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2u1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2u1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2u1E"></span><span id="DualHingedRigidBodyStateEffector::u1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1af8fe73f3e8e561dbaed3ab8061fb6509"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2u1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] motor torques on panel 1 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector2u2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector2u2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector2u2E"></span><span id="DualHingedRigidBodyStateEffector::u2__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a3c3cc69ddc4464563b780a622bc16920"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector2u2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] motor torques on panel 2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11rTildeH1B_BE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11rTildeH1B_BE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11rTildeH1B_BE"></span><span id="DualHingedRigidBodyStateEffector::rTildeH1B_B__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a035d99f45c3f546549f753b8fcb9d501"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeH1B_B</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11rTildeH1B_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Tilde matrix of rHB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7dcm_S1PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7dcm_S1PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7dcm_S1PE"></span><span id="DualHingedRigidBodyStateEffector::dcm_S1P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1abb7b0465771a1f55f9f2f889adfe923a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_S1P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7dcm_S1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM from primary body to S1 frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7dcm_S2PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7dcm_S2PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7dcm_S2PE"></span><span id="DualHingedRigidBodyStateEffector::dcm_S2P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ac7c528c109bc532b79b8ffccc9c9d52a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_S2P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7dcm_S2PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM from primary body to S2 frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11omega_PN_S1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11omega_PN_S1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11omega_PN_S1E"></span><span id="DualHingedRigidBodyStateEffector::omega_PN_S1__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ad943b1893e206b2afbf2d922ee343a64"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PN_S1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11omega_PN_S1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] omega_PN in S1 frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11omega_PN_S2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11omega_PN_S2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11omega_PN_S2E"></span><span id="DualHingedRigidBodyStateEffector::omega_PN_S2__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a412570c01377f80845745bb7a425a598"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PN_S2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11omega_PN_S2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] omega_PN in S2 frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sHat11_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sHat11_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sHat11_PE"></span><span id="DualHingedRigidBodyStateEffector::sHat11_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a8044a27589c69e4d3be7068b731ff64e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat11_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sHat11_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit direction vector for the first axis of the S frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sHat12_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sHat12_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sHat12_PE"></span><span id="DualHingedRigidBodyStateEffector::sHat12_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aff118a8dccc3aadcd6e52d0632c0a6b8"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat12_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sHat12_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit direction vector for the second axis of the S frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sHat13_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sHat13_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sHat13_PE"></span><span id="DualHingedRigidBodyStateEffector::sHat13_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a13381cc218b067e0a41b2e5e86ffcd6d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat13_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sHat13_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit direction vector for the third axis of the S frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sHat21_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sHat21_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sHat21_PE"></span><span id="DualHingedRigidBodyStateEffector::sHat21_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a66dbcfac9efaa0277cdc7a7b84e1a677"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat21_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sHat21_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit direction vector for the first axis of the S frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sHat22_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sHat22_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sHat22_PE"></span><span id="DualHingedRigidBodyStateEffector::sHat22_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a83c0aea9772147599391d59205fe343e"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat22_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sHat22_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit direction vector for the second axis of the S frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sHat23_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sHat23_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sHat23_PE"></span><span id="DualHingedRigidBodyStateEffector::sHat23_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a5e5cb498b6a675fd46181f4c9bb46b56"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat23_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sHat23_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unit direction vector for the third axis of the S frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7r_S1P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7r_S1P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7r_S1P_PE"></span><span id="DualHingedRigidBodyStateEffector::r_S1P_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a943505d331123a8b6316375b3904ac2d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_S1P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7r_S1P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Vector pointing from body origin to CoM of hinged rigid body in P frame comp </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector7r_S2P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector7r_S2P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector7r_S2P_PE"></span><span id="DualHingedRigidBodyStateEffector::r_S2P_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a7e61aa8e9cbca89a511a8419f111c694"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_S2P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector7r_S2P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Vector pointing from body origin to CoM of hinged rigid body in P frame comp </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11rTildeS1P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11rTildeS1P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11rTildeS1P_PE"></span><span id="DualHingedRigidBodyStateEffector::rTildeS1P_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a1b65f17033ea3db26f147ca6179d71c9"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeS1P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11rTildeS1P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Tilde matrix of rSP_P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11rTildeS2P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11rTildeS2P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11rTildeS2P_PE"></span><span id="DualHingedRigidBodyStateEffector::rTildeS2P_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aabc80cf449096f68727d08e5cddb074f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeS2P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11rTildeS2P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Tilde matrix of rSP_P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11rPrimeS1P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11rPrimeS1P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11rPrimeS1P_PE"></span><span id="DualHingedRigidBodyStateEffector::rPrimeS1P_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a3f053b0cb1089ea635e83aefdecc1e30"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeS1P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11rPrimeS1P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Body time derivative of rSP_P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11rPrimeS2P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11rPrimeS2P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11rPrimeS2P_PE"></span><span id="DualHingedRigidBodyStateEffector::rPrimeS2P_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a0c32e7064820ed8b8a15c1166bc78760"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeS2P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11rPrimeS2P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Body time derivative of rSBP_P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector16rPrimeTildeS1P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector16rPrimeTildeS1P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector16rPrimeTildeS1P_PE"></span><span id="DualHingedRigidBodyStateEffector::rPrimeTildeS1P_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a3c206e2536ad4b24e02f8c3f53627560"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeTildeS1P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector16rPrimeTildeS1P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Tilde matrix of rPrime_SP_P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector16rPrimeTildeS2P_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector16rPrimeTildeS2P_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector16rPrimeTildeS2P_PE"></span><span id="DualHingedRigidBodyStateEffector::rPrimeTildeS2P_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a36f00d28a25ed1fb046853798895e40f"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeTildeS2P_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector16rPrimeTildeS2P_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Tilde matrix of rPrime_SP_P </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector15IS1PrimePntS1_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector15IS1PrimePntS1_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector15IS1PrimePntS1_PE"></span><span id="DualHingedRigidBodyStateEffector::IS1PrimePntS1_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a15c939c13df3cde1d7ef1a29687f5338"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IS1PrimePntS1_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector15IS1PrimePntS1_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2/s] time body derivative IPntS in primary body frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector15IS2PrimePntS2_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector15IS2PrimePntS2_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector15IS2PrimePntS2_PE"></span><span id="DualHingedRigidBodyStateEffector::IS2PrimePntS2_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aab93e960c8a792c4d93871e2c7f46ee4"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IS2PrimePntS2_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector15IS2PrimePntS2_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2/s] time body derivative IPntS in primary body frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector13omega_PNLoc_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector13omega_PNLoc_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector13omega_PNLoc_PE"></span><span id="DualHingedRigidBodyStateEffector::omega_PNLoc_P__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a0ead6b0c2aea974811ca93941a1bbc44"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PNLoc_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector13omega_PNLoc_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] local copy of omegaPN </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector17omegaTildePNLoc_PE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector17omegaTildePNLoc_PE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector17omegaTildePNLoc_PE"></span><span id="DualHingedRigidBodyStateEffector::omegaTildePNLoc_P__Eigen::Matrix3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a9fdd9e05da95af95b16de595fe790764"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTildePNLoc_P</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector17omegaTildePNLoc_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] tilde matrix of omegaPN </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector6theta1E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector6theta1E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector6theta1E"></span><span id="DualHingedRigidBodyStateEffector::theta1__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a5b38e5c41febdaafeaf4f17390549dee"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta1</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector6theta1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] hinged rigid body angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector9theta1DotE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector9theta1DotE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector9theta1DotE"></span><span id="DualHingedRigidBodyStateEffector::theta1Dot__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a02fdc90a86dfc85e5d1ef5812694f8e2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta1Dot</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector9theta1DotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] hinged rigid body angle rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector6theta2E">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector6theta2E"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector6theta2E"></span><span id="DualHingedRigidBodyStateEffector::theta2__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a5b794f7067ed1d35ff6d1eb9d62adb5e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta2</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector6theta2E" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] hinged rigid body angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector9theta2DotE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector9theta2DotE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector9theta2DotE"></span><span id="DualHingedRigidBodyStateEffector::theta2Dot__double"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ac37cc357cad5b459b3bbcc328e368aff"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta2Dot</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector9theta2DotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] hinged rigid body angle rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11matrixADHRBE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11matrixADHRBE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11matrixADHRBE"></span><span id="DualHingedRigidBodyStateEffector::matrixADHRB__Eigen::Matrix2d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aad49d40e4494e8d0fc4f2f8ab9009c86"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix2d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixADHRB</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11matrixADHRBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] term needed for back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11matrixEDHRBE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11matrixEDHRBE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11matrixEDHRBE"></span><span id="DualHingedRigidBodyStateEffector::matrixEDHRB__Eigen::Matrix2d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a55c37c787e2dbdf66aa220cc85d1da62"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix2d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixEDHRB</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11matrixEDHRBE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] term needed for back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11matrixFDHRBE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11matrixFDHRBE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11matrixFDHRBE"></span><span id="DualHingedRigidBodyStateEffector::matrixFDHRB__Eigen::MatrixXd"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a4329a1bfaa771b9e3bb5bdc55d1d9ffc"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixFDHRB</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11matrixFDHRBE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11matrixGDHRBE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11matrixGDHRBE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11matrixGDHRBE"></span><span id="DualHingedRigidBodyStateEffector::matrixGDHRB__Eigen::MatrixXd"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a72726c6eddd8d75336406bc719e74fbe"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">matrixGDHRB</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11matrixGDHRBE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11vectorVDHRBE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11vectorVDHRBE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11vectorVDHRBE"></span><span id="DualHingedRigidBodyStateEffector::vectorVDHRB__Eigen::Vector2d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ac2b2b702e35fe0562a9022c9e154d2e3"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector2d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vectorVDHRB</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11vectorVDHRBE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11theta1StateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11theta1StateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11theta1StateE"></span><span id="DualHingedRigidBodyStateEffector::theta1State__StateDataP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ae2ceb5ce1d9b46b8585a0f1571b57d2b"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">theta1State</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11theta1StateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] state manager of theta for hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector14theta1DotStateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector14theta1DotStateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector14theta1DotStateE"></span><span id="DualHingedRigidBodyStateEffector::theta1DotState__StateDataP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a91f0a98d8043c901ee4ce79eb9add951"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">theta1DotState</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector14theta1DotStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] state manager of thetaDot for hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11theta2StateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11theta2StateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11theta2StateE"></span><span id="DualHingedRigidBodyStateEffector::theta2State__StateDataP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ae8ccf597b39d7207c1aada093377f35b"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">theta2State</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11theta2StateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] state manager of theta for hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector14theta2DotStateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector14theta2DotStateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector14theta2DotStateE"></span><span id="DualHingedRigidBodyStateEffector::theta2DotState__StateDataP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a79ecf48d87ef09eb2e471e8e6a68582c"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">theta2DotState</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector14theta2DotStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] state manager of thetaDot for hinged rigid body </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector6r_SN_NE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector6r_SN_NE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector6r_SN_NE"></span><span id="DualHingedRigidBodyStateEffector::r_SN_N__Eigen::Vector3dA"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aefcab432a60da767e278488521e821fe"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SN_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector6r_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector of hinge CM S relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector6v_SN_NE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector6v_SN_NE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector6v_SN_NE"></span><span id="DualHingedRigidBodyStateEffector::v_SN_N__Eigen::Vector3dA"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a9558849b458645853d9bf3d1138224eb"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_SN_N</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector6v_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] inertial velocity vector of S relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sigma_SNE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sigma_SNE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sigma_SNE"></span><span id="DualHingedRigidBodyStateEffector::sigma_SN__Eigen::Vector3dA"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1aa5377743a6f61774cf1c32ec33d24d23"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_SN</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sigma_SNE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; MRP attitude of panel frame S relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector10omega_SN_SE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector10omega_SN_SE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector10omega_SN_SE"></span><span id="DualHingedRigidBodyStateEffector::omega_SN_S__Eigen::Vector3dA"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a5ff533e200f6402c09317c0d95453c07"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_SN_S</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector10omega_SN_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] inertial panel frame angular velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector8sigma_BNE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector8sigma_BNE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector8sigma_BNE"></span><span id="DualHingedRigidBodyStateEffector::sigma_BN__Eigen::MRPd"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a74675368aa81ab2beacd9714582b9fe1"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BN</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector8sigma_BNE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hub/Inertial attitude represented by MRP of body relative to inertial frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector10omega_BN_BE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector10omega_BN_BE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector10omega_BN_BE"></span><span id="DualHingedRigidBodyStateEffector::omega_BN_B__Eigen::Vector3d"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a41b830c03e6aed49f4404c67f937d2aa"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_BN_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector10omega_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hub/Inertial angular velocity vector in B frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector11v_BN_NStateE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector11v_BN_NStateE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector11v_BN_NStateE"></span><span id="DualHingedRigidBodyStateEffector::v_BN_NState__StateDataP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a57f079ffbbbbd1e1ff561bfb9c9615ce"></span><a class="reference internal" href="../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">v_BN_NState</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector11v_BN_NStateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hub/Inertial velocity vector in inertial frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector24inertialPositionPropertyE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector24inertialPositionPropertyE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector24inertialPositionPropertyE"></span><span id="DualHingedRigidBodyStateEffector::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a8e644f5d953f6f5315020d44066e2ed2"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] r_N inertial position relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector24inertialVelocityPropertyE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector24inertialVelocityPropertyE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector24inertialVelocityPropertyE"></span><span id="DualHingedRigidBodyStateEffector::inertialVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a0063c5dda48ec208208516a9ea0618ac"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] v_N inertial velocity relative to system spice zeroBase/refBase </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector3g_NE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector3g_NE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector3g_NE"></span><span id="DualHingedRigidBodyStateEffector::g_N__Eigen::MatrixXdP"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1ab31f4c6ad538f5e612a2119f59c4625a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">g_N</span></span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector3g_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s^2] Gravitational acceleration in N frame components </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N32DualHingedRigidBodyStateEffector10effectorIDE">
+<span id="_CPPv3N32DualHingedRigidBodyStateEffector10effectorIDE"></span><span id="_CPPv2N32DualHingedRigidBodyStateEffector10effectorIDE"></span><span id="DualHingedRigidBodyStateEffector::effectorID__uint64_t"></span><span class="target" id="class_dual_hinged_rigid_body_state_effector_1a93ba0713a2d2c3f2fa33fcb6ff039134"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N32DualHingedRigidBodyStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[] ID number of this panel </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="dualHingedRigidBodies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

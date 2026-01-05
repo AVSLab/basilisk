@@ -1,0 +1,511 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: lambertPlanner &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="lambertPlanner" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">orbitControl</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">lambertPlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSecondDV/index.html">lambertSecondDV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSolver/index.html">lambertSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSurfaceRelativeVelocity/index.html">lambertSurfaceRelativeVelocity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertValidator/index.html">lambertValidator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smallBodyWaypointFeedback/index.html">smallBodyWaypointFeedback</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">orbitControl</a></li>
+          <li class="breadcrumb-item"><a href="index.html">lambertPlanner</a></li>
+      <li class="breadcrumb-item active">Module: lambertPlanner</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/orbitControl/lambertPlanner/lambertPlanner.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-lambertplanner">
+<span id="lambertplanner"></span><h1>Module: lambertPlanner<a class="headerlink" href="#module-lambertplanner" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Lambert’s problem aims at finding an orbit given two position vectors <span class="math notranslate nohighlight">\(\mathbf{r}_{1}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{r}_{2}\)</span>
+and the time if flight <span class="math notranslate nohighlight">\(t_{flight}\)</span> between these two locations. That is, given the two position vectors
+<span class="math notranslate nohighlight">\(\mathbf{r}_{1}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{r}_{2}\)</span> and the time of flight <span class="math notranslate nohighlight">\(t_{flight}\)</span>, one finds the two velocity
+vectors <span class="math notranslate nohighlight">\(\mathbf{v}_{1}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}_{2}\)</span> at the corresponding locations such that a spacecraft travels
+from <span class="math notranslate nohighlight">\(\mathbf{r}_{1}\)</span> to <span class="math notranslate nohighlight">\(\mathbf{r}_{2}\)</span> at the given time of flight.</p>
+<p>This module assumes that <span class="math notranslate nohighlight">\(\mathbf{r}_{2}\)</span> is equal to a targeted location <span class="math notranslate nohighlight">\({}^N\mathbf{r}_{T/N}\)</span>, and that
+the spacecraft should arrive at the targeted location at specified time <span class="math notranslate nohighlight">\(t_{final}\)</span>. To get to the targeted
+location, a maneuver should be performed at specified time <span class="math notranslate nohighlight">\(t_{maneuver}\)</span>, where the maneuver time must be in the
+future. The location of the maneuver is assumed to not be known, so a 4th order Runge-Kutta (RK4) is used to propagate
+the current state (obtained from the <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a> navigation input message) to obtain the estimated
+position at maneuver time, corresponding to <span class="math notranslate nohighlight">\(\mathbf{r}_{1}\)</span>.
+In other words, this module takes a targeted location <span class="math notranslate nohighlight">\({}^N\mathbf{r}_{T/N}\)</span>, final time <span class="math notranslate nohighlight">\(t_{final}\)</span>,
+maneuver time <span class="math notranslate nohighlight">\(t_{maneuver}\)</span> and the spacecraft navigation message <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a> to compute the input
+parameters <span class="math notranslate nohighlight">\(\mathbf{r}_{1}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{r}_{2}\)</span> and time if flight
+<span class="math notranslate nohighlight">\(t_{flight} = t_{final} - t_{maneuver}\)</span> that are required to solve Lambert’s problem. This module writes these
+parameters to the <a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#lambertproblemmsgpayload"><span class="std std-ref">LambertProblemMsgPayload</span></a> message that is used as an input to the <a class="reference internal" href="../lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">Module: lambertSolver</span></a> module,
+which subsequently solves Lambert’s problem.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>translational navigation input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>lambertProblemOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#lambertproblemmsgpayload"><span class="std std-ref">LambertProblemMsgPayload</span></a></p></td>
+<td><p>lambert problem setup output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The equations of motion used inside the module to propagate the state assume simple two body point mass gravity, and the
+motion is propagated using a 4th order Runge-Kutta (RK4). Additionally, this module assumes that
+<span class="math notranslate nohighlight">\(t_{final} &gt; t_{maneuver} \ge t\)</span>, with final time <span class="math notranslate nohighlight">\(t_{final}\)</span>, maneuver time <span class="math notranslate nohighlight">\(t_{maneuver}\)</span> and
+current time <span class="math notranslate nohighlight">\(t\)</span>.</p>
+</section>
+<section id="algorithm">
+<h2>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading"></a></h2>
+<p>Equations of motion (two body point mass gravity) with gravitational parameter <span class="math notranslate nohighlight">\(\mu\)</span> and spacecraft position
+vector <span class="math notranslate nohighlight">\(\mathbf{r}\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-plannereom">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-plannereom" title="Link to this equation"></a></span>\[\mathbf{\ddot{r}} = - \frac{\mu}{r^3} \mathbf{r}\]</div>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The module is first initialized as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="o">=</span> <span class="n">lambertPlanner</span><span class="o">.</span><span class="n">LambertPlanner</span><span class="p">()</span>
+<span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;lambertPlanner&quot;</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setR_TN_N</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">8000.</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span><span class="mf">0.</span><span class="p">]))</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setFinalTime</span><span class="p">(</span><span class="mf">2000.</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setManeuverTime</span><span class="p">(</span><span class="mf">1000.</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setMu</span><span class="p">(</span><span class="mf">3.986004418e14</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setNumRevolutions</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># module defaults this value to 0 if not specified</span>
+<span class="n">module</span><span class="o">.</span><span class="n">useSolverIzzoMethod</span><span class="p">()</span> <span class="c1"># module uses Izzo by default if not specified</span>
+<span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The navigation translation message is then connected:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">navTransInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">navTransInMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414LambertPlanner">
+<span id="_CPPv314LambertPlanner"></span><span id="_CPPv214LambertPlanner"></span><span id="LambertPlanner"></span><span class="target" id="class_lambert_planner"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LambertPlanner</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv414LambertPlanner" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;lambertPlanner.h&gt;</em></div>
+<p>This module creates the LambertProblemMsg to be used for the LambertSolver module. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner14LambertPlannerEv">
+<span id="_CPPv3N14LambertPlanner14LambertPlannerEv"></span><span id="_CPPv2N14LambertPlanner14LambertPlannerEv"></span><span id="LambertPlanner::LambertPlanner"></span><span class="target" id="class_lambert_planner_1aa7449de131c796f1261066969ac6e861"></span><span class="sig-name descname"><span class="n"><span class="pre">LambertPlanner</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner14LambertPlannerEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlannerD0Ev">
+<span id="_CPPv3N14LambertPlannerD0Ev"></span><span id="_CPPv2N14LambertPlannerD0Ev"></span><span id="LambertPlanner::~LambertPlanner"></span><span class="target" id="class_lambert_planner_1a8b11a612dcb43428e4b1c85fa06123f9"></span><span class="sig-name descname"><span class="n"><span class="pre">~LambertPlanner</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlannerD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner5ResetE8uint64_t">
+<span id="_CPPv3N14LambertPlanner5ResetE8uint64_t"></span><span id="_CPPv2N14LambertPlanner5ResetE8uint64_t"></span><span id="LambertPlanner::Reset__uint64_t"></span><span class="target" id="class_lambert_planner_1ad93bcd95f5acd70bc5b21b680cb6cfdd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner11UpdateStateE8uint64_t">
+<span id="_CPPv3N14LambertPlanner11UpdateStateE8uint64_t"></span><span id="_CPPv2N14LambertPlanner11UpdateStateE8uint64_t"></span><span id="LambertPlanner::UpdateState__uint64_t"></span><span class="target" id="class_lambert_planner_1ac353eac3520348c12c31bfb861f8e9e4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner19useSolverIzzoMethodEv">
+<span id="_CPPv3N14LambertPlanner19useSolverIzzoMethodEv"></span><span id="_CPPv2N14LambertPlanner19useSolverIzzoMethodEv"></span><span id="LambertPlanner::useSolverIzzoMethod"></span><span class="target" id="class_lambert_planner_1ad4ce5eaaa6d3db93d3ae3caa8f10b17c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useSolverIzzoMethod</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner19useSolverIzzoMethodEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method sets the lambert solver algorithm that should be used to the method by Izzo. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner22useSolverGoodingMethodEv">
+<span id="_CPPv3N14LambertPlanner22useSolverGoodingMethodEv"></span><span id="_CPPv2N14LambertPlanner22useSolverGoodingMethodEv"></span><span id="LambertPlanner::useSolverGoodingMethod"></span><span class="target" id="class_lambert_planner_1acb43cd97d67e2a78b4d2f324aa5c86fa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useSolverGoodingMethod</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner22useSolverGoodingMethodEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method sets the lambert solver algorithm that should be used to the method by Gooding. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner9setR_TN_NEKN5Eigen8Vector3dE">
+<span id="_CPPv3N14LambertPlanner9setR_TN_NEKN5Eigen8Vector3dE"></span><span id="_CPPv2N14LambertPlanner9setR_TN_NEKN5Eigen8Vector3dE"></span><span id="LambertPlanner::setR_TN_N__Eigen::Vector3dC"></span><span class="target" id="class_lambert_planner_1a0e411643c21056f3ca8bcb543ed8f355"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_TN_N</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner9setR_TN_NEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_TN_N</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14LambertPlanner9getR_TN_NEv">
+<span id="_CPPv3NK14LambertPlanner9getR_TN_NEv"></span><span id="_CPPv2NK14LambertPlanner9getR_TN_NEv"></span><span id="LambertPlanner::getR_TN_NC"></span><span class="target" id="class_lambert_planner_1ad08ff3b6ed43bde0235b137e43c8fcf3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_TN_N</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14LambertPlanner9getR_TN_NEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_TN_N</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner12setFinalTimeEKd">
+<span id="_CPPv3N14LambertPlanner12setFinalTimeEKd"></span><span id="_CPPv2N14LambertPlanner12setFinalTimeEKd"></span><span id="LambertPlanner::setFinalTime__doubleC"></span><span class="target" id="class_lambert_planner_1a9f97140daf9e241a93db601bdfb9f683"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setFinalTime</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner12setFinalTimeEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">finalTime</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14LambertPlanner12getFinalTimeEv">
+<span id="_CPPv3NK14LambertPlanner12getFinalTimeEv"></span><span id="_CPPv2NK14LambertPlanner12getFinalTimeEv"></span><span id="LambertPlanner::getFinalTimeC"></span><span class="target" id="class_lambert_planner_1a70f11fe691f73ad81e489e3b2c9e305b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFinalTime</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14LambertPlanner12getFinalTimeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">finalTime</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner15setManeuverTimeEKd">
+<span id="_CPPv3N14LambertPlanner15setManeuverTimeEKd"></span><span id="_CPPv2N14LambertPlanner15setManeuverTimeEKd"></span><span id="LambertPlanner::setManeuverTime__doubleC"></span><span class="target" id="class_lambert_planner_1a95b082fde720c5f751c71d20c0e66816"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setManeuverTime</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner15setManeuverTimeEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">maneuverTime</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14LambertPlanner15getManeuverTimeEv">
+<span id="_CPPv3NK14LambertPlanner15getManeuverTimeEv"></span><span id="_CPPv2NK14LambertPlanner15getManeuverTimeEv"></span><span id="LambertPlanner::getManeuverTimeC"></span><span class="target" id="class_lambert_planner_1a6ccd79779d3484655dbd1ffc808ad213"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getManeuverTime</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14LambertPlanner15getManeuverTimeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">maneuverTime</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner5setMuEKd">
+<span id="_CPPv3N14LambertPlanner5setMuEKd"></span><span id="_CPPv2N14LambertPlanner5setMuEKd"></span><span id="LambertPlanner::setMu__doubleC"></span><span class="target" id="class_lambert_planner_1ac4340a60f10524811c0e0c14c997cd8d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner5setMuEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">mu</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14LambertPlanner5getMuEv">
+<span id="_CPPv3NK14LambertPlanner5getMuEv"></span><span id="_CPPv2NK14LambertPlanner5getMuEv"></span><span id="LambertPlanner::getMuC"></span><span class="target" id="class_lambert_planner_1af436b8334f270f8f9793ab872e358409"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMu</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14LambertPlanner5getMuEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">mu</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner17setNumRevolutionsEKi">
+<span id="_CPPv3N14LambertPlanner17setNumRevolutionsEKi"></span><span id="_CPPv2N14LambertPlanner17setNumRevolutionsEKi"></span><span id="LambertPlanner::setNumRevolutions__iC"></span><span class="target" id="class_lambert_planner_1a22e93191b24a59a2960bb37e375553ac"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNumRevolutions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner17setNumRevolutionsEKi" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">numRevolutions</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14LambertPlanner17getNumRevolutionsEv">
+<span id="_CPPv3NK14LambertPlanner17getNumRevolutionsEv"></span><span id="_CPPv2NK14LambertPlanner17getNumRevolutionsEv"></span><span id="LambertPlanner::getNumRevolutionsC"></span><span class="target" id="class_lambert_planner_1add3c4afbbc5618e8b8f9dcbd5053540e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumRevolutions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14LambertPlanner17getNumRevolutionsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">numRevolutions</span></code></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner13navTransInMsgE">
+<span id="_CPPv3N14LambertPlanner13navTransInMsgE"></span><span id="_CPPv2N14LambertPlanner13navTransInMsgE"></span><span id="LambertPlanner::navTransInMsg__ReadFunctor:NavTransMsgPayload:"></span><span class="target" id="class_lambert_planner_1a595e0373139fe185d4f7b793e7277bc2"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner13navTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>translational navigation input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner20lambertProblemOutMsgE">
+<span id="_CPPv3N14LambertPlanner20lambertProblemOutMsgE"></span><span id="_CPPv2N14LambertPlanner20lambertProblemOutMsgE"></span><span id="LambertPlanner::lambertProblemOutMsg__Message:LambertProblemMsgPayload:"></span><span class="target" id="class_lambert_planner_1aeb82dfa5a56dbb85821db9353fd0721e"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#_CPPv424LambertProblemMsgPayload" title="LambertProblemMsgPayload"><span class="n"><span class="pre">LambertProblemMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lambertProblemOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner20lambertProblemOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>lambert problem output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner9bskLoggerE">
+<span id="_CPPv3N14LambertPlanner9bskLoggerE"></span><span id="_CPPv2N14LambertPlanner9bskLoggerE"></span><span id="LambertPlanner::bskLogger__BSKLogger"></span><span class="target" id="class_lambert_planner_1adc6520e8c1930ad9b9f754edc5c1acba"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner12readMessagesEv">
+<span id="_CPPv3N14LambertPlanner12readMessagesEv"></span><span id="_CPPv2N14LambertPlanner12readMessagesEv"></span><span id="LambertPlanner::readMessages"></span><span class="target" id="class_lambert_planner_1ae87ecd03dc4eabfca69fa39c0c191fb3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the input messages each call of updateState. It also checks if the message contents are valid for this module. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner13writeMessagesE8uint64_t">
+<span id="_CPPv3N14LambertPlanner13writeMessagesE8uint64_t"></span><span id="_CPPv2N14LambertPlanner13writeMessagesE8uint64_t"></span><span id="LambertPlanner::writeMessages__uint64_t"></span><span class="target" id="class_lambert_planner_1a2a80668d95b10f069bedc9d85922ac52"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method writes the output messages each call of updateState </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner9propagateERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEENSt5arrayIdXL2EEEERKN5Eigen8VectorXdEd">
+<span id="_CPPv3N14LambertPlanner9propagateERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEENSt5arrayIdXL2EEEERKN5Eigen8VectorXdEd"></span><span id="_CPPv2N14LambertPlanner9propagateERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEENSt5arrayIdX2EEERKN5Eigen8VectorXdEd"></span><span class="target" id="class_lambert_planner_1ad2df5fd5e4777d41c093d15cd04cc404"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propagate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">EOM</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">interval</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">X0</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner9propagateERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEENSt5arrayIdXL2EEEERKN5Eigen8VectorXdEd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method integrates the provided equations of motion using Runge-Kutta 4 (RK4) and returns the time steps and state vectors at each time step. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>EOM</strong> – equations of motion function to be propagated </p></li>
+<li><p><strong>interval</strong> – integration interval </p></li>
+<li><p><strong>X0</strong> – initial state </p></li>
+<li><p><strong>dt</strong> – time step </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>std::pair&lt;std::vector&lt;double&gt;, std::vector&lt;Eigen::VectorXd&gt;&gt; </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner3RK4ERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEERKN5Eigen8VectorXdEdd">
+<span id="_CPPv3N14LambertPlanner3RK4ERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEERKN5Eigen8VectorXdEdd"></span><span id="_CPPv2N14LambertPlanner3RK4ERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEERKN5Eigen8VectorXdEdd"></span><span class="target" id="class_lambert_planner_1a08da854c2ac4608f20af4f4d5012451f"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RK4</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">ODEfunction</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">X0</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t0</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14LambertPlanner3RK4ERKNSt8functionIFN5Eigen8VectorXdEdN5Eigen8VectorXdEEEERKN5Eigen8VectorXdEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method provides the 4th order Runge-Kutta (RK4) </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ODEfunction</strong> – function handle that includes the equations of motion </p></li>
+<li><p><strong>X0</strong> – initial state </p></li>
+<li><p><strong>t0</strong> – initial time </p></li>
+<li><p><strong>dt</strong> – time step </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eigen::VectorXd </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner6r_TN_NE">
+<span id="_CPPv3N14LambertPlanner6r_TN_NE"></span><span id="_CPPv2N14LambertPlanner6r_TN_NE"></span><span id="LambertPlanner::r_TN_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_planner_1ab6edb251af1d67433f3800adacf44a7d"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_TN_N</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner6r_TN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] targeted position vector with respect to celestial body at finalTime, in N frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner9finalTimeE">
+<span id="_CPPv3N14LambertPlanner9finalTimeE"></span><span id="_CPPv2N14LambertPlanner9finalTimeE"></span><span id="LambertPlanner::finalTime__double"></span><span class="target" id="class_lambert_planner_1aff049267b9f856b767ae07a90bed4511"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">finalTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner9finalTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] time at which target position should be reached </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner12maneuverTimeE">
+<span id="_CPPv3N14LambertPlanner12maneuverTimeE"></span><span id="_CPPv2N14LambertPlanner12maneuverTimeE"></span><span id="LambertPlanner::maneuverTime__double"></span><span class="target" id="class_lambert_planner_1a5deb58a799ef109f247a041a4b4b7b16"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maneuverTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner12maneuverTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] time at which maneuver should be executed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner2muE">
+<span id="_CPPv3N14LambertPlanner2muE"></span><span id="_CPPv2N14LambertPlanner2muE"></span><span id="LambertPlanner::mu__double"></span><span class="target" id="class_lambert_planner_1a6b1c222133c287ef5864591f3ee009e9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^3 s^-2] gravitational parameter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner14numRevolutionsE">
+<span id="_CPPv3N14LambertPlanner14numRevolutionsE"></span><span id="_CPPv2N14LambertPlanner14numRevolutionsE"></span><span id="LambertPlanner::numRevolutions__i"></span><span class="target" id="class_lambert_planner_1a834618ed117587e5c81a1347b3078edc"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numRevolutions</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner14numRevolutionsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] number of revolutions to be completed (completed orbits) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner12solverMethodE">
+<span id="_CPPv3N14LambertPlanner12solverMethodE"></span><span id="_CPPv2N14LambertPlanner12solverMethodE"></span><span id="LambertPlanner::solverMethod__SolverMethod"></span><span class="target" id="class_lambert_planner_1a96c129569b6e23b3a886e104f1dea912"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#_CPPv412SolverMethod" title="SolverMethod"><span class="n"><span class="pre">SolverMethod</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">solverMethod</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner12solverMethodE" title="Link to this definition"></a><br /></dt>
+<dd><p>lambert solver algorithm (GOODING or IZZO) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner4timeE">
+<span id="_CPPv3N14LambertPlanner4timeE"></span><span id="_CPPv2N14LambertPlanner4timeE"></span><span id="LambertPlanner::time__double"></span><span class="target" id="class_lambert_planner_1a739595b9b2c65c261470eedc10fbc700"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">time</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner4timeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Current vehicle time-tag associated with measurements </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner3r_NE">
+<span id="_CPPv3N14LambertPlanner3r_NE"></span><span id="_CPPv2N14LambertPlanner3r_NE"></span><span id="LambertPlanner::r_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_planner_1adac6a14f855e95d9de858978c41d3b59"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_N</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner3r_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Current inertial spacecraft position vector in inertial frame N components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner3v_NE">
+<span id="_CPPv3N14LambertPlanner3v_NE"></span><span id="_CPPv2N14LambertPlanner3v_NE"></span><span id="LambertPlanner::v_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_planner_1acead3a9a018df9b741411af7a62f021b"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_N</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner3v_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] Current inertial velocity of the spacecraft in inertial frame N components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14LambertPlanner4rm_NE">
+<span id="_CPPv3N14LambertPlanner4rm_NE"></span><span id="_CPPv2N14LambertPlanner4rm_NE"></span><span id="LambertPlanner::rm_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_planner_1ae0b37da0e1dff6f6c4ab12df616bbb67"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rm_N</span></span></span><a class="headerlink" href="#_CPPv4N14LambertPlanner4rm_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] Expected inertial spacecraft position vector at maneuver time tm in inertial frame N </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="lambertPlanner" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deprecating code in Basilisk &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Making a New C/C++ Basilisk Module" href="makingNewBskModule.html" />
+    <link rel="prev" title="Accessing the Debugger for C/C++ Basilisk Modules" href="Debugging.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Deprecating code in Basilisk</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecating-python-code">Deprecating Python Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deprecating-c-code-wrapped-by-swig">Deprecating C++ Code Wrapped by SWIG</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migratingBskModuleToBsk2.html">Migrating Basilisk Modules from Version 1.X to 2.X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MigratingToPython3.html">Migrating BSK Scripts to Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">Deprecating code in Basilisk</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/deprecatingCode.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="deprecating-code-in-basilisk">
+<span id="deprecatingcode"></span><h1>Deprecating code in Basilisk<a class="headerlink" href="#deprecating-code-in-basilisk" title="Link to this heading"></a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h2>
+<p>The nature of a fast evolving software such as Basilisk is that systems are consistently improving, many times making older functionality obsolete.
+Thus, we face the challenge of handling older code while we move towards the new systems.
+We cannot simply remove old functionality, as we don’t want user code to break overnight.
+Instead, we enter a phase of deprecation, when we warn users about the use of deprecated code,
+but otherwise continue to allow it and support it. After enough time has passed for our users to update
+their code, the deprecated functionality can be removed.</p>
+<p>This support page explains the different mechanisms we have available in Basilisk to mark code as deprecated.
+Deprecated code will cause deprecation warnings to pop-up in the user’s console, but otherwise it should
+work as expected.</p>
+</section>
+<section id="deprecating-python-code">
+<h2>Deprecating Python Code<a class="headerlink" href="#deprecating-python-code" title="Link to this heading"></a></h2>
+<p>For code that is entirely defined in Python, we can make use of the utility decorators and descriptors
+defined in <code class="docutils literal notranslate"><span class="pre">Basilisk.utilities.deprecated</span></code>. This section shows how to deprecate functions, classes, attributes,
+and properties.</p>
+<p>To illustrate this functionality, let’s imagine the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">standaloneFun</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">myAttribute</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_myPropertyInner</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">myFun1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_myPropertyInner</span> <span class="o">*</span> <span class="mi">2</span>
+
+    <span class="nd">@myProperty</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_myPropertyInner</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>There is a standalone function <code class="docutils literal notranslate"><span class="pre">standaloneFun</span></code>, a class <code class="docutils literal notranslate"><span class="pre">MyClass</span></code> with two attributes
+<code class="docutils literal notranslate"><span class="pre">myAttribute</span></code> and <code class="docutils literal notranslate"><span class="pre">_myPropertyInner</span></code>, a class method <code class="docutils literal notranslate"><span class="pre">myFun1</span></code>, and a property <code class="docutils literal notranslate"><span class="pre">myProperty</span></code>
+with a getter and setter (which makes use of the <code class="docutils literal notranslate"><span class="pre">_myPropertyInner</span></code> private attribute).</p>
+<p>If we want to deprecate the <strong>standalone function</strong> and the <strong>class method</strong>, the syntax is
+as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2099/05/05&quot;</span><span class="p">,</span> <span class="s2">&quot;Use standaloneFun_new() instead!&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">standaloneFun</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="o">...</span>
+
+    <span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2000/05/05&quot;</span><span class="p">,</span> <span class="s2">&quot;myFun1 is super old!&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myFun1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>The first argument to <code class="docutils literal notranslate"><span class="pre">&#64;deprecated.deprecated</span></code> must be a string with the date when the function is expected
+to be removed (as a rule of thumb, between 6 to 12 months after the release of
+the deprecated code). The second argument is a message that is shown directly
+to users. Here, you may explain why the function is deprecated, alternative functions,
+links to documentation or scenarios that show how to translate deprecated code…</p>
+<p>If you want to deprecate a <strong>class</strong>, then use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="nd">@deprecated</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span><span class="s2">&quot;2099/05/05&quot;</span><span class="p">,</span> <span class="s2">&quot;This entire class is replaced by MyOtherClass&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>This is the same syntax as deprecating functions, and the arguments behave in the same way.</p>
+<p>If you want to deprecate an <strong>attribute</strong>, that is, a class variable, then do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="n">myAttribute</span> <span class="o">=</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">DeprecatedAttribute</span><span class="p">(</span>
+        <span class="s2">&quot;2099/05/05&quot;</span><span class="p">,</span> <span class="s2">&quot;myAttribute is no longer used in the simulation&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">ignore</span><span class="p">(</span><span class="s2">&quot;myAttribute&quot;</span><span class="p">):</span>  <span class="c1"># Prevents warnings here</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">myAttribute</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>The input arguments to <code class="docutils literal notranslate"><span class="pre">deprecated.DeprecatedAttribute</span></code> are the same as the arguments
+for <code class="docutils literal notranslate"><span class="pre">deprecated.deprecated</span></code>. Note that if you want to initialize the attribute to
+some variable (or otherwise manipulate it in any way) without raising deprecation
+warnings, you should use the <code class="docutils literal notranslate"><span class="pre">deprecated.ignore</span></code> context manager.</p>
+<p>Finally, if you need to deprecate a <strong>property</strong>, then use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">myPropertyInner</span> <span class="o">*</span> <span class="mi">2</span>
+
+    <span class="nd">@myProperty</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">myProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">myPropertyInner</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">myProperty</span> <span class="o">=</span> <span class="n">deprecated</span><span class="o">.</span><span class="n">DeprecatedProperty</span><span class="p">(</span>
+        <span class="s2">&quot;2099/05/05&quot;</span><span class="p">,</span> <span class="s2">&quot;myProperty is no longer used in the simulation&quot;</span><span class="p">,</span> <span class="n">myProperty</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>The first two arguments to <code class="docutils literal notranslate"><span class="pre">deprecated.DeprecatedProperty</span></code> are the same as the
+arguments to <code class="docutils literal notranslate"><span class="pre">deprecated.deprecated</span></code> or <code class="docutils literal notranslate"><span class="pre">deprecated.DeprecatedAttribute</span></code>.
+The third argument, however, shold be the name of the property to deprecate.</p>
+</section>
+<section id="deprecating-c-code-wrapped-by-swig">
+<h2>Deprecating C++ Code Wrapped by SWIG<a class="headerlink" href="#deprecating-c-code-wrapped-by-swig" title="Link to this heading"></a></h2>
+<p>This section explains how to deprecate code that is written in C++ and exposed to
+Python through a SWIG interface. Note that deprecation warnings will be raised only
+when the Python wrappers to C++ functionality are invoked. Currently, it is not
+possible to emit deprecation warnings when the deprecated functionality is called from
+C++.</p>
+<p>In order to deprecate functions, classes, or variables in C++, we use special
+macros in the SWIG file that is exposing
+the deprecated functionality. For example, let’s consider we have this C++ code:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// example.h</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">standaloneFun</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">)</span><span class="w"> </span><span class="p">{};</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">MyClass</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">myFun</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">myAttribute</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>with the following SWIG interface file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">example</span><span class="o">.</span><span class="n">i</span>
+
+<span class="o">%</span><span class="n">module</span> <span class="n">example</span>
+<span class="o">%</span><span class="p">{</span>
+   <span class="c1">#include &quot;example.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;example.h&quot;</span>
+</pre></div>
+</div>
+<p>If we want to deprecate the <strong>standalone function</strong> and <strong>class function</strong>, then we
+would change the SWIG file to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">example</span><span class="o">.</span><span class="n">i</span>
+
+<span class="o">%</span><span class="n">module</span> <span class="n">example</span>
+<span class="o">%</span><span class="p">{</span>
+   <span class="c1">#include &quot;example.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;swig_deprecated.i&quot;</span>
+<span class="o">%</span><span class="n">deprecated_function</span><span class="p">(</span><span class="n">standaloneFun</span><span class="p">,</span> <span class="s2">&quot;2023/01/01&quot;</span><span class="p">,</span> <span class="s2">&quot;You should use standaloneFunNew&quot;</span><span class="p">)</span>
+<span class="o">%</span><span class="n">deprecated_function</span><span class="p">(</span><span class="n">MyClass</span><span class="p">::</span><span class="n">myFun</span><span class="p">,</span> <span class="s2">&quot;2023/01/01&quot;</span><span class="p">,</span> <span class="s2">&quot;myFun has no effects.&quot;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;example.h&quot;</span>
+</pre></div>
+</div>
+<p>In the code above, we have included <code class="docutils literal notranslate"><span class="pre">&quot;swig_deprecated.i&quot;</span></code>, which makes the
+<code class="docutils literal notranslate"><span class="pre">%deprecated_function</span></code> macro available. Then, we have called this macro <strong>before we included the header file</strong>
+<code class="docutils literal notranslate"><span class="pre">&quot;example.h&quot;</span></code>. The first input to the macro is the SWIG identifier for the function.
+For standalone functions this is simple the function name, but for class functions this is
+<code class="docutils literal notranslate"><span class="pre">[CLASS_NAME]::[FUNCTION_NAME]</span></code>. The next two arguments are the expected removal date
+and message, as covered in the previous section.</p>
+<p>If we want to deprecate an entire <strong>class</strong>, then the SWIG file ought to change to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">example</span><span class="o">.</span><span class="n">i</span>
+
+<span class="o">%</span><span class="n">module</span> <span class="n">example</span>
+<span class="o">%</span><span class="p">{</span>
+   <span class="c1">#include &quot;example.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;swig_deprecated.i&quot;</span>
+<span class="o">%</span><span class="n">deprecated_function</span><span class="p">(</span><span class="n">MyClass</span><span class="p">::</span><span class="n">MyClass</span><span class="p">,</span> <span class="s2">&quot;2023/01/01&quot;</span><span class="p">,</span> <span class="s2">&quot;Use MyNewClass.&quot;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;example.h&quot;</span>
+</pre></div>
+</div>
+<p>Again, we use <code class="docutils literal notranslate"><span class="pre">%deprecated_function</span></code> before <code class="docutils literal notranslate"><span class="pre">%include</span> <span class="pre">&quot;example.h&quot;</span></code>. This time, however,
+we need to target <code class="docutils literal notranslate"><span class="pre">[CLASS_NAME]::[CLASS_NAME]</span></code>.</p>
+<p>Finally, to deprecate a class variable, the SWIG file would change to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">example</span><span class="o">.</span><span class="n">i</span>
+
+<span class="o">%</span><span class="n">module</span> <span class="n">example</span>
+<span class="o">%</span><span class="p">{</span>
+   <span class="c1">#include &quot;example.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;swig_deprecated.i&quot;</span>
+<span class="o">%</span><span class="n">deprecated_variable</span><span class="p">(</span><span class="n">MyClass</span><span class="p">,</span> <span class="n">myAttribute</span><span class="p">,</span> <span class="s2">&quot;2023/01/01&quot;</span><span class="p">,</span> <span class="s2">&quot;Use MyNewClass.&quot;</span><span class="p">)</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;example.h&quot;</span>
+</pre></div>
+</div>
+<p>This time, we call the macro <code class="docutils literal notranslate"><span class="pre">%deprecated_variable</span></code>, although always
+before <code class="docutils literal notranslate"><span class="pre">%include</span> <span class="pre">&quot;example.h&quot;</span></code>. In this case, the two first arguments to <code class="docutils literal notranslate"><span class="pre">%deprecated_variable</span></code>
+are the name of the class that contains the variable, and then the name of the varible.
+The final two arguments are the expected removal date and the message.</p>
+<p>If a C++ structure or one of its fields are renamed, an alias can be used to deprecate the entity while retaining support for the old name. This is done using the <code class="docutils literal notranslate"><span class="pre">_DeprecatedWrapper</span></code> class defined in <code class="docutils literal notranslate"><span class="pre">&quot;swig_deprecated.i&quot;</span></code>. Its implementation is detailed below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">example</span><span class="o">.</span><span class="n">i</span>
+
+<span class="o">%</span><span class="n">module</span> <span class="n">example</span>
+<span class="o">%</span><span class="p">{</span>
+    <span class="c1">#include &quot;example.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="s2">&quot;swig_deprecated.i&quot;</span>
+<span class="o">%</span><span class="n">include</span> <span class="n">example</span><span class="o">.</span><span class="n">h</span>
+
+<span class="o">%</span><span class="n">pythoncode</span> <span class="o">%</span><span class="p">{</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">]</span>
+
+<span class="n">mod</span><span class="o">.</span><span class="n">ExampleStruct</span> <span class="o">=</span> <span class="n">_DeprecatedWrapper</span><span class="p">(</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">ExampleStruct</span><span class="p">,</span>
+    <span class="n">targetName</span><span class="o">=</span><span class="s2">&quot;ExampleStruct&quot;</span><span class="p">,</span>
+    <span class="n">deprecatedFields</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;oldField&quot;</span><span class="p">:</span> <span class="s2">&quot;newField&quot;</span><span class="p">},</span>
+    <span class="n">typeConversion</span><span class="o">=</span><span class="s2">&quot;scalarTo3D&quot;</span><span class="p">,</span>
+    <span class="n">removalDate</span><span class="o">=</span><span class="s2">&quot;YYYY/MM/DD&quot;</span>
+<span class="p">)</span>
+
+<span class="n">mod</span><span class="o">.</span><span class="n">OldStructure</span> <span class="o">=</span> <span class="n">_DeprecatedWrapper</span><span class="p">(</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">NewStructure</span><span class="p">,</span>
+    <span class="n">aliasName</span><span class="o">=</span><span class="s2">&quot;OldStructure&quot;</span><span class="p">,</span>
+    <span class="n">targetName</span><span class="o">=</span><span class="s2">&quot;NewStructure&quot;</span><span class="p">,</span>
+    <span class="n">removalDate</span><span class="o">=</span><span class="s2">&quot;YYYY/MM/DD&quot;</span>
+<span class="p">)</span>
+
+<span class="n">protectAllClasses</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">])</span>
+<span class="o">%</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If a field is renamed, the top chunk creates a wrapper that contains the old field name and handles deprecation warnings and getter/setter behavior. The <code class="docutils literal notranslate"><span class="pre">typeConversion</span></code> parameter can be set to <code class="docutils literal notranslate"><span class="pre">&quot;scalarTo3D&quot;</span></code> to deprecate a scalar variable and alias to a new 3D variable with repeated values.</p>
+<p>If a structure is renamed, the second chunk creates a wrapper that generates an alias using the old structure name for continued support.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Debugging.html" class="btn btn-neutral float-left" title="Accessing the Debugger for C/C++ Basilisk Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="makingNewBskModule.html" class="btn btn-neutral float-right" title="Making a New C/C++ Basilisk Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

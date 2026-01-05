@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioIntegrators &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioVariableTimeStepIntegrators" href="scenarioVariableTimeStepIntegrators.html" />
+    <link rel="prev" title="scenarioDragSensitivity" href="scenarioDragSensitivity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Setting Type of Integrator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioVariableTimeStepIntegrators.html">Using a Variable Time Step Integrator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioIntegratorsComparison.html">Comparison of different integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAttitudePointingPy.html">Using a Python BSK Module Inherited from SysModel Class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioBskLog.html">Changing the bskLog Verbosity from Python</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioIntegrators</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioIntegrators.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariointegrators">
+<span id="id1"></span><h1>scenarioIntegrators<a class="headerlink" href="#scenariointegrators" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioIntegrators"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioIntegrators</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The simulation layout is shown in the following illustration.  A single simulation process is created
+which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
+simulate the gravitational accelerations.  The spacecraft object provides the states that the integration
+module needs to perform the time integration.</p>
+<img alt="../_images/test_scenarioIntegrators.svg" class="align-center" src="../_images/test_scenarioIntegrators.svg" />
+<p>If <a class="reference internal" href="../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a>, or any other dynamics module, is created without specifying a particular
+integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
+different integration scheme, the following code is used before the dynamics module is added to the
+python task list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorEuler</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+<span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first line invokes an instance of the desired state vector integration module, and provides
+the dynamics module (spacecraft() in this case) as the input.  This specifies to the integrator
+module which other module will provide the <code class="docutils literal notranslate"><span class="pre">equationOfMotion()</span></code> function to evaluate the derivatives of
+the state vector.  The second line ties the integration module to the dynamics module.  After that we are
+done.</p>
+<p>The integrator scenario script is setup to evaluate the default integration method (RK4), a fourth-order variable time
+step integrator (RKF45), a first order Euler integration method, as well as a second order RK2 method.</p>
+<p>Moreover, this scenario illustrates how to set-up your own explicit Runge-Kutta
+methods simply by providing the coefficients in their Butcher table. The 3rd order
+Runge-Kutta and the (adaptive) Bogacki-Shampine methods are implemented in this way
+to illustrate how to create custom integrators:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3rd order Runge-Kutta method</span>
+<span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRungeKutta</span><span class="p">(</span>
+    <span class="n">scObject</span><span class="p">,</span>
+    <span class="n">a_coefficients</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">b_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">],</span>
+    <span class="n">c_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bogacki-Shampine method</span>
+<span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorAdaptiveRungeKutta</span><span class="p">(</span>
+    <span class="n">scObject</span><span class="p">,</span>
+    <span class="n">largest_order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">a_coefficients</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span>  <span class="p">,</span> <span class="mi">3</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">2</span><span class="o">/</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">b_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span><span class="o">/</span><span class="mi">24</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="p">],</span>
+    <span class="n">b_star_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="o">/</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="n">c_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When the simulation completes a plot is shown for illustrating both the true and the numerically
+evaluated orbit.</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">integratorCase</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;rk4&#39;</span><span class="p">,</span> <span class="s1">&#39;rkf45&#39;</span><span class="p">,</span> <span class="s1">&#39;rk2&#39;</span><span class="p">,</span> <span class="s1">&#39;euler&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The following figure illustrates the resulting
+trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
+The RK4 and RKF45 method still approximate the true orbit well, while the RK2 method is starting to show some visible
+errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
+that much smaller time steps must be used with this method in this scenario.</p>
+<img alt="../_images/scenarioIntegrators.svg" class="align-center" src="../_images/scenarioIntegrators.svg" />
+</section>
+<section id="creating-new-integrator-modules">
+<h2>Creating New Integrator Modules<a class="headerlink" href="#creating-new-integrator-modules" title="Link to this heading"></a></h2>
+<p>New integration modules can be readily created for Basilisk.  They are all stored in the folder
+<code class="docutils literal notranslate"><span class="pre">Basilisk/src/simulation/dynamics/Integrators/</span></code>.</p>
+<p>The integrators must be created to function on a general state vector and be independent of the particular
+dynamics being integrated.  Note that the default integrator is placed inside the <code class="docutils literal notranslate"><span class="pre">_GeneralModulesFiles</span></code>
+folder within the <code class="docutils literal notranslate"><span class="pre">dynamics</span></code> folder.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioIntegrators.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioIntegrators.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integratorCase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioIntegrators.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioIntegrators.run" title="Link to this definition"></a></dt>
+<dd><p>The scenarios can be run with the followings setups parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots</p></li>
+<li><p><strong>integratorCase</strong> (<em>bool</em>) – <p>Specify what type of integrator to use in the simulation</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>String</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>’rk4’</p></td>
+<td><p>RK4 - default</p></td>
+</tr>
+<tr class="row-odd"><td><p>’rkf45’</p></td>
+<td><p>RKF45</p></td>
+</tr>
+<tr class="row-even"><td><p>’rkf78’</p></td>
+<td><p>RKF78</p></td>
+</tr>
+<tr class="row-odd"><td><p>’rk2’</p></td>
+<td><p>RK2</p></td>
+</tr>
+<tr class="row-even"><td><p>’euler’</p></td>
+<td><p>Euler or RK1</p></td>
+</tr>
+<tr class="row-odd"><td><p>’rk3’</p></td>
+<td><p>RK3</p></td>
+</tr>
+<tr class="row-even"><td><p>’bogackiShampine’</p></td>
+<td><p>Bogacki-Shampine adaptive</p></td>
+</tr>
+</tbody>
+</table>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioDragSensitivity.html" class="btn btn-neutral float-left" title="scenarioDragSensitivity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioVariableTimeStepIntegrators.html" class="btn btn-neutral float-right" title="scenarioVariableTimeStepIntegrators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

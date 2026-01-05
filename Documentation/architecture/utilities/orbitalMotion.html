@@ -1,0 +1,512 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orbitalMotion &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="rigidBodyKinematics" href="rigidBodyKinematics.html" />
+    <link rel="prev" title="macroDefinitions" href="macroDefinitions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BSpline.html">BSpline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="astroConstants.html">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenSupport.html">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="keplerianOrbit.html">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">orbitalMotion</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/orbitalMotion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="orbitalmotion">
+<span id="orbitalmotionutilities"></span><h1>orbitalMotion<a class="headerlink" href="#orbitalmotion" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.N_DEBYE_PARAMETERS">
+<span class="target" id="orbital_motion_8h_1a4b115c094f061686b6ce326caf9eee42"></span><span class="sig-name descname"><span class="n"><span class="pre">N_DEBYE_PARAMETERS</span></span></span><a class="headerlink" href="#c.N_DEBYE_PARAMETERS" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv417CelestialObject_t">
+<span id="_CPPv317CelestialObject_t"></span><span id="_CPPv217CelestialObject_t"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69c"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CelestialObject_t</span></span></span><a class="headerlink" href="#_CPPv417CelestialObject_t" title="Link to this definition"></a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t17CELESTIAL_MERCURYE">
+<span id="_CPPv3N17CelestialObject_t17CELESTIAL_MERCURYE"></span><span id="_CPPv2N17CelestialObject_t17CELESTIAL_MERCURYE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca649e464bd410ab63abc0303875b41749"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_MERCURY</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t17CELESTIAL_MERCURYE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t15CELESTIAL_VENUSE">
+<span id="_CPPv3N17CelestialObject_t15CELESTIAL_VENUSE"></span><span id="_CPPv2N17CelestialObject_t15CELESTIAL_VENUSE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69cacebe0d79cbdc55009c20608fbfde96f7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_VENUS</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t15CELESTIAL_VENUSE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t15CELESTIAL_EARTHE">
+<span id="_CPPv3N17CelestialObject_t15CELESTIAL_EARTHE"></span><span id="_CPPv2N17CelestialObject_t15CELESTIAL_EARTHE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69caca036c2a7f1251da17deb03e73deab0c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_EARTH</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t15CELESTIAL_EARTHE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t14CELESTIAL_MOONE">
+<span id="_CPPv3N17CelestialObject_t14CELESTIAL_MOONE"></span><span id="_CPPv2N17CelestialObject_t14CELESTIAL_MOONE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69cafad08cf750a252223786afcd47689744"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_MOON</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t14CELESTIAL_MOONE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t14CELESTIAL_MARSE">
+<span id="_CPPv3N17CelestialObject_t14CELESTIAL_MARSE"></span><span id="_CPPv2N17CelestialObject_t14CELESTIAL_MARSE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69caa93415d59b40b43c38f2c4b5d0c4b45a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_MARS</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t14CELESTIAL_MARSE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t16CELESTIAL_PHOBOSE">
+<span id="_CPPv3N17CelestialObject_t16CELESTIAL_PHOBOSE"></span><span id="_CPPv2N17CelestialObject_t16CELESTIAL_PHOBOSE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca33c61a29139f9fce57ec57cfaa3dcef2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_PHOBOS</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t16CELESTIAL_PHOBOSE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t16CELESTIAL_DEIMOSE">
+<span id="_CPPv3N17CelestialObject_t16CELESTIAL_DEIMOSE"></span><span id="_CPPv2N17CelestialObject_t16CELESTIAL_DEIMOSE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69cad7cb6f3f6f17f49fbba8cc6820ea8b28"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_DEIMOS</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t16CELESTIAL_DEIMOSE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t17CELESTIAL_JUPITERE">
+<span id="_CPPv3N17CelestialObject_t17CELESTIAL_JUPITERE"></span><span id="_CPPv2N17CelestialObject_t17CELESTIAL_JUPITERE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca2240bcc501eee293bb18c2df9dae86ef"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_JUPITER</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t17CELESTIAL_JUPITERE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t16CELESTIAL_SATURNE">
+<span id="_CPPv3N17CelestialObject_t16CELESTIAL_SATURNE"></span><span id="_CPPv2N17CelestialObject_t16CELESTIAL_SATURNE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca68f6ae8bd65b71a99d31c5bbf18711ae"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_SATURN</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t16CELESTIAL_SATURNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t16CELESTIAL_URANUSE">
+<span id="_CPPv3N17CelestialObject_t16CELESTIAL_URANUSE"></span><span id="_CPPv2N17CelestialObject_t16CELESTIAL_URANUSE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca647a494beb835fc6f095c909fa610ba5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_URANUS</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t16CELESTIAL_URANUSE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t17CELESTIAL_NEPTUNEE">
+<span id="_CPPv3N17CelestialObject_t17CELESTIAL_NEPTUNEE"></span><span id="_CPPv2N17CelestialObject_t17CELESTIAL_NEPTUNEE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69cafa04e9a1a84f7aed5f3886cc618ae15d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_NEPTUNE</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t17CELESTIAL_NEPTUNEE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t15CELESTIAL_PLUTOE">
+<span id="_CPPv3N17CelestialObject_t15CELESTIAL_PLUTOE"></span><span id="_CPPv2N17CelestialObject_t15CELESTIAL_PLUTOE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69caa350a3e192e92475c14268fb07fed426"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_PLUTO</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t15CELESTIAL_PLUTOE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t13CELESTIAL_SUNE">
+<span id="_CPPv3N17CelestialObject_t13CELESTIAL_SUNE"></span><span id="_CPPv2N17CelestialObject_t13CELESTIAL_SUNE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca25afd603d26357511bfb9d64178bcc01"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CELESTIAL_SUN</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t13CELESTIAL_SUNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N17CelestialObject_t13MAX_CELESTIALE">
+<span id="_CPPv3N17CelestialObject_t13MAX_CELESTIALE"></span><span id="_CPPv2N17CelestialObject_t13MAX_CELESTIALE"></span><span class="target" id="orbital_motion_8h_1a083e424d73ee7eb1754dce528593f69ca961827dc782f2a9a273f731bfc8ee2a9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MAX_CELESTIAL</span></span></span><a class="headerlink" href="#_CPPv4N17CelestialObject_t13MAX_CELESTIALE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43E2fdd">
+<span id="_CPPv33E2fdd"></span><span id="_CPPv23E2fdd"></span><span id="E2f__double.double"></span><span class="target" id="orbital_motion_8h_1af7ca583f63a8f53803f6bd60bae31f8e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">E2f</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">E</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43E2fdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps eccentric anomaly angles into true anomaly angles. This function requires the orbit to be either circular or non-rectilinar elliptic orbit. Inputs: Ecc = eccentric anomaly (rad) e = eccentricity (0 &lt;= e &lt; 1) Outputs: f = true anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43E2Mdd">
+<span id="_CPPv33E2Mdd"></span><span id="_CPPv23E2Mdd"></span><span id="E2M__double.double"></span><span class="target" id="orbital_motion_8h_1ae78f82590511c7e55bda09cdc57d1d82"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">E2M</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">E</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43E2Mdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps the eccentric anomaly angle into the corresponding mean elliptic anomaly angle. Both 2D and 1D elliptic orbit are allowed. Inputs: Ecc = eccentric anomaly (rad) e = eccentricity (0 &lt;= e &lt; 1) Outputs: M = mean elliptic anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43f2Edd">
+<span id="_CPPv33f2Edd"></span><span id="_CPPv23f2Edd"></span><span id="f2E__double.double"></span><span class="target" id="orbital_motion_8h_1a7f8981f0dfee045a691fe64f524fcff5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f2E</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">f</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43f2Edd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps true anomaly angles into eccentric anomaly angles. This function requires the orbit to be either circular or non-rectilinar elliptic orbit. Inputs: f = true anomaly angle (rad) e = eccentricity (0 &lt;= e &lt; 1) Outputs: Ecc = eccentric anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43f2Hdd">
+<span id="_CPPv33f2Hdd"></span><span id="_CPPv23f2Hdd"></span><span id="f2H__double.double"></span><span class="target" id="orbital_motion_8h_1ac4a07684425c297705a4c173f15afbfc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f2H</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">f</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43f2Hdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps true anomaly angles into hyperbolic anomaly angles. This function requires the orbit to be hyperbolic Inputs: f = true anomaly angle (rad) e = eccentricity (e &gt; 1) Outputs: H = hyperbolic anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43H2fdd">
+<span id="_CPPv33H2fdd"></span><span id="_CPPv23H2fdd"></span><span id="H2f__double.double"></span><span class="target" id="orbital_motion_8h_1af3b7f09bcdac83345decff823ac4be0c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">H2f</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">H</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43H2fdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps hyperbolic anomaly angles into true anomaly angles. This function requires the orbit to be hyperbolic Inputs: H = hyperbolic anomaly (rad) e = eccentricity (e &gt; 1) Outputs: f = true anomaly angle (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43H2Ndd">
+<span id="_CPPv33H2Ndd"></span><span id="_CPPv23H2Ndd"></span><span id="H2N__double.double"></span><span class="target" id="orbital_motion_8h_1ac406aa432311b4981a039a7f76465747"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">H2N</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">H</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43H2Ndd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps the hyperbolic anomaly angle H into the corresponding mean hyperbolic anomaly angle N. Inputs: H = hyperbolic anomaly (rad) e = eccentricity (e &gt; 1) Outputs: N = mean hyperbolic anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43M2Edd">
+<span id="_CPPv33M2Edd"></span><span id="_CPPv23M2Edd"></span><span id="M2E__double.double"></span><span class="target" id="orbital_motion_8h_1aa4732caf356b3aab0afc80e1352e12f8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">M2E</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">M</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43M2Edd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps the mean elliptic anomaly angle into the corresponding eccentric anomaly angle. Both 2D and 1D elliptic orbit are allowed. Inputs: M = mean elliptic anomaly (rad) e = eccentricity (0 &lt;= e &lt; 1) Outputs: Ecc = eccentric anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43N2Hdd">
+<span id="_CPPv33N2Hdd"></span><span id="_CPPv23N2Hdd"></span><span id="N2H__double.double"></span><span class="target" id="orbital_motion_8h_1a4636a6951ee8e048b08cb1315a1104a2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">N2H</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43N2Hdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Maps the mean hyperbolic anomaly angle N into the corresponding hyperbolic anomaly angle H. Inputs: N = mean hyperbolic anomaly (rad) e = eccentricity (e &gt; 1) Outputs: H = hyperbolic anomaly (rad) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47elem2rvdP15ClassicElementsPdPd">
+<span id="_CPPv37elem2rvdP15ClassicElementsPdPd"></span><span id="_CPPv27elem2rvdP15ClassicElementsPdPd"></span><span id="elem2rv__double.ClassicElementsP.doubleP.doubleP"></span><span class="target" id="orbital_motion_8h_1a13665dbfd65c74a7ff0c137520af1a8a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elem2rv</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span>, <a class="reference internal" href="#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">elements</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rVec</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vVec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47elem2rvdP15ClassicElementsPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Translates the orbit elements a - semi-major axis (km) e - eccentricity i - inclination (rad) AN - ascending node (rad) AP - argument of periapses (rad) f - true anomaly angle (rad) to the inertial Cartesian position and velocity vectors. The attracting body is specified through the supplied gravitational constant mu (units of km^3/s^2).</p>
+<p>The code can handle the following cases: circular: e = 0 a &gt; 0 elliptical-2D: 0 &lt; e &lt; 1 a &gt; 0 elliptical-1D: e = 1 a &gt; 0 f = Ecc. Anom. here parabolic: e = 1 rp = -a hyperbolic: e &gt; 1 a &lt; 0</p>
+<p>Note: to handle the parabolic case and distinguish it form the rectilinear elliptical case, instead of passing along the semi-major axis a in the “a” input slot, the negative radius at periapses is supplied. Having “a” be negative and e = 1 is a then a unique identified for the code for the parabolic case. Inputs: mu = gravitational parameter elements = orbital elements Outputs: rVec = position vector vVec = velocity vector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47rv2elemdPdPdP15ClassicElements">
+<span id="_CPPv37rv2elemdPdPdP15ClassicElements"></span><span id="_CPPv27rv2elemdPdPdP15ClassicElements"></span><span id="rv2elem__double.doubleP.doubleP.ClassicElementsP"></span><span class="target" id="orbital_motion_8h_1a2383cd1b258ec4bf593c09040aa31b01"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rv2elem</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rVec</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vVec</span></span>, <a class="reference internal" href="#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">elements</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47rv2elemdPdPdP15ClassicElements" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Translates the orbit elements inertial Cartesian position vector rVec and velocity vector vVec into the corresponding classical orbit elements where a - semi-major axis (zero if parabolic) e - eccentricity i - inclination (rad) AN - ascending node (rad) AP - argument of periapses (rad) f - true anomaly angle (rad) if the orbit is rectilinear, then this will be the eccentric or hyperbolic anomaly rp - radius at periapses ra - radius at apoapses (zero if parabolic) The attracting body is specified through the supplied gravitational constant mu (units of km^3/s^2). Inputs: mu = gravitational parameter rVec = position vector vVec = velocity vector Outputs: elements = orbital elements </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv412clMeanOscMapddP15ClassicElementsP15ClassicElementsd">
+<span id="_CPPv312clMeanOscMapddP15ClassicElementsP15ClassicElementsd"></span><span id="_CPPv212clMeanOscMapddP15ClassicElementsP15ClassicElementsd"></span><span id="clMeanOscMap__double.double.ClassicElementsP.ClassicElementsP.double"></span><span class="target" id="orbital_motion_8h_1a18b7a174290e19983d1cd6967802945d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clMeanOscMap</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">req</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">J2</span></span>, <a class="reference internal" href="#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">elements</span></span>, <a class="reference internal" href="#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">elements_p</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sgn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412clMeanOscMapddP15ClassicElementsP15ClassicElementsd" title="Link to this definition"></a><br /></dt>
+<dd><p>maps classical mean orbit elements to Osculating elements </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413clElem2eqElemP15ClassicElementsP19equinoctialElements">
+<span id="_CPPv313clElem2eqElemP15ClassicElementsP19equinoctialElements"></span><span id="_CPPv213clElem2eqElemP15ClassicElementsP19equinoctialElements"></span><span id="clElem2eqElem__ClassicElementsP.equinoctialElementsP"></span><span class="target" id="orbital_motion_8h_1acfd7654635c10cf21a4abe5dc23a6385"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clElem2eqElem</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">elements_cl</span></span>, <a class="reference internal" href="#_CPPv419equinoctialElements" title="equinoctialElements"><span class="n"><span class="pre">equinoctialElements</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">elements_eq</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413clElem2eqElemP15ClassicElementsP19equinoctialElements" title="Link to this definition"></a><br /></dt>
+<dd><p>maps from classical orbit elements to equinoctial elements </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv49hillFramePdPdAL3E_AL3E_d">
+<span id="_CPPv39hillFramePdPdAL3E_AL3E_d"></span><span id="_CPPv29hillFramePdPdA3_A3_d"></span><span id="hillFrame__doubleP.doubleP.doubleAA"></span><span class="target" id="orbital_motion_8h_1a4fd2c4ccc9feab0d6f954b15e00f352a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hillFrame</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rc_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vc_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">HN</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49hillFramePdPdAL3E_AL3E_d" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: maps inertial position and velocity vectors in the Hill frame DCM HN Inputs: rc_N: inertial position vector vc_N: inertial velocity vector Outputs: HN: Hill frame DCM relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47hill2rvPdPdPdPdPdPd">
+<span id="_CPPv37hill2rvPdPdPdPdPdPd"></span><span id="_CPPv27hill2rvPdPdPdPdPdPd"></span><span id="hill2rv__doubleP.doubleP.doubleP.doubleP.doubleP.doubleP"></span><span class="target" id="orbital_motion_8h_1a1f8b971382317c09ae30ac1671748e0f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hill2rv</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rc_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vc_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rho_H</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rhoPrime_H</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rd_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vd_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47hill2rvPdPdPdPdPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: maps Hill frame deputy states to inertial inertial position and velocity vectors Inputs: rc_N: chief inertial position vector vc_N: chief inertial velocity vector rho_H: deputy Hill position vector rhoPrime_H: deputy Hill velocity vector Outputs: rd_N: deputy inertial position vector vd_N: deputy inertial velocity vector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv47rv2hillPdPdPdPdPdPd">
+<span id="_CPPv37rv2hillPdPdPdPdPdPd"></span><span id="_CPPv27rv2hillPdPdPdPdPdPd"></span><span id="rv2hill__doubleP.doubleP.doubleP.doubleP.doubleP.doubleP"></span><span class="target" id="orbital_motion_8h_1a5a03909809850208991c83c17812fa90"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rv2hill</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rc_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vc_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rd_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vd_N</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rho_H</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rhoPrime_H</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47rv2hillPdPdPdPdPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: maps inertial frame deputy states to Hill inertial position and velocity vectors Inputs: rc_N: chief inertial position vector vc_N: chief inertial velocity vector rd_N: deputy inertial position vector vd_N: deputy inertial velocity vector Outputs: rho_H: deputy Hill position vector rhoPrime_H: deputy Hill velocity vector </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418atmosphericDensityd">
+<span id="_CPPv318atmosphericDensityd"></span><span id="_CPPv218atmosphericDensityd"></span><span id="atmosphericDensity__double"></span><span class="target" id="orbital_motion_8h_1a751bda0fc8ac6707f36ad8466547fd0f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmosphericDensity</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418atmosphericDensityd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: This program computes the atmospheric density based on altitude supplied by user. This function uses a curve fit based on atmospheric data from the Standard Atmosphere 1976 Data. This function is valid for altitudes ranging from 100km to 1000km.</p>
+<p>Note: This code can only be applied to spacecraft orbiting the Earth Inputs: alt = altitude in km Outputs: density = density at the given altitude in kg/m^3 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411debyeLengthd">
+<span id="_CPPv311debyeLengthd"></span><span id="_CPPv211debyeLengthd"></span><span id="debyeLength__double"></span><span class="target" id="orbital_motion_8h_1a64e8eb7c23b49cdd202a339b64f14536"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">debyeLength</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411debyeLengthd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: This program computes the Debye Length length for a given altitude and is valid for altitudes ranging from 200 km to GEO (35000km). However, all values above 1000 km are HIGHLY speculative at this point. Inputs: alt = altitude in km Outputs: debye = debye length given in m </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415atmosphericDragdddPdPdPd">
+<span id="_CPPv315atmosphericDragdddPdPdPd"></span><span id="_CPPv215atmosphericDragdddPdPdPd"></span><span id="atmosphericDrag__double.double.double.doubleP.doubleP.doubleP"></span><span class="target" id="orbital_motion_8h_1ae058f10e9ca166e38130e8e61d3276a1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">atmosphericDrag</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Cd</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rvec</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">vvec</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">advec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415atmosphericDragdddPdPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: This program computes the atmospheric drag acceleration vector acting on a spacecraft. Note the acceleration vector output is inertial, and is only valid for altitudes up to 1000 km. Afterwards the drag force is zero. Only valid for Earth. Inputs: Cd = drag coefficient of the spacecraft A = cross-sectional area of the spacecraft in m^2 m = mass of the spacecraft in kg rvec = Inertial position vector of the spacecraft in km [x;y;z] vvec = Inertial velocity vector of the spacecraft in km/s [vx;vy;vz] Outputs: advec = The inertial acceleration vector due to atmospheric drag in km/sec^2 </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48jPerturbPdiPdz">
+<span id="_CPPv38jPerturbPdiPdz"></span><span id="_CPPv28jPerturbPdiPdz"></span><span id="jPerturb__doubleP.i.doubleP.z"></span><span class="target" id="orbital_motion_8h_1a7b3831b0af1af024f193a94957b03655"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">jPerturb</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">rvec</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">num</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ajtot</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48jPerturbPdiPdz" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Computes the J2_EARTH-J6_EARTH zonal graviational perturbation accelerations. Inputs: rvec = Cartesian Position vector in kilometers [x;y;z]. num = Corresponds to which J components to use, must be an integer between 2 and 6. (note: Additive- 2 corresponds to J2_EARTH while 3 will correspond to J2_EARTH + J3_EARTH) Outputs: ajtot = The total acceleration vector due to the J perturbations in km/sec^2 [accelx;accely;accelz] </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48solarRadddPdPd">
+<span id="_CPPv38solarRadddPdPd"></span><span id="_CPPv28solarRadddPdPd"></span><span id="solarRad__double.double.doubleP.doubleP"></span><span class="target" id="orbital_motion_8h_1a4e52cb9151edb75b6bf496c2a6fbc2b0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">solarRad</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">A</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">m</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">sunvec</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">arvec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48solarRadddPdPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Purpose: Computes the inertial solar radiation force vectors based on cross-sectional Area and mass of the spacecraft and the position vector of the planet to the sun. Note: It is assumed that the solar radiation pressure decreases quadratically with distance from sun (in AU)</p>
+<p>Solar Radiation Equations obtained from Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986 Inputs: A = Cross-sectional area of the spacecraft that is facing the sun in m^2. m = The mass of the spacecraft in kg. sunvec = Position vector to the Sun in units of AU. Earth has a distance of 1 AU. Outputs: arvec = The inertial acceleration vector due to the effects of Solar Radiation pressure in km/sec^2. The vector components of the output are the same as the vector components of the sunvec input vector. </p>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv415ClassicElements">
+<span id="_CPPv315ClassicElements"></span><span id="_CPPv215ClassicElements"></span><span id="ClassicElements"></span><span class="target" id="struct_classic_elements"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ClassicElements</span></span></span><a class="headerlink" href="#_CPPv415ClassicElements" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;orbitalMotion.h&gt;</em></div>
+<p>Structure used to define classic orbit elements. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements1aE">
+<span id="_CPPv3N15ClassicElements1aE"></span><span id="_CPPv2N15ClassicElements1aE"></span><span id="ClassicElements::a__double"></span><span class="target" id="struct_classic_elements_1ac5ce6561d892b2c11a3f6561306fe2d6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements1aE" title="Link to this definition"></a><br /></dt>
+<dd><p>object semi-major axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements1eE">
+<span id="_CPPv3N15ClassicElements1eE"></span><span id="_CPPv2N15ClassicElements1eE"></span><span id="ClassicElements::e__double"></span><span class="target" id="struct_classic_elements_1af0463e0ef0e11fe7d480c98f509b1e0e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">e</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements1eE" title="Link to this definition"></a><br /></dt>
+<dd><p>Eccentricity of the orbit. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements1iE">
+<span id="_CPPv3N15ClassicElements1iE"></span><span id="_CPPv2N15ClassicElements1iE"></span><span id="ClassicElements::i__double"></span><span class="target" id="struct_classic_elements_1ad27cfaafbdfed1418b31213c8d761e80"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements1iE" title="Link to this definition"></a><br /></dt>
+<dd><p>inclination of the orbital plane </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements5OmegaE">
+<span id="_CPPv3N15ClassicElements5OmegaE"></span><span id="_CPPv2N15ClassicElements5OmegaE"></span><span id="ClassicElements::Omega__double"></span><span class="target" id="struct_classic_elements_1ab9c429e05e3225792b7c35cc7e626272"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements5OmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Right ascension of the ascending node. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements5omegaE">
+<span id="_CPPv3N15ClassicElements5omegaE"></span><span id="_CPPv2N15ClassicElements5omegaE"></span><span id="ClassicElements::omega__double"></span><span class="target" id="struct_classic_elements_1a086fbb017bc19852f029b4332477d654"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements5omegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Argument of periapsis of the orbit. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements1fE">
+<span id="_CPPv3N15ClassicElements1fE"></span><span id="_CPPv2N15ClassicElements1fE"></span><span id="ClassicElements::f__double"></span><span class="target" id="struct_classic_elements_1a3dab507babf084c1aa4a79fb34744d6f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements1fE" title="Link to this definition"></a><br /></dt>
+<dd><p>True anomaly of the orbit. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements4rmagE">
+<span id="_CPPv3N15ClassicElements4rmagE"></span><span id="_CPPv2N15ClassicElements4rmagE"></span><span id="ClassicElements::rmag__double"></span><span class="target" id="struct_classic_elements_1ac1ac996fa2d2b6c14b58699262f7ef67"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rmag</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements4rmagE" title="Link to this definition"></a><br /></dt>
+<dd><p>Magnitude of the position vector (extra). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements5alphaE">
+<span id="_CPPv3N15ClassicElements5alphaE"></span><span id="_CPPv2N15ClassicElements5alphaE"></span><span id="ClassicElements::alpha__double"></span><span class="target" id="struct_classic_elements_1ab7a54ded9af5f93eff02c027a3b625c1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>Inverted semi-major axis (extra). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements7rPeriapE">
+<span id="_CPPv3N15ClassicElements7rPeriapE"></span><span id="_CPPv2N15ClassicElements7rPeriapE"></span><span id="ClassicElements::rPeriap__double"></span><span class="target" id="struct_classic_elements_1a5a5456269d5ce9682afa5095cca790f7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPeriap</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements7rPeriapE" title="Link to this definition"></a><br /></dt>
+<dd><p>Radius of periapsis (extra). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ClassicElements6rApoapE">
+<span id="_CPPv3N15ClassicElements6rApoapE"></span><span id="_CPPv2N15ClassicElements6rApoapE"></span><span id="ClassicElements::rApoap__double"></span><span class="target" id="struct_classic_elements_1a789b9d79c4f3612566a3e6308f3f589f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rApoap</span></span></span><a class="headerlink" href="#_CPPv4N15ClassicElements6rApoapE" title="Link to this definition"></a><br /></dt>
+<dd><p>Radius if apoapsis (extra). </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419equinoctialElements">
+<span id="_CPPv319equinoctialElements"></span><span id="_CPPv219equinoctialElements"></span><span id="equinoctialElements"></span><span class="target" id="structequinoctial_elements"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equinoctialElements</span></span></span><a class="headerlink" href="#_CPPv419equinoctialElements" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;orbitalMotion.h&gt;</em></div>
+<p>This structure contains the set of Keplerian orbital elements that define the spacecraft translational state. It is operated on by the orbital element routines and the OrbElemConvert module.</p>
+<p>equinoctial elment struct definition </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements1aE">
+<span id="_CPPv3N19equinoctialElements1aE"></span><span id="_CPPv2N19equinoctialElements1aE"></span><span id="equinoctialElements::a__double"></span><span class="target" id="structequinoctial_elements_1a920a62bff1062b7a1e9608a0f471b01b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements1aE" title="Link to this definition"></a><br /></dt>
+<dd><p>semi-major axis </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements2P1E">
+<span id="_CPPv3N19equinoctialElements2P1E"></span><span id="_CPPv2N19equinoctialElements2P1E"></span><span id="equinoctialElements::P1__double"></span><span class="target" id="structequinoctial_elements_1a247c912aa5c4ecfa7aeca054f5481384"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P1</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements2P1E" title="Link to this definition"></a><br /></dt>
+<dd><p>e*sin(omega+Omega) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements2P2E">
+<span id="_CPPv3N19equinoctialElements2P2E"></span><span id="_CPPv2N19equinoctialElements2P2E"></span><span id="equinoctialElements::P2__double"></span><span class="target" id="structequinoctial_elements_1ab94eae0c75b6f7e1bcdb5e61462d8848"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P2</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements2P2E" title="Link to this definition"></a><br /></dt>
+<dd><p>e*cos(omega+Omega) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements2Q1E">
+<span id="_CPPv3N19equinoctialElements2Q1E"></span><span id="_CPPv2N19equinoctialElements2Q1E"></span><span id="equinoctialElements::Q1__double"></span><span class="target" id="structequinoctial_elements_1a5b3d8b84a927e930d9ae9a68d3153033"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Q1</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements2Q1E" title="Link to this definition"></a><br /></dt>
+<dd><p>tan(i/2)*sin(Omega) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements2Q2E">
+<span id="_CPPv3N19equinoctialElements2Q2E"></span><span id="_CPPv2N19equinoctialElements2Q2E"></span><span id="equinoctialElements::Q2__double"></span><span class="target" id="structequinoctial_elements_1a3355a5c52b4923065519acf8e8468882"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Q2</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements2Q2E" title="Link to this definition"></a><br /></dt>
+<dd><p>tan(i/2)*cos(Omega) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements1lE">
+<span id="_CPPv3N19equinoctialElements1lE"></span><span id="_CPPv2N19equinoctialElements1lE"></span><span id="equinoctialElements::l__double"></span><span class="target" id="structequinoctial_elements_1a18f6d0b81322a11da92ac0d915d6b389"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">l</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements1lE" title="Link to this definition"></a><br /></dt>
+<dd><p>Omega+omega+M. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19equinoctialElements1LE">
+<span id="_CPPv3N19equinoctialElements1LE"></span><span id="_CPPv2N19equinoctialElements1LE"></span><span id="equinoctialElements::L__double"></span><span class="target" id="structequinoctial_elements_1ae0dbf5ed8452ef2afbba3a3acd09c9d3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L</span></span></span><a class="headerlink" href="#_CPPv4N19equinoctialElements1LE" title="Link to this definition"></a><br /></dt>
+<dd><p>Omega+omega+f. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="macroDefinitions.html" class="btn btn-neutral float-left" title="macroDefinitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rigidBodyKinematics.html" class="btn btn-neutral float-right" title="rigidBodyKinematics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_vscmgVelocitySteering &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_vscmgVelocitySteering</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_vscmgVelocitySteering</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">fswSetupVSCMGs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">vscmgVelocitySteering</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">defaultVSCMG</span><span class="p">():</span>
+    <span class="n">VSCMG</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGConfigMsgPayload</span><span class="p">()</span>
+
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">rGB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_s_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_s_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_s_f</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">wheelLinearFrictionRatio</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_current</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">u_g_f</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gimbalLinearFrictionRatio</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">14.4</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">Omega_max</span> <span class="o">=</span> <span class="mf">6000.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">gammaDot_max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IW2</span> <span class="o">=</span> <span class="mf">0.04</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="mf">0.03</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IG1</span> <span class="o">=</span> <span class="mf">0.03</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IG2</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">U_s</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">U_d</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">rGcG_G</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">]]</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">massW</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">massG</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">VSCMG</span><span class="o">.</span><span class="n">VSCMGModel</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">VSCMG</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setupVSCMGs</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">):</span>
+    <span class="n">VSCMGs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">ang</span> <span class="o">=</span> <span class="mf">54.75</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+
+    <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">numVSCMGs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+        <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]]</span>
+        <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)]),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">numVSCMGs</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">90.0</span><span class="p">)</span>
+            <span class="n">gsHat2_t0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+            <span class="n">ggHat2_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)])</span>
+            <span class="n">gtHat2_t0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">ggHat2_B</span><span class="p">,</span> <span class="n">gsHat2_t0_B</span><span class="p">)</span>
+            <span class="n">gtHat2_t0_B</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gtHat2_t0_B</span><span class="p">)</span>
+            <span class="n">BG2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">gsHat2_t0_B</span><span class="p">,</span>
+                            <span class="n">gtHat2_t0_B</span><span class="p">,</span>
+                            <span class="n">ggHat2_B</span><span class="p">])</span>
+            <span class="n">GG02</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">[</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span>  <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>             <span class="mf">0.0</span><span class="p">,</span>          <span class="mf">1.0</span><span class="p">]</span>
+                <span class="p">])</span>
+            <span class="n">BG02</span> <span class="o">=</span> <span class="n">BG2</span> <span class="o">@</span> <span class="n">GG02</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]]]</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]]]</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG02</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]]]</span>
+
+            <span class="n">VSCMGs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaultVSCMG</span><span class="p">())</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">90.0</span><span class="p">)</span>
+            <span class="n">gsHat3_t0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+            <span class="n">ggHat3_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)])</span>
+            <span class="n">gtHat3_t0_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">ggHat3_B</span><span class="p">,</span> <span class="n">gsHat3_t0_B</span><span class="p">)</span>
+            <span class="n">gtHat3_t0_B</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gtHat3_t0_B</span><span class="p">)</span>
+            <span class="n">BG3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">gsHat3_t0_B</span><span class="p">,</span>
+                            <span class="n">gtHat3_t0_B</span><span class="p">,</span>
+                            <span class="n">ggHat3_B</span><span class="p">])</span>
+            <span class="n">GG03</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">[</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span>  <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>             <span class="mf">0.0</span><span class="p">,</span>          <span class="mf">1.0</span><span class="p">]</span>
+                <span class="p">])</span>
+            <span class="n">BG03</span> <span class="o">=</span> <span class="n">BG3</span> <span class="o">@</span> <span class="n">GG03</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]]]</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]]]</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">BG03</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]]]</span>
+
+    <span class="k">return</span> <span class="n">VSCMGs</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">etaDot</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">,</span><span class="n">numVSCMGs</span><span class="p">,</span> <span class="n">omega_BN_B</span><span class="p">,</span> <span class="n">omega_RN_B</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">W0_s</span><span class="p">,</span> <span class="n">W_g</span><span class="p">,</span> <span class="n">Lr</span><span class="p">):</span>
+
+    <span class="n">h_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">)</span>
+    <span class="c1"># Calculate the D matrices</span>
+    <span class="n">D0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">))</span>
+    <span class="n">D1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">))</span>
+    <span class="n">D2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">))</span>
+    <span class="n">D3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">))</span>
+    <span class="n">D4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">):</span>
+        <span class="n">BG0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="p">))</span>
+        <span class="n">GG0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">GG0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="n">GG0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="n">GG0</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">GG0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">GG0</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">GG0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">BG</span> <span class="o">=</span> <span class="n">BG0</span> <span class="o">@</span> <span class="n">GG0</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">gsHat</span> <span class="o">=</span> <span class="n">BG</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">gtHat</span> <span class="o">=</span> <span class="n">BG</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">Js</span> <span class="o">=</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IG1</span> <span class="o">+</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW1</span>
+        <span class="n">Jt</span> <span class="o">=</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IG2</span> <span class="o">+</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW2</span>
+        <span class="n">Jg</span> <span class="o">=</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IG3</span> <span class="o">+</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW3</span>
+        <span class="n">Iws</span> <span class="o">=</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW1</span>
+
+        <span class="n">omega_BN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">omega_BN_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">omega_RN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">omega_RN_B</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">omega_s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gsHat</span> <span class="o">@</span> <span class="n">omega_BN</span><span class="p">)</span>
+        <span class="n">omega_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gtHat</span> <span class="o">@</span> <span class="n">omega_BN</span><span class="p">)</span>
+
+        <span class="n">Omega</span> <span class="o">=</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span>
+
+        <span class="n">D0</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">gsHat</span><span class="o">*</span><span class="n">Iws</span>
+        <span class="n">D1</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Iws</span><span class="o">*</span><span class="n">Omega</span> <span class="o">+</span> <span class="n">Js</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">omega_s</span><span class="p">)</span><span class="o">*</span><span class="n">gtHat</span> <span class="o">+</span> <span class="n">Js</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">omega_t</span><span class="o">*</span><span class="n">gsHat</span>
+        <span class="n">D2</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">Jt</span><span class="o">*</span><span class="p">(</span><span class="n">omega_t</span><span class="o">*</span><span class="n">gsHat</span> <span class="o">+</span> <span class="n">omega_s</span><span class="o">*</span><span class="n">gtHat</span><span class="p">)</span>
+        <span class="n">D3</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Jg</span><span class="o">*</span><span class="p">(</span><span class="n">omega_t</span><span class="o">*</span><span class="n">gsHat</span> <span class="o">-</span> <span class="n">omega_s</span><span class="o">*</span><span class="n">gtHat</span><span class="p">)</span>
+        <span class="n">D4</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">Js</span><span class="o">-</span><span class="n">Jt</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">gsHat</span><span class="p">,</span><span class="n">gtHat</span><span class="p">)</span> <span class="o">@</span> <span class="n">omega_RN</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">gtHat</span><span class="p">,</span><span class="n">gsHat</span><span class="p">)</span> <span class="o">@</span> <span class="n">omega_RN</span><span class="p">)</span>
+
+        <span class="n">h_bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Js</span><span class="o">*</span><span class="n">Omega</span>
+
+    <span class="n">D</span> <span class="o">=</span> <span class="n">D1</span><span class="o">-</span><span class="n">D2</span><span class="o">+</span><span class="n">D3</span><span class="o">+</span><span class="n">D4</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">D0</span><span class="p">,</span><span class="n">D</span><span class="p">])</span>
+
+    <span class="n">mean_h_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">h_bar</span><span class="p">)</span>
+    <span class="n">h_bar_squared</span> <span class="o">=</span> <span class="n">mean_h_bar</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">h_bar_squared</span> <span class="o">*</span> <span class="p">(</span><span class="n">D1</span> <span class="o">@</span> <span class="n">D1</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+
+    <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">numVSCMGs</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">numVSCMGs</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">):</span>
+        <span class="n">W_si</span> <span class="o">=</span> <span class="n">W0_s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">W</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">W_si</span>
+        <span class="n">W</span><span class="p">[</span><span class="n">numVSCMGs</span><span class="o">+</span><span class="n">i</span><span class="p">,</span><span class="n">numVSCMGs</span><span class="o">+</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">W_g</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">QWQT</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">W</span> <span class="o">@</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">etaDot</span> <span class="o">=</span> <span class="n">W</span> <span class="o">@</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">QWQT</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Lr</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">etaDot</span>
+
+<div class="viewcode-block" id="test_vscmgVelocitySteering">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/vscmgVelocitySteering/_UnitTest/test_vscmgVelocitySteering.html#test_vscmgVelocitySteering.test_vscmgVelocitySteering">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;numVSCMGs&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_vscmgVelocitySteering</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">):</span>
+<span class="w">   </span><span class="sd">&quot;&quot;&quot;Module Unit Test&quot;&quot;&quot;</span>
+   <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">vscmgVelocitySteeringTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">)</span>
+   <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+<div class="viewcode-block" id="vscmgVelocitySteeringTest">
+<a class="viewcode-back" href="../Documentation/fswAlgorithms/effectorInterfaces/vscmgVelocitySteering/_UnitTest/test_vscmgVelocitySteering.html#test_vscmgVelocitySteering.vscmgVelocitySteeringTest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">vscmgVelocitySteeringTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numVSCMGs</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    Compose a general description of what is being tested in this unit test script.</span>
+
+<span class="sd">    **Test Parameters**</span>
+
+<span class="sd">    Discuss the test parameters used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        numVSCMGs (int): number of VSCMGs for this parameterized unit test</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file we are checking that the VSCMG Velocity Steering module produces the desired</span>
+<span class="sd">    wheel accelerations and gimbal rates.</span>
+<span class="sd">    Therefore, the output accelerations and rates are checked against their expected values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># setup module to be tested</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">vscmgVelocitySteering</span><span class="o">.</span><span class="n">VscmgVelocitySteering</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;vscmgVelocitySteeringTag&quot;</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="mf">1e-9</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setMu</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">W0_s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">200.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">numVSCMGs</span>
+    <span class="n">W_g</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">numVSCMGs</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setW0_s</span><span class="p">(</span><span class="n">W0_s</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">setW_g</span><span class="p">(</span><span class="n">W_g</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># setup hub angular velocity</span>
+    <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">]</span>
+    <span class="n">attIn</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavAttMsgPayload</span><span class="p">()</span>
+    <span class="n">attIn</span><span class="o">.</span><span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">omega_BN_B</span>
+
+    <span class="c1"># setup hub reference angular velocity</span>
+    <span class="n">omega_RN_B</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.00649856</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01231292</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01172612</span><span class="p">]</span>
+    <span class="n">guideIn</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsgPayload</span><span class="p">()</span>
+    <span class="n">guideIn</span><span class="o">.</span><span class="n">omega_RN_B</span> <span class="o">=</span> <span class="n">omega_RN_B</span>
+
+    <span class="c1"># setup VSCMGs</span>
+    <span class="n">VSCMGs</span> <span class="o">=</span> <span class="n">setupVSCMGs</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">)</span>
+    <span class="n">fswSetupVSCMGs</span><span class="o">.</span><span class="n">clearSetup</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">):</span>
+        <span class="n">fswSetupVSCMGs</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gsHat0_B</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gtHat0_B</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ggHat_B</span><span class="p">,</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IG1</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IG2</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IG3</span><span class="p">,</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW1</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW2</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">IW3</span><span class="p">,</span>
+            <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gammaDot</span><span class="p">)</span>
+
+    <span class="c1"># setup speeds message</span>
+    <span class="n">speedsArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGSpeedMsgPayload</span><span class="p">()</span>
+    <span class="n">gimbalAngles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">gimbalRates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">wheelSpeeds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numVSCMGs</span><span class="p">):</span>
+        <span class="n">gimbalAngles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="n">gimbalRates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">gammaDot</span><span class="p">)</span>
+        <span class="n">wheelSpeeds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Omega</span><span class="p">)</span>
+    <span class="n">speedsArray</span><span class="o">.</span><span class="n">gimbalAngles</span> <span class="o">=</span> <span class="n">gimbalAngles</span>
+    <span class="n">speedsArray</span><span class="o">.</span><span class="n">gimbalRates</span> <span class="o">=</span> <span class="n">gimbalRates</span>
+    <span class="n">speedsArray</span><span class="o">.</span><span class="n">wheelSpeeds</span> <span class="o">=</span> <span class="n">wheelSpeeds</span>
+
+    <span class="c1"># setup control torque</span>
+    <span class="n">Lr</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.42470656</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.82132484</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.76165287</span><span class="p">]</span>
+    <span class="n">vehControlIn</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">()</span>
+    <span class="n">vehControlIn</span><span class="o">.</span><span class="n">torqueRequestBody</span> <span class="o">=</span> <span class="n">Lr</span>
+
+    <span class="c1"># write messages</span>
+    <span class="n">vscmgParamMsg</span> <span class="o">=</span> <span class="n">fswSetupVSCMGs</span><span class="o">.</span><span class="n">writeConfigMessage</span><span class="p">()</span>
+    <span class="n">attInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">NavAttMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">attIn</span><span class="p">)</span>
+    <span class="n">guideInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AttGuidMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">guideIn</span><span class="p">)</span>
+    <span class="n">speedsInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGSpeedMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">speedsArray</span><span class="p">)</span>
+    <span class="n">vehControlInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vehControlIn</span><span class="p">)</span>
+
+    <span class="c1"># subscribe input messages to module</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">vscmgParamsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vscmgParamMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">vehControlInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vehControlInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">attGuideInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">guideInMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">speedsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">speedsInMsg</span><span class="p">)</span>
+
+    <span class="c1"># setup logging for the output message</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">vscmgRefStatesOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">dataLogC</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">vscmgRefStatesOutMsgC</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLogC</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># pull module data and make sure it is correct</span>
+    <span class="n">wheelAccels</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">wheelAccels</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">numVSCMGs</span><span class="p">]</span>
+    <span class="n">gimbalRates</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">gimbalRates</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">numVSCMGs</span><span class="p">]</span>
+    <span class="n">wheelAccelsC</span> <span class="o">=</span> <span class="n">dataLogC</span><span class="o">.</span><span class="n">wheelAccels</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">numVSCMGs</span><span class="p">]</span>
+    <span class="n">gimbalRatesC</span> <span class="o">=</span> <span class="n">dataLogC</span><span class="o">.</span><span class="n">gimbalRates</span><span class="p">[</span><span class="mi">0</span><span class="p">,:</span><span class="n">numVSCMGs</span><span class="p">]</span>
+
+    <span class="n">moduleOutputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">wheelAccels</span><span class="p">,</span> <span class="n">gimbalRates</span><span class="p">))</span>
+    <span class="n">moduleOutputsC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">wheelAccelsC</span><span class="p">,</span> <span class="n">gimbalRatesC</span><span class="p">))</span>
+
+    <span class="c1"># set the output truth values</span>
+    <span class="n">trueOutputs</span> <span class="o">=</span> <span class="n">etaDot</span><span class="p">(</span><span class="n">VSCMGs</span><span class="p">,</span><span class="n">numVSCMGs</span><span class="p">,</span> <span class="n">omega_BN_B</span><span class="p">,</span> <span class="n">omega_RN_B</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">W0_s</span><span class="p">,</span> <span class="n">W_g</span><span class="p">,</span> <span class="n">Lr</span><span class="p">)</span>
+
+    <span class="c1"># compare the module output values to the truth values</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-12</span>
+    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArrayND</span><span class="p">([</span><span class="n">trueOutputs</span><span class="p">],</span> <span class="p">[</span><span class="n">moduleOutputs</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">,</span> <span class="s2">&quot;VSCMGDesiredStates&quot;</span><span class="p">,</span>
+                                                                 <span class="mi">2</span><span class="o">*</span><span class="n">numVSCMGs</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">compareArrayND</span><span class="p">([</span><span class="n">moduleOutputs</span><span class="p">],</span> <span class="p">[</span><span class="n">moduleOutputsC</span><span class="p">],</span> <span class="n">accuracy</span><span class="p">,</span> <span class="s2">&quot;cMsgTorques&quot;</span><span class="p">,</span>
+                                                                 <span class="mi">2</span> <span class="o">*</span> <span class="n">numVSCMGs</span><span class="p">,</span> <span class="n">testFailCount</span><span class="p">,</span> <span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_vscmgVelocitySteering</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

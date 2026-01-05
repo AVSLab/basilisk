@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_dataFileToViz &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_dataFileToViz</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_dataFileToViz</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+
+<span class="c1">#</span>
+<span class="c1">#   Unit Test Script</span>
+<span class="c1">#   Module Name:        vizInterfaceDataFile</span>
+<span class="c1">#   Author:             Hanspeter Schaub</span>
+<span class="c1">#   Creation Date:      May 12, 2020</span>
+<span class="c1">#</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataFileToViz</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="c1"># Import all of the modules that we are going to be called in this simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizInterface</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+<span class="n">dataFileName</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="viewcode-block" id="test_module">
+<a class="viewcode-back" href="../Documentation/simulation/vizard/dataFileToViz/_UnitTest/test_dataFileToViz.html#test_dataFileToViz.test_module">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;convertPosUnits&quot;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;attType&quot;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;checkThruster&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;checkRW&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_module</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">convertPosUnits</span><span class="p">,</span> <span class="n">attType</span><span class="p">,</span> <span class="n">checkThruster</span><span class="p">,</span> <span class="n">checkRW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Validation Test Description**</span>
+
+<span class="sd">    This section describes the specific unit tests conducted on this module.</span>
+<span class="sd">    The test reads in simulation from ``data.txt``, run the module, and compares the Basilisk</span>
+<span class="sd">    spacecraft state messages with known values.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        convertPosUnits (double): If positive, then this conversion factor is set.  If negative, then the</span>
+<span class="sd">            default value of 1000. is checked.</span>
+<span class="sd">        attType (int): -1 (use default), 0 (MRP), 1 (quaternion), 2 (3-2-1 Euler Angles)</span>
+<span class="sd">        checkThruster (bool): flag to check for simulation data with thrusters</span>
+<span class="sd">        checkRW (bool): flag to check for simulation data with RW information</span>
+
+<span class="sd">    **Description of Variables Being Tested**</span>
+
+<span class="sd">    In this file, we are checking the values of the spacecraft state output message for both spacecraft:</span>
+
+<span class="sd">    - ``r_BN_N[3]``</span>
+<span class="sd">    - ``sigma_BN[3]``</span>
+<span class="sd">    - ``thrustForce``</span>
+
+<span class="sd">    which is pulled from the log data to see if they match with the expected truth values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">convertPosUnits</span><span class="p">,</span> <span class="n">attType</span><span class="p">,</span> <span class="n">checkThruster</span><span class="p">,</span> <span class="n">checkRW</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span>
+    <span class="k">global</span> <span class="n">dataFileName</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dataFileName</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">dataFileName</span><span class="p">)</span></div>
+
+
+
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">convertPosUnits</span><span class="p">,</span> <span class="n">attType</span><span class="p">,</span> <span class="n">checkThruster</span><span class="p">,</span> <span class="n">checkRW</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">bskLogging</span><span class="o">.</span><span class="n">setDefaultLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_WARNING</span><span class="p">)</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>                       <span class="c1"># create empty array to store test log messages</span>
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTask&quot;</span>               <span class="c1"># arbitrary name (don&#39;t change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">&quot;TestProcess&quot;</span>         <span class="c1"># arbitrary name (don&#39;t change)</span>
+
+    <span class="c1"># Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">dtSeconds</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">simTimeSeconds</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dtSeconds</span><span class="p">)</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simTimeSeconds</span><span class="p">)</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="c1"># create the simulation data file</span>
+    <span class="n">rB1N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6761.48</span><span class="p">,</span> <span class="mf">1569.01</span><span class="p">,</span> <span class="mf">905.867</span><span class="p">]</span>
+    <span class="n">vB1N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.95306</span><span class="p">,</span> <span class="mf">6.3124</span><span class="p">,</span> <span class="mf">3.64446</span><span class="p">]</span>
+    <span class="n">betaB1N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.182574</span><span class="p">,</span> <span class="mf">0.365148</span><span class="p">,</span> <span class="mf">0.547723</span><span class="p">,</span> <span class="mf">0.730297</span><span class="p">]</span>
+    <span class="n">sigmaB1N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+    <span class="n">rB2N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6761.48</span><span class="p">,</span> <span class="mf">1569.02</span><span class="p">,</span> <span class="mf">905.874</span><span class="p">]</span>
+    <span class="n">vB2N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.95308</span><span class="p">,</span> <span class="mf">6.31239</span><span class="p">,</span> <span class="mf">3.64446</span><span class="p">]</span>
+    <span class="n">betaB2N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.182574</span><span class="p">,</span> <span class="mf">0.365148</span><span class="p">,</span> <span class="mf">0.547723</span><span class="p">,</span> <span class="mf">0.730297</span><span class="p">]</span>
+    <span class="n">sigmaB2N</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+    <span class="k">global</span> <span class="n">dataFileName</span>
+    <span class="n">dataFileName</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">convertPosUnits</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">attType</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">checkThruster</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">checkRW</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
+    <span class="n">dataFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataFileName</span><span class="p">)</span>
+    <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+    <span class="n">fDataFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dataFileName</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">simTimeSeconds</span><span class="o">/</span><span class="n">dtSeconds</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">dtSeconds</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="c1"># sc1</span>
+        <span class="n">lineString</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rB1N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">vB1N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="k">if</span> <span class="n">attType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">betaB1N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sigmaB1N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">omega</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+            <span class="n">th1ACS</span> <span class="o">=</span> <span class="mf">1.</span>
+            <span class="n">th1DV</span> <span class="o">=</span> <span class="mf">100.</span>
+            <span class="n">numACS1</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">numDV1</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">th1ACS</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">th1DV</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+            <span class="n">Omega1sc1</span> <span class="o">=</span> <span class="mf">100.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+            <span class="n">u1sc1</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">Omega2sc1</span> <span class="o">=</span> <span class="mf">500.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+            <span class="n">u2sc1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.1</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Omega1sc1</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">u1sc1</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Omega2sc1</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">u2sc1</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span>
+
+        <span class="c1"># sc2</span>
+        <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rB2N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">vB2N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="k">if</span> <span class="n">attType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">betaB2N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sigmaB2N</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delimiter</span>
+        <span class="n">lineString</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">omega</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+            <span class="n">th2ACS</span> <span class="o">=</span> <span class="mf">0.001</span>
+            <span class="n">th2DV</span> <span class="o">=</span> <span class="mf">200.</span>
+            <span class="n">numACS2</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">numDV2</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">th2ACS</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">th2DV</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">th2DV</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+            <span class="n">Omega1sc2</span> <span class="o">=</span> <span class="mf">1000.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span>
+            <span class="n">u1sc2</span> <span class="o">=</span> <span class="mf">0.3</span>
+            <span class="n">lineString</span> <span class="o">+=</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Omega1sc2</span><span class="p">)</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">u1sc2</span><span class="p">)</span>
+
+        <span class="n">lineString</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">fDataFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lineString</span><span class="p">)</span>
+    <span class="n">fDataFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># Construct algorithm and associated C++ container</span>
+    <span class="n">testModule</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">DataFileToViz</span><span class="p">()</span>
+    <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;testModule&quot;</span>
+
+    <span class="c1"># set number of satellites</span>
+    <span class="n">testModule</span><span class="o">.</span><span class="n">setNumOfSatellites</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># load the data path from the same folder where this python script is</span>
+    <span class="n">testModule</span><span class="o">.</span><span class="n">dataFileName</span> <span class="o">=</span> <span class="n">dataFileName</span>
+    <span class="n">testModule</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
+    <span class="k">if</span> <span class="n">convertPosUnits</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">convertPosToMeters</span> <span class="o">=</span> <span class="n">convertPosUnits</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">convertPosUnits</span> <span class="o">=</span> <span class="mf">1000.</span>
+    <span class="k">if</span> <span class="n">attType</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">attitudeType</span> <span class="o">=</span> <span class="n">attType</span>
+
+    <span class="n">scNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;test1&quot;</span><span class="p">,</span> <span class="s2">&quot;test2&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+        <span class="c1"># sc1</span>
+        <span class="n">thSetAdcs1</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+        <span class="n">thSetAdcs1</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="s2">&quot;adcs&quot;</span>
+        <span class="n">thSetAdcs1</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+        <span class="n">thSetDV1</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+        <span class="n">thSetDV1</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="s2">&quot;dv&quot;</span>
+        <span class="n">thSetDV1</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+        <span class="n">thList1</span> <span class="o">=</span> <span class="p">[</span><span class="n">thSetAdcs1</span><span class="p">,</span> <span class="n">thSetDV1</span><span class="p">]</span>
+        <span class="n">numTh1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrClusterMap</span><span class="p">(</span><span class="n">dataFileToViz</span><span class="o">.</span><span class="n">VizThrConfig</span><span class="p">(</span><span class="n">thList1</span><span class="p">),</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">numTh1</span><span class="p">))</span>
+
+        <span class="c1"># set ACS thruster position and direction states</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>  <span class="c1"># thr location in B frame, meters</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># thr force direction</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="n">th1ACS</span><span class="p">)</span>
+
+        <span class="c1"># set DV thruster position and direction states</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="n">th1DV</span><span class="p">)</span>
+
+        <span class="c1"># sc2</span>
+        <span class="n">thSetAdcs2</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+        <span class="n">thSetAdcs2</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="s2">&quot;adcs&quot;</span>
+
+        <span class="n">thSetDV2</span> <span class="o">=</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()</span>
+        <span class="n">thSetDV2</span><span class="o">.</span><span class="n">thrTag</span> <span class="o">=</span> <span class="s2">&quot;dv&quot;</span>
+
+        <span class="n">thList2</span> <span class="o">=</span> <span class="p">[</span><span class="n">thSetAdcs2</span><span class="p">,</span> <span class="n">thSetDV2</span><span class="p">]</span>
+        <span class="n">numTh2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrClusterMap</span><span class="p">(</span><span class="n">dataFileToViz</span><span class="o">.</span><span class="n">VizThrConfig</span><span class="p">(</span><span class="n">thList2</span><span class="p">),</span> <span class="n">dataFileToViz</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">numTh2</span><span class="p">))</span>
+
+        <span class="c1"># set ACS thruster position and direction states</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="n">th2ACS</span><span class="p">)</span>
+
+        <span class="c1"># set DV thruster position and direction states</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="n">th2DV</span><span class="p">)</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrPos</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendThrForceMax</span><span class="p">(</span><span class="n">th2DV</span><span class="p">)</span>
+
+        <span class="n">thrNumList</span> <span class="o">=</span> <span class="p">[</span><span class="n">numTh1</span><span class="p">,</span> <span class="n">numTh2</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+        <span class="c1"># set number of RW for SC1</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendNumOfRWs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># RW 1</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendRwPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendRwDir</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendOmegaMax</span><span class="p">(</span><span class="mf">3000.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">)</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendUMax</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="c1"># RW2</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendRwPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendRwDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendOmegaMax</span><span class="p">(</span><span class="mf">3000.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">)</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendUMax</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="c1"># set number of RW for SC2</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendNumOfRWs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># RW 1</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendRwPos</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendRwDir</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendOmegaMax</span><span class="p">(</span><span class="mf">3000.</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">RPM</span><span class="p">)</span>
+        <span class="n">testModule</span><span class="o">.</span><span class="n">appendUMax</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># Add module to the task</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testModule</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="c1"># setup Earth Gravity Body</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+
+    <span class="c1"># create SC dummy objects to setup basic Vizard settings.  Only one has to have the Grav Bodies attached</span>
+    <span class="c1"># to show up in Vizard</span>
+    <span class="n">scObject1</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject1</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">scObject2</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+
+    <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">unitTestSim</span><span class="p">,</span> <span class="n">unitTaskName</span><span class="p">,</span> <span class="p">[</span><span class="n">scObject1</span><span class="p">,</span> <span class="n">scObject2</span><span class="p">]</span>
+                                              <span class="c1"># , saveFile=__file__</span>
+                                              <span class="p">)</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="c1"># over-ride the default to not read the SC states from scObjects, but set them directly</span>
+        <span class="c1"># to read from the dataFileToFiz output message</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">scData</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scNames</span><span class="p">)):</span>
+            <span class="n">scData</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizSpacecraftData</span><span class="p">()</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">scNames</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+            <span class="n">scData</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">testModule</span><span class="o">.</span><span class="n">scStateOutMsgs</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+                <span class="n">thrList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">thrInfo</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">thrLogMsg</span> <span class="ow">in</span> <span class="n">testModule</span><span class="o">.</span><span class="n">thrScOutMsgs</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>  <span class="c1"># loop over the THR cluster log message</span>
+                    <span class="n">thrList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thrLogMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">())</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">testModule</span><span class="o">.</span><span class="n">thrMsgDataSC</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">thrNumList</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">k</span><span class="p">]):</span>
+                        <span class="n">thrInfo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+                    <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">thrInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THROutputMsgInMsgsVector</span><span class="p">(</span><span class="n">thrList</span><span class="p">)</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">thrInfo</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">ThrClusterVector</span><span class="p">(</span><span class="n">thrInfo</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+                <span class="n">rwList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">rwLogMsg</span> <span class="ow">in</span> <span class="n">testModule</span><span class="o">.</span><span class="n">rwScOutMsgs</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">rwList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rwLogMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">())</span>
+                <span class="n">scData</span><span class="o">.</span><span class="n">rwInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">RWConfigLogMsgInMsgsVector</span><span class="p">(</span><span class="n">rwList</span><span class="p">)</span>
+
+            <span class="n">viz</span><span class="o">.</span><span class="n">scData</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">scData</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+            <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">defaultThrusterColor</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Setup logging on the test module output message so that we get all the writes to it</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">scCounter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">dataLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">testModule</span><span class="o">.</span><span class="n">scStateOutMsgs</span><span class="p">[</span><span class="n">scCounter</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">())</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+        <span class="n">dataThrLog</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># SC1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numACS1</span> <span class="o">+</span> <span class="n">numDV1</span><span class="p">):</span>
+            <span class="n">dataThrLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">testModule</span><span class="o">.</span><span class="n">thrScOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">())</span>
+            <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataThrLog</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># SC2</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numACS2</span> <span class="o">+</span> <span class="n">numDV2</span><span class="p">):</span>
+            <span class="n">dataThrLog</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">testModule</span><span class="o">.</span><span class="n">thrScOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">())</span>
+            <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataThrLog</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+        <span class="n">dataSc1RW1Log</span> <span class="o">=</span> <span class="n">testModule</span><span class="o">.</span><span class="n">rwScOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">dataSc1RW2Log</span> <span class="o">=</span> <span class="n">testModule</span><span class="o">.</span><span class="n">rwScOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">dataSc2RW1Log</span> <span class="o">=</span> <span class="n">testModule</span><span class="o">.</span><span class="n">rwScOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataSc1RW1Log</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataSc1RW2Log</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataSc2RW1Log</span><span class="p">)</span>
+
+    <span class="c1"># Need to call the self-init and cross-init methods</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span> 
+
+    <span class="c1"># Begin the simulation time run set above</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># This pulls the actual data log from the simulation run.</span>
+    <span class="n">pos1</span> <span class="o">=</span> <span class="n">dataLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">pos2</span> <span class="o">=</span> <span class="n">dataLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">att1</span> <span class="o">=</span> <span class="n">dataLog</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_BN</span>
+    <span class="n">att2</span> <span class="o">=</span> <span class="n">dataLog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sigma_BN</span>
+
+    <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+        <span class="n">thrData</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataThrLog</span><span class="p">:</span>
+            <span class="n">thrData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">thrustForce</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+        <span class="n">rw1Sc1OmegaData</span> <span class="o">=</span> <span class="n">dataSc1RW1Log</span><span class="o">.</span><span class="n">Omega</span>
+        <span class="n">rw1Sc1uData</span> <span class="o">=</span> <span class="n">dataSc1RW1Log</span><span class="o">.</span><span class="n">u_current</span>
+        <span class="n">rw2Sc1OmegaData</span> <span class="o">=</span> <span class="n">dataSc1RW2Log</span><span class="o">.</span><span class="n">Omega</span>
+        <span class="n">rw2Sc1uData</span> <span class="o">=</span> <span class="n">dataSc1RW2Log</span><span class="o">.</span><span class="n">u_current</span>
+        <span class="n">rw1Sc2OmegaData</span> <span class="o">=</span> <span class="n">dataSc2RW1Log</span><span class="o">.</span><span class="n">Omega</span>
+        <span class="n">rw1Sc2uData</span> <span class="o">=</span> <span class="n">dataSc2RW1Log</span><span class="o">.</span><span class="n">u_current</span>
+
+    <span class="c1"># set input data</span>
+    <span class="n">pos1In</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rB1N</span><span class="p">)</span>
+    <span class="n">pos2In</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rB2N</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">att1In</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">EP2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">betaB1N</span><span class="p">))</span>
+        <span class="n">att2In</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">EP2MRP</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">betaB2N</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">att1In</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigmaB1N</span><span class="p">)</span>
+        <span class="n">att2In</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigmaB2N</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">attType</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">att1In</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">euler3212MRP</span><span class="p">(</span><span class="n">att1In</span><span class="p">)</span>
+            <span class="n">att2In</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">euler3212MRP</span><span class="p">(</span><span class="n">att2In</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isVectorEqual</span><span class="p">(</span><span class="n">pos1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos1In</span><span class="o">*</span><span class="n">convertPosUnits</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed pos1 check.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isVectorEqual</span><span class="p">(</span><span class="n">pos2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos2In</span><span class="o">*</span><span class="n">convertPosUnits</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed pos2 check.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isVectorEqual</span><span class="p">(</span><span class="n">att1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">att1In</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed att1 check.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isVectorEqual</span><span class="p">(</span><span class="n">att2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">att2In</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed att2 check.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">checkThruster</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">thrData</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">th1ACS</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed th1ACS check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">thrData</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">th1DV</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed th1ACS check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">thrData</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">th2ACS</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed th2ACS check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">thrData</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">th2DV</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed th2DV (1st) check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">thrData</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">th2DV</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed th2DV (2nd) check.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">checkRW</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">rw1Sc1OmegaData</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Omega1sc1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed Omega1sc1 check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">rw1Sc1uData</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">u1sc1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed u1sc1 check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">rw2Sc1OmegaData</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Omega2sc1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed Omega1sc1 check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">rw2Sc1uData</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">u2sc1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed u1sc1 check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">rw1Sc2OmegaData</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Omega1sc2</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed Omega1sc2 check.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">rw1Sc2uData</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">u1sc2</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAILED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">&quot; Module failed u1sc2 check.&quot;</span><span class="p">)</span>
+
+
+    <span class="c1"># print out success or failure message</span>
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed: &quot;</span> <span class="o">+</span> <span class="n">testModule</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unitTestScript can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+         <span class="kc">False</span><span class="p">,</span>     <span class="c1"># showplots</span>
+         <span class="o">-</span><span class="mi">1</span><span class="p">,</span>        <span class="c1"># convertPosUnits</span>
+         <span class="mi">0</span><span class="p">,</span>        <span class="c1"># attType (-1 -&gt; default, 0 -&gt; MRP, 1 -&gt; quaternions, 2 -&gt; 3-2-1 Euler Angles)</span>
+         <span class="kc">True</span><span class="p">,</span>      <span class="c1"># checkThruster</span>
+         <span class="kc">True</span><span class="p">,</span>      <span class="c1"># checkRW</span>
+         <span class="kc">True</span>       <span class="c1"># verbose</span>
+       <span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dataFileName</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">dataFileName</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

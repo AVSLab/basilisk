@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: lambertSurfaceRelativeVelocity &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="lambertSurfaceRelativeVelocity" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">orbitControl</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../lambertPlanner/index.html">lambertPlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSecondDV/index.html">lambertSecondDV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertSolver/index.html">lambertSolver</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">lambertSurfaceRelativeVelocity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lambertValidator/index.html">lambertValidator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smallBodyWaypointFeedback/index.html">smallBodyWaypointFeedback</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">orbitControl</a></li>
+          <li class="breadcrumb-item"><a href="index.html">lambertSurfaceRelativeVelocity</a></li>
+      <li class="breadcrumb-item active">Module: lambertSurfaceRelativeVelocity</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/orbitControl/lambertSurfaceRelativeVelocity/lambertSurfaceRelativeVelocity.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-lambertsurfacerelativevelocity">
+<span id="lambertsurfacerelativevelocity"></span><h1>Module: lambertSurfaceRelativeVelocity<a class="headerlink" href="#module-lambertsurfacerelativevelocity" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module computes the required inertial spacecraft velocity <span class="math notranslate nohighlight">\({}^N\mathbf{v}_{B/N}\)</span> to satisfy the desired
+relative velocity to the surface <span class="math notranslate nohighlight">\({}^S\mathbf{v}_{rel,des}\)</span> at position <span class="math notranslate nohighlight">\({}^N\mathbf{r}_{B/N}\)</span> and
+(maneuver) time <span class="math notranslate nohighlight">\(t\)</span>. The module takes into account the rotation and orientation of the celestial body, provided
+by the <a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a>. The spacecraft position <span class="math notranslate nohighlight">\({}^N\mathbf{r}_{B/N}\)</span> is provided by the second
+position vector <span class="math notranslate nohighlight">\({}^N\mathbf{r}_{2}\)</span> in <a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#lambertproblemmsgpayload"><span class="std std-ref">LambertProblemMsgPayload</span></a>, as this module is designed to be used at
+the end of a Lambert problem transfer arc. The surface frame S, in which the desired relative velocity vector is
+expressed in, is an East-North-Up frame (third unit vector is in the radial direction, first unit vector is
+perpendicular to the angular velocity vector of the celestial body and the radial direction, and the second unit vector
+completes the right-handed coordinate frame). Note that the frame is not fully defined when the angular velocity vector
+of the celestial body <span class="math notranslate nohighlight">\(\mathbf{\omega}_{P/N}\)</span> is zero. In this case, the frame S is defined using the inertial z
+vector <span class="math notranslate nohighlight">\([0, 0, 1]\)</span> instead of <span class="math notranslate nohighlight">\(\mathbf{\omega}_{P/N}\)</span>. The computed required inertial spacecraft velocity
+and maneuver time are written to the <a class="reference internal" href="../../../architecture/msgPayloadDefC/DesiredVelocityMsgPayload.html#desiredvelocitymsgpayload"><span class="std std-ref">DesiredVelocityMsgPayload</span></a> output message.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>lambertProblemInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#lambertproblemmsgpayload"><span class="std std-ref">LambertProblemMsgPayload</span></a></p></td>
+<td><p>lambert problem setup input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>ephemerisInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>ephemeris input message</p></td>
+</tr>
+<tr class="row-even"><td><p>desiredVelocityOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/DesiredVelocityMsgPayload.html#desiredvelocitymsgpayload"><span class="std std-ref">DesiredVelocityMsgPayload</span></a></p></td>
+<td><p>Desired velocity output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="algorithm">
+<h2>Algorithm<a class="headerlink" href="#algorithm" title="Link to this heading"></a></h2>
+<p>The required inertial spacecraft velocity is computed by:</p>
+<div class="math notranslate nohighlight" id="equation-eq-vinertial">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-vinertial" title="Link to this equation"></a></span>\[\mathbf{v}_{B/N} = \mathbf{\omega}_{P/N} \times \mathbf{r}_{B/N} + \mathbf{v}_{rel,des}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{\omega}_{P/N}\)</span> is the angular velocity of the planet fixed frame P w.r.t. the inertial frame N.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The module is first initialized as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="o">=</span> <span class="n">lambertSurfaceRelativeVelocity</span><span class="o">.</span><span class="n">LambertSurfaceRelativeVelocity</span><span class="p">()</span>
+<span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;lambertSurfaceRelativeVelocity&quot;</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setVRelativeDesired_S</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">]))</span>  <span class="c1"># in surface frame (East-North-Up)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">setTime</span><span class="p">(</span><span class="mf">1000.</span><span class="p">)</span>
+<span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The input messages are then connected:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">lambertProblemInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lambertProblemInMsg</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">ephemerisInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ephemerisInMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv430LambertSurfaceRelativeVelocity">
+<span id="_CPPv330LambertSurfaceRelativeVelocity"></span><span id="_CPPv230LambertSurfaceRelativeVelocity"></span><span id="LambertSurfaceRelativeVelocity"></span><span class="target" id="class_lambert_surface_relative_velocity"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LambertSurfaceRelativeVelocity</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv430LambertSurfaceRelativeVelocity" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;lambertSurfaceRelativeVelocity.h&gt;</em></div>
+<p>This module computes the inertial velocity corresponding to a given position and relative velocity to the celestial body surface. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity30LambertSurfaceRelativeVelocityEv">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity30LambertSurfaceRelativeVelocityEv"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity30LambertSurfaceRelativeVelocityEv"></span><span id="LambertSurfaceRelativeVelocity::LambertSurfaceRelativeVelocity"></span><span class="target" id="class_lambert_surface_relative_velocity_1a333f7fbf2e27b663efc92a65876d8cfd"></span><span class="sig-name descname"><span class="n"><span class="pre">LambertSurfaceRelativeVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity30LambertSurfaceRelativeVelocityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor for the module class. It sets default variable values and initializes the various parts of the model </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocityD0Ev">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocityD0Ev"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocityD0Ev"></span><span id="LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity"></span><span class="target" id="class_lambert_surface_relative_velocity_1ab63cb4adaf6abdcb74347bb909fa0023"></span><span class="sig-name descname"><span class="n"><span class="pre">~LambertSurfaceRelativeVelocity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocityD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Module Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity5ResetE8uint64_t">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity5ResetE8uint64_t"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity5ResetE8uint64_t"></span><span id="LambertSurfaceRelativeVelocity::Reset__uint64_t"></span><span class="target" id="class_lambert_surface_relative_velocity_1a7739f4d7e36fd93fb63678bc2b6917c6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to reset the module and checks that required input messages are connected. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity11UpdateStateE8uint64_t">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity11UpdateStateE8uint64_t"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity11UpdateStateE8uint64_t"></span><span id="LambertSurfaceRelativeVelocity::UpdateState__uint64_t"></span><span class="target" id="class_lambert_surface_relative_velocity_1a258d568a146566e8644ce719a2331d89"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the main method that gets called every time the module is updated. It computes the solution of Lambert’s problem. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity21setVRelativeDesired_SEKN5Eigen8Vector3dE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity21setVRelativeDesired_SEKN5Eigen8Vector3dE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity21setVRelativeDesired_SEKN5Eigen8Vector3dE"></span><span id="LambertSurfaceRelativeVelocity::setVRelativeDesired_S__Eigen::Vector3dC"></span><span class="target" id="class_lambert_surface_relative_velocity_1ab56b865ce914b30439f657e28821ef99"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setVRelativeDesired_S</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity21setVRelativeDesired_SEKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">vRelativeDesired_S</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK30LambertSurfaceRelativeVelocity21getVRelativeDesired_SEv">
+<span id="_CPPv3NK30LambertSurfaceRelativeVelocity21getVRelativeDesired_SEv"></span><span id="_CPPv2NK30LambertSurfaceRelativeVelocity21getVRelativeDesired_SEv"></span><span id="LambertSurfaceRelativeVelocity::getVRelativeDesired_SC"></span><span class="target" id="class_lambert_surface_relative_velocity_1a98e80e04c125391e71bab5a2909ae89c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getVRelativeDesired_S</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK30LambertSurfaceRelativeVelocity21getVRelativeDesired_SEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">vRelativeDesired_S</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity7setTimeEKd">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity7setTimeEKd"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity7setTimeEKd"></span><span id="LambertSurfaceRelativeVelocity::setTime__doubleC"></span><span class="target" id="class_lambert_surface_relative_velocity_1a981daa176ba0ec894baee1e2385eb8fc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setTime</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity7setTimeEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">time</span></code></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK30LambertSurfaceRelativeVelocity7getTimeEv">
+<span id="_CPPv3NK30LambertSurfaceRelativeVelocity7getTimeEv"></span><span id="_CPPv2NK30LambertSurfaceRelativeVelocity7getTimeEv"></span><span id="LambertSurfaceRelativeVelocity::getTimeC"></span><span class="target" id="class_lambert_surface_relative_velocity_1a7ca18926b11a9ee95400cb314d90d312"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTime</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK30LambertSurfaceRelativeVelocity7getTimeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">time</span></code></p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity19lambertProblemInMsgE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity19lambertProblemInMsgE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity19lambertProblemInMsgE"></span><span id="LambertSurfaceRelativeVelocity::lambertProblemInMsg__ReadFunctor:LambertProblemMsgPayload:"></span><span class="target" id="class_lambert_surface_relative_velocity_1a17d4230893482d1aa00957977c7d83a0"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/LambertProblemMsgPayload.html#_CPPv424LambertProblemMsgPayload" title="LambertProblemMsgPayload"><span class="n"><span class="pre">LambertProblemMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lambertProblemInMsg</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity19lambertProblemInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>lambert problem input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity14ephemerisInMsgE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity14ephemerisInMsgE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity14ephemerisInMsgE"></span><span id="LambertSurfaceRelativeVelocity::ephemerisInMsg__ReadFunctor:EphemerisMsgPayload:"></span><span class="target" id="class_lambert_surface_relative_velocity_1adb9dc5f287e6e232acf5c3f4e85449d7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#_CPPv419EphemerisMsgPayload" title="EphemerisMsgPayload"><span class="n"><span class="pre">EphemerisMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ephemerisInMsg</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity14ephemerisInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>ephemeris input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity21desiredVelocityOutMsgE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity21desiredVelocityOutMsgE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity21desiredVelocityOutMsgE"></span><span id="LambertSurfaceRelativeVelocity::desiredVelocityOutMsg__Message:DesiredVelocityMsgPayload:"></span><span class="target" id="class_lambert_surface_relative_velocity_1acfc0cfe293aa9376f381eba9f3027ab7"></span><a class="reference internal" href="../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/DesiredVelocityMsgPayload.html#_CPPv425DesiredVelocityMsgPayload" title="DesiredVelocityMsgPayload"><span class="n"><span class="pre">DesiredVelocityMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">desiredVelocityOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity21desiredVelocityOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>desired inertial velocity output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity9bskLoggerE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity9bskLoggerE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity9bskLoggerE"></span><span id="LambertSurfaceRelativeVelocity::bskLogger__BSKLogger"></span><span class="target" id="class_lambert_surface_relative_velocity_1acbe00f19abe68e4021c35799c8a747ea"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity12readMessagesEv">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity12readMessagesEv"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity12readMessagesEv"></span><span id="LambertSurfaceRelativeVelocity::readMessages"></span><span class="target" id="class_lambert_surface_relative_velocity_1a7efe284a7301f2d705aa46b8bdc9db28"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity12readMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads the input messages each call of updateState. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity13writeMessagesE8uint64_t">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity13writeMessagesE8uint64_t"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity13writeMessagesE8uint64_t"></span><span id="LambertSurfaceRelativeVelocity::writeMessages__uint64_t"></span><span class="target" id="class_lambert_surface_relative_velocity_1ad64711e3c95025ef58d423757804d03c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentSimNanos</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity13writeMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method writes the output messages each call of updateState </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentSimNanos</strong> – current simulation time in nano-seconds </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity18vRelativeDesired_SE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity18vRelativeDesired_SE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity18vRelativeDesired_SE"></span><span id="LambertSurfaceRelativeVelocity::vRelativeDesired_S__Eigen::Vector3d"></span><span class="target" id="class_lambert_surface_relative_velocity_1ae01257172009d6254400eb89b5257d1a"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vRelativeDesired_S</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity18vRelativeDesired_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] desired relative velocity, in surface frame S (East-North-Up) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity4timeE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity4timeE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity4timeE"></span><span id="LambertSurfaceRelativeVelocity::time__double"></span><span class="target" id="class_lambert_surface_relative_velocity_1afbfb43aaad73e49b21299b4dbcf9053a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">time</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity4timeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] time for the desired velocity of the spacecraft </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity6r_BN_NE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity6r_BN_NE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity6r_BN_NE"></span><span id="LambertSurfaceRelativeVelocity::r_BN_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_surface_relative_velocity_1a30102f09afe0ac5bc29f1669d9c856fd"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity6r_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position of spacecraft, expressed in inertial frame N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity6v_BN_NE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity6v_BN_NE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity6v_BN_NE"></span><span id="LambertSurfaceRelativeVelocity::v_BN_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_surface_relative_velocity_1afee06c362372e0427f91e5ddb8236a7c"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_BN_N</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity6v_BN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] velocity of spacecraft, expressed in inertial frame N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity6dcm_PNE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity6dcm_PNE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity6dcm_PNE"></span><span id="LambertSurfaceRelativeVelocity::dcm_PN__Eigen::Matrix3d"></span><span class="target" id="class_lambert_surface_relative_velocity_1a01baa947acc8e147dee602bf7fc3cf04"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_PN</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity6dcm_PNE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM of the orbital body fixed frame relative to inertial. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N30LambertSurfaceRelativeVelocity10omega_PN_NE">
+<span id="_CPPv3N30LambertSurfaceRelativeVelocity10omega_PN_NE"></span><span id="_CPPv2N30LambertSurfaceRelativeVelocity10omega_PN_NE"></span><span id="LambertSurfaceRelativeVelocity::omega_PN_N__Eigen::Vector3d"></span><span class="target" id="class_lambert_surface_relative_velocity_1ad711cd091110ce78cd71f6fc78f9acc1"></span><a class="reference internal" href="../../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_PN_N</span></span></span><a class="headerlink" href="#_CPPv4N30LambertSurfaceRelativeVelocity10omega_PN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[r/s] angular velocity of the orbital body relative to inertial </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="lambertSurfaceRelativeVelocity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

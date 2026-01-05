@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioLambertSolver &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioMagneticFieldCenteredDipole" href="scenarioMagneticFieldCenteredDipole.html" />
+    <link rel="prev" title="scenarioSmallBodyFeedbackControl" href="scenarioSmallBodyFeedbackControl.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioSmallBodyFeedbackControl.html">Small Body Waypoint-to-Waypoint Control</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Lambert Solver Delta-V Maneuver</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioLambertSolver</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioLambertSolver.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariolambertsolver">
+<span id="id1"></span><h1>scenarioLambertSolver<a class="headerlink" href="#scenariolambertsolver" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioLambertSolver"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This scenario demonstrates how to use the Lambert solver module package, consisting of
+<code class="docutils literal notranslate"><span class="pre">lambertPlanner()</span></code>, <code class="docutils literal notranslate"><span class="pre">lambertSolver()</span></code> and <code class="docutils literal notranslate"><span class="pre">lambertValidator()</span></code>, the computation of a Delta-V maneuver that takes
+the spacecraft to a desired locataion in a given time.</p>
+<p>In this scenario, the goal is to reach a target position at final time tf by performing a maneuver at time tm.
+This is done by solving Lambert’s problem. The Lambert problem is set up using <a class="reference internal" href="../Documentation/fswAlgorithms/orbitControl/lambertPlanner/lambertPlanner.html#lambertplanner"><span class="std std-ref">Module: lambertPlanner</span></a>, which provides the
+information in the form of <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/LambertProblemMsgPayload.html#lambertproblemmsgpayload"><span class="std std-ref">LambertProblemMsgPayload</span></a> to <a class="reference internal" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">Module: lambertSolver</span></a>. Lambert’s problem is solved within
+<a class="reference internal" href="../Documentation/fswAlgorithms/orbitControl/lambertSolver/lambertSolver.html#lambertsolver"><span class="std std-ref">Module: lambertSolver</span></a>, which writes the <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/LambertSolutionMsgPayload.html#lambertsolutionmsgpayload"><span class="std std-ref">LambertSolutionMsgPayload</span></a> and <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/LambertPerformanceMsgPayload.html#lambertperformancemsgpayload"><span class="std std-ref">LambertPerformanceMsgPayload</span></a> output
+messages. Finally, <a class="reference internal" href="../Documentation/fswAlgorithms/orbitControl/lambertValidator/lambertValidator.html#lambertvalidator"><span class="std std-ref">Module: lambertValidator</span></a> processes the content of those messages, computes the required Delta-V, and
+only writes a non-zero Delta-V message within <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/DvBurnCmdMsgPayload.html#dvburncmdmsgpayload"><span class="std std-ref">DvBurnCmdMsgPayload</span></a> if no constraints are violated
+(minimum orbit radius and final distance from targeted location) and the Delta-V solution has converged.</p>
+<p>The simulation layout is shown in the following illustration. The simulation and flight software (FSW) are divided into
+two different processes. After the maneuver, all tasks of the FSW process are disabled.</p>
+<img alt="../_images/test_scenarioLambertSolver.svg" class="align-center" src="../_images/test_scenarioLambertSolver.svg" />
+<p>The true and measured spacecraft position and velocity are shown in the plots below.</p>
+<img alt="../_images/scenarioLambertSolver1.svg" class="align-center" src="../_images/scenarioLambertSolver1.svg" />
+<img alt="../_images/scenarioLambertSolver2.svg" class="align-center" src="../_images/scenarioLambertSolver2.svg" />
+<p>Likewise, the expected spacecraft position and velocity at the time of the maneuver are shown in the plots below.
+Due to the noise of the measured spacecraft state, the expected state at maneuver time changes slightly with time.</p>
+<img alt="../_images/scenarioLambertSolver3.svg" class="align-center" src="../_images/scenarioLambertSolver3.svg" />
+<img alt="../_images/scenarioLambertSolver4.svg" class="align-center" src="../_images/scenarioLambertSolver4.svg" />
+<p>The next Figure shows the Delta-V that will be required at maneuver time to take the spacecraft to the target location.
+Again, due to the noise of the measured spacecraft state, the Delta-V changes slightly with time.</p>
+<img alt="../_images/scenarioLambertSolver5.svg" class="align-center" src="../_images/scenarioLambertSolver5.svg" />
+<p>The following three figures show the performance message content of the Lambert solver module,
+including the solution of the iteration variable x, the number of iterations it took to find x, and the change in x
+between the last and second to last root-finder iteration.</p>
+<img alt="../_images/scenarioLambertSolver6.svg" class="align-center" src="../_images/scenarioLambertSolver6.svg" />
+<img alt="../_images/scenarioLambertSolver7.svg" class="align-center" src="../_images/scenarioLambertSolver7.svg" />
+<img alt="../_images/scenarioLambertSolver8.svg" class="align-center" src="../_images/scenarioLambertSolver8.svg" />
+<p>Finally, the last figure shows the failedDvSolutionConvergence flag of the <a class="reference internal" href="../Documentation/architecture/msgPayloadDefC/LambertValidatorMsgPayload.html#lambertvalidatormsgpayload"><span class="std std-ref">LambertValidatorMsgPayload</span></a>, which is 1
+if the lambert validator returned a zeroed Delta-V if the Delta-V solution is too different from the previous time step,
+and 0 otherwise. At the very first time step, the flag is equal to 1, because it is the first time step so the solution
+has not converged it. At all subsequent time steps, the flag is equal to 0.</p>
+<img alt="../_images/scenarioLambertSolver9.svg" class="align-center" src="../_images/scenarioLambertSolver9.svg" />
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioLambertSolver</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_dV">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_dV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dv_N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_dV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_dV" title="Link to this definition"></a></dt>
+<dd><p>Plot the required Delta-V for the maneuver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_errX">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_errX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errX</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_errX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_errX" title="Link to this definition"></a></dt>
+<dd><p>Plot the error in x from the Lambert solver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_failedDvConvergence">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_failedDvConvergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failedDvSolutionConvergence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_failedDvConvergence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_failedDvConvergence" title="Link to this definition"></a></dt>
+<dd><p>Plot the failedDvSolutionConvergence flag.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_numIter">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_numIter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numIter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_numIter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_numIter" title="Link to this definition"></a></dt>
+<dd><p>Plot the number of iterations from the Lambert solver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_position">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_BN_N_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_BN_N_meas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_TN_N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_position" title="Link to this definition"></a></dt>
+<dd><p>Plot the position result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_rm">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_rm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_BN_N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_rm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_rm" title="Link to this definition"></a></dt>
+<dd><p>Plot the expected position at maneuver time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_velocity">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_velocity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_BN_N_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_BN_N_meas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_velocity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_velocity" title="Link to this definition"></a></dt>
+<dd><p>Plot the velocity result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_vm">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vm_BN_N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_vm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_vm" title="Link to this definition"></a></dt>
+<dd><p>Plot the expected velocity at maneuver time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.plot_x">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">plot_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#plot_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.plot_x" title="Link to this definition"></a></dt>
+<dd><p>Plot the x solution results from the Lambert solver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioLambertSolver.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioLambertSolver.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioLambertSolver.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioLambertSolver.run" title="Link to this definition"></a></dt>
+<dd><p>The scenarios can be run with the followings setups parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioSmallBodyFeedbackControl.html" class="btn btn-neutral float-left" title="scenarioSmallBodyFeedbackControl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioMagneticFieldCenteredDipole.html" class="btn btn-neutral float-right" title="scenarioMagneticFieldCenteredDipole" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

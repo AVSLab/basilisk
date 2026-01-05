@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: RWConfigPayload &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: THROperation" href="THROperation.html" />
+    <link rel="prev" title="Module: BodyToHubInfo" href="BodyToHubInfo.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: RWConfigPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/RWConfigPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rwconfigpayload">
+<span id="rwconfigpayload"></span><h1>Module: RWConfigPayload<a class="headerlink" href="#module-rwconfigpayload" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv415RWConfigPayload">
+<span id="_CPPv315RWConfigPayload"></span><span id="_CPPv215RWConfigPayload"></span><span id="RWConfigPayload"></span><span class="target" id="struct_r_w_config_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RWConfigPayload</span></span></span><a class="headerlink" href="#_CPPv415RWConfigPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;RWConfigPayload.h&gt;</em></div>
+<p>Structure used to define the individual RW configuration data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5rWB_BE">
+<span id="_CPPv3N15RWConfigPayload5rWB_BE"></span><span id="_CPPv2N15RWConfigPayload5rWB_BE"></span><span id="RWConfigPayload::rWB_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1af368802c73ae103995b874ae117ab048"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rWB_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5rWB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m], position vector of the RW relative to the spacecraft body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload7gsHat_BE">
+<span id="_CPPv3N15RWConfigPayload7gsHat_BE"></span><span id="_CPPv2N15RWConfigPayload7gsHat_BE"></span><span id="RWConfigPayload::gsHat_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1a698f6ecbef25d88c95423b30ec922d28"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gsHat_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload7gsHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] spin axis unit vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload8w2Hat0_BE">
+<span id="_CPPv3N15RWConfigPayload8w2Hat0_BE"></span><span id="_CPPv2N15RWConfigPayload8w2Hat0_BE"></span><span id="RWConfigPayload::w2Hat0_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1acf6fef71144e0f10f9747950a528fc69"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w2Hat0_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload8w2Hat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] initial torque axis unit vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload8w3Hat0_BE">
+<span id="_CPPv3N15RWConfigPayload8w3Hat0_BE"></span><span id="_CPPv2N15RWConfigPayload8w3Hat0_BE"></span><span id="RWConfigPayload::w3Hat0_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1a23107f6ec346b9b862014c8eae421f8a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w3Hat0_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload8w3Hat0_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] initial gimbal axis unit vector in body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload4massE">
+<span id="_CPPv3N15RWConfigPayload4massE"></span><span id="_CPPv2N15RWConfigPayload4massE"></span><span id="RWConfigPayload::mass__double"></span><span class="target" id="struct_r_w_config_payload_1ae91c7ab0a5f671e7193f2d6ce362436d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload4massE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg], reaction wheel rotor mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5thetaE">
+<span id="_CPPv3N15RWConfigPayload5thetaE"></span><span id="_CPPv2N15RWConfigPayload5thetaE"></span><span id="RWConfigPayload::theta__double"></span><span class="target" id="struct_r_w_config_payload_1a0492ce2ad4af1460149ab3b02aa1a6d6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad], wheel angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5OmegaE">
+<span id="_CPPv3N15RWConfigPayload5OmegaE"></span><span id="_CPPv2N15RWConfigPayload5OmegaE"></span><span id="RWConfigPayload::Omega__double"></span><span class="target" id="struct_r_w_config_payload_1a2818113883d515f5f63dd5ba586a0e01"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5OmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], wheel speed </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload2JsE">
+<span id="_CPPv3N15RWConfigPayload2JsE"></span><span id="_CPPv2N15RWConfigPayload2JsE"></span><span id="RWConfigPayload::Js__double"></span><span class="target" id="struct_r_w_config_payload_1a9b67b88bbeec4e7d5e853000ce2d21e0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Js</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload2JsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], spin axis gsHat rotor moment of inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload2JtE">
+<span id="_CPPv3N15RWConfigPayload2JtE"></span><span id="_CPPv2N15RWConfigPayload2JtE"></span><span id="RWConfigPayload::Jt__double"></span><span class="target" id="struct_r_w_config_payload_1a543c06a18472e073ca18399df0764c2b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Jt</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload2JtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], gtHat axis rotor moment of inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload2JgE">
+<span id="_CPPv3N15RWConfigPayload2JgE"></span><span id="_CPPv2N15RWConfigPayload2JgE"></span><span id="RWConfigPayload::Jg__double"></span><span class="target" id="struct_r_w_config_payload_1a9a6718eebdc621cad76bcd6b74602015"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Jg</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload2JgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], ggHat axis rotor moment of inertia </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload3U_sE">
+<span id="_CPPv3N15RWConfigPayload3U_sE"></span><span id="_CPPv2N15RWConfigPayload3U_sE"></span><span id="RWConfigPayload::U_s__double"></span><span class="target" id="struct_r_w_config_payload_1a3ebb2f9d8c01cd7e95b89293022b85a0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U_s</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload3U_sE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m], static imbalance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload3U_dE">
+<span id="_CPPv3N15RWConfigPayload3U_dE"></span><span id="_CPPv2N15RWConfigPayload3U_dE"></span><span id="RWConfigPayload::U_d__double"></span><span class="target" id="struct_r_w_config_payload_1a96b1a7aeb5ae4fcd492ad7987b367228"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U_d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload3U_dE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], dynamic imbalance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload1dE">
+<span id="_CPPv3N15RWConfigPayload1dE"></span><span id="_CPPv2N15RWConfigPayload1dE"></span><span id="RWConfigPayload::d__double"></span><span class="target" id="struct_r_w_config_payload_1aa7b338efd358cf416ec4829ded8d9668"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload1dE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m], wheel center of mass offset from wheel frame origin </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload3J13E">
+<span id="_CPPv3N15RWConfigPayload3J13E"></span><span id="_CPPv2N15RWConfigPayload3J13E"></span><span id="RWConfigPayload::J13__double"></span><span class="target" id="struct_r_w_config_payload_1a433ecd72e47a2d6bf9ffc0c9e55dd177"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">J13</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload3J13E" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload9u_currentE">
+<span id="_CPPv3N15RWConfigPayload9u_currentE"></span><span id="_CPPv2N15RWConfigPayload9u_currentE"></span><span id="RWConfigPayload::u_current__double"></span><span class="target" id="struct_r_w_config_payload_1a6e5f452aea0b6865887b780dc61d74f4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_current</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload9u_currentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], current motor torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5u_maxE">
+<span id="_CPPv3N15RWConfigPayload5u_maxE"></span><span id="_CPPv2N15RWConfigPayload5u_maxE"></span><span id="RWConfigPayload::u_max__double"></span><span class="target" id="struct_r_w_config_payload_1aece0cad81e4c92618b8290a8801e9849"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5u_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Max torque, negative value turns off saturating the wheel </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5u_minE">
+<span id="_CPPv3N15RWConfigPayload5u_minE"></span><span id="_CPPv2N15RWConfigPayload5u_minE"></span><span id="RWConfigPayload::u_min__double"></span><span class="target" id="struct_r_w_config_payload_1aac0dcec77ec8c0d58246010aed1e7352"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u_min</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5u_minE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Min torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload8fCoulombE">
+<span id="_CPPv3N15RWConfigPayload8fCoulombE"></span><span id="_CPPv2N15RWConfigPayload8fCoulombE"></span><span id="RWConfigPayload::fCoulomb__double"></span><span class="target" id="struct_r_w_config_payload_1ac98a630c3a108d48eb305b2cec9062ab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fCoulomb</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload8fCoulombE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Coulomb friction torque magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload7fStaticE">
+<span id="_CPPv3N15RWConfigPayload7fStaticE"></span><span id="_CPPv2N15RWConfigPayload7fStaticE"></span><span id="RWConfigPayload::fStatic__double"></span><span class="target" id="struct_r_w_config_payload_1a1ce5019d98308869bdfed5d5458c0edf"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fStatic</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload7fStaticE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m], Static friction torque magnitude </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload10betaStaticE">
+<span id="_CPPv3N15RWConfigPayload10betaStaticE"></span><span id="_CPPv2N15RWConfigPayload10betaStaticE"></span><span id="RWConfigPayload::betaStatic__double"></span><span class="target" id="struct_r_w_config_payload_1a727d6a77f4a7ac153621a4d998102e46"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">betaStatic</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload10betaStaticE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stribeck friction coefficient; For stribeck friction to be activiated, user must change this variable to a positive non-zero number. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload8cViscousE">
+<span id="_CPPv3N15RWConfigPayload8cViscousE"></span><span id="_CPPv2N15RWConfigPayload8cViscousE"></span><span id="RWConfigPayload::cViscous__double"></span><span class="target" id="struct_r_w_config_payload_1a365a1dfac774b990a4a9d960f19a150d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cViscous</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload8cViscousE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m-s/rad] Viscous fricion coefficient </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload15omegaLimitCycleE">
+<span id="_CPPv3N15RWConfigPayload15omegaLimitCycleE"></span><span id="_CPPv2N15RWConfigPayload15omegaLimitCycleE"></span><span id="RWConfigPayload::omegaLimitCycle__double"></span><span class="target" id="struct_r_w_config_payload_1af1e7b614cba687e97e01cdd97861d679"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaLimitCycle</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0001</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload15omegaLimitCycleE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], wheel speed that avoids limit cycle with friction </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload14frictionTorqueE">
+<span id="_CPPv3N15RWConfigPayload14frictionTorqueE"></span><span id="_CPPv2N15RWConfigPayload14frictionTorqueE"></span><span id="RWConfigPayload::frictionTorque__double"></span><span class="target" id="struct_r_w_config_payload_1aeb62468df13fa19b09055597dc27328b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frictionTorque</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload14frictionTorqueE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] friction torque, this is a computed value, don’t set it directly </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload11omegaBeforeE">
+<span id="_CPPv3N15RWConfigPayload11omegaBeforeE"></span><span id="_CPPv2N15RWConfigPayload11omegaBeforeE"></span><span id="RWConfigPayload::omegaBefore__double"></span><span class="target" id="struct_r_w_config_payload_1afa40d94a3f3d656d4506d5e6db647981"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaBefore</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload11omegaBeforeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], wheel speed one time step before </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload16frictionStribeckE">
+<span id="_CPPv3N15RWConfigPayload16frictionStribeckE"></span><span id="_CPPv2N15RWConfigPayload16frictionStribeckE"></span><span id="RWConfigPayload::frictionStribeck__b"></span><span class="target" id="struct_r_w_config_payload_1af036f48645cf6b8a07236c5afd8d56bb"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frictionStribeck</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload16frictionStribeckE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Boolenian to determine if stribeck friction model is used or not, 0 is non-stribeck, 1 is stribeck; Parameter is set internally. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload9Omega_maxE">
+<span id="_CPPv3N15RWConfigPayload9Omega_maxE"></span><span id="_CPPv2N15RWConfigPayload9Omega_maxE"></span><span id="RWConfigPayload::Omega_max__double"></span><span class="target" id="struct_r_w_config_payload_1a922b3f5e1eb2567eaf58464691b21d27"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Omega_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload9Omega_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s], max wheel speed, negative values turn off wheel saturation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5P_maxE">
+<span id="_CPPv3N15RWConfigPayload5P_maxE"></span><span id="_CPPv2N15RWConfigPayload5P_maxE"></span><span id="RWConfigPayload::P_max__double"></span><span class="target" id="struct_r_w_config_payload_1aa80ad7674c2ab566ba30b637c0999bb8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P_max</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5P_maxE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m/s], maximum wheel power, negative values turn off power limit </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload7RWModelE">
+<span id="_CPPv3N15RWConfigPayload7RWModelE"></span><span id="_CPPv2N15RWConfigPayload7RWModelE"></span><span id="RWConfigPayload::RWModel__RWModels"></span><span class="target" id="struct_r_w_config_payload_1ac0867d935daceb121af01d97bca0a70d"></span><a class="reference internal" href="../reactionWheels/reactionWheelSupport.html#_CPPv48RWModels" title="RWModels"><span class="n"><span class="pre">RWModels</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RWModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../reactionWheels/reactionWheelSupport.html#_CPPv4N8RWModels14BalancedWheelsE" title="BalancedWheels"><span class="n"><span class="pre">BalancedWheels</span></span></a><a class="headerlink" href="#_CPPv4N15RWConfigPayload7RWModelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], Type of imbalance model to use </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload6aOmegaE">
+<span id="_CPPv3N15RWConfigPayload6aOmegaE"></span><span id="_CPPv2N15RWConfigPayload6aOmegaE"></span><span id="RWConfigPayload::aOmega__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1a83b5b581134f581d99fff5d86f12a313"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aOmega</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload6aOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload6bOmegaE">
+<span id="_CPPv3N15RWConfigPayload6bOmegaE"></span><span id="_CPPv2N15RWConfigPayload6bOmegaE"></span><span id="RWConfigPayload::bOmega__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1a8199fd33f393880e13f499f9c1378a2d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bOmega</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload6bOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload6cOmegaE">
+<span id="_CPPv3N15RWConfigPayload6cOmegaE"></span><span id="_CPPv2N15RWConfigPayload6cOmegaE"></span><span id="RWConfigPayload::cOmega__double"></span><span class="target" id="struct_r_w_config_payload_1a164e2a85e001ba8f9a3d3289af73ba20"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cOmega</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload6cOmegaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], parameter used in coupled jitter back substitution </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload10IRWPntWc_BE">
+<span id="_CPPv3N15RWConfigPayload10IRWPntWc_BE"></span><span id="_CPPv2N15RWConfigPayload10IRWPntWc_BE"></span><span id="RWConfigPayload::IRWPntWc_B__Eigen::Matrix3d"></span><span class="target" id="struct_r_w_config_payload_1aa02233b0f43cdaf9a44ccf7df0cafa35"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IRWPntWc_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload10IRWPntWc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>RW inertia about point Wc in B frame components. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload15IPrimeRWPntWc_BE">
+<span id="_CPPv3N15RWConfigPayload15IPrimeRWPntWc_BE"></span><span id="_CPPv2N15RWConfigPayload15IPrimeRWPntWc_BE"></span><span id="RWConfigPayload::IPrimeRWPntWc_B__Eigen::Matrix3d"></span><span class="target" id="struct_r_w_config_payload_1a9e318b7f1a1fc9807a62f7763e0042ac"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPrimeRWPntWc_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload15IPrimeRWPntWc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>RW inertia B-frame derivative. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload6rWcB_BE">
+<span id="_CPPv3N15RWConfigPayload6rWcB_BE"></span><span id="_CPPv2N15RWConfigPayload6rWcB_BE"></span><span id="RWConfigPayload::rWcB_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1abec584245eaf6b6212047d77b32e1f9d"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload6rWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>position of Wc relative to B in B-frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload11rTildeWcB_BE">
+<span id="_CPPv3N15RWConfigPayload11rTildeWcB_BE"></span><span id="_CPPv2N15RWConfigPayload11rTildeWcB_BE"></span><span id="RWConfigPayload::rTildeWcB_B__Eigen::Matrix3d"></span><span class="target" id="struct_r_w_config_payload_1a14a3545026fca25b715dba6f1ab10b85"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTildeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload11rTildeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>tilde matrix of r_WcB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload11rPrimeWcB_BE">
+<span id="_CPPv3N15RWConfigPayload11rPrimeWcB_BE"></span><span id="_CPPv2N15RWConfigPayload11rPrimeWcB_BE"></span><span id="RWConfigPayload::rPrimeWcB_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1ab850107d9e6dfe2a41266134ea3564c5"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrimeWcB_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload11rPrimeWcB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>B-frame derivative of r_WcB_B. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload7w2Hat_BE">
+<span id="_CPPv3N15RWConfigPayload7w2Hat_BE"></span><span id="_CPPv2N15RWConfigPayload7w2Hat_BE"></span><span id="RWConfigPayload::w2Hat_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1ac3b7f5c800389f69883645ad1ff1eebd"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w2Hat_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload7w2Hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>unit vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload7w3Hat_BE">
+<span id="_CPPv3N15RWConfigPayload7w3Hat_BE"></span><span id="_CPPv2N15RWConfigPayload7w3Hat_BE"></span><span id="RWConfigPayload::w3Hat_B__Eigen::Vector3d"></span><span class="target" id="struct_r_w_config_payload_1a9d4ca8d8a3a158fc3ad4650ece0be809"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">w3Hat_B</span></span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload7w3Hat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>unit vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15RWConfigPayload5labelE">
+<span id="_CPPv3N15RWConfigPayload5labelE"></span><span id="_CPPv2N15RWConfigPayload5labelE"></span><span id="RWConfigPayload::label__cA"></span><span class="target" id="struct_r_w_config_payload_1a4e1ca861de2c37c47f5b8860778a686c"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">label</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N15RWConfigPayload5labelE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-], label name of the RW device being simulated </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BodyToHubInfo.html" class="btn btn-neutral float-left" title="Module: BodyToHubInfo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="THROperation.html" class="btn btn-neutral float-right" title="Module: THROperation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

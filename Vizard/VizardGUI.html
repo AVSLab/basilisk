@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Guide &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Advanced Features" href="vizardAdvanced/index.html" />
+    <link rel="prev" title="Release Notes" href="VizardReleaseNotes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#startup-panel">Startup Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#view-modes">View Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#space-vehicle-states">Space Vehicle States</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-position-and-orientation">Basic Position and Orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reaction-wheel-states">Reaction Wheel States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thruster-states">Thruster States</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#file-menu-item"><code class="docutils literal notranslate"><span class="pre">File</span></code> Menu Item</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#settings-panel">Settings Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#save-messages-to-file">Save Messages To File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#view-menu-item"><code class="docutils literal notranslate"><span class="pre">View</span></code> Menu Item</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coordinate-frames">Coordinate Frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#orbit-lines">Orbit Lines</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#osculating-orbit-lines">Osculating Orbit Lines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#true-trajectory-lines">True Trajectory Lines</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-pointing-vector">Edit Pointing Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-keep-out-in-cone">Edit Keep Out/In Cone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-location">Edit Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#display-vizmessage-log">Display VizMessage Log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adjust-gui-scale">Adjust GUI Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-inventory-panel">Model Inventory Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hot-key-directory">Hot-Key Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#labels">Labels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-inventory">Model Inventory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#time-menu-item"><code class="docutils literal notranslate"><span class="pre">Time</span></code> Menu Item</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#camera-menu-item"><code class="docutils literal notranslate"><span class="pre">Camera</span></code> Menu Item</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-a-custom-shape-model">Import a Custom Shape Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#built-in-cad-models-of-celestial-bodies">Built-In CAD Models of Celestial Bodies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-options">Advanced Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-compress-messages-option"><code class="docutils literal notranslate"><span class="pre">File/Compress</span> <span class="pre">Messages</span></code> Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sprite-representation-of-space-objects">Sprite Representation of Space Objects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">User Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vizard/VizardGUI.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+</div>
+<section id="user-guide">
+<span id="vizardgui"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
+<a class="reference internal image-reference" href="../_images/basiliskVizardLogo.png"><img alt="../_images/basiliskVizardLogo.png" class="align-right" src="../_images/basiliskVizardLogo.png" style="width: 251.0px; height: 224.5px;" />
+</a>
+<section id="startup-panel">
+<h2>Startup Panel<a class="headerlink" href="#startup-panel" title="Link to this heading"></a></h2>
+<p>When starting up the Vizard software a panel is presented where the user can select which simulation to visualize. To play back a previously recorded BSK simulation press the <cite>Select</cite> button and navigate to the binary BSK recording file. After a file has been selected press the <cite>Start Visualization</cite> button.</p>
+<a class="reference internal image-reference" href="../_images/vizard-img2.jpg"><img alt="../_images/vizard-img2.jpg" class="align-center" src="../_images/vizard-img2.jpg" style="width: 90%;" />
+</a>
+<p>To live stream data from a running Basilisk simulation to Vizard, refer to the <a class="reference internal" href="vizardAdvanced/vizardLiveComm.html#vizardlivecomm"><span class="std std-ref">Live Communication with Vizard</span></a> page.</p>
+</section>
+<section id="view-modes">
+<h2>View Modes<a class="headerlink" href="#view-modes" title="Link to this heading"></a></h2>
+<p>To engage with the visualization, the
+view point can be rotated and the user can zoom in and out. There are
+three view modes available:</p>
+<ul class="simple">
+<li><p><strong>Spacecraft-Centric View Mode</strong> (default): Here the spacecraft is
+drawn 1:1 while showing other celestial objects about it. When
+rotating the center of the spacecraft is the center of rotation. The
+spacecraft trajectory is not shown in this view. You can zoom in and
+out locally, but if you zoom out too far then the view mode switched
+to a planet-centric view mode.</p></li>
+<li><p><strong>Planet-Centric View Mode</strong>: Here a planet-wide view is presented.
+When rotating the view point this is about with the center of the
+planet as the center of rotation. The spacecraft trajectory is shown.
+The spacecraft is drawn at an exaggerated size so it is visible as a
+3D object in this view. To return to a spacecraft-centric view mode
+double click on the spacecraft. If you zoom out far enough then the
+mode switches to a heliocentric view.</p></li>
+<li><p><strong>Heliocentric View Mode</strong>: Here a solar system wide view is shown.
+The planets are drawn enlarged to make them visible, and the planet
+trajectories are shown as well. If the spacecraft is orbiting a
+planet it is not visible in this view. If the spacecraft is on a
+heliocentric trajectory it is shown, also enlarged, in this view.
+Double clicking on a planet returns the user to a planet-centric
+view.</p></li>
+</ul>
+</section>
+<section id="space-vehicle-states">
+<h2>Space Vehicle States<a class="headerlink" href="#space-vehicle-states" title="Link to this heading"></a></h2>
+<p>The following sections describe
+the basic user interface elements of Vizard. Some settings can be set
+via a Basilisk script as described in the <a class="reference internal" href="vizardAdvanced/vizardSettings.html#vizardsettings"><span class="std std-ref">BSK Scripting Settings</span></a>.</p>
+<section id="basic-position-and-orientation">
+<h3>Basic Position and Orientation<a class="headerlink" href="#basic-position-and-orientation" title="Link to this heading"></a></h3>
+<p>Vizard is able to show the position and orientation of the spacecraft
+being simulated. If one or more planets are being modeled, then the
+spacecraft is show relative to the nearest planet.</p>
+</section>
+<section id="reaction-wheel-states">
+<h3>Reaction Wheel States<a class="headerlink" href="#reaction-wheel-states" title="Link to this heading"></a></h3>
+<p>If Reaction Wheels or RWs are modeled, then a RW panel can be opened
+from within the <code class="docutils literal notranslate"><span class="pre">Actuator</span></code> menu bar item. Here the RW wheel speeds and
+motor torques are shown.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgRW.jpg"><img alt="../_images/vizard-ImgRW.jpg" class="align-center" src="../_images/vizard-ImgRW.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="thruster-states">
+<h3>Thruster States<a class="headerlink" href="#thruster-states" title="Link to this heading"></a></h3>
+<p>If thrusters are being simulated then a range of visualizations can be
+enables within the <code class="docutils literal notranslate"><span class="pre">Actuator</span></code> menu item. The options include to open
+a Thruster Panel which shows the thruster firings as bar charts. The
+thruster HUD uses a particle engine to illustrate if a thruster is
+firing. Here the length and density of the particles is related to the
+strength and duty cycle of the thruster. The thruster geometry option
+draws small cones where the thrusters are modeled to be. This is
+useful when debugging that a thruster configuration is being properly
+modeled. Finally, the thruster normals option illustrates the thrust
+axes being modeled.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgTHR.jpg"><img alt="../_images/vizard-ImgTHR.jpg" class="align-center" src="../_images/vizard-ImgTHR.jpg" style="width: 90%;" />
+</a>
+</section>
+</section>
+<section id="file-menu-item">
+<h2><code class="docutils literal notranslate"><span class="pre">File</span></code> Menu Item<a class="headerlink" href="#file-menu-item" title="Link to this heading"></a></h2>
+<section id="settings-panel">
+<h3>Settings Panel<a class="headerlink" href="#settings-panel" title="Link to this heading"></a></h3>
+<p>This panel provides access to some system defaults:</p>
+<ul class="simple">
+<li><p>ambient brightness</p></li>
+<li><p>keyboard controlled camera angular rate</p></li>
+<li><p>keyboard controlled camera zoom rate</p></li>
+</ul>
+</section>
+<section id="save-messages-to-file">
+<h3>Save Messages To File<a class="headerlink" href="#save-messages-to-file" title="Link to this heading"></a></h3>
+<p>Allows all the protobuffer message, or a sub-set, to be saved off to a file.  This document is located
+inside a sub-folder <code class="docutils literal notranslate"><span class="pre">VizardData</span></code> inside the user’s home directory.</p>
+</section>
+</section>
+<section id="view-menu-item">
+<h2><code class="docutils literal notranslate"><span class="pre">View</span></code> Menu Item<a class="headerlink" href="#view-menu-item" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">View</span></code> menu tab contains a range of Vizard options.</p>
+<section id="coordinate-frames">
+<h3>Coordinate Frames<a class="headerlink" href="#coordinate-frames" title="Link to this heading"></a></h3>
+<p>A range of coordinate frames can be toggled on or off, including <code class="docutils literal notranslate"><span class="pre">Camera</span> <span class="pre">Target</span> <span class="pre">CS</span></code>, <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">Spacecraft</span> <span class="pre">CS</span></code>, <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">Effector</span> <span class="pre">CS</span></code>, <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">Planet/Moon</span> <span class="pre">CS</span></code>, <code class="docutils literal notranslate"><span class="pre">Hill</span> <span class="pre">Frame</span></code> and <code class="docutils literal notranslate"><span class="pre">Velocity</span> <span class="pre">Frame</span></code>.</p>
+<a class="reference internal image-reference" href="../_images/vizard-imgAxes.jpg"><img alt="../_images/vizard-imgAxes.jpg" class="align-center" src="../_images/vizard-imgAxes.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="orbit-lines">
+<h3>Orbit Lines<a class="headerlink" href="#orbit-lines" title="Link to this heading"></a></h3>
+<p>Both <code class="docutils literal notranslate"><span class="pre">Osculating</span> <span class="pre">Orbit</span> <span class="pre">Lines</span></code> and <code class="docutils literal notranslate"><span class="pre">True</span> <span class="pre">Trajectory</span> <span class="pre">Lines</span></code> can be shown in a variety of frames as described below. Example scenarios highlight different orbit line view settings.</p>
+<section id="osculating-orbit-lines">
+<h4>Osculating Orbit Lines<a class="headerlink" href="#osculating-orbit-lines" title="Link to this heading"></a></h4>
+<p>The osculating orbit is the instantaneous Keplerian orbit disregarding perturbations. These lines can be shown in the following modes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Celestial</span> <span class="pre">Body</span> <span class="pre">Relative</span> <span class="pre">Inertial</span></code> (default). The relative celestial body is the parent by default, but can be changed through the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Celestial</span> <span class="pre">Body</span> <span class="pre">(Relative</span> <span class="pre">Inertial)</span></code> menu item.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Spacecraft</span> <span class="pre">Relative</span></code>. This mode is available in scenarios with multiple spacecraft. The relative orbit chief is selected based on the camera target, but can be changed manually through the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Spacecraft</span> <span class="pre">Relative</span> <span class="pre">Orbit</span> <span class="pre">Chief</span></code> menu item.</p></li>
+</ul>
+</section>
+<section id="true-trajectory-lines">
+<h4>True Trajectory Lines<a class="headerlink" href="#true-trajectory-lines" title="Link to this heading"></a></h4>
+<p>The true trajectory lines can be shown in the following modes:</p>
+<ul class="simple">
+<li><p>Un-corrected Inertial (default). Inertial trajectories shown with respect to the solar system origin.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Celestial</span> <span class="pre">Body</span> <span class="pre">Relative</span> <span class="pre">Inertial</span></code>. The relative celestial body is the parent by default, but can be changed through the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Celestial</span> <span class="pre">Body</span> <span class="pre">(Relative</span> <span class="pre">Inertial)</span></code> menu item. This view mode is highlighted in <a class="reference internal" href="../examples/scenarioOrbitManeuver.html#scenarioorbitmaneuver"><span class="std std-ref">scenarioOrbitManeuver</span></a> as shown below.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/vizard-bodyInertialFrame.jpg"><img alt="../_images/vizard-bodyInertialFrame.jpg" class="align-center" src="../_images/vizard-bodyInertialFrame.jpg" style="width: 50%;" />
+</a>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Spacecraft</span> <span class="pre">Relative</span></code>. This mode is available in scenarios with multiple spacecraft. The relative orbit chief is selected based on the camera target, but can be changed manually through the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Spacecraft</span> <span class="pre">Relative</span> <span class="pre">Orbit</span> <span class="pre">Chief</span></code> menu item. These can be expressed in the Hill frame, velocity frame, or inertial frame of the chief. This view mode is highlighted in <a class="reference internal" href="../examples/scenarioDataToViz.html#scenariodatatoviz"><span class="std std-ref">scenarioDataToViz</span></a> as shown below.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/vizard-scRelative.jpg"><img alt="../_images/vizard-scRelative.jpg" class="align-center" src="../_images/vizard-scRelative.jpg" style="width: 50%;" />
+</a>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Two-Body</span> <span class="pre">Rotating</span> <span class="pre">Frame</span></code>. In scenarios with two celestial bodies, the primary is selected to be the larger of the two, per 3-body problem convention. In scenarios with more than two celestial bodies, the bodies must be manually selected using through the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Rotating</span> <span class="pre">Frame</span> <span class="pre">Celestial</span> <span class="pre">Bodies</span></code> menu item. This view mode is highlighted in <a class="reference internal" href="../examples/scenarioHaloOrbit.html#scenariohaloorbit"><span class="std std-ref">scenarioHaloOrbit</span></a> as shown below.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/vizard-rotatingFrame.jpg"><img alt="../_images/vizard-rotatingFrame.jpg" class="align-center" src="../_images/vizard-rotatingFrame.jpg" style="width: 50%;" />
+</a>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Body-Fixed</span> <span class="pre">Frame</span></code>. The primary celestial body is default, but can be changed through the <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">Body-Fixed</span> <span class="pre">Frame</span> <span class="pre">Body</span></code> menu item. This view mode is highlighted in <a class="reference internal" href="../examples/scenarioAsteroidArrival.html#scenarioasteroidarrival"><span class="std std-ref">scenarioAsteroidArrival</span></a> as shown below.</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/vizard-fixedFrame.jpg"><img alt="../_images/vizard-fixedFrame.jpg" class="align-center" src="../_images/vizard-fixedFrame.jpg" style="width: 50%;" />
+</a>
+</section>
+</section>
+<section id="edit-pointing-vector">
+<h3>Edit Pointing Vector<a class="headerlink" href="#edit-pointing-vector" title="Link to this heading"></a></h3>
+<p>This allows a line to be drawn from the spacecraft aimed at another
+celestial body such as the sun, a planet, etc. The spacecraft location
+is referred to as “Inertial”. The purpose of these lines is to have a
+quick visual reference in what direction another body is located. The
+lines can be hidden or removed as needed. Some celestial bodies come
+with default colors such as yellow for sun heading, or red for Mars
+heading, etc. However, each line color can be customized as needed.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgPointing.jpg"><img alt="../_images/vizard-ImgPointing.jpg" class="align-center" src="../_images/vizard-ImgPointing.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="edit-keep-out-in-cone">
+<h3>Edit Keep Out/In Cone<a class="headerlink" href="#edit-keep-out-in-cone" title="Link to this heading"></a></h3>
+<p>This feature allows for a cone to be added relative to the spacecraft
+which indicates if a cone about a particular body-fixed axis intersects
+with a celestial object. For example, this can be used to add a cone to
+validate that the sensor axis doesn’t get too close to the sun (keep out
+cone), or if the solar panel normal axis stays within some cone to the
+sun (keep in cone). If the cone in/out condition is not triggered, then
+the cone is opaque. If the in/out condition is triggered, then the cone
+becomes solid.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgCones.jpg"><img alt="../_images/vizard-ImgCones.jpg" class="align-center" src="../_images/vizard-ImgCones.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="edit-location">
+<h3>Edit Location<a class="headerlink" href="#edit-location" title="Link to this heading"></a></h3>
+<p>Here you can control what ground or satellite locations are shown, as well as toggle if the location
+boresight vector should be shown, or/and the location coverage cone.  These locations can also be scripted
+in python.  However, this panel allows for locations to be added or edited on the fly.</p>
+</section>
+<section id="display-vizmessage-log">
+<h3>Display VizMessage Log<a class="headerlink" href="#display-vizmessage-log" title="Link to this heading"></a></h3>
+<p>This opens up a panel which displays all the raw protobuffer message states.  You can downselect
+what type of messages to how with toggles on the left side.  The messages are updated in realtime
+as the simulation progresses.  Note, if a message is sent only once on start-up, it is only shown
+on the first simulation frame.  This panel is useful when debugging protobuffer communication features.</p>
+</section>
+<section id="adjust-gui-scale">
+<h3>Adjust GUI Scale<a class="headerlink" href="#adjust-gui-scale" title="Link to this heading"></a></h3>
+<p>This brings up a panel where a global GUI scale factor can be set.  This is useful increase or decrease,
+the Vizard font, panel and GUI element sizes.  The Vizard default values switch automatically with the screen
+resolution.  If a specific value is set in this panel than this over-rides the auto-setting.</p>
+</section>
+<section id="model-inventory-panel">
+<h3>Model Inventory Panel<a class="headerlink" href="#model-inventory-panel" title="Link to this heading"></a></h3>
+<p>If you want to see to the Vizard space object model inventory panel, then select <code class="docutils literal notranslate"><span class="pre">View/Model</span> <span class="pre">Inventory</span></code> as illustrated in the
+following image:</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgCAD-6.jpg"><img alt="../_images/vizard-ImgCAD-6.jpg" class="align-center" src="../_images/vizard-ImgCAD-6.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="hot-key-directory">
+<h3>Hot-Key Directory<a class="headerlink" href="#hot-key-directory" title="Link to this heading"></a></h3>
+<p>The key <code class="docutils literal notranslate"><span class="pre">h</span></code> will open up a help panel showing all the hot-keys that are available.  This includes a
+camera-centric flashlight model with <code class="docutils literal notranslate"><span class="pre">L</span></code>, or ways to engage constant camera rates, or stopping all
+camera rates with <code class="docutils literal notranslate"><span class="pre">s</span></code>, etc.</p>
+<a class="reference internal image-reference" href="../_images/vizard-HotKey.jpg"><img alt="../_images/vizard-HotKey.jpg" class="align-center" src="../_images/vizard-HotKey.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="labels">
+<h3>Labels<a class="headerlink" href="#labels" title="Link to this heading"></a></h3>
+<p>This allows you to turn on labels for spacecraft, planets, even actuators such as thrusters etc.</p>
+<a class="reference internal image-reference" href="../_images/vizard-Labels.jpg"><img alt="../_images/vizard-Labels.jpg" class="align-center" src="../_images/vizard-Labels.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="model-inventory">
+<h3>Model Inventory<a class="headerlink" href="#model-inventory" title="Link to this heading"></a></h3>
+<p>Brings up a panel to edit and modify the 3D CAD models that are used by a spacecraft or a planet.</p>
+<a class="reference internal image-reference" href="../_images/vizard-sprites.jpg"><img alt="../_images/vizard-sprites.jpg" class="align-center" src="../_images/vizard-sprites.jpg" style="width: 90%;" />
+</a>
+</section>
+</section>
+<section id="time-menu-item">
+<h2><code class="docutils literal notranslate"><span class="pre">Time</span></code> Menu Item<a class="headerlink" href="#time-menu-item" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Time</span></code> menu tab contains a range of Vizard time or mission date related option. Some of these items have
+a keyboard short-cut assigned.</p>
+<a class="reference internal image-reference" href="../_images/vizard-timeMenu.jpg"><img alt="../_images/vizard-timeMenu.jpg" class="align-center" src="../_images/vizard-timeMenu.jpg" style="width: 90%;" />
+</a>
+<ul class="simple">
+<li><p><strong>Playback in Real time:</strong> This mode syncs up the playback speed to be real time where 1s of simulation time takes
+1s of real time.  This can be increased or decreased as desired.</p></li>
+<li><p><strong>Playback at Frame:</strong> This mode plays back each data frame as it arrives.  Thus, the visualization is playing
+back a data file as fast as it can without skipping any data frames.  If you press the Plus icon then the data
+playback speed is doubled to 2 by only showing every second frame.  Pressing Plus again doubles once more the data
+rate to 4 to showing only
+every 4th data frame.  If you press negative the trend is reversed.  You can slow down the playback as well in this
+mode in that a data rate of 1/2 means a data frame is held for 2 unit cycles.</p></li>
+<li><p><strong>Use 24 Hour Clock:</strong> This toggles between a 12 hour clock using <cite>am</cite> and <cite>pm</cite> and a 24 hour clock.</p></li>
+<li><p><strong>Show Mission/Sim Time:</strong> This toggles the time bar to show either the simulation elapsed time or the mission
+date and time.  Note that if the Basilisk simulation doesn’t set an epoch date than January 1st, 2019, 00:00am
+is assumed by the simulation.</p></li>
+<li><p><strong>Show Data Rate</strong>: This toggle shows the data frame rate.  If this is 1, then every data rate is being shown.
+If the rate is 2, then only every 2nd data frame is shown.  A data rate of 1/2 means a frame is held for
+one rendering cycle to slow down the simulation.</p></li>
+<li><p><strong>Show FPS</strong>: This toggles on the frames-per-second on the lower right of the screen</p></li>
+</ul>
+</section>
+<section id="camera-menu-item">
+<h2><code class="docutils literal notranslate"><span class="pre">Camera</span></code> Menu Item<a class="headerlink" href="#camera-menu-item" title="Link to this heading"></a></h2>
+<p>The Camera menu item allows for custom camera views to be created into
+the visualization. The first item called <em>Changed Main Camera Target</em> brings up a list of simulation objects that
+can be made the focus of the simulation camera window.  This makes it easy to switch between an Earth-centric and a
+spacecraft centric simulation point of view.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">Camera</span></code> menu list contains 2 default camera options that can be turned on.  Selecting either camera
+1 or camera 2 will open a stand-alone camera view as shown below.  Finally, if more camera views are required,
+these can be added with the <em>Add Camera</em> menu option. Within a camera panel the user can
+select from which object the camera is
+simulated, and where this camera is pointing.  Below the camera is selected to point camera along a body fixed vector.</p>
+<a class="reference internal image-reference" href="../_images/vizard-imgCamera1.jpg"><img alt="../_images/vizard-imgCamera1.jpg" class="align-center" src="../_images/vizard-imgCamera1.jpg" style="width: 90%;" />
+</a>
+<p>In this second illustration the camera is chosen to point toward another simulation object such as the Earth.
+Here the user can select to point the camera at the target (nadir), along the velocity direction (along-track)
+or orbit-normal,.</p>
+<a class="reference internal image-reference" href="../_images/vizard-imgCamera2.jpg"><img alt="../_images/vizard-imgCamera2.jpg" class="align-center" src="../_images/vizard-imgCamera2.jpg" style="width: 90%;" />
+</a>
+<p>If you press the snap shot icon on the lower right of the camera panel, then the camera view is captured and stored
+as a PNG image within the user’s home directory.</p>
+</section>
+<section id="import-a-custom-shape-model">
+<h2>Import a Custom Shape Model<a class="headerlink" href="#import-a-custom-shape-model" title="Link to this heading"></a></h2>
+<p>When Vizard starts up it represents the spacecraft using a default CAD model called <code class="docutils literal notranslate"><span class="pre">bsk-Sat</span></code>.  This default spacecraft model can be replaced with with a custom CAD model in an <code class="docutils literal notranslate"><span class="pre">.obj</span></code> or <code class="docutils literal notranslate"><span class="pre">.glb</span></code> file format, or by using a built-in shape primitive. Go to the <code class="docutils literal notranslate"><span class="pre">File</span></code> menu and select <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">Model</span></code>:</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgCAD-2.jpg"><img alt="../_images/vizard-ImgCAD-2.jpg" class="align-center" src="../_images/vizard-ImgCAD-2.jpg" style="width: 90%;" />
+</a>
+<p>Next, select the file that is to be imported into Vizard.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgCAD-3.jpg"><img alt="../_images/vizard-ImgCAD-3.jpg" class="align-center" src="../_images/vizard-ImgCAD-3.jpg" style="width: 90%;" />
+</a>
+<p>The next panel allows the CAD model import to be customized.  The user can modify the origin offset,
+the CAD orientation and the CAD scaling.  The latter is useful to convert the CAD model into meters
+used by Vizard.  The model center and model extrema information is provided as a convenient.  A
+bounding box can also be draw as a convenient to make sure this is correctly configured.  Note that
+if a model is to be applied for each simulation instance, then see how <code class="docutils literal notranslate"><span class="pre">createCustomModel()</span></code> can be
+configured to script this OBJ import process as illustrated in <a class="reference internal" href="vizardAdvanced/vizardSettings.html#vizardsettings"><span class="std std-ref">BSK Scripting Settings</span></a>.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgCAD-4.jpg"><img alt="../_images/vizard-ImgCAD-4.jpg" class="align-center" src="../_images/vizard-ImgCAD-4.jpg" style="width: 90%;" />
+</a>
+<p>At this point a panel appears that allows you select the object for which you want to apply a new
+shape, and what shape you want to apply.  When ready, press <cite>Apply Models to Selected Objects</cite> to
+apply the custom space object shape.  Note that instead of an <code class="docutils literal notranslate"><span class="pre">.obj</span></code> or <code class="docutils literal notranslate"><span class="pre">.glb</span></code> file a custom shape can also be selected such as a sphere, cylinder or cube.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgCAD-5.jpg"><img alt="../_images/vizard-ImgCAD-5.jpg" class="align-center" src="../_images/vizard-ImgCAD-5.jpg" style="width: 90%;" />
+</a>
+</section>
+<section id="built-in-cad-models-of-celestial-bodies">
+<h2>Built-In CAD Models of Celestial Bodies<a class="headerlink" href="#built-in-cad-models-of-celestial-bodies" title="Link to this heading"></a></h2>
+<p>While custom CAD shapes can be imported to display celestial bodies and spacecraft shapes,
+Vizard has several built-in models that are automatically applied if the body has the
+corresponding name.  For the gravitational bodies, <a class="reference internal" href="../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> uses by default
+the string <code class="docutils literal notranslate"><span class="pre">planetName</span></code> in the <code class="docutils literal notranslate"><span class="pre">GravBodyData()</span></code> structure as the gravity body label.  If
+the optional string <code class="docutils literal notranslate"><span class="pre">displayName</span></code> is set, this this gravity body label over-rides the <code class="docutils literal notranslate"><span class="pre">planetName</span></code>
+string.  This is handy in that sometimes the gravity body might have an unintuitive Spice ID or name,
+and the user wishes to label the planet with a more common name such as <code class="docutils literal notranslate"><span class="pre">earth</span></code>, <code class="docutils literal notranslate"><span class="pre">mars</span></code>, etc.
+Further, or override the auto-shape selection and specify a specific shape, use the
+<code class="docutils literal notranslate"><span class="pre">modelDictionaryKey</span></code> string to specify CAD model to be used.  This allows the CAD keyword and the
+planet label to be different.</p>
+<p>This gravity body label is used in Vizard to select a default shape.  For example, Vizard seeks
+for the label <code class="docutils literal notranslate"><span class="pre">earth</span></code> (regardless of capitalization) and will find it in <code class="docutils literal notranslate"><span class="pre">earth</span></code>, <code class="docutils literal notranslate"><span class="pre">earth_planet_data</span></code>, etc.
+The following table is the list of built-in Vizard celestial bodies.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Build-In Vizard Celestial Body Shapes</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Vizard Keyword</p></th>
+<th class="head"><p>Features</p></th>
+<th class="head"><p>Satellites</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Mercury</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Venus</p></td>
+<td><p>atmospheric shader</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Earth</p></td>
+<td><p>atmospheric shader</p></td>
+<td><p>moon</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mars</p></td>
+<td><p>atmospheric shader</p></td>
+<td><p>Phobos, Deimos</p></td>
+</tr>
+<tr class="row-even"><td><p>Jupiter</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Saturn</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Uranus</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Neptune</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Bennu</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Ryugu</p></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="advanced-options">
+<h2>Advanced Options<a class="headerlink" href="#advanced-options" title="Link to this heading"></a></h2>
+<section id="file-compress-messages-option">
+<h3><code class="docutils literal notranslate"><span class="pre">File/Compress</span> <span class="pre">Messages</span></code> Option<a class="headerlink" href="#file-compress-messages-option" title="Link to this heading"></a></h3>
+<p>This option will compress the number of stored vizMessages from the current run. This feature is especially useful during multi-day live streaming simulation runs when the number of saved <a class="reference internal" href="../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> can grow too large for the app to continue running.</p>
+<p>Selecting this option brings up a settings panel that allows the user to specify how many messages should be retained. For example, if the user opts to retain 1/2  stored messages, Vizard will delete every other message in the <a class="reference internal" href="../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> dictionary, reducing the Vizard memory footprint.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Compression can be applied when running the Vizard from a <a class="reference internal" href="../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">Module: vizInterface</span></a> archive file <em>or</em> when live streaming. Please note that the compression cannot be reversed, but that the archive file, if in use, will not be changed.</p>
+</div>
+</section>
+<section id="sprite-representation-of-space-objects">
+<h3>Sprite Representation of Space Objects<a class="headerlink" href="#sprite-representation-of-space-objects" title="Link to this heading"></a></h3>
+<p>Vizard is setup to show an attitude dependent 3D rendering of a spacecraft model by default.  In a planet centric
+or helio-centric view the spacecraft is enlarged such that the orientation can still be determined.  This is the
+default behavior if a single satellite is shown.  However, if multiple satellites are shown then seeing enlarged
+3D renderings can both be a large computation hit and confusing to the viewer.  Thus, if 2 or more spacecraft are shown,
+and the view point is planet- or sun-centric, then Vizard defaults to showing the spacecraft locations as 2D sprites.</p>
+<p>The default shape is a white circle.  Using <code class="docutils literal notranslate"><span class="pre">View/Sprite</span> <span class="pre">Settings</span></code> opens a control panel to custumize the use
+of sprites.  Different shape primitives and colors can be selected for some or all the spacecraft and planets.  Further,
+toggles are provided to over-ride the default behavior and switch between a 3D rendering or 2D sprite representation.</p>
+<a class="reference internal image-reference" href="../_images/vizard-ImgSprite.jpg"><img alt="../_images/vizard-ImgSprite.jpg" class="align-center" src="../_images/vizard-ImgSprite.jpg" style="width: 90%;" />
+</a>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VizardReleaseNotes.html" class="btn btn-neutral float-left" title="Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vizardAdvanced/index.html" class="btn btn-neutral float-right" title="Advanced Features" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sys_model_task &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="messaging" href="../messaging/index.html" />
+    <link rel="prev" title="sys_model" href="sys_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="sys_model.html">sys_model</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">sys_model_task</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">sys_model_task</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/_GeneralModuleFiles/sys_model_task.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sys-model-task">
+<span id="id1"></span><h1>sys_model_task<a class="headerlink" href="#sys-model-task" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417ModelPriorityPair">
+<span id="_CPPv317ModelPriorityPair"></span><span id="_CPPv217ModelPriorityPair"></span><span id="ModelPriorityPair"></span><span class="target" id="struct_model_priority_pair"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ModelPriorityPair</span></span></span><a class="headerlink" href="#_CPPv417ModelPriorityPair" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sys_model_task.h&gt;</em></div>
+<p>Structure used to pair a model and its requested priority. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17ModelPriorityPair20CurrentModelPriorityE">
+<span id="_CPPv3N17ModelPriorityPair20CurrentModelPriorityE"></span><span id="_CPPv2N17ModelPriorityPair20CurrentModelPriorityE"></span><span id="ModelPriorityPair::CurrentModelPriority__int32_t"></span><span class="target" id="struct_model_priority_pair_1a2d49d3cbfb492af1775ca237d2e82952"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CurrentModelPriority</span></span></span><a class="headerlink" href="#_CPPv4N17ModelPriorityPair20CurrentModelPriorityE" title="Link to this definition"></a><br /></dt>
+<dd><p>The current model priority. Higher goes first. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17ModelPriorityPair8ModelPtrE">
+<span id="_CPPv3N17ModelPriorityPair8ModelPtrE"></span><span id="_CPPv2N17ModelPriorityPair8ModelPtrE"></span><span id="ModelPriorityPair::ModelPtr__SysModelP"></span><span class="target" id="struct_model_priority_pair_1aac7b2c953dcbd6cee57c06d4a7f6e78c"></span><a class="reference internal" href="sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ModelPtr</span></span></span><a class="headerlink" href="#_CPPv4N17ModelPriorityPair8ModelPtrE" title="Link to this definition"></a><br /></dt>
+<dd><p>The model associated with this priority. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv412SysModelTask">
+<span id="_CPPv312SysModelTask"></span><span id="_CPPv212SysModelTask"></span><span id="SysModelTask"></span><span class="target" id="class_sys_model_task"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SysModelTask</span></span></span><a class="headerlink" href="#_CPPv412SysModelTask" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;sys_model_task.h&gt;</em></div>
+<p>Class used to group a set of models into one “Task” of execution. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask12SysModelTaskEv">
+<span id="_CPPv3N12SysModelTask12SysModelTaskEv"></span><span id="_CPPv2N12SysModelTask12SysModelTaskEv"></span><span id="SysModelTask::SysModelTask"></span><span class="target" id="class_sys_model_task_1a9f404bc3ac0f1f4230a0ffe7b2543735"></span><span class="sig-name descname"><span class="n"><span class="pre">SysModelTask</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask12SysModelTaskEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask12SysModelTaskE8uint64_t8uint64_t">
+<span id="_CPPv3N12SysModelTask12SysModelTaskE8uint64_t8uint64_t"></span><span id="_CPPv2N12SysModelTask12SysModelTaskE8uint64_t8uint64_t"></span><span id="SysModelTask::SysModelTask__uint64_t.uint64_t"></span><span class="target" id="class_sys_model_task_1a80c16425ff5ffd2ed6455b7e27e4d321"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SysModelTask</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">InputPeriod</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">FirstStartTime</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask12SysModelTaskE8uint64_t8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>class method </p>
+<p>A construction option that allows the user to set some task parameters. Note that the only required argument is InputPeriod. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>InputPeriod</strong> – The amount of nanoseconds between calls to this Task. </p></li>
+<li><p><strong>FirstStartTime</strong> – The amount of time in nanoseconds to hold a task dormant before starting. After this time the task is executed at integer amounts of InputPeriod again </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTaskD0Ev">
+<span id="_CPPv3N12SysModelTaskD0Ev"></span><span id="_CPPv2N12SysModelTaskD0Ev"></span><span id="SysModelTask::~SysModelTask"></span><span class="target" id="class_sys_model_task_1ab5827599f1a4d651833e5ccaea7c0442"></span><span class="sig-name descname"><span class="n"><span class="pre">~SysModelTask</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N12SysModelTaskD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask12AddNewObjectEP8SysModel7int32_t">
+<span id="_CPPv3N12SysModelTask12AddNewObjectEP8SysModel7int32_t"></span><span id="_CPPv2N12SysModelTask12AddNewObjectEP8SysModel7int32_t"></span><span id="SysModelTask::AddNewObject__SysModelP.int32_t"></span><span class="target" id="class_sys_model_task_1ae368f0da40da920f7605b8c531950528"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AddNewObject</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">NewModel</span></span>, <span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">Priority</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask12AddNewObjectEP8SysModel7int32_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method adds a new model into the Task list. Note that the Priority parameter is option as it defaults to -1 (lowest, latest) </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NewModel</strong> – The new model that we are adding to the Task </p></li>
+<li><p><strong>Priority</strong> – The selected priority of the model being added (highest goes first) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SysModelTask16SelfInitTaskListEv">
+<span id="_CPPv3NK12SysModelTask16SelfInitTaskListEv"></span><span id="_CPPv2NK12SysModelTask16SelfInitTaskListEv"></span><span id="SysModelTask::SelfInitTaskListC"></span><span class="target" id="class_sys_model_task_1ae19e874fa25057d65c34799939d25808"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInitTaskList</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SysModelTask16SelfInitTaskListEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method self-initializes all of the models that have been added to the Task. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask15ExecuteTaskListE8uint64_t">
+<span id="_CPPv3N12SysModelTask15ExecuteTaskListE8uint64_t"></span><span id="_CPPv2N12SysModelTask15ExecuteTaskListE8uint64_t"></span><span id="SysModelTask::ExecuteTaskList__uint64_t"></span><span class="target" id="class_sys_model_task_1ace0cab1c2d03a7422713aaf17997f762"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ExecuteTaskList</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask15ExecuteTaskListE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method executes all of the models on the Task during runtime. Then, it sets its NextStartTime appropriately. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – The current simulation time in [ns] </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask13ResetTaskListE8uint64_t">
+<span id="_CPPv3N12SysModelTask13ResetTaskListE8uint64_t"></span><span id="_CPPv2N12SysModelTask13ResetTaskListE8uint64_t"></span><span id="SysModelTask::ResetTaskList__uint64_t"></span><span class="target" id="class_sys_model_task_1aa160641a32a62d0ce776c60dfb1c8710"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResetTaskList</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask13ResetTaskListE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets all of the models that have been added to the Task at the CurrentSimTime. See sys_model_task.h for related method <a class="reference internal" href="#class_sys_model_task_1a549079b2bef4718bb870cd694186ea04"><span class="std std-ref">ResetTask()</span></a> </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimTime</strong> – The time to start at after reset </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask9ResetTaskEv">
+<span id="_CPPv3N12SysModelTask9ResetTaskEv"></span><span id="_CPPv2N12SysModelTask9ResetTaskEv"></span><span id="SysModelTask::ResetTask"></span><span class="target" id="class_sys_model_task_1a549079b2bef4718bb870cd694186ea04"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResetTask</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask9ResetTaskEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Resets the task. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask10enableTaskEv">
+<span id="_CPPv3N12SysModelTask10enableTaskEv"></span><span id="_CPPv2N12SysModelTask10enableTaskEv"></span><span id="SysModelTask::enableTask"></span><span class="target" id="class_sys_model_task_1a64994b13ac32a16fe710c13a945d61d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">enableTask</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask10enableTaskEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Enables the task. Great comment huh? </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask11disableTaskEv">
+<span id="_CPPv3N12SysModelTask11disableTaskEv"></span><span id="_CPPv2N12SysModelTask11disableTaskEv"></span><span id="SysModelTask::disableTask"></span><span class="target" id="class_sys_model_task_1a1dbbb03853de15e0008538b0287d8111"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">disableTask</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask11disableTaskEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Disables the task. I know. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask12updatePeriodE8uint64_t">
+<span id="_CPPv3N12SysModelTask12updatePeriodE8uint64_t"></span><span id="_CPPv2N12SysModelTask12updatePeriodE8uint64_t"></span><span id="SysModelTask::updatePeriod__uint64_t"></span><span class="target" id="class_sys_model_task_1aeda51159234bb5852abb372b6ab712cd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updatePeriod</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newPeriod</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask12updatePeriodE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method changes the period of a given task over to the requested period. It attempts to keep the same offset relative to the original offset that was specified at task creation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>newPeriod</strong> – The period that the task should run at going forward </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask16updateParentProcERKNSt6stringE">
+<span id="_CPPv3N12SysModelTask16updateParentProcERKNSt6stringE"></span><span id="_CPPv2N12SysModelTask16updateParentProcERKNSt6stringE"></span><span id="SysModelTask::updateParentProc__ssCR"></span><span class="target" id="class_sys_model_task_1ad96f31359477e92761c0a5105edeab4c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateParentProc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">parent</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SysModelTask16updateParentProcERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Allows the system to move task to a different process. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask10TaskModelsE">
+<span id="_CPPv3N12SysModelTask10TaskModelsE"></span><span id="_CPPv2N12SysModelTask10TaskModelsE"></span><span id="SysModelTask::TaskModels__std::vector:ModelPriorityPair:"></span><span class="target" id="class_sys_model_task_1a6bdb95635a0172e7214e3f003e2d7eff"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv417ModelPriorityPair" title="ModelPriorityPair"><span class="n"><span class="pre">ModelPriorityPair</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TaskModels</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask10TaskModelsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Array that has pointers to all task sysModels </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask8TaskNameE">
+<span id="_CPPv3N12SysModelTask8TaskNameE"></span><span id="_CPPv2N12SysModelTask8TaskNameE"></span><span id="SysModelTask::TaskName__ss"></span><span class="target" id="class_sys_model_task_1ac9d9a925e6820c78a1464e5ed1895645"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TaskName</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask8TaskNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Identifier for Task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask10parentProcE">
+<span id="_CPPv3N12SysModelTask10parentProcE"></span><span id="_CPPv2N12SysModelTask10parentProcE"></span><span id="SysModelTask::parentProc__ss"></span><span class="target" id="class_sys_model_task_1a543584af868df97619f8c554360ac86a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parentProc</span></span></span><a class="headerlink" href="#_CPPv4N12SysModelTask10parentProcE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Process that calls this task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask13NextStartTimeE">
+<span id="_CPPv3N12SysModelTask13NextStartTimeE"></span><span id="_CPPv2N12SysModelTask13NextStartTimeE"></span><span id="SysModelTask::NextStartTime__uint64_t"></span><span class="target" id="class_sys_model_task_1adc492d2c9207dec7e8901bd05a08df4e"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NextStartTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask13NextStartTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Next time to start task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask14NextPickupTimeE">
+<span id="_CPPv3N12SysModelTask14NextPickupTimeE"></span><span id="_CPPv2N12SysModelTask14NextPickupTimeE"></span><span id="SysModelTask::NextPickupTime__uint64_t"></span><span class="target" id="class_sys_model_task_1ae55049a100a38b886c908d5fc31dad96"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NextPickupTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask14NextPickupTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Next time read Task outputs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask10TaskPeriodE">
+<span id="_CPPv3N12SysModelTask10TaskPeriodE"></span><span id="_CPPv2N12SysModelTask10TaskPeriodE"></span><span id="SysModelTask::TaskPeriod__uint64_t"></span><span class="target" id="class_sys_model_task_1aa8450710c6c2d2bff540af7ce00ef58f"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TaskPeriod</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">100</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask10TaskPeriodE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Cycle rate for Task </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask13FirstTaskTimeE">
+<span id="_CPPv3N12SysModelTask13FirstTaskTimeE"></span><span id="_CPPv2N12SysModelTask13FirstTaskTimeE"></span><span id="SysModelTask::FirstTaskTime__uint64_t"></span><span class="target" id="class_sys_model_task_1a7fe4614471fae04193bf0efe47f159fe"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FirstTaskTime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask13FirstTaskTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] Time to start Task for first time. After this time the normal periodic updates resume. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask10taskActiveE">
+<span id="_CPPv3N12SysModelTask10taskActiveE"></span><span id="_CPPv2N12SysModelTask10taskActiveE"></span><span id="SysModelTask::taskActive__b"></span><span class="target" id="class_sys_model_task_1aaf78cbbda16bb3c0544c4f006e3f0ebf"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">taskActive</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N12SysModelTask10taskActiveE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Flag indicating whether the Task has been disabled </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SysModelTask9bskLoggerE">
+<span id="_CPPv3N12SysModelTask9bskLoggerE"></span><span id="_CPPv2N12SysModelTask9bskLoggerE"></span><span id="SysModelTask::bskLogger__BSKLogger"></span><span class="target" id="class_sys_model_task_1a26c0a01eec5ede3379118d809825119a"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12SysModelTask9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; BSK Logging </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sys_model.html" class="btn btn-neutral float-left" title="sys_model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../messaging/index.html" class="btn btn-neutral float-right" title="messaging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

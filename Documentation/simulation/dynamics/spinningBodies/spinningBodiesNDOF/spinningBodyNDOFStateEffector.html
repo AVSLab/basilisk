@@ -1,0 +1,1088 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: spinningBodyNDOFStateEffector &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spinningBodiesNDOF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">spinningBodies</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spinningBodiesNDOF</a></li>
+      <li class="breadcrumb-item active">Module: spinningBodyNDOFStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spinningbodyndofstateeffector">
+<span id="spinningbodyndofstateeffector"></span><h1>Module: spinningBodyNDOFStateEffector<a class="headerlink" href="#module-spinningbodyndofstateeffector" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The N-degree-of-freedom spinning body class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the N-DoF spinning body module and the rigid body hub that it is attached to. In this case, an N-DoF spinning body system has four masses and four inertia tensors. The lower axis is attached to the hub and the upper axis is attached to the lower body. This module can represent multiple different effectors, with any number of degrees of freedom. A spring and damper can be included in each axis, and an optional motor torque can be applied on each spinning axis.</p>
+<p>Nominally, each degree of freedom corresponds to an additional rigid body link. However, by setting the mass and the inertia of to 0, the module can simulate multiple degrees of freedom for the same spinning body instead.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>spinningBodyOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#hingedrigidbodymsgpayload"><span class="std std-ref">HingedRigidBodyMsgPayload</span></a></p></td>
+<td><p>Output vector of messages containing the spinning body state angle and angle rate</p></td>
+</tr>
+<tr class="row-odd"><td><p>motorTorqueInMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#arraymotortorquemsgpayload"><span class="std std-ref">ArrayMotorTorqueMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message of the motor torque value</p></td>
+</tr>
+<tr class="row-even"><td><p>motorLockInMsg</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.html#arrayeffectorlockmsgpayload"><span class="std std-ref">ArrayEffectorLockMsgPayload</span></a></p></td>
+<td><p>(Optional) Input message for locking the axis</p></td>
+</tr>
+<tr class="row-odd"><td><p>spinningBodyConfigLogOutMsgs</p></td>
+<td><p><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#scstatesmsgpayload"><span class="std std-ref">SCStatesMsgPayload</span></a></p></td>
+<td><p>Output vector of messages containing the spinning body inertial position and attitude states</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>An N-DoF spinning body has 2N states: <code class="docutils literal notranslate"><span class="pre">theta</span></code>, <code class="docutils literal notranslate"><span class="pre">thetaDot</span></code> for each degree of freedom.</p>
+<section id="mathematical-modeling">
+<h3>Mathematical Modeling<a class="headerlink" href="#mathematical-modeling" title="Link to this heading"></a></h3>
+<p>See the following conference paper for a detailed description of this model.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>J. Vaz Carneiro, C. Allard and H. Schaub, <a class="reference external" href="https://hanspeterschaub.info/Papers/VazCarneiro2023a.pdf">“Effector Dynamics For Sequentially Rotating Rigid Body Spacecraft Components”</a>,
+AAS Astrodynamics Specialist Conference, Bog Sky, MT, Aug. 13-17, 2023</p>
+</div>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This section is to outline the steps needed to setup a Spinning Body N DoF State Effector in Python using Basilisk.</p>
+<ol class="arabic">
+<li><p>Import the spinningBodyNDOFStateEffector class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spinningBodyNDOFStateEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create an instantiation of a Spinning body:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spinningBodyEffector</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyNDOFStateEffector</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define all physical parameters for each spinning body. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyNDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBody</span><span class="p">()</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mf">25.0</span><span class="p">)</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setISPntSc_S</span><span class="p">([[</span><span class="mi">50</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">30</span><span class="p">]])</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setDCM_S0P</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_ScS_S</span><span class="p">([[</span><span class="mf">0.2</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.1</span><span class="p">]])</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setR_SP_P</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">0.1</span><span class="p">]])</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setSHat_S</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">spinningBodyEffector</span><span class="o">.</span><span class="n">addSpinningBody</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define initial conditions of the effector.  Default values are zero states:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spinningBody</span><span class="o">.</span><span class="n">setThetaInit</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setThetaDotInit</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define spring and damper coefficients.  Default values are zero states:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spinningBody</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">setC</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spinningBodyEffector</span><span class="o">.</span><span class="n">setNameOfThetaState</span> <span class="o">=</span> <span class="s2">&quot;spinningBodyTheta&quot;</span>
+<span class="n">spinningBodyEffector</span><span class="o">.</span><span class="n">setNameOfThetaDotState</span> <span class="o">=</span> <span class="s2">&quot;spinningBodyThetaDot&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Connect a command torque message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cmdArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsgPayload</span><span class="p">()</span>
+<span class="n">cmdArray</span><span class="o">.</span><span class="n">motorTorque</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmdTorque</span><span class="p">]</span>  <span class="c1"># [Nm]</span>
+<span class="n">cmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmdArray</span><span class="p">)</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">motorTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) Connect an axis-locking message (0 means the axis is free to rotate and 1 locks the axis):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lockArray</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayEffectorLockMsgPayload</span><span class="p">()</span>
+<span class="n">lockArray</span><span class="o">.</span><span class="n">motorTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">lockMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayEffectorLockMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">lockArray</span><span class="p">)</span>
+<span class="n">spinningBody</span><span class="o">.</span><span class="n">motorLockInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">lockMsg</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>The angular states of the body are created using an output vector of messages <code class="docutils literal notranslate"><span class="pre">spinningBodyOutMsgs</span></code>.</p></li>
+<li><p>The spinning body config log state output messages is <code class="docutils literal notranslate"><span class="pre">spinningBodyConfigLogOutMsgs</span></code>.</p></li>
+<li><p>Add the effector to your spacecraft:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../../spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">Module: spacecraft</span></a> documentation on how to set up a spacecraft object.</p>
+</li>
+<li><p>Add the module to the task list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">spinningBody</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<hr class="docutils" />
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv412SpinningBody">
+<span id="_CPPv312SpinningBody"></span><span id="_CPPv212SpinningBody"></span><span id="SpinningBody"></span><span class="target" id="struct_spinning_body"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpinningBody</span></span></span><a class="headerlink" href="#_CPPv412SpinningBody" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spinningBodyNDOFStateEffector.h&gt;</em></div>
+<p>Struct containing all the spinning bodies variables. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7setMassEd">
+<span id="_CPPv3N12SpinningBody7setMassEd"></span><span id="_CPPv2N12SpinningBody7setMassEd"></span><span id="SpinningBody::setMass__double"></span><span class="target" id="struct_spinning_body_1a38e4c16a86dba3d9a22be892e102c077"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setMass</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mass</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody7setMassEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">mass</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody9setR_SP_PEN5Eigen8Vector3dE">
+<span id="_CPPv3N12SpinningBody9setR_SP_PEN5Eigen8Vector3dE"></span><span id="_CPPv2N12SpinningBody9setR_SP_PEN5Eigen8Vector3dE"></span><span id="SpinningBody::setR_SP_P__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a65b7298698ef5d70f29725bb22eec20f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_SP_P</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_SP_P</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody9setR_SP_PEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_SP_P</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10setR_ScS_SEN5Eigen8Vector3dE">
+<span id="_CPPv3N12SpinningBody10setR_ScS_SEN5Eigen8Vector3dE"></span><span id="_CPPv2N12SpinningBody10setR_ScS_SEN5Eigen8Vector3dE"></span><span id="SpinningBody::setR_ScS_S__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a9df0315ab4d89a567f35bc8fb08fd74a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setR_ScS_S</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r_ScS_S</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody10setR_ScS_SEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">r_ScS_S</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12setISPntSc_SERKN5Eigen8Matrix3dE">
+<span id="_CPPv3N12SpinningBody12setISPntSc_SERKN5Eigen8Matrix3dE"></span><span id="_CPPv2N12SpinningBody12setISPntSc_SERKN5Eigen8Matrix3dE"></span><span id="SpinningBody::setISPntSc_S__Eigen::Matrix3dCR"></span><span class="target" id="struct_spinning_body_1a38a8648e5d4952f558f272a38edfb875"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setISPntSc_S</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">ISPntSc_S</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody12setISPntSc_SERKN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">ISPntSc_S</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody9setSHat_SEN5Eigen8Vector3dE">
+<span id="_CPPv3N12SpinningBody9setSHat_SEN5Eigen8Vector3dE"></span><span id="_CPPv2N12SpinningBody9setSHat_SEN5Eigen8Vector3dE"></span><span id="SpinningBody::setSHat_S__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a8aa6e4cd63cfd4c316c0c4221d8804e7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setSHat_S</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sHat_S</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody9setSHat_SEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">sHat_S</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10setDCM_S0PERKN5Eigen8Matrix3dE">
+<span id="_CPPv3N12SpinningBody10setDCM_S0PERKN5Eigen8Matrix3dE"></span><span id="_CPPv2N12SpinningBody10setDCM_S0PERKN5Eigen8Matrix3dE"></span><span id="SpinningBody::setDCM_S0P__Eigen::Matrix3dCR"></span><span class="target" id="struct_spinning_body_1a7ae453801ecb68d780f746fb4820d99b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setDCM_S0P</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dcm_S0P</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody10setDCM_S0PERKN5Eigen8Matrix3dE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">dcm_S0P</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody4setKEd">
+<span id="_CPPv3N12SpinningBody4setKEd"></span><span id="_CPPv2N12SpinningBody4setKEd"></span><span id="SpinningBody::setK__double"></span><span class="target" id="struct_spinning_body_1a405af5d717b75af0f809bc88c26e2a8c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setK</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody4setKEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">k</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody4setCEd">
+<span id="_CPPv3N12SpinningBody4setCEd"></span><span id="_CPPv2N12SpinningBody4setCEd"></span><span id="SpinningBody::setC__double"></span><span class="target" id="struct_spinning_body_1ac17ba2242482e2534710bb4738747f78"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setC</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody4setCEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">c</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12setThetaInitEd">
+<span id="_CPPv3N12SpinningBody12setThetaInitEd"></span><span id="_CPPv2N12SpinningBody12setThetaInitEd"></span><span id="SpinningBody::setThetaInit__double"></span><span class="target" id="struct_spinning_body_1aa94f091ba2cc90925417f04633f932c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setThetaInit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">thetaInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody12setThetaInitEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">thetaInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody15setThetaDotInitEd">
+<span id="_CPPv3N12SpinningBody15setThetaDotInitEd"></span><span id="_CPPv2N12SpinningBody15setThetaDotInitEd"></span><span id="SpinningBody::setThetaDotInit__double"></span><span class="target" id="struct_spinning_body_1ac4a03bcd2c8c65f026414e24d90dfa48"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setThetaDotInit</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">thetaDotInit</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12SpinningBody15setThetaDotInitEd" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">thetaDotInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody7getMassEv">
+<span id="_CPPv3NK12SpinningBody7getMassEv"></span><span id="_CPPv2NK12SpinningBody7getMassEv"></span><span id="SpinningBody::getMassC"></span><span class="target" id="struct_spinning_body_1ac9f5c8a2acaf4b0dc11c07b06258d3c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMass</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody7getMassEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">mass</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody9getR_SP_PEv">
+<span id="_CPPv3NK12SpinningBody9getR_SP_PEv"></span><span id="_CPPv2NK12SpinningBody9getR_SP_PEv"></span><span id="SpinningBody::getR_SP_PC"></span><span class="target" id="struct_spinning_body_1a1205af033231179640e6bd3e2090e9d7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_SP_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody9getR_SP_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_SP_P</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody10getR_ScS_SEv">
+<span id="_CPPv3NK12SpinningBody10getR_ScS_SEv"></span><span id="_CPPv2NK12SpinningBody10getR_ScS_SEv"></span><span id="SpinningBody::getR_ScS_SC"></span><span class="target" id="struct_spinning_body_1a5165768e2db439226df5ea6f6af544c1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getR_ScS_S</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody10getR_ScS_SEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">r_ScS_S</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody12getISPntSc_SEv">
+<span id="_CPPv3NK12SpinningBody12getISPntSc_SEv"></span><span id="_CPPv2NK12SpinningBody12getISPntSc_SEv"></span><span id="SpinningBody::getISPntSc_SC"></span><span class="target" id="struct_spinning_body_1a067c402bb39100311588455374250c71"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getISPntSc_S</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody12getISPntSc_SEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">ISPntSc_S</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody9getSHat_SEv">
+<span id="_CPPv3NK12SpinningBody9getSHat_SEv"></span><span id="_CPPv2NK12SpinningBody9getSHat_SEv"></span><span id="SpinningBody::getSHat_SC"></span><span class="target" id="struct_spinning_body_1a3701a0ec21dbd4fbe86686a73c3b7b9e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSHat_S</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody9getSHat_SEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">sHat_S</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody10getDCM_S0PEv">
+<span id="_CPPv3NK12SpinningBody10getDCM_S0PEv"></span><span id="_CPPv2NK12SpinningBody10getDCM_S0PEv"></span><span id="SpinningBody::getDCM_S0PC"></span><span class="target" id="struct_spinning_body_1a918138e4143e8d2a220f3b60a2fd4797"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDCM_S0P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody10getDCM_S0PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">dcm_S0P</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody4getKEv">
+<span id="_CPPv3NK12SpinningBody4getKEv"></span><span id="_CPPv2NK12SpinningBody4getKEv"></span><span id="SpinningBody::getKC"></span><span class="target" id="struct_spinning_body_1ab677ecf6f41153c2c166d582230e92d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getK</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody4getKEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">k</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody4getCEv">
+<span id="_CPPv3NK12SpinningBody4getCEv"></span><span id="_CPPv2NK12SpinningBody4getCEv"></span><span id="SpinningBody::getCC"></span><span class="target" id="struct_spinning_body_1a96bd92a4b455763f281c113e8554022d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getC</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody4getCEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">c</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody12getThetaInitEv">
+<span id="_CPPv3NK12SpinningBody12getThetaInitEv"></span><span id="_CPPv2NK12SpinningBody12getThetaInitEv"></span><span id="SpinningBody::getThetaInitC"></span><span class="target" id="struct_spinning_body_1a44457ad4370fefc9df37aff76644898a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getThetaInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody12getThetaInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">thetaInit</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK12SpinningBody15getThetaDotInitEv">
+<span id="_CPPv3NK12SpinningBody15getThetaDotInitEv"></span><span id="_CPPv2NK12SpinningBody15getThetaDotInitEv"></span><span id="SpinningBody::getThetaDotInitC"></span><span class="target" id="struct_spinning_body_1aa1e0d97b781db206dfe978256c0f61c9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getThetaDotInit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK12SpinningBody15getThetaDotInitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">thetaDotInit</span></code> property </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN12SpinningBody21assignStateParamNamesEv4Type">
+<span id="_CPPv3I0EN12SpinningBody21assignStateParamNamesE4Type"></span><span id="_CPPv2I0EN12SpinningBody21assignStateParamNamesE4Type"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Type</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="struct_spinning_body_1af4febf10e4841fcc19f3842d793eff1a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">assignStateParamNames</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN12SpinningBody21assignStateParamNamesEv4Type" title="SpinningBody::assignStateParamNames::Type"><span class="n"><span class="pre">Type</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">effector</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN12SpinningBody21assignStateParamNamesEv4Type" title="Link to this definition"></a><br /></dt>
+<dd><p>Assign the state engine parameter names </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody9thetaInitE">
+<span id="_CPPv3N12SpinningBody9thetaInitE"></span><span id="_CPPv2N12SpinningBody9thetaInitE"></span><span id="SpinningBody::thetaInit__double"></span><span class="target" id="struct_spinning_body_1a1ddc5a008040f8918d6130154588aead"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody9thetaInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] initial spinning body angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12thetaDotInitE">
+<span id="_CPPv3N12SpinningBody12thetaDotInitE"></span><span id="_CPPv2N12SpinningBody12thetaDotInitE"></span><span id="SpinningBody::thetaDotInit__double"></span><span class="target" id="struct_spinning_body_1a4e2c56bba56a52079b7f630bea93a011"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDotInit</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody12thetaDotInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] initial spinning body angle rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody1kE">
+<span id="_CPPv3N12SpinningBody1kE"></span><span id="_CPPv2N12SpinningBody1kE"></span><span id="SpinningBody::k__double"></span><span class="target" id="struct_spinning_body_1a7e3fe6be0a7dc3891c60c769801c1bd2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">k</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody1kE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m/rad] torsional spring constant </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody1cE">
+<span id="_CPPv3N12SpinningBody1cE"></span><span id="_CPPv2N12SpinningBody1cE"></span><span id="SpinningBody::c__double"></span><span class="target" id="struct_spinning_body_1a001d98aacaf7e8ac461013fe5757e0bd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody1cE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m-s/rad] rotational damping coefficient </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody4massE">
+<span id="_CPPv3N12SpinningBody4massE"></span><span id="_CPPv2N12SpinningBody4massE"></span><span id="SpinningBody::mass__double"></span><span class="target" id="struct_spinning_body_1aadf148c334eec593b692866df8f677c0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mass</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody4massE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg] spinning body mass </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6r_SP_PE">
+<span id="_CPPv3N12SpinningBody6r_SP_PE"></span><span id="_CPPv2N12SpinningBody6r_SP_PE"></span><span id="SpinningBody::r_SP_P__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a93b27f2c1c61a007616aad76319d3b2e"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SP_P</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6r_SP_PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from parent frame P origin to spinning frame S origin in P frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7r_ScS_SE">
+<span id="_CPPv3N12SpinningBody7r_ScS_SE"></span><span id="_CPPv2N12SpinningBody7r_ScS_SE"></span><span id="SpinningBody::r_ScS_S__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a14964c2e69c90b03b84225de6ce35ec8"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_ScS_S</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7r_ScS_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6sHat_SE">
+<span id="_CPPv3N12SpinningBody6sHat_SE"></span><span id="_CPPv2N12SpinningBody6sHat_SE"></span><span id="SpinningBody::sHat_S__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a464a2cdad83221bb5ecaa2662d9e9167"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat_S</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6sHat_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>spinning axis in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7dcm_S0SE">
+<span id="_CPPv3N12SpinningBody7dcm_S0SE"></span><span id="_CPPv2N12SpinningBody7dcm_S0SE"></span><span id="SpinningBody::dcm_S0S__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1acaa9268217ae191eb3b642e4169dd4fa"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_S0S</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7dcm_S0SE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from the S0 frame to S frame (rotated by theta). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7dcm_S0PE">
+<span id="_CPPv3N12SpinningBody7dcm_S0PE"></span><span id="_CPPv2N12SpinningBody7dcm_S0PE"></span><span id="SpinningBody::dcm_S0P__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1a8edb92d1716e43c10f2fac566065f562"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_S0P</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7dcm_S0PE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from the parent frame to the S0 frame (S frame for theta=0). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody9ISPntSc_SE">
+<span id="_CPPv3N12SpinningBody9ISPntSc_SE"></span><span id="_CPPv2N12SpinningBody9ISPntSc_SE"></span><span id="SpinningBody::ISPntSc_S__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1a2cf739c34513b331e8d8137b6242a14b"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ISPntSc_S</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody9ISPntSc_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] Inertia of spinning body about point Sc in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody5thetaE">
+<span id="_CPPv3N12SpinningBody5thetaE"></span><span id="_CPPv2N12SpinningBody5thetaE"></span><span id="SpinningBody::theta__double"></span><span class="target" id="struct_spinning_body_1a38c83d86e90b811ccfda5fcacc55aa42"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">theta</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody5thetaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] current spinning body angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody8thetaDotE">
+<span id="_CPPv3N12SpinningBody8thetaDotE"></span><span id="_CPPv2N12SpinningBody8thetaDotE"></span><span id="SpinningBody::thetaDot__double"></span><span class="target" id="struct_spinning_body_1ac74b823f8302b69e41b52cbaa8781069"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDot</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody8thetaDotE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] current spinning body angle rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody8thetaRefE">
+<span id="_CPPv3N12SpinningBody8thetaRefE"></span><span id="_CPPv2N12SpinningBody8thetaRefE"></span><span id="SpinningBody::thetaRef__double"></span><span class="target" id="struct_spinning_body_1aa78e2134a56d175f53a24193aa965fd4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaRef</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody8thetaRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad] reference spinning body angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody11thetaDotRefE">
+<span id="_CPPv3N12SpinningBody11thetaDotRefE"></span><span id="_CPPv2N12SpinningBody11thetaDotRefE"></span><span id="SpinningBody::thetaDotRef__double"></span><span class="target" id="struct_spinning_body_1a392bf821ed4b85cdfbc78d4f11e88ad0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thetaDotRef</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody11thetaDotRefE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] reference spinning body angle rate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody1uE">
+<span id="_CPPv3N12SpinningBody1uE"></span><span id="_CPPv2N12SpinningBody1uE"></span><span id="SpinningBody::u__double"></span><span class="target" id="struct_spinning_body_1aef69b0159e78222f762a72edff2b9df9"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody1uE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] initial spinning body angle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12isAxisLockedE">
+<span id="_CPPv3N12SpinningBody12isAxisLockedE"></span><span id="_CPPv2N12SpinningBody12isAxisLockedE"></span><span id="SpinningBody::isAxisLocked__b"></span><span class="target" id="struct_spinning_body_1a170611a19793a4d4129b5ad4e3b24ed2"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isAxisLocked</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody12isAxisLockedE" title="Link to this definition"></a><br /></dt>
+<dd><p>axis lock flag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6sHat_BE">
+<span id="_CPPv3N12SpinningBody6sHat_BE"></span><span id="_CPPv2N12SpinningBody6sHat_BE"></span><span id="SpinningBody::sHat_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a28324abc3ebfcb9346783f17297f32f5"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sHat_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6sHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>spinning axis in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6r_SP_BE">
+<span id="_CPPv3N12SpinningBody6r_SP_BE"></span><span id="_CPPv2N12SpinningBody6r_SP_BE"></span><span id="SpinningBody::r_SP_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a078d5eefefe8f847b6cb50a789d2d0db"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SP_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6r_SP_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from parent frame P origin to spinning frame S origin in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6r_SB_BE">
+<span id="_CPPv3N12SpinningBody6r_SB_BE"></span><span id="_CPPv2N12SpinningBody6r_SB_BE"></span><span id="SpinningBody::r_SB_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1acf8da1367c6acc415b79279572e4f1f2"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_SB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6r_SB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from body frame B origin to spinning frame S origin in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7r_ScS_BE">
+<span id="_CPPv3N12SpinningBody7r_ScS_BE"></span><span id="_CPPv2N12SpinningBody7r_ScS_BE"></span><span id="SpinningBody::r_ScS_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1ab879bcc6bdb28241d02f7849c3440851"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_ScS_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7r_ScS_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from spinning frame S origin to point Sc (center of mass of the spinner) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7r_ScB_BE">
+<span id="_CPPv3N12SpinningBody7r_ScB_BE"></span><span id="_CPPv2N12SpinningBody7r_ScB_BE"></span><span id="SpinningBody::r_ScB_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1aec45db054e31334a4cbc005f608fc900"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_ScB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7r_ScB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] vector pointing from body frame B origin to point Sc (center of mass of the spinner) in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody11rPrime_SP_BE">
+<span id="_CPPv3N12SpinningBody11rPrime_SP_BE"></span><span id="_CPPv2N12SpinningBody11rPrime_SP_BE"></span><span id="SpinningBody::rPrime_SP_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1ab3e40957d15e6645b7b84b127a09c82b"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_SP_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody11rPrime_SP_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] body frame time derivative of r_SP_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody11rPrime_SB_BE">
+<span id="_CPPv3N12SpinningBody11rPrime_SB_BE"></span><span id="_CPPv2N12SpinningBody11rPrime_SB_BE"></span><span id="SpinningBody::rPrime_SB_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1ac33d91e5fae08c77fd57350ef87d80bd"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_SB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody11rPrime_SB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] body frame time derivative of r_SB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12rPrime_ScS_BE">
+<span id="_CPPv3N12SpinningBody12rPrime_ScS_BE"></span><span id="_CPPv2N12SpinningBody12rPrime_ScS_BE"></span><span id="SpinningBody::rPrime_ScS_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a792c9c5d34f01f1368e1040e62df53de"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_ScS_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody12rPrime_ScS_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] body frame time derivative of r_ScS_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12rPrime_ScB_BE">
+<span id="_CPPv3N12SpinningBody12rPrime_ScB_BE"></span><span id="_CPPv2N12SpinningBody12rPrime_ScB_BE"></span><span id="SpinningBody::rPrime_ScB_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a08b157431a68db5e725c8c92fa324ccc"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rPrime_ScB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody12rPrime_ScB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] body frame time derivative of r_ScB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10rDot_ScB_BE">
+<span id="_CPPv3N12SpinningBody10rDot_ScB_BE"></span><span id="_CPPv2N12SpinningBody10rDot_ScB_BE"></span><span id="SpinningBody::rDot_ScB_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a24f32b5af510867315d4f9617e7b8bfa"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rDot_ScB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody10rDot_ScB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] inertial time derivative of r_ScB_B in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10omega_SP_BE">
+<span id="_CPPv3N12SpinningBody10omega_SP_BE"></span><span id="_CPPv2N12SpinningBody10omega_SP_BE"></span><span id="SpinningBody::omega_SP_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a9d15a51c857a9932b577a439cbe18b31"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_SP_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody10omega_SP_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] angular velocity of the S frame wrt the P frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10omega_SB_BE">
+<span id="_CPPv3N12SpinningBody10omega_SB_BE"></span><span id="_CPPv2N12SpinningBody10omega_SB_BE"></span><span id="SpinningBody::omega_SB_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a113749738fbd3e97c4b84f16f6d6c798"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_SB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody10omega_SB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] angular velocity of the S frame wrt the B frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10omega_SN_BE">
+<span id="_CPPv3N12SpinningBody10omega_SN_BE"></span><span id="_CPPv2N12SpinningBody10omega_SN_BE"></span><span id="SpinningBody::omega_SN_B__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1af88e5b10f6d889da9fcbbd08c03c2ac0"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_SN_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody10omega_SN_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] angular velocity of the S frame wrt the N frame in B frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10extForce_SE">
+<span id="_CPPv3N12SpinningBody10extForce_SE"></span><span id="_CPPv2N12SpinningBody10extForce_SE"></span><span id="SpinningBody::extForce_S__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1aaac357ff2576307a0f8c3e03fb58c6bc"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extForce_S</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody10extForce_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N] external force acting on the spinning body in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody15extTorquePntS_SE">
+<span id="_CPPv3N12SpinningBody15extTorquePntS_SE"></span><span id="_CPPv2N12SpinningBody15extTorquePntS_SE"></span><span id="SpinningBody::extTorquePntS_S__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a65689dac7fe632356b75400368c44c1d"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">extTorquePntS_S</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody15extTorquePntS_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N-m] external torque acting on the spinning body about point Sc in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody9ISPntSc_BE">
+<span id="_CPPv3N12SpinningBody9ISPntSc_BE"></span><span id="_CPPv2N12SpinningBody9ISPntSc_BE"></span><span id="SpinningBody::ISPntSc_B__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1af5a3595c6365830ae818037e428405e4"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ISPntSc_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody9ISPntSc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] inertia of spinning body about point Sc in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody14IPrimeSPntSc_BE">
+<span id="_CPPv3N12SpinningBody14IPrimeSPntSc_BE"></span><span id="_CPPv2N12SpinningBody14IPrimeSPntSc_BE"></span><span id="SpinningBody::IPrimeSPntSc_B__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1a2cde8404006e45887dcc4efd3521a9c6"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IPrimeSPntSc_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody14IPrimeSPntSc_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[kg-m^2] body frame derivative of the inertia of spinning body about point Sc in S frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6dcm_BSE">
+<span id="_CPPv3N12SpinningBody6dcm_BSE"></span><span id="_CPPv2N12SpinningBody6dcm_BSE"></span><span id="SpinningBody::dcm_BS__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1afbfdd6caea927b0443a076a6066b025a"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BS</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Identity</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6dcm_BSE" title="Link to this definition"></a><br /></dt>
+<dd><p>DCM from spinner frame to body frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12rTilde_ScB_BE">
+<span id="_CPPv3N12SpinningBody12rTilde_ScB_BE"></span><span id="_CPPv2N12SpinningBody12rTilde_ScB_BE"></span><span id="SpinningBody::rTilde_ScB_B__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1a11c30afb1c8ef8726a9fed1037405bc3"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rTilde_ScB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody12rTilde_ScB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] tilde matrix of r_ScB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody15omegaTilde_SP_BE">
+<span id="_CPPv3N12SpinningBody15omegaTilde_SP_BE"></span><span id="_CPPv2N12SpinningBody15omegaTilde_SP_BE"></span><span id="SpinningBody::omegaTilde_SP_B__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1a55074b564ee1fa570c5b1cfab685e337"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_SP_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody15omegaTilde_SP_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] tilde matrix of omega_SP_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody15omegaTilde_SB_BE">
+<span id="_CPPv3N12SpinningBody15omegaTilde_SB_BE"></span><span id="_CPPv2N12SpinningBody15omegaTilde_SB_BE"></span><span id="SpinningBody::omegaTilde_SB_B__Eigen::Matrix3d"></span><span class="target" id="struct_spinning_body_1a73db42175af690e9a09be3afb2c87225"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_SB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N12SpinningBody15omegaTilde_SB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] tilde matrix of omega_SB_B </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody12dynEffectorsE">
+<span id="_CPPv3N12SpinningBody12dynEffectorsE"></span><span id="_CPPv2N12SpinningBody12dynEffectorsE"></span><span id="SpinningBody::dynEffectors__std::vector:DynamicEffectorP:"></span><span class="target" id="struct_spinning_body_1a4ea78c25579c07d623c52717a2d49be5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dynEffectors</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody12dynEffectorsE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Vector of dynamic effectors attached </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody30nameOfInertialPositionPropertyE">
+<span id="_CPPv3N12SpinningBody30nameOfInertialPositionPropertyE"></span><span id="_CPPv2N12SpinningBody30nameOfInertialPositionPropertyE"></span><span id="SpinningBody::nameOfInertialPositionProperty__ss"></span><span class="target" id="struct_spinning_body_1a782f126645dc713ff918f46b8be75111"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialPositionProperty</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody30nameOfInertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; identifier for the inertial position property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody30nameOfInertialVelocityPropertyE">
+<span id="_CPPv3N12SpinningBody30nameOfInertialVelocityPropertyE"></span><span id="_CPPv2N12SpinningBody30nameOfInertialVelocityPropertyE"></span><span id="SpinningBody::nameOfInertialVelocityProperty__ss"></span><span class="target" id="struct_spinning_body_1a5a4529c105ce2f8d46aec6f827596124"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody30nameOfInertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; identifier for the inertial velocity property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody30nameOfInertialAttitudePropertyE">
+<span id="_CPPv3N12SpinningBody30nameOfInertialAttitudePropertyE"></span><span id="_CPPv2N12SpinningBody30nameOfInertialAttitudePropertyE"></span><span id="SpinningBody::nameOfInertialAttitudeProperty__ss"></span><span class="target" id="struct_spinning_body_1a0fa62e64ee01c85e5c03ad1e49208b79"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialAttitudeProperty</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody30nameOfInertialAttitudePropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; identifier for the inertial attitude property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody33nameOfInertialAngVelocityPropertyE">
+<span id="_CPPv3N12SpinningBody33nameOfInertialAngVelocityPropertyE"></span><span id="_CPPv2N12SpinningBody33nameOfInertialAngVelocityPropertyE"></span><span id="SpinningBody::nameOfInertialAngVelocityProperty__ss"></span><span class="target" id="struct_spinning_body_1aacbd0c18a77ed384e638f53dc2b0032a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfInertialAngVelocityProperty</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody33nameOfInertialAngVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; identifier for the inertial angular velocity property </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7r_ScN_NE">
+<span id="_CPPv3N12SpinningBody7r_ScN_NE"></span><span id="_CPPv2N12SpinningBody7r_ScN_NE"></span><span id="SpinningBody::r_ScN_N__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a182669352fc240f6aef9f8249f72a893"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_ScN_N</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7r_ScN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody7v_ScN_NE">
+<span id="_CPPv3N12SpinningBody7v_ScN_NE"></span><span id="_CPPv2N12SpinningBody7v_ScN_NE"></span><span id="SpinningBody::v_ScN_N__Eigen::Vector3d"></span><span class="target" id="struct_spinning_body_1a2afa9dafb79ef34d80100114027ec00b"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_ScN_N</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody7v_ScN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] inertial velocity vector of Sc relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6r_SN_NE">
+<span id="_CPPv3N12SpinningBody6r_SN_NE"></span><span id="_CPPv2N12SpinningBody6r_SN_NE"></span><span id="SpinningBody::r_SN_N__Eigen::MatrixXdP"></span><span class="target" id="struct_spinning_body_1a4ea2b94a296a45578e34529afc4938c2"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">r_SN_N</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6r_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m] position vector of the spinning body frame origin S relative to the inertial frame origin N </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody6v_SN_NE">
+<span id="_CPPv3N12SpinningBody6v_SN_NE"></span><span id="_CPPv2N12SpinningBody6v_SN_NE"></span><span id="SpinningBody::v_SN_N__Eigen::MatrixXdP"></span><span class="target" id="struct_spinning_body_1a842e727c788c924f04e19ec9610f47e6"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">v_SN_N</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody6v_SN_NE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] inertial velocity vector of S relative to inertial frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody8sigma_SNE">
+<span id="_CPPv3N12SpinningBody8sigma_SNE"></span><span id="_CPPv2N12SpinningBody8sigma_SNE"></span><span id="SpinningBody::sigma_SN__Eigen::MatrixXdP"></span><span class="target" id="struct_spinning_body_1aee12d7d831fad9769b25cc9688b84849"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">sigma_SN</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody8sigma_SNE" title="Link to this definition"></a><br /></dt>
+<dd><p>MRP attitude of frame S relative to inertial frame. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody10omega_SN_SE">
+<span id="_CPPv3N12SpinningBody10omega_SN_SE"></span><span id="_CPPv2N12SpinningBody10omega_SN_SE"></span><span id="SpinningBody::omega_SN_S__Eigen::MatrixXdP"></span><span class="target" id="struct_spinning_body_1a6689e7cec748f9f69793d7ba2c13ea52"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">omega_SN_S</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody10omega_SN_SE" title="Link to this definition"></a><br /></dt>
+<dd><p>[rad/s] inertial spinning body frame angular velocity vector </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12SpinningBody9bskLoggerE">
+<span id="_CPPv3N12SpinningBody9bskLoggerE"></span><span id="_CPPv2N12SpinningBody9bskLoggerE"></span><span id="SpinningBody::bskLogger__BSKLogger"></span><span class="target" id="struct_spinning_body_1a7d3462c8a87caecf6da801c50045a4d1"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N12SpinningBody9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
+<dl>
+<dt class="sig sig-object cpp">
+<em class="property"><span class="pre">friend</span> <span class="pre">class</span></em> <span class="pre">SpinningBodyNDOFStateEffector</span></dt>
+</dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv429SpinningBodyNDOFStateEffector">
+<span id="_CPPv329SpinningBodyNDOFStateEffector"></span><span id="_CPPv229SpinningBodyNDOFStateEffector"></span><span id="SpinningBodyNDOFStateEffector"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SpinningBodyNDOFStateEffector</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv413StateEffector" title="StateEffector"><span class="n"><span class="pre">StateEffector</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv429SpinningBodyNDOFStateEffector" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spinningBodyNDOFStateEffector.h&gt;</em></div>
+<p>spinning rigid body state effector class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector29SpinningBodyNDOFStateEffectorEv">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector29SpinningBodyNDOFStateEffectorEv"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector29SpinningBodyNDOFStateEffectorEv"></span><span id="SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a0e39320fe13342c182ba1f9a393f2e9d"></span><span class="sig-name descname"><span class="n"><span class="pre">SpinningBodyNDOFStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector29SpinningBodyNDOFStateEffectorEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffectorD0Ev">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffectorD0Ev"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffectorD0Ev"></span><span id="SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ae81eca484483eb418e28d8312883f400"></span><span class="sig-name descname"><span class="n"><span class="pre">~SpinningBodyNDOFStateEffector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffectorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector15addSpinningBodyEKNSt10shared_ptrI12SpinningBodyEE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector15addSpinningBodyEKNSt10shared_ptrI12SpinningBodyEE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector15addSpinningBodyEKNSt10shared_ptrI12SpinningBodyEE"></span><span id="SpinningBodyNDOFStateEffector::addSpinningBody__std::shared_ptr:SpinningBody:C"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a5036392bffe597423e5c7186167385f3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addSpinningBody</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">newBody</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector15addSpinningBodyEKNSt10shared_ptrI12SpinningBodyEE" title="Link to this definition"></a><br /></dt>
+<dd><p>method for adding a new spinning body </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector15getSpinningBodyE8uint64_t">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector15getSpinningBodyE8uint64_t"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector15getSpinningBodyE8uint64_t"></span><span id="SpinningBodyNDOFStateEffector::getSpinningBody__uint64_t"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ad0ea86a5108766ca257107c55014c6e6"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSpinningBody</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector15getSpinningBodyE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>method for getting an indexed spinning body </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector19setNameOfThetaStateERKNSt6stringE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector19setNameOfThetaStateERKNSt6stringE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector19setNameOfThetaStateERKNSt6stringE"></span><span id="SpinningBodyNDOFStateEffector::setNameOfThetaState__ssCR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a65c3d20056327bd49417bdade6e12c46"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNameOfThetaState</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">nameOfThetaState</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector19setNameOfThetaStateERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">nameOfThetaState</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector22setNameOfThetaDotStateERKNSt6stringE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector22setNameOfThetaDotStateERKNSt6stringE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector22setNameOfThetaDotStateERKNSt6stringE"></span><span id="SpinningBodyNDOFStateEffector::setNameOfThetaDotState__ssCR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aad8c77d08d6292bdeefe6497c2add383"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setNameOfThetaDotState</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">nameOfThetaDotState</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector22setNameOfThetaDotStateERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>setter for <code class="docutils literal notranslate"><span class="pre">nameOfThetaDotState</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector19getNameOfThetaStateEv">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector19getNameOfThetaStateEv"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector19getNameOfThetaStateEv"></span><span id="SpinningBodyNDOFStateEffector::getNameOfThetaStateC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a76c820c4adcd7275415d1959220d426a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNameOfThetaState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector19getNameOfThetaStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">nameOfThetaState</span></code> property </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector22getNameOfThetaDotStateEv">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector22getNameOfThetaDotStateEv"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector22getNameOfThetaDotStateEv"></span><span id="SpinningBodyNDOFStateEffector::getNameOfThetaDotStateC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a25b394c5d52dd75656ff9a3761f8416c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNameOfThetaDotState</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector22getNameOfThetaDotStateEv" title="Link to this definition"></a><br /></dt>
+<dd><p>getter for <code class="docutils literal notranslate"><span class="pre">nameOfThetaDotState</span></code> property </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector19spinningBodyOutMsgsE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector19spinningBodyOutMsgsE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector19spinningBodyOutMsgsE"></span><span id="SpinningBodyNDOFStateEffector::spinningBodyOutMsgs__std::vector:Message:HingedRigidBodyMsgPayload:P:"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a83bd46e9b4bb199449c2bfbf194c695a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#_CPPv425HingedRigidBodyMsgPayload" title="HingedRigidBodyMsgPayload"><span class="n"><span class="pre">HingedRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spinningBodyOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector19spinningBodyOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>state output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector28spinningBodyConfigLogOutMsgsE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector28spinningBodyConfigLogOutMsgsE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector28spinningBodyConfigLogOutMsgsE"></span><span id="SpinningBodyNDOFStateEffector::spinningBodyConfigLogOutMsgs__std::vector:Message:SCStatesMsgPayload:P:"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa15a08d065bef522a11a3d51575b5453"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E7Message" title="Message"><span class="n"><span class="pre">Message</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/SCStatesMsgPayload.html#_CPPv418SCStatesMsgPayload" title="SCStatesMsgPayload"><span class="n"><span class="pre">SCStatesMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spinningBodyConfigLogOutMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector28spinningBodyConfigLogOutMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>spinning body state config log message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector16motorTorqueInMsgE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector16motorTorqueInMsgE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector16motorTorqueInMsgE"></span><span id="SpinningBodyNDOFStateEffector::motorTorqueInMsg__ReadFunctor:ArrayMotorTorqueMsgPayload:"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a3e6a616ed82948ad1e38105226efd876"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#_CPPv426ArrayMotorTorqueMsgPayload" title="ArrayMotorTorqueMsgPayload"><span class="n"><span class="pre">ArrayMotorTorqueMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorTorqueInMsg</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector16motorTorqueInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) motor torque input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector14motorLockInMsgE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector14motorLockInMsgE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector14motorLockInMsgE"></span><span id="SpinningBodyNDOFStateEffector::motorLockInMsg__ReadFunctor:ArrayEffectorLockMsgPayload:"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ab70645ae5997c6bf179d0a66a6427903"></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/ArrayEffectorLockMsgPayload.html#_CPPv427ArrayEffectorLockMsgPayload" title="ArrayEffectorLockMsgPayload"><span class="n"><span class="pre">ArrayEffectorLockMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">motorLockInMsg</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector14motorLockInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) lock flag input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector21spinningBodyRefInMsgsE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector21spinningBodyRefInMsgsE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector21spinningBodyRefInMsgsE"></span><span id="SpinningBodyNDOFStateEffector::spinningBodyRefInMsgs__std::vector:ReadFunctor:HingedRigidBodyMsgPayload::"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a91f64ba00906fcaf7dc0164399178d55"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/messaging/messaging.html#_CPPv4I0E11ReadFunctor" title="ReadFunctor"><span class="n"><span class="pre">ReadFunctor</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../../../architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#_CPPv425HingedRigidBodyMsgPayload" title="HingedRigidBodyMsgPayload"><span class="n"><span class="pre">HingedRigidBodyMsgPayload</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spinningBodyRefInMsgs</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector21spinningBodyRefInMsgsE" title="Link to this definition"></a><br /></dt>
+<dd><p>(optional) reference state input message </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector5ResetE8uint64_t">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector5ResetE8uint64_t"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector5ResetE8uint64_t"></span><span id="SpinningBodyNDOFStateEffector::Reset__uint64_t"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a2fc8d4454a67ad6147049faced455316"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector24writeOutputStateMessagesE8uint64_t">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector24writeOutputStateMessagesE8uint64_t"></span><span id="SpinningBodyNDOFStateEffector::writeOutputStateMessages__uint64_t"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a24f3d73cabd0bfc20bc3554ebdba594f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputStateMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentClock</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector24writeOutputStateMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector11UpdateStateE8uint64_t">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector11UpdateStateE8uint64_t"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector11UpdateStateE8uint64_t"></span><span id="SpinningBodyNDOFStateEffector::UpdateState__uint64_t"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a334e48b48c9dd051fd291c266315889d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector14registerStatesER15DynParamManager">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector14registerStatesER15DynParamManager"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector14registerStatesER15DynParamManager"></span><span id="SpinningBodyNDOFStateEffector::registerStates__DynParamManagerR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a16d8d318873714c4f5fce19eb7aa84d9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector14registerStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector12linkInStatesER15DynParamManager">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector12linkInStatesER15DynParamManager"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector12linkInStatesER15DynParamManager"></span><span id="SpinningBodyNDOFStateEffector::linkInStates__DynParamManagerR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1afa8e763d0bb6a406eee01c9729f79e48"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector18addDynamicEffectorEP15DynamicEffectori">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector18addDynamicEffectorEP15DynamicEffectori"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector18addDynamicEffectorEP15DynamicEffectori"></span><span id="SpinningBodyNDOFStateEffector::addDynamicEffector__DynamicEffectorP.i"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1af974e2f10d88f32ea236d2b391118c85"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">addDynamicEffector</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newDynamicEffector</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector18addDynamicEffectorEP15DynamicEffectori" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector18registerPropertiesER15DynParamManager">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector18registerPropertiesER15DynParamManager"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector18registerPropertiesER15DynParamManager"></span><span id="SpinningBodyNDOFStateEffector::registerProperties__DynParamManagerR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a1548050ae4f18dd098bf36680f689bad"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerProperties</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">states</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector18registerPropertiesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector25computeDependentEffectorsER15BackSubMatricesd">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector25computeDependentEffectorsER15BackSubMatricesd"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector25computeDependentEffectorsER15BackSubMatricesd"></span><span id="SpinningBodyNDOFStateEffector::computeDependentEffectors__BackSubMatricesR.double"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a2a5d959e87c96659c0bd14b85e56bebd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDependentEffectors</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector25computeDependentEffectorsER15BackSubMatricesd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="SpinningBodyNDOFStateEffector::updateContributions__double.BackSubMatricesR.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a9da639a8b80e875cc4e83e7b9e052b90"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector19updateContributionsEdR15BackSubMatricesN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE"></span><span id="SpinningBodyNDOFStateEffector::computeDerivatives__double.Eigen::Vector3d.Eigen::Vector3d.Eigen::Vector3d"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa229a32b6c1d73a58a92c2ea54569355"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeDerivatives</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rDDot_BN_N</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omegaDot_BN_B</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sigma_BN</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector18computeDerivativesEdN5Eigen8Vector3dEN5Eigen8Vector3dEN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector23updateEffectorMassPropsEd">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector23updateEffectorMassPropsEd"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector23updateEffectorMassPropsEd"></span><span id="SpinningBodyNDOFStateEffector::updateEffectorMassProps__double"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a5d63c7b76eb0c019aee6ab90605598e4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEffectorMassProps</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector23updateEffectorMassPropsEd" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE"></span><span id="SpinningBodyNDOFStateEffector::updateEnergyMomContributions__double.Eigen::Vector3dR.doubleR.Eigen::Vector3d"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a52fd9fdae3d37659454a55670d99874a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateEnergyMomContributions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotAngMomPntCContr_B</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rotEnergyContr</span></span>, <a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega_BN_B</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector28updateEnergyMomContributionsEdRN5Eigen8Vector3dERdN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector29prependSpacecraftNameToStatesEv">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector29prependSpacecraftNameToStatesEv"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector29prependSpacecraftNameToStatesEv"></span><span id="SpinningBodyNDOFStateEffector::prependSpacecraftNameToStates"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa3ba84f16dd973d3e5a7286b8d4724b2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prependSpacecraftNameToStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector29prependSpacecraftNameToStatesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector17readInputMessagesEv">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector17readInputMessagesEv"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector17readInputMessagesEv"></span><span id="SpinningBodyNDOFStateEffector::readInputMessages"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1af75e6816ebe233c49e6e9350aa89caed"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector33computeSpinningBodyInertialStatesEv">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector33computeSpinningBodyInertialStatesEv"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector33computeSpinningBodyInertialStatesEv"></span><span id="SpinningBodyNDOFStateEffector::computeSpinningBodyInertialStates"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1affa684069568c2111687aa56b9c8da7a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeSpinningBodyInertialStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector33computeSpinningBodyInertialStatesEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector25computeAttitudePropertiesENSt10shared_ptrI12SpinningBodyEEi">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector25computeAttitudePropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector25computeAttitudePropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="SpinningBodyNDOFStateEffector::computeAttitudeProperties__std::shared_ptr:SpinningBody:.iC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ad42d7fbd273656d33f75b7263db7b8b1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAttitudeProperties</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBody</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBodyIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector25computeAttitudePropertiesENSt10shared_ptrI12SpinningBodyEEi" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector32computeAngularVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector32computeAngularVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector32computeAngularVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="SpinningBodyNDOFStateEffector::computeAngularVelocityProperties__std::shared_ptr:SpinningBody:.iC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1af53d26c8f72bf762fe6b0e3624ad5e24"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAngularVelocityProperties</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBody</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBodyIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector32computeAngularVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector25computePositionPropertiesENSt10shared_ptrI12SpinningBodyEEi">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector25computePositionPropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector25computePositionPropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="SpinningBodyNDOFStateEffector::computePositionProperties__std::shared_ptr:SpinningBody:.iC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a76a37390db2937e22980931e67488480"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computePositionProperties</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBody</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBodyIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector25computePositionPropertiesENSt10shared_ptrI12SpinningBodyEEi" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector25computeVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector25computeVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector25computeVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi"></span><span id="SpinningBodyNDOFStateEffector::computeVelocityProperties__std::shared_ptr:SpinningBody:.iC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ac5056361d9350a1902decb1f875889f9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeVelocityProperties</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBody</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBodyIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector25computeVelocityPropertiesENSt10shared_ptrI12SpinningBodyEEi" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector24computeInertiaPropertiesENSt10shared_ptrI12SpinningBodyEE">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector24computeInertiaPropertiesENSt10shared_ptrI12SpinningBodyEE"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector24computeInertiaPropertiesENSt10shared_ptrI12SpinningBodyEE"></span><span id="SpinningBodyNDOFStateEffector::computeInertiaProperties__std::shared_ptr:SpinningBody:C"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ad64dc8b473ed8ab78c5a19082beb28d9"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeInertiaProperties</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spinningBody</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector24computeInertiaPropertiesENSt10shared_ptrI12SpinningBodyEE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector13computeMThetaERN5Eigen8MatrixXdE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector13computeMThetaERN5Eigen8MatrixXdE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector13computeMThetaERN5Eigen8MatrixXdE"></span><span id="SpinningBodyNDOFStateEffector::computeMTheta__Eigen::MatrixXdR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a2afba9802cdc298bac156f291b1f2756"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeMTheta</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">MTheta</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector13computeMThetaERN5Eigen8MatrixXdE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector17computeAThetaStarERN5Eigen8MatrixXdE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector17computeAThetaStarERN5Eigen8MatrixXdE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector17computeAThetaStarERN5Eigen8MatrixXdE"></span><span id="SpinningBodyNDOFStateEffector::computeAThetaStar__Eigen::MatrixXdR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ad76ec1f6ceab56aa87de6b46d40a64d2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeAThetaStar</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">AThetaStar</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector17computeAThetaStarERN5Eigen8MatrixXdE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector17computeBThetaStarERN5Eigen8MatrixXdE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector17computeBThetaStarERN5Eigen8MatrixXdE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector17computeBThetaStarERN5Eigen8MatrixXdE"></span><span id="SpinningBodyNDOFStateEffector::computeBThetaStar__Eigen::MatrixXdR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a54435d980647d9c356d853ebd682197f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBThetaStar</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">BThetaStar</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector17computeBThetaStarERN5Eigen8MatrixXdE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector17computeCThetaStarERN5Eigen8VectorXdERKN5Eigen8Vector3dE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector17computeCThetaStarERN5Eigen8VectorXdERKN5Eigen8Vector3dE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector17computeCThetaStarERN5Eigen8VectorXdERKN5Eigen8Vector3dE"></span><span id="SpinningBodyNDOFStateEffector::computeCThetaStar__Eigen::VectorXdR.Eigen::Vector3dCR"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a37d7447bce67e377f54dcc0911f50915"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeCThetaStar</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">CThetaStar</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">g_N</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector17computeCThetaStarERN5Eigen8VectorXdERKN5Eigen8Vector3dE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector22computeBackSubMatricesER15BackSubMatrices">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector22computeBackSubMatricesER15BackSubMatrices"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector22computeBackSubMatricesER15BackSubMatrices"></span><span id="SpinningBodyNDOFStateEffector::computeBackSubMatrices__BackSubMatricesRC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a260b3cb01215175e55bcd7229b9cfb3f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBackSubMatrices</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector22computeBackSubMatricesER15BackSubMatrices" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK29SpinningBodyNDOFStateEffector21computeBackSubVectorsER15BackSubMatrices">
+<span id="_CPPv3NK29SpinningBodyNDOFStateEffector21computeBackSubVectorsER15BackSubMatrices"></span><span id="_CPPv2NK29SpinningBodyNDOFStateEffector21computeBackSubVectorsER15BackSubMatrices"></span><span id="SpinningBodyNDOFStateEffector::computeBackSubVectors__BackSubMatricesRC"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a207de3070d34b931a77f4d0dfc0fbdb8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBackSubVectors</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../_GeneralModuleFiles/stateEffector.html#_CPPv415BackSubMatrices" title="BackSubMatrices"><span class="n"><span class="pre">BackSubMatrices</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">backSubContr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK29SpinningBodyNDOFStateEffector21computeBackSubVectorsER15BackSubMatrices" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector24numberOfDegreesOfFreedomE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector24numberOfDegreesOfFreedomE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector24numberOfDegreesOfFreedomE"></span><span id="SpinningBodyNDOFStateEffector::numberOfDegreesOfFreedom__i"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa7e4d20d57a3f2a2c44004e61fa548fe"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numberOfDegreesOfFreedom</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector24numberOfDegreesOfFreedomE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector15spinningBodyVecE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector15spinningBodyVecE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector15spinningBodyVecE"></span><span id="SpinningBodyNDOFStateEffector::spinningBodyVec__std::vector:std::shared_ptr:SpinningBody::"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a863b6b93e8dc0c98b78774c2542c8be7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412SpinningBody" title="SpinningBody"><span class="n"><span class="pre">SpinningBody</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spinningBodyVec</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector15spinningBodyVecE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector6AThetaE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector6AThetaE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector6AThetaE"></span><span id="SpinningBodyNDOFStateEffector::ATheta__Eigen::MatrixXd"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a244b12282d81730c0fba889a4c449d7e"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ATheta</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector6AThetaE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector6BThetaE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector6BThetaE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector6BThetaE"></span><span id="SpinningBodyNDOFStateEffector::BTheta__Eigen::MatrixXd"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a4cddbfea69e324c821c33ccff09d35d7"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BTheta</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector6BThetaE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector6CThetaE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector6CThetaE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector6CThetaE"></span><span id="SpinningBodyNDOFStateEffector::CTheta__Eigen::VectorXd"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1ad0ddca93a85cade0a50bd2994f3c5b8a"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CTheta</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector6CThetaE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector10omega_BN_BE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector10omega_BN_BE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector10omega_BN_BE"></span><span id="SpinningBodyNDOFStateEffector::omega_BN_B__Eigen::Vector3d"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a07386d4a55f207deefa2aaa8db6da30f"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega_BN_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector10omega_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector8sigma_BNE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector8sigma_BNE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector8sigma_BNE"></span><span id="SpinningBodyNDOFStateEffector::sigma_BN__Eigen::MRPd"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa101e8642f7dd38e1d68fc74e939d9fc"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MRPd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BN</span></span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector8sigma_BNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector6dcm_BNE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector6dcm_BNE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector6dcm_BNE"></span><span id="SpinningBodyNDOFStateEffector::dcm_BN__Eigen::Matrix3d"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a58cbd58dba306db7e3bb3864b27a5f36"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BN</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector6dcm_BNE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector15omegaTilde_BN_BE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector15omegaTilde_BN_BE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector15omegaTilde_BN_BE"></span><span id="SpinningBodyNDOFStateEffector::omegaTilde_BN_B__Eigen::Matrix3d"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a2b642bae445cba36d2b9f9d9ec9552ee"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omegaTilde_BN_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Matrix3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector15omegaTilde_BN_BE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector24inertialPositionPropertyE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector24inertialPositionPropertyE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector24inertialPositionPropertyE"></span><span id="SpinningBodyNDOFStateEffector::inertialPositionProperty__Eigen::MatrixXdP"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a8e9c2507207778e3a0e5a67fd26efa91"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialPositionProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector24inertialPositionPropertyE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector24inertialVelocityPropertyE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector24inertialVelocityPropertyE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector24inertialVelocityPropertyE"></span><span id="SpinningBodyNDOFStateEffector::inertialVelocityProperty__Eigen::MatrixXdP"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a4f28573ecd685872174567ba07d97a7f"></span><a class="reference internal" href="../../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">inertialVelocityProperty</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector24inertialVelocityPropertyE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector10thetaStateE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector10thetaStateE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector10thetaStateE"></span><span id="SpinningBodyNDOFStateEffector::thetaState__StateDataP"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a19036ea91cc160119d47ef10e5a4cfce"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">thetaState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector10thetaStateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector13thetaDotStateE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector13thetaDotStateE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector13thetaDotStateE"></span><span id="SpinningBodyNDOFStateEffector::thetaDotState__StateDataP"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a463197e41a77bc0aa0ef47bc027a7e67"></span><a class="reference internal" href="../../_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">thetaDotState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector13thetaDotStateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector16nameOfThetaStateE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector16nameOfThetaStateE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector16nameOfThetaStateE"></span><span id="SpinningBodyNDOFStateEffector::nameOfThetaState__ss"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a3d91fcd94f8b662f323a2dd4b7f10072"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfThetaState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector16nameOfThetaStateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector19nameOfThetaDotStateE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector19nameOfThetaDotStateE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector19nameOfThetaDotStateE"></span><span id="SpinningBodyNDOFStateEffector::nameOfThetaDotState__ss"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa08fb87edc833e3dce107d707b66ab78"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nameOfThetaDotState</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector19nameOfThetaDotStateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector17propertyNameIndexE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector17propertyNameIndexE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector17propertyNameIndexE"></span><span id="SpinningBodyNDOFStateEffector::propertyNameIndex__ss"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1a0e0a8a8e1027d6f5ec9c06bb147e82da"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">propertyNameIndex</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector17propertyNameIndexE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N29SpinningBodyNDOFStateEffector10effectorIDE">
+<span id="_CPPv3N29SpinningBodyNDOFStateEffector10effectorIDE"></span><span id="_CPPv2N29SpinningBodyNDOFStateEffector10effectorIDE"></span><span id="SpinningBodyNDOFStateEffector::effectorID__uint64_t"></span><span class="target" id="class_spinning_body_n_d_o_f_state_effector_1aa30210e7847cb85856146d1113d25194"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">effectorID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N29SpinningBodyNDOFStateEffector10effectorIDE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spinningBodiesNDOF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_coarseSunSensor &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_coarseSunSensor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_coarseSunSensor</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Coarse Sun Sensor Unit Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Test the proper function of the coarse sun sensor (css) module.</span>
+<span class="c1">#           For basic functionality, results are compared to simple truth values calculated using np.cos().</span>
+<span class="c1">#           For noise testing, noiseless truth values are subtracted from the output and the standard deviation is compared</span>
+<span class="c1">#           to the input standard deviation.</span>
+<span class="c1">#           For css constellation set up, two identical constellations are set up with different methods and compared to</span>
+<span class="c1">#           each other</span>
+<span class="c1"># Creation Date:  May. 31, 2017</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">coarseSunSensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+<span class="c1"># The following &#39;parametrize&#39; function decorator provides the parameters and expected results for each</span>
+<span class="c1">#   of the multiple test runs for this test.</span>
+<div class="viewcode-block" id="test_coarseSunSensor">
+<a class="viewcode-back" href="../Documentation/simulation/sensors/coarseSunSensor/_UnitTest/test_coarseSunSensor.html#test_coarseSunSensor.test_coarseSunSensor">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">5.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;eclipse&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">5.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;fieldOfView&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">5.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;kellyFactor&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">5.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;scaleFactor&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">5.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">3e-2</span><span class="p">,</span> <span class="s2">&quot;deviation&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span>
+        <span class="c1"># low tolerance for std deviation comparison</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;albedo&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mf">5.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;saturation&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">2.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;sunDistance&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">3.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;combined&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span>
+        <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;constellation&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+    <span class="p">])</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_coarseSunSensor</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">useConstellation</span><span class="p">,</span> <span class="n">visibilityFactor</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">kelly</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">noiseStd</span><span class="p">,</span>
+                         <span class="n">albedoValue</span><span class="p">,</span> <span class="n">sunDistInput</span><span class="p">,</span> <span class="n">minIn</span><span class="p">,</span> <span class="n">maxIn</span><span class="p">,</span> <span class="n">errTol</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">zLevel</span><span class="p">,</span> <span class="n">lineWide</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;This function is called by the py.test environment.&#39;&#39;&#39;</span>
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">useConstellation</span><span class="p">,</span> <span class="n">visibilityFactor</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">kelly</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span>
+                                     <span class="n">noiseStd</span><span class="p">,</span> <span class="n">albedoValue</span><span class="p">,</span> <span class="n">sunDistInput</span><span class="p">,</span> <span class="n">minIn</span><span class="p">,</span> <span class="n">maxIn</span><span class="p">,</span> <span class="n">errTol</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">zLevel</span><span class="p">,</span> <span class="n">lineWide</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span>
+
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">useConstellation</span><span class="p">,</span> <span class="n">visibilityFactor</span><span class="p">,</span> <span class="n">fov</span><span class="p">,</span> <span class="n">kelly</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">noiseStd</span><span class="p">,</span> <span class="n">albedoValue</span><span class="p">,</span>
+        <span class="n">sunDistInput</span><span class="p">,</span> <span class="n">minIn</span><span class="p">,</span> <span class="n">maxIn</span><span class="p">,</span> <span class="n">errTol</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">zLevel</span><span class="p">,</span> <span class="n">lineWide</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#   Sim Setup</span>
+    <span class="c1">#</span>
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">testTaskName</span> <span class="o">=</span> <span class="s2">&quot;unitTestTask&quot;</span>
+    <span class="n">testProcessName</span> <span class="o">=</span> <span class="s2">&quot;unitTestProcess&quot;</span>
+    <span class="n">testTaskRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="c1"># Create a simulation container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="c1"># Ensure simulation is empty</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">testProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">testTaskRate</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Input Message Setup</span>
+    <span class="c1">#   Creates inputs from sun, spacecraft, and eclipse so that those modules don&#39;t have to be included</span>
+    <span class="c1"># Create dummy sun message</span>
+    <span class="n">sunPositionMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">[</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">*</span> <span class="n">sunDistInput</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunPositionMsg</span><span class="p">)</span>
+
+    <span class="c1"># Create dummy spacecraft message</span>
+    <span class="n">satelliteStateMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">satelliteStateMsg</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">angles</span><span class="p">))</span>
+    <span class="n">truthVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>  <span class="c1"># set truth vector initially, modify below based on inputs</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigmas</span><span class="p">)):</span>  <span class="c1"># convert rotation angle about 3rd axis to MRP</span>
+        <span class="n">sigmas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)</span>  <span class="c1"># This is iterated through in the execution for loop</span>
+    <span class="n">satelliteStateMsg</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">satelliteStateMsg</span><span class="p">)</span>
+
+    <span class="c1"># Calculate sun distance factor</span>
+    <span class="n">r_Sun_Sc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">r_Sun_Sc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sunPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">satelliteStateMsg</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">r_Sun_Sc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sunPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">satelliteStateMsg</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">r_Sun_Sc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sunPositionMsg</span><span class="o">.</span><span class="n">PositionVector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">satelliteStateMsg</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">sunDist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_Sun_Sc</span><span class="p">)</span>
+    <span class="n">sunDistanceFactor</span> <span class="o">=</span> <span class="p">((</span><span class="n">om</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sunDist</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># create dummy eclipse message</span>
+    <span class="n">eclipseMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
+    <span class="n">eclipseMsg</span><span class="o">.</span><span class="n">shadowFactor</span> <span class="o">=</span> <span class="n">visibilityFactor</span>
+    <span class="n">ecMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eclipseMsg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupCSS</span><span class="p">(</span><span class="n">CSS</span><span class="p">):</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">kellyFactor</span> <span class="o">=</span> <span class="n">kelly</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">scaleFactor</span> <span class="o">=</span> <span class="n">scaleFactor</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">senBias</span> <span class="o">=</span> <span class="n">bias</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">senNoiseStd</span> <span class="o">=</span> <span class="n">noiseStd</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">albedoValue</span> <span class="o">=</span> <span class="n">albedoValue</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">minOutput</span> <span class="o">=</span> <span class="n">minIn</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">maxOutput</span> <span class="o">=</span> <span class="n">maxIn</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">stateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+        <span class="n">CSS</span><span class="o">.</span><span class="n">sunEclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ecMsg</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Single CSS Setup</span>
+    <span class="c1">#   Sets up a single CSS with inputs from the pytest parameterization</span>
+    <span class="n">singleCss</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+    <span class="n">singleCss</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;singleCss&quot;</span>
+    <span class="n">setupCSS</span><span class="p">(</span><span class="n">singleCss</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">singleCss</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   CSS Constellation Setup</span>
+    <span class="c1">#   Sets up two identical constellations (P1 and P2) but uses different methods to establish nHat_B for the sensors.</span>
+    <span class="k">if</span> <span class="n">useConstellation</span><span class="p">:</span>
+        <span class="n">cssP11</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP11</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP11&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP11</span><span class="p">)</span>
+        <span class="n">cssP12</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP12</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP12&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP12</span><span class="p">)</span>
+        <span class="n">cssP13</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP13</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP13&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP13</span><span class="p">)</span>
+        <span class="n">cssP14</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP14</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP14&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP14</span><span class="p">)</span>
+        <span class="n">cssP21</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP21</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP21&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP21</span><span class="p">)</span>
+        <span class="n">cssP22</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP22</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP22&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP22</span><span class="p">)</span>
+        <span class="n">cssP23</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP23</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP23&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP23</span><span class="p">)</span>
+        <span class="n">cssP24</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CoarseSunSensor</span><span class="p">()</span>
+        <span class="n">cssP24</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;cssP24&quot;</span>
+        <span class="n">setupCSS</span><span class="p">(</span><span class="n">cssP24</span><span class="p">)</span>
+
+        <span class="c1"># all sensors on a 45 degree, four sided pyramid mount</span>
+        <span class="n">cssP11</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)]</span>
+        <span class="n">cssP12</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">]</span>
+        <span class="n">cssP13</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+        <span class="n">cssP14</span><span class="o">.</span><span class="n">nHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">]</span>
+
+        <span class="c1"># all except cssP24 given non-zero platform frame. B4 is not changed so that the default is tested.</span>
+        <span class="n">cssP21</span><span class="o">.</span><span class="n">setBodyToPlatformDCM</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+        <span class="n">cssP22</span><span class="o">.</span><span class="n">setBodyToPlatformDCM</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+        <span class="n">cssP23</span><span class="o">.</span><span class="n">setBodyToPlatformDCM</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+        <span class="c1"># cssP24 is not changed so that the default is tested to be identity</span>
+
+        <span class="n">cssP21</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span>
+        <span class="n">cssP21</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">cssP22</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span>
+        <span class="n">cssP22</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="n">cssP23</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.</span>
+        <span class="n">cssP23</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">cssP24</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.</span>  <span class="c1"># remember, the cssP24 frame is the B frame. This angle is cancelled by a perturbation.</span>
+        <span class="n">cssP24</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">8.</span>  <span class="c1"># This angle is also provided with a perturbation to test to perturbation functionality.</span>
+
+        <span class="n">cssP21</span><span class="o">.</span><span class="n">setUnitDirectionVectorWithPerturbation</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="n">cssP22</span><span class="o">.</span><span class="n">setUnitDirectionVectorWithPerturbation</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="n">cssP23</span><span class="o">.</span><span class="n">setUnitDirectionVectorWithPerturbation</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="n">cssP24</span><span class="o">.</span><span class="n">setUnitDirectionVectorWithPerturbation</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">8.</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.</span><span class="p">)</span>
+
+        <span class="n">constellationP1List</span> <span class="o">=</span> <span class="p">[</span><span class="n">cssP11</span><span class="p">,</span> <span class="n">cssP12</span><span class="p">,</span> <span class="n">cssP13</span><span class="p">,</span>
+                               <span class="n">cssP14</span><span class="p">]</span>  <span class="c1"># P1 is second platform, numbers following P2 are sensor numbers</span>
+
+        <span class="n">constellationP1</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSConstellation</span><span class="p">()</span>
+        <span class="n">constellationP1</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constellationP1&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">constellationP1List</span><span class="p">:</span>
+            <span class="n">constellationP1</span><span class="o">.</span><span class="n">appendCSS</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">constellationP1</span><span class="p">)</span>
+
+        <span class="n">constellationP2List</span> <span class="o">=</span> <span class="p">[</span><span class="n">cssP21</span><span class="p">,</span> <span class="n">cssP22</span><span class="p">,</span> <span class="n">cssP23</span><span class="p">,</span> <span class="n">cssP24</span><span class="p">]</span>  <span class="c1"># P2 is second platform, numbers following P2 are sensor numbers</span>
+        <span class="n">constellationP2</span> <span class="o">=</span> <span class="n">coarseSunSensor</span><span class="o">.</span><span class="n">CSSConstellation</span><span class="p">()</span>
+        <span class="n">constellationP2</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;constellationP2&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">constellationP2List</span><span class="p">:</span>
+            <span class="n">constellationP2</span><span class="o">.</span><span class="n">appendCSS</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">constellationP2</span><span class="p">)</span>
+
+        <span class="n">dataLogP1</span> <span class="o">=</span> <span class="n">constellationP1</span><span class="o">.</span><span class="n">constellationOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">dataLogP2</span> <span class="o">=</span> <span class="n">constellationP2</span><span class="o">.</span><span class="n">constellationOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">dataLogP1</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">dataLogP2</span><span class="p">)</span>
+
+    <span class="c1"># log single CSS</span>
+    <span class="n">dataLogSingle</span> <span class="o">=</span> <span class="n">singleCss</span><span class="o">.</span><span class="n">cssDataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">testTaskName</span><span class="p">,</span> <span class="n">dataLogSingle</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Modify Truth Vector Appropriately</span>
+    <span class="c1">#</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">truthVector</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">kelly</span> <span class="o">&gt;</span> <span class="mf">0.0000000000001</span><span class="p">:</span>  <span class="c1"># only if kelly isn&#39;t actually zero</span>
+            <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+                    <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">e</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">kelly</span><span class="p">))</span>  <span class="c1"># apply kelly factor, note: no albedo</span>
+        <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">visibilityFactor</span> <span class="o">*</span> <span class="n">sunDistanceFactor</span>  <span class="c1"># account for eclipse effects</span>
+        <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">albedoValue</span>  <span class="c1"># apply albedo</span>
+        <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">bias</span>  <span class="c1"># apply bias</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">angles</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">fov</span> <span class="ow">and</span> <span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">fov</span><span class="p">):</span>  <span class="c1"># first, trim to fov</span>
+            <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">albedoValue</span>  <span class="c1"># apply albedo</span>
+            <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">bias</span>
+    <span class="n">truthVector</span> <span class="o">=</span> <span class="n">truthVector</span> <span class="o">*</span> <span class="n">scaleFactor</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">truthVector</span><span class="p">)):</span>
+        <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">maxIn</span><span class="p">])</span>
+        <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">minIn</span><span class="p">])</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Initialize and run simulation one step at a time</span>
+    <span class="c1">#</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Execute the simulation for one time step</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigmas</span><span class="p">)):</span>
+        <span class="n">satelliteStateMsg</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">scMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">satelliteStateMsg</span><span class="p">,</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">CurrentNanos</span> <span class="o">+</span> <span class="n">testTaskRate</span><span class="p">)</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Constellation Outputs and plots</span>
+    <span class="c1">#</span>
+    <span class="n">cssOutput</span> <span class="o">=</span> <span class="n">dataLogSingle</span><span class="o">.</span><span class="n">OutputData</span>
+    <span class="k">if</span> <span class="n">useConstellation</span><span class="p">:</span>
+        <span class="n">constellationP1data</span> <span class="o">=</span> <span class="n">dataLogP1</span><span class="o">.</span><span class="n">CosValue</span>
+        <span class="n">constellationP2data</span> <span class="o">=</span> <span class="n">dataLogP2</span><span class="o">.</span><span class="n">CosValue</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;plain&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">sensorlabel</span> <span class="o">=</span> <span class="s2">&quot;cssP1&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLogP1</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">constellationP1data</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">sensorlabel</span><span class="p">,</span>
+                     <span class="n">linewidth</span><span class="o">=</span><span class="mi">4</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;P1 Output Values [-]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper center&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># plt.figure(2,figsize=(7, 5), dpi=80, facecolor=&#39;w&#39;, edgecolor=&#39;k&#39;)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">sensorlabel</span> <span class="o">=</span> <span class="s2">&quot;cssP2&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLogP2</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">constellationP2data</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">sensorlabel</span><span class="p">,</span>
+                     <span class="n">linewidth</span><span class="o">=</span><span class="mi">4</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;P2 Output Values [-]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper center&#39;</span><span class="p">)</span>
+        <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s1">&#39;constellationPlots&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;Plot of first and second constellation outputs for comparision.</span><span class="se">\</span>
+<span class="s1">                                          Note that the constellation starts pointing directly at the sun</span><span class="se">\</span>
+<span class="s1">                                           and linearly rotates in time until it returns to a direct view.&#39;</span><span class="p">,</span>
+                                         <span class="n">plt</span><span class="p">,</span> <span class="s1">&#39;height=0.7</span><span class="se">\\</span><span class="s1">textwidth, keepaspectratio&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1">#   Single CSS plotting</span>
+    <span class="c1">#</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">justTheNoise</span> <span class="o">=</span> <span class="n">cssOutput</span> <span class="o">-</span> <span class="n">truthVector</span>  <span class="c1"># subtract curve from noisy curve</span>
+        <span class="n">outputStd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">justTheNoise</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;plain&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataLogSingle</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2MIN</span><span class="p">,</span> <span class="n">cssOutput</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="n">zLevel</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">lineWide</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time [min]&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Output Value [-]&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;combined&quot;</span><span class="p">:</span>
+            <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeFigureLaTeX</span><span class="p">(</span><span class="s1">&#39;combinedPlot&#39;</span><span class="p">,</span>
+                                             <span class="s1">&#39;Plot of all cases of individual coarse sun sensor in comparison to</span><span class="se">\</span>
+<span class="s1">                                              each other. Note that the incidence angle starts at direct and linearly</span><span class="se">\</span>
+<span class="s1">                                               rotates in time until it returns to a direct view.&#39;</span><span class="p">,</span>
+                                             <span class="n">plt</span><span class="p">,</span> <span class="s1">&#39;height=0.7</span><span class="se">\\</span><span class="s1">textwidth, keepaspectratio&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;constellation&quot;</span> <span class="ow">and</span> <span class="n">show_plots</span><span class="p">:</span>  <span class="c1"># Don&#39;t show plots until last run.</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Compare output and truth vectors</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">useConstellation</span><span class="p">:</span>  <span class="c1"># compare constellation P1 to constellation P2</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">constellationP2data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">constellationP2data</span><span class="p">[</span><span class="n">i</span><span class="p">][:],</span> <span class="n">constellationP1data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:],</span> <span class="mi">4</span><span class="p">,</span>
+                                                        <span class="n">errTol</span><span class="p">):</span>
+                <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">noiseStd</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># if a test without noise</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cssOutput</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">cssOutput</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayZero</span><span class="p">([</span><span class="n">cssOutput</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+                    <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">cssOutput</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">truthVector</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errTol</span><span class="p">):</span>
+                    <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># if &quot;combined&quot; or &quot;deviation&quot;</span>
+        <span class="c1"># Calculate standard deviation of just the noise component</span>
+        <span class="n">justTheNoise</span> <span class="o">=</span> <span class="n">cssOutput</span> <span class="o">-</span> <span class="n">truthVector</span>  <span class="c1"># subtract curve from noisy curve</span>
+        <span class="n">outputStd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">justTheNoise</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isDoubleEqualRelative</span><span class="p">(</span><span class="n">noiseStd</span> <span class="o">*</span> <span class="n">scaleFactor</span><span class="p">,</span> <span class="n">outputStd</span><span class="p">,</span> <span class="n">errTol</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">outputStd</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">noiseStd</span> <span class="o">*</span> <span class="n">scaleFactor</span><span class="p">)</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HPS: 2&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;ForestGreen&#39;</span>
+        <span class="n">passFailMsg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># &quot;Passed: &quot; + name + &quot;.&quot;</span>
+        <span class="n">passedText</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="s2">&quot;PASSED&quot;</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">colorText</span> <span class="o">=</span> <span class="s1">&#39;Red&#39;</span>
+        <span class="n">passFailMsg</span> <span class="o">=</span> <span class="s2">&quot;Failed: &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">passFailMsg</span><span class="p">)</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; | &quot;</span><span class="p">)</span>
+        <span class="n">passedText</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\textcolor{&#39;</span> <span class="o">+</span> <span class="n">colorText</span> <span class="o">+</span> <span class="s1">&#39;}{&#39;</span> <span class="o">+</span> <span class="s2">&quot;FAILED&quot;</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+
+    <span class="c1"># Write some snippets for AutoTex</span>
+    <span class="n">snippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;PassedText&quot;</span>
+    <span class="n">snippetContent</span> <span class="o">=</span> <span class="n">passedText</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">snippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;PassFailMsg&quot;</span>
+    <span class="n">snippetContent</span> <span class="o">=</span> <span class="n">passFailMsg</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">snippetName</span><span class="p">,</span> <span class="n">snippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">passFailMsg</span><span class="p">)</span>
+
+    <span class="c1"># write pytest parameters to AutoTex folder</span>
+    <span class="c1"># &quot;useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide&quot;</span>
+    <span class="n">useConstellationSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;UseConstellation&quot;</span>
+    <span class="n">useConstellationSnippetContent</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">useConstellation</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">useConstellationSnippetName</span><span class="p">,</span> <span class="n">useConstellationSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">visibilityFactorSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;VisibilityFactor&quot;</span>
+    <span class="n">visibilityFactorSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">visibilityFactor</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">visibilityFactorSnippetName</span><span class="p">,</span> <span class="n">visibilityFactorSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">fovSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;Fov&quot;</span>
+    <span class="n">fovSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fov</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">fovSnippetName</span><span class="p">,</span> <span class="n">fovSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">kellySnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;Kelly&quot;</span>
+    <span class="n">kellySnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kelly</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">kellySnippetName</span><span class="p">,</span> <span class="n">kellySnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">scaleFactorSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;ScaleFactor&quot;</span>
+    <span class="n">scaleFactorSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scaleFactor</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">scaleFactorSnippetName</span><span class="p">,</span> <span class="n">scaleFactorSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">biasSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;Bias&quot;</span>
+    <span class="n">biasSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bias</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">biasSnippetName</span><span class="p">,</span> <span class="n">biasSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">noiseStdSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;NoiseStd&quot;</span>
+    <span class="n">noiseStdSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">noiseStd</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">noiseStdSnippetName</span><span class="p">,</span> <span class="n">noiseStdSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">albedoValueSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;AlbedoValue&quot;</span>
+    <span class="n">albedoValueSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">albedoValue</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">albedoValueSnippetName</span><span class="p">,</span> <span class="n">albedoValueSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">locationSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;Location&quot;</span>
+    <span class="n">locationSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sunDistInput</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">locationSnippetName</span><span class="p">,</span> <span class="n">locationSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">saturationMaxSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;MaxSaturation&quot;</span>
+    <span class="n">saturationMaxSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:2.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">maxIn</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">saturationMaxSnippetName</span><span class="p">,</span> <span class="n">saturationMaxSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">saturationMinSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;MinSaturation&quot;</span>
+    <span class="n">saturationMinSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:2.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minIn</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">saturationMinSnippetName</span><span class="p">,</span> <span class="n">saturationMinSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">errTolSnippetName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;ErrTol&quot;</span>
+    <span class="n">errTolSnippetContent</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:1.1e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">errTol</span><span class="p">)</span>
+    <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">writeTeXSnippet</span><span class="p">(</span><span class="n">errTolSnippetName</span><span class="p">,</span> <span class="n">errTolSnippetContent</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PASSED&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># run(True, False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.125, 0.0, 1.0, -10., 10., 1e-2, &quot;deviation&quot;, -5, 1.)</span>
+    <span class="c1"># run(True, False, 1.0, np.pi / 2., 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 10., 1e-10, &quot;plain&quot;, 0, 5.)</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="s2">&quot;constellation&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+    <span class="c1"># run(True, False, 0.5, 3 * np.pi / 8., 0.15, 2.0, 0.5, 0.125, 0.5, 2.0, -10., 10., 1e-2, &quot;combined&quot;, -6, 1.0)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

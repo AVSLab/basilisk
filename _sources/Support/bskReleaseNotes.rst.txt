@@ -1,0 +1,4481 @@
+.. _bskReleaseNotes:
+
+Basilisk Release Notes
+======================
+
+.. Note::
+
+    We are very excited by the great capabilities that this software already has, and plan to be updating this
+    software regularly.  There is some documentation in terms of Sphinx generated HTML documentation, but also
+    documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation
+    folders as well.  Best place to start is to run the integrated tutorial scripts inside the ``basilisk/examples``
+    folder, described in :ref:`examples`.  To learn how to use and program Basilisk, see :ref:`learningBasilisk`.
+
+
+.. sidebar:: In Progress Features
+
+    - new tutorial example scripts
+    - landing dynamics force/torque effector that computes the interaction between a CAD spacecraft model and a
+      CAD asteroid or lunar surface terrain.
+    - spacecraft charging related modules
+    - support effector branching for additional state and dynamic effectors
+    - More effector and sensor fault modeling
+    - `pip`-based installation and pre-compiled releases
+    - integrating the `MuJoCo <https://mujoco.org>`_ library as an alternate dynamics engine
+
+
+Version |release|
+-----------------
+- Migrated supportData handling to a Pooch-based fetch system.
+  .. warning::
+
+    This is a breaking change, minor changes were made to how the Denton flux model API is used.
+    See list of known issues for details.
+- Removed supportData files from wheels and source distributions to reduce package size.
+- Added automatic MD5 registry generation via ``makeRegistry.py`` for versioned supportData.
+- Updated documentation to include workflow for adding new supportData files and regenerating the registry.
+- Removed automated version bumping on merges to develop. Version bumps will be handled manually moving forward.
+- Added SWIG as a python package dependency in ``requirements_dev.txt`` and updated installation instructions.
+- Updated CI to no longer automatically publish git tags and publish wheels to PyPI. This process will be handled manually.
+- Added cp313 wheel builds for Python 3.13 and newer to support updated SWIG and ABI changes.
+- Added :ref:`bskPrinciples-11` capability. Now enabled for :ref:`extForceTorque`, :ref:`constraintDynamicEffector`,
+  and :ref:`thrusterDynamicEffector` attachable to :ref:`spinningBodyOneDOFStateEffector`,
+  :ref:`spinningBodyTwoDOFStateEffector`, and :ref:`spinningBodyNDOFStateEffector`.
+- Added support for :ref:`linearTranslationOneDOFStateEffector` to attach dependent effectors.
+- Added custom reaction wheel: "NanoAvionics RW0" to ``src/utilities/simIncludeRW.py``
+- Added TLE handling utilities in :ref:`tleHandling` to parse TLE files and convert to orbital elements
+- Removed deprecated use of astro constants from ``src/utilities/astroFunction.py``.
+  Users should be astrodynamics constants from ``Basilisk.architecture.astroConstants``.
+- Made statistical unit tests more robust
+- Fix typo in how :ref:`gravityEffector` compute the planets gravity potential contributions
+- Added fault modeling capability to :ref:`magnetometer` module.
+- Added new module :ref:`MJSystemCoM` to extract the system center of mass position and velocity from a MuJoCo simulation.
+- Added new module :ref:`MJSystemMassMatrix` to extract the system mass matrix from a MuJoCo simulation.
+- Added new module :ref:`MJJointReactionForces` to extract the reaction forces and torques acting on the joints from a MuJoCo simulation.
+- Added new module :ref:`hingedJointArrayMotor` to determine the motor torques for an array of hinged joints.
+- Added new module :ref:`jointMotionCompensator` to determine the hub torques required to negate the effect of hinged joint motor torques on the spacecraft hub motion.
+- Refactored the CI build system scripts
+- Removed deprecated use of ``Basilisk.simulation.planetEphemeris.ClassicElementsMsgPayload``.
+  Users need to use ``ClassicalElements()`` defined in ``orbitalMotion``.
+- Added documentation to :ref:`constraintDynamicEffector` explaining the required execution order
+- Fixed bug with recording message payload entries that are 2D arrays. This bug was introduced with the faster recording
+  strategy added in version 2.8.0.
+- Add a desired relative attitude between spacecraft in :ref:`constraintDynamicEffector`.
+- Added new example scenarios demonstrating extended use of :ref:`constraintDynamicEffector`:
+  :ref:`scenarioConstrainedDynamicsManeuverAnalysis`, :ref:`scenarioConstrainedDynamicsComponentAnalysis`,
+  and :ref:`scenarioConstrainedDynamicsFrequencyAnalysis`.
+- Added a new stepper motor simulation module :ref:`stepperMotor`. This kinematic profiler module is useful to
+  simulate the actuation of motor-driven prescribed spacecraft components.
+- Made individual structures for each degree of freedom in :ref:`spinningBodyNDOFStateEffector` and
+  :ref:`linearTranslationNDOFStateEffector`.
+- Capitalized all structures in :ref:`linearTranslationOneDOFStateEffector` and :ref:`linearTranslationNDOFStateEffector`.
+- The way body-fixed locations are added to Vizard data is changed.  Now Vizard retains a copy of the
+  list of locations and only incremental changes have to be sent using the ``vizSupport.changeLocation()``
+  method. This drastically reduces the Vizard data size.
+- The support file :ref:`vizSupport` is updated to only have ``enableUnityVisualization()`` check
+  if :ref:`vizInterface` has been built or not.  Example scripts check if ``vizSupport.vizFound`` is true
+  to execute ``vizInterface`` related code.
+- In :ref:`vizSupport`, in the method ``setInstrumentGuiSetting()``, corrected the spelling of
+  ``showTransceiverFrustrum`` to be ``showTransceiverFrustum``.  The prior argument name has
+  been deprecated.
+- For :ref:`vizInterface`.settings, changed the name of ``viewCameraConeHUD`` to ``viewCameraFrustrumHUD``
+- Added support for Vizard 2.3.1 features
+- Refactor and optimize Event checking in ``SimulationBaseClass``. Time-based events can be specified by a more efficient
+  ``conditionTime`` instead of a ``conditionFunction``.  This is especially useful for large numbers of events.
+- Added option for ``exactRateMatch=False`` when creating events which causes events to be checked whenever the
+  ``eventRate`` has elapsed since the last check (as opposed to only when the current time is an exact multiple of the
+  ``eventRate``).
+- ``ConfigureStopTime`` now supports specifying the stop condition as ``<=`` (default, prior behavior) or ``>=`` (new).
+  The new option is useful when the user wants to ensure that the simulation runs for at least the specified time,
+  instead of at most the specified time.
+- Fixed documentation quote typos that caused documentation build errors with doxygen version 1.15 and newer.
+- Configured the :ref:`prescribedMotionStateEffector` module for attachment of other state effectors to it
+  rather than the spacecraft hub.
+- Configured the :ref:`spinningBodyOneDOFStateEffector`, :ref:`spinningBodyTwoDOFStateEffector`, and
+  :ref:`linearTranslationOneDOFStateEffector` modules for optional attachment to the prescribed motion state effector.
+- Added two example branching scenarios to illustrate the prescribed motion branching capability. See
+  :ref:`scenarioPrescribedMotionWithTranslationBranching` and :ref:`scenarioPrescribedMotionWithRotationBranching`.
+- Fixed a bug where :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyNDOFStateEffector`
+  both registered their states under the same name, resulting in overwriting and a ``BSK_ERROR``.
+- Added support for :ref:`hingedRigidBodyStateEffector` to be the parent for Dynamic Effectors.
+- Added SWIG Eigen typemaps for passing Eigen products or returning Eigen products to/from director methods.
+- Added a required time duration that must be satisfied for the imaging to be considered successful in :ref:`simpleInstrumentController` module.
+- Added a new scenario that simulates a debris strike on a flexible solar array :ref:`scenarioImpact`.
+- Updated :ref:`imuSensor` to remove deprecated direct setting of ``walkBoundsGyro`` and ``walkBoundsAccel``.
+  The module now outputs a zero'd output message on the first run.
+- Updated Basilisk python dependencies to include the latest range of allowable packages
+- Improved documentation of :ref:`orbitalMotion`
+- Avoid reloading and re-unloading SPICE kernels when multiple simulations run in the same process. This
+  fixes the problem with Spice becoming very slow when multiple simulation are run in parallel, addresses
+  the Spice kernel load limit of 5000 kernels, and prevents a rare bug where kernels are corrupted when
+  loaded from multiple simulations at the same time.
+- Added support for Vizard version 2.3.2
+- Added optional prescribed 1-DOF helical screw motion to the :ref:`prescribedRotation1DOF` kinematic profiler module.
+- Added a new prescribed helical screw motion example scenario. See :ref:`scenarioPrescribedScrewMotion`.
+- Added ``SysModelMixin``, a utility class in ``py_sys_model.i`` that can be used for subclasses
+  of ``SysModel`` (:ref:`sys_model`) that have virtual methods to be implemented in Python. The class will automatically
+  add better error logging for all methods implemented in Python and will add a sanity check that the
+  C++ class constructor is called (otherwise, hard-to-parse errors will be raised). Refactored
+  ``pyStatefulSysModel.i`` to use this mixin.
+- Added support for setting the position and velocity of :ref:`MJBody` with pure translational motion.
+- Added ``getAxis`` and ``isHinge`` to :ref:`MJJoint`.
+- Migrated ``supportData`` handling to a Pooch-based fetch system.
+
+  .. warning::
+
+    This is a breaking change, minor changes were made to how the Denton flux model API is used.
+    See list of known issues for details.
+
+- Removed ``supportData`` files from wheels and source distributions to reduce package size.
+- Made :ref:`FacetSRPDynamicEffector` variables ``numFacets`` and ``numArticulatedFacets`` private
+  variables.  Their use as public variables has been deprecated since December 2024.
+
+
+Version 2.8.0 (August 30, 2025)
+-------------------------------
+- Marked the use of python 3.8 as deprecated
+- Support for ``opNavMode`` flag within vizSupport was removed, as its deprecation period ended
+- Demo video was added to :ref:`scenarioQuadMaps` documentation
+- Pinned python dependencies to avoid issues with new package versions.
+- Updated :ref:`vscmgStateEffector` documentation.
+- Added a new :ref:`vscmgGimbalRateServo` module that computes the VSCMG wheel motor torque and gimbal motor torque.
+- Added a new :ref:`vscmgVelocitySteering` module that computes the desired VSCMG wheel accelerations and gimbal rates.
+- Added a new github workflow job ``canary`` to routinely check the compatibility of latest python dependencies with python 3.13 on the latest mac-os.
+- Deprecated :ref:`SpacecraftSystem`.  It was never completed and we have other ways to connect spacecraft components
+- Allow event conditions and effects to be defined by functions. This is preferred over the old string-based method, as it
+  enables the use of arbitrary packages and objects in events and allows for event code to be parsed by IDE tools.
+- Add a sun message input and ``theta_solar`` threshold to :ref:`SpacecraftLocation`.
+- Fixed an issue where DynamicObject classes computed time steps by differencing double values rather
+  than ``uint64_t`` values in nanoseconds.  This could cause micro drifts in the integration process.  See
+  `Issue 993 <https://github.com/AVSLab/basilisk/issues/993>`_ for more info on this issue.  Now the time step is computed
+  using ``uint64_t`` time values and then converted to a double.
+- Enhance how ``uint64_t`` values are converted to doubles.  BSK now warns if the time value is large enough such
+  that the conversion method has a loss of precision in this process.
+- Support including an eclipse message in :ref:`SpacecraftLocation` to more accurately determine illumination.
+- Fixed an issue where the :ref:`spaceToGroundTransmitter` would check for the amount of data remaining in a different partition than the one being downlinked.
+- Fixed an issue where a high baud rate prevented the :ref:`spaceToGroundTransmitter` from downlinking data from the :ref:`simpleStorageUnit` or :ref:`partitionedStorageUnit`.
+- Updated default Windows compiler to be ``Visual Studio 17 2022``.  The CI test build now occurs on Windows 11.
+
+  .. warning::
+
+    If you still want to use Visual Studio 16, then be sure to set the generator
+    using ``python conanfile.py --generator "Visual Studio 16 2019``
+
+- Improve reading speed of recorded messages by about 75%.
+- Added support for Vizard 2.3.0
+- Adds support for updating noise parameters in :ref:`simpleNav` during simulation
+- Redirected MuJoCo errors and warnings to :ref:`bskLogging` instead of printing to file.
+- Update :ref:`vizSupport`  for the ``saveFile`` argument to take an explicit
+  file path and file name and not auto-generate the ``_VizFiles`` sub-folder.  This provides the
+  user more direct control where and how the simulation data is saved.
+- Support calling ``unsubscribe`` on input messages.
+- Fixed an issue where the :ref:`forceTorqueThrForceMapping` module's Reset() function did not zero all thruster settings correctly.
+- Updated ``canary`` workflow to run on all pull requests to the develop branch, providing feedback on compatibility with latest dependencies.
+- Added links to published paper in :ref:`oneAxisSolarArrayPoint` documentation.
+- Converted RW data structures in ``reactionWheelStateEffector`` to shared pointers instead of raw pointers.
+- The ``BSKLogger`` now raises a ``BasiliskError`` (``Basilisk.architecture.bskLogging.BasiliskError``)
+  if something is logged at ``BSK_ERROR`` level. Certain errors are reduced to ``BSK_WARNING`` to reflect
+  the new behavior.
+- Improve reading speed of recorded messages by 1-4 orders of magnitude.
+
+  .. warning::
+
+    This is a breaking change, see list of known issues for details. Please report any issues
+    (at buildtime or runtime) with recorders for custom payloads.
+- Support initialization of fields in the constructor of message payloads (in Python).
+- Improve string representation of message payloads (in Python).
+- Add support for pretty-printing message payloads (in Python).
+- Updated documentation and all scenarios to use new payload constructor format.
+- Add :ref:`scenarioBranchingPanels`, which showcases a branching solar array configuration, staged deployment,
+  and joint locking when panels are stowed or fully deployed.
+- Bugfix: joint velocity not being reported correctly in ``MJScalarJoint``.
+- Add ``addJointSingleActuator`` to ``MJScene``. This can be used to add actuators acting on joints
+  to a MuJoCo-based simulation (e.g. motors that produce torque).
+- Add method to scalar joints class to get to the equality constraint object that can be used to constrain
+  the joint to a specific value (``MJScalarJoint::getConstrainedEquality``).
+- Add methods ``setSolref`` and ``setSolimp`` to ``MJEquality`` to enable control of the solver parameters
+  that control how the equalities are enforced in MuJoCo.
+- Add PID controller models for ``MJScene``. Currently implemented ``JointPIDController``, which can read the state
+  of a joint and output a torque to act on said joint to achieve a desired angle and angular velocity.
+
+
+Version 2.7.0 (April 20, 2025)
+------------------------------
+- Updated Linux and Windows CI builds to use ``swig`` 4.2.1
+- Updated CI scripts to run on latest macOS and no longer use Ubuntu 20.04
+- Updated :ref:`makeDraftModule` to remove redundant comments and implementation of the destructor,
+  using only a header-defaulted destructor with ``= default;`` syntax.
+- Fixed issue where reaction wheels with unlimited torque (``useMaxTorque=False``) would end simulation prematurely
+- Added safety mechanism to limit excessive wheel acceleration and provide warning messages
+- Fixed a bug in the :ref:`SpacecraftLocation` module that prevented proper eclipse calculation in some cases.
+- Added support for Vizard release 2.2.2, including transition from MultiSphere to MultiShape, and SWIG structure deprecation through aliasing.
+- Fixed scenario name mismatch in :ref:`scenarioRerunMonteCarlo` that prevented rerunning example Monte Carlo simulation scenarios.
+- Fixed bug in :ref:`thrusterPlatformReference` where a DCM had an incorrect transpose operation.
+- Memory Leak for ``reactionWheelStateEffector`` fixed via destructor update, swig update,
+  and removing ``.disown()`` in RW factory classes.
+- Removed the use of ``.disown()`` in all BSK scripts.  Python code is modified to ensure
+  required message of class instance are retained in memory  if needed.  This removes
+  a memory leak issue when running lots of instances of BSK in Monte Carlo runs.
+- C++ wrapped sensor objects (CSS, thrusters, reaction wheels) must now be stored
+  on the simulation object to prevent premature garbage collection. This change affects all scenarios
+  using these components. See :ref:`bskKnownIssues` for detailed explanation and examples. Users
+  upgrading from previous versions must update their scripts to store these objects on their
+  simulation instance to prevent segmentation faults. Once again, this change replaces the previous use of
+  ``.disown()`` with a more robust memory management approach.
+- Added comprehensive unit tests for :ref:`avsEigenSupport` including tests for vector and matrix operations
+  and conversions.
+- Updated install requirements to not manually install ``cmake``, but have it installed with pip by including it
+  in ``requirements_dev.txt``.  A ``conan`` dependency requires Basilisk to use ``cmake<4.0`` for now.
+- Add support for python 3.13 by removing the use of ``eval()`` and most ``exec()`` methods,
+  rewrote ``methodizeEvent()`` in ``SimulationBaseClass.py``.  If you use python 3.13+ the
+  scope of the ``eval()`` method has changed (see https://peps.python.org/pep-0667/).
+- Added ``lla2fixedframe()`` function in :ref:`vizSupport` which provides ability to define Locations on a parent body by providing latitude/longitude/altitude relative to reference ellipsoid.
+- Fixed a bug in :ref:`radiationPressure` where ``parseAndLoadXML()`` would raise a ValueError when using VS Code's debugger.
+  The error occurred in Python 3.10.12 because numpy arrays that reference other arrays cannot be resized
+  without setting ``refcheck=False``. This fix allows debugging scenarios that use the radiation pressure module.
+- Enhanced FSW effector interface modules to zero output messages in their reset methods, ensuring safe management
+  of effector states when algorithms are disabled. This prevents potential runaway operations by clearing stale
+  control values.
+- Updated :ref:`scenarioDeployingSolarArrays` to use the new ``P``-frame designation for the prescribed motion body
+- Deleted deprecated ``prescribedRot1DOF`` and ``prescribedTrans`` modules.  They have been replaced a while ago
+  with :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation`.
+- :beta:`Mujoco Support`: Added a new ``DynamicObject`` for multi-body dynamics that uses the `MuJoCo <https://mujoco.org>`_ library.
+  Information about using mujoco is found in :ref:`mujocoDynObject`. This is a work in progress, and is not
+  yet ready for general use. This system will be expanded to include more features and capabilities in future releases.
+- Added support for showing ``QuadMap`` quadrilateral surface meshes in Vizard, with scenario :ref:`scenarioQuadMaps` detailing usage. Allows users to draw quads on celestial bodies and spacecraft.
+- Added ``fixedframe2lla()`` function in :ref:`vizSupport` which is useful for computing QuadMap mesh interpolations
+- Added QuadMap mesh support functions (:ref:`quadMapSupport`) for displaying camera FOV boxes as projected on the surface of a reference ellipsoid, and drawing rectangular latitude/longitude defined regions.
+- Updated ``THRSimConfig`` to use a shared pointer to avoid duplication of configuration data across the simulation and to enable access and updates to the parameters during simulation. This change has been implemented in both the ``thrusterDynamicsEffector`` and ``thrusterStateEffector`` modules.
+- :beta:`Mujoco Support`: Added ``StatefulSysModel`` for models in the dynamics task of ``MJScene`` that need to declare
+  continuous-time states. Modified :ref:`scenarioDeployPanels` to illustrate the use of ``StatefulSysModel``.
+
+
+Version  2.6.0  (Feb. 21, 2025)
+-------------------------------
+- Build ``ubuntu-latest`` wheels for Python 3.9, 3.10, and 3.11 on GitHub CI, allowing for
+  other CI systems to use these wheels for testing with Basilisk as a dependency.
+- updated README file.  Links now point to local documentation instead of to the pages
+  on the AVS lab web page that used to host the documentation.
+- Updated :ref:`scenarioBasicOrbitStream` to add the ability to pause and resume the live BSK stream
+- Added documenation on installing with ``pip`` via source code in :ref:`pipInstall`
+- Updated :ref:`scenarioOrbitManeuver` to include a SPICE module that rotates the Earth
+- Changed the way polyhedron gravity is computed to be more computationally efficient
+- Updated :ref:`vizInterface` to flush the output buffer when saving binary files to avoid truncation
+- Updated :ref:`examples` to better include folders of scenario tutorial scripts
+- Updated documentation build to use latest version of ``sphinx`` and ``sphinx_rtd_theme``.
+  Updated the install documenation and optional package requirements.
+- Updated ``MonteCarloExamples`` directory with a bokeh plotting feature robust to large Monte Carlo datasets
+- Updated :ref:`scenarioVisualizeMonteCarlo` to autogenerate live bokeh plots in Sphinx documentation
+- Updated :ref:`scenarioMonteCarloAttRW` to include the new ``useBokeh`` feature in the ``run()`` method
+- Updated :ref:`scenarioMonteCarloAttRW` to use more pythonic OOP for Monte Carlo data retention
+- Updated :ref:`scenarioMonteCarloSpice` to use more pythonic OOP for Monte Carlo data retention
+- Decreased the Basilisk wheel size by keeping large data files out of the wheel.
+- The wheel installs the local command tool ``bskLargeData`` to execute :ref:`bskLargeData`.
+  The purpose is to install the large Basilisk data files into the local Basilisk
+  python package.
+- The wheel installs the local command tool ``bskExamples`` to execute :ref:`bskExamples`.  This
+  tool downloads the Basilisk repo ``examples`` folder into the local folder
+- Removed the now deprecated ``datashader_utilities.py`` in favor of the new bokeh plotting features in ``AnalysisBaseClass.py``
+- Upgraded protoc compiler to v3.20.0, added ``protobuf`` to optional package install list
+- Created unit tests for protobuffer packing and saving in :ref:`vizInterface`
+- Added YouTube video links of Vizard illustrating the :ref:`scenarioFlexiblePanel` and
+  :ref:`scenarioRoboticArm` scenarios.
+- Fixed issue in which reading ``RWModel`` from RW message payloads when :ref:`vizInterface` was also
+  imported would return a Swig Object instead of an enumerated integer.
+- Refactored the ``GaussMarkov`` class to enforce walk bounds and remove the need for the 1.5x noise multiplier.
+  Note: Existing code that used this multiplier will need to be updated to maintain the same behavior.
+- Removed the deprecated 1.5x multiplier in :ref:`magnetometer` and :ref:`coarsesunsensor` when setting 'senNoiseStd'
+- Updated ``starTracker`` unit tests to properly convert EP's to rotation vector now that random walk exists
+- Added :ref:`scenarioGaussMarkovRandomWalk` to showcase ``GaussMarkov`` class functionality
+- Added unit test coverage for ``GaussMarkov`` implementation in :ref:`tempMeasurement`,
+  :ref:`simpleNav` and :ref:`planetNav`.
+- Fixed SWIG array handling for message payloads on macOS, particularly addressing issues with uint8_t arrays and other
+  array types in message payloads. This resolves compatibility issues between SWIG's array typemaps and builds.
+- A bug was fixed in the :ref:`facetSRPDynamicEffector` module. A transpose was required to be added to a dcm
+  in order to correctly express rotated facet normals in the spacecraft body frame.
+- The :ref:`facetSRPDynamicEffector` module was refactored and setters and getters were added for the module
+  variables ``numFacets`` and ``numArticulatedFacets``. A deprecation warning is added to the module documentation
+  stating that these variables will be moved to private module variables in Dec 2025. To access these variables
+  the added setters and getters must be used.
+- Fixed a bug in which the ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
+  include file in ``MtbEffector.i``.
+- Added the capability to simulate a fault in the :ref:`simpleBattery` module that reduces the actual storage capacity without directly altering the stated capacity.
+- Cleaned up what python packages are required to build BSK (``requirements_dev.txt``),
+  to run BSK (``requirements.txt``) and to build BSK documentation (``requirements_doc.txt``).
+- The BSK install instructions are updated to ask users to install by first ``pip`` installing build
+  required packages through ``requirements_dev.txt``.
+- Update the build process to use ``conan`` version 2.x
+
+  .. warning::
+
+    You have to upgrade your python ``conan`` package to be able to build Basilisk.
+    Use ``python install --upgrade conan``.
+- Added support for subclassing ``StateData`` and overloading certain methods. This enables support for custom state
+  behavior, such as quaternions, which have size 4 but their derivative is size 3. This is done in preparation of
+  a future MuJoCo integration. Note the warning below regarding SWIG files for ``dynamicEffector`` and ``stateEffector``.
+
+  .. warning::
+
+    SWIG files for subclasses of ``dynamicEffector`` and ``stateEffector`` must now
+    ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"`` instead of
+    ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"``. See
+    ``src/simulation/dynamics/dragEffector/dragDynamicEffector.i`` for an example.
+- Update CI Linux build with ``opNav`` to use Ubuntu 22.04, not latest (i.e. 24.02).  The latter does not
+  support directly Python 3.11, and Basilisk does not support Python 3.13 yet.
+- :ref:`simIncludeGravBody` set the moon equatorial radius in km, not meters.
+- fixed ``subMRP()`` routine in :ref:`RigidBodyKinematics`
+- Updated :ref:`solarArrayReference` to correct the wrong assumption of reflective solar arrays for momentum management pointing mode.
+- Updated the CI build that includes the documentation to fail if a doxygen warning happens
+- Removed deprecated swig code that allowed still importing `sys_model.h` instead of `sys_model.i`
+- Updated :ref:`groundMapping` to correct behavior if ``maximumRange == -1``
+- Updated scripts to work with ``matplotlib`` version 3.10.x without errors or warnings
+- Add support for Python 3.12
+- Resolved inconstencies in sensor noise handling for the :ref:`imuSensor`, :ref:`coarseSunsensor`,
+  :ref:`magnetometer`, :ref:`starTracker`, and :ref:`simpleVoltEstimator` modules.
+- Added setter and getter methods for the propagation matrices in the :ref:`simpleVoltEstimator`
+  and :ref:`starTracker` modules as their ``Amatrix`` attributes were private.
+- Name change warning added to module documentation for the ``imuSensor`` ``walkBounds`` attribute to ``errorBounds``
+  and a note on specifying sensor properties in  :ref:`scenarioGaussMarkovRandomWalk`.
+- Update :ref:`makingModules-2` on how to make messages available to Basilisk modules
+- Support for Vizard release 2.2.1, including rotating frame settings and documentation for support of ``.glb`` shape files
+- ``vizProtobuffer`` upgraded to use latest C++ compiler, ``protobuf`` Python/C++ library upgraded
+- Updated :ref:`installLinux` to discuss installing BSK on Fedora Linux systems.
+- Updated CI scripts to catch cases where tests are skipped that should be.  Windows now builds properly with `conan2`.
+- Download ``cspice`` using ``conan`` instead of providing custom libraries.  This ensures all platforms are using
+  the same version of ``cspice``.
+- Ensured that the ability to designate an external BSK folder still works with ``conan2``
+
+
+Version 2.5.0 (Sept. 30, 2024)
+------------------------------
+- Added swirl torque information to :ref:`THRConfigMsgPayload`, :ref:`thrustCMEstimation`, and :ref:`thrusterPlatformState`
+- Updated required version of `setuptools` to avoid installation error ("invalid command ``bdist_wheel``") on
+  some environments.
+- Made the initial Basilisk build more robust in case ``de430.bsp`` download was interrupted
+- Enhanced :ref:`thrusterDynamicEffector` to allow automatic scaling down of thrust and Isp as fuel mass depletes.
+- Fixed issue with :ref:`vizInterface` not being able to save to file
+- Fixed issue with :ref:`vizInterface` not saving off Vizard protobuffer message on first time step
+- Created an input device status message to toggle the :ref:`constraintDynamicEffector` dynamics module on/off.
+- Created an output message to record constraint forces and torques acting on separate spacecraft connected using a :ref:`constraintDynamicEffector` dynamics module.
+- Added in a low-pass filter to filter the output forces and torques of the :ref:`constraintDynamicEffector` dynamics module.
+- Removed deprecated way to log Basilisk module variables
+- Removed deprecated way to create C-wrapped Basilisk modules
+- Corrected Equations (11) and (12) in the :ref:`celestialTwoBodyPoint` PDF documentation
+- Expanded the GitHub CI tests to run scenario script tests
+- Untangled :ref:`ClassicElementsMsgPayload` which was used both as a message payload definition
+  and as a data structure inside modules.  The use of ``classicElements()`` is now depreciated
+  for the use of ``ClassicElements()`` defined in :ref:`orbitalMotionutilities`.
+- Added ``packaging>=22`` dependency for installing Basilisk to solve an incompatibility issue with ``setuptools``.
+- Added support for macOS to the CI test builds, including opNav for all three platforms
+- Added CI support to test Linux on latest Ubuntu with opNav
+- Added CI support to build and test Basilisk documentation on the GitHub macOS platform
+- Added new scenario :ref:`scenarioOrbitManeuverTH` to do Hohmann transfer using thrusters
+- Refactored :ref:`pyswice_ck_utilities` utility file, added unit test
+- Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
+  astronautical data in :ref:`astroConstants`.  These tools now all use a consisten set of planet data
+  referenced from NASA sources.
+- Updated :ref:`simIncludeRW` to allow values of ``fCoulomb``, ``fStatic`` and ``cViscous`` to be
+  specified even if a prebuilt RW data set is used.
+- If ``messaging`` was not imported then the msg ``recorder()`` modules couldn't be setup.  Now
+  ``messaging`` is imported as part of the Basilisk package so the ``recorder()`` modules always work.
+- Added the ability for GitHub to rebuild the BSK documentation each time a branch is merged back into develop.
+  This way the online documentation for develop is up to date for each contribution, not just for the hand-built
+  documentation we did with major tagged releases.  The new Basilisk online documentation list is now
+  `<https://avslab.github.io/basilisk>`__.
+- Small updates to the Cmake build process to remove unneeded policies and python 3 swig overwriting scripts
+- Added a Lambert's problem based FSW package to compute the DV maneuver required to get to a desired location at a
+  desired time. At that location, another maneuver may be performed to match the surface velocity of a celestial body.
+  This FSW package consists of the modules :ref:`lambertSolver` to solve Lambert's problem, :ref:`lambertPlanner` to
+  set up and define the Lambert problem, :ref:`lambertValidator` to check if the solution from the :ref:`lambertSolver`
+  module violates any constraints before a Delta-V is commanded, :ref:`lambertSurfaceRelativeVelocity` to compute the
+  inertial velocity required to match the surface velocity of the central body, and :ref:`lambertSecondDV` to compute
+  the DV maneuver required to match the surface velocity.
+- Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert's problem FSW module package
+- Added :ref:`scenario_LambertGuidance` BSK-Sim scenario to illustrate the Lambert modules in different flight modes
+- Added new scenario :ref:`scenarioSweepingSpacecraft` to perform sweeping maneuvers.
+- Added a new :math:`N`-axis translating effector :ref:`linearTranslationNDOFStateEffector` and a corresponding scenario
+  :ref:`scenarioExtendingBoom`.
+- Enhanced :ref:`scenarioSepMomentumManagement` with the options to model the thruster swirl torque and to use
+  :ref:`solarArrayReference` in momentum management mode.
+
+
+Version 2.4.0 (August 23, 2024)
+-------------------------------
+- Added a new example scenario :ref:`scenarioConstrainedDynamics` demonstrating post-docked spacecraft dynamics
+- Created a :ref:`constraintDynamicEffector` dynamics module to couple separate spacecraft motion using holonomic
+  constraints.
+- Removed the depreciated manner of creating python modules
+- Created a new example scenario :ref:`scenarioTempMeasurementAttitude` demonstrating the use of tempMeasurement module and generating random noise in the measurement.
+- Uncaught exceptions raised in Python modules are now printed to ``stderr`` before the program is terminated.
+- Updated Basilisk and Vizard logos and provided download links
+- Updated ``News and Discussions`` menu tab to be ``External Links`` to Basilisk related web sites
+- Added a new N-axis spinning effector :ref:`spinningBodyNDOFStateEffector`. This is an expansion of :ref:`spinningBodyOneDOFStateEffector`
+  and :ref:`spinningBodyTwoDOFStateEffector` to any number of degrees of freedom.
+- Update the Windows build to automatically include the Math library defines.  This avoids having
+  to include them in BSK source code files individually.
+- Added support for arrays and 2D arrays of 16 and 64 bit integers in message definitions
+- Fixed bug where 2D arrays of 32 bit integers would have elements of type ``float`` in python.
+- Fixed the ``Identity()`` method in avsEigenMRP library.
+- Fixed the ``SpiceInterface::initTimeData()`` method to write epoch strings with microsecond precision instead of 0.1 second precision
+  to prevent SPICE errors when epochs ending with seconds higher than 59.95 seconds got rounded up to 60.0 seconds
+- Update :ref:`dynamicEffector` and :ref:`stateEffector` classes to be able to pull the state engine names of the
+  spacecraft hub object
+- The fuel tank module is refactored to remove the limitation of a only being able to have a single instance of a
+  specific tank model type.
+- Update Basilisk documentation build system to use latest version of ``sphinx`` and ``sphinx_rtd_theme``
+- Added time tag to :ref:`CSSArraySensorMsgPayload`
+- updated Eigen library to 3.4.0
+- updated OpenCV library to 4.5.5
+- Added support for Vizard 2.2.0
+- Added documentation on using pre-commit formatters and clang formating
+- Added two new scenarios that use the :ref:`spinningBodyNDOFStateEffector` module. :ref:`scenarioRoboticArm` simulates
+  a robotic arm that changes orientation through the use of the :ref:`prescribedRotation1DOF` profiler module.
+  :ref:`scenarioFlexiblePanel` simulates a flexible panel that has torsional and bending modes, which are approximated
+  though a lumped-mass approach and discretized to as many subpanels as needed.
+- Fixed ``protectAllClasses`` method in ``Basilisk.architecture.swig_common_model`` so that it actually protects the classes
+  in the given module (prevents code from setting unknown attributes). This might impact user code that depended on adding
+  additional attributes to python classes generated by SWIG.
+- Updated install instructions to specify python version 3.8 to 3.11 are required.  Python 3.12 does yet work.
+- Updated :ref:`bskPrinciples-6` to discuss how to log private C++ module variables that have a getter method
+- Updated :ref:`cppModuleTemplate` to make user configurable variables private, accessed via setter and getter methods
+- Updated :ref:`makeDraftModule` to make C++ modules with private module variables using setter/getter methods
+- Updated :ref:`cppModules-1` to discuss the new expectation that C++ modules are all private.  This enables
+  graceful module variable depreciation if needed.
+- Added support for numpy 2.0.
+- Fixed use of spherical coordinate system in :ref:`magneticFieldWMM` model.
+- Added ability to run the GitHub ``pull_request.yml`` action on a select branch
+- Fixed mass depletion rate bug in :ref:`thrusterStateEffector` previously fixed at 100%
+- Enhanced :ref:`solarArrayReference` with a mode that can compute the reference for the solar arrays that maximizes SRP torque opposed to current RW net momentum.
+- (Beta) Added PEP-517-compliant project specification, providing initial support for installation via ``pip install .``.
+
+  - NOTE: This is primarily intended to support pre-compiled releases in the future. All users are recommended to continue
+    using ``python conanfile.py`` installation for now.
+
+- The ``cmake`` command now downloads large Spice data files automatically from the JPL server.
+- Updated Conan/CMake build system to avoid unnecessary recompilations and greatly speed up rebuilds.
+
+
+Version 2.3.0 (April 5, 2024)
+-----------------------------
+- Added optional facet articulation to the :ref:`facetSRPDynamicEffector` module.
+- Fixed a bug where the legacy variable logging API would either, not log at all or log at a rate different to the
+  requested rate.
+- Fixed a python version checking bug that prevented Basilisk from compiling on Windows
+- Created a new example scenario :ref:`scenarioHaloOrbit` demonstrating a near-Halo orbit simulation
+- Updated versioning to better follow the `semantic versioning <https://semver.org>`_ standard, in the format
+  ``MAJOR.MINOR.PATCH``. Releases will increment the minor version number, while pull requests into develop will
+  automatically increment the patch number. This allows users to reference/require specific versions of Basilisk
+  outside of the release cycle.
+  Online documentation is only built for the ``MAJOR.MINOR.0`` releases
+- updated plotting of ``opNav`` example scenarios to work again with latest version of ``matplotlib``
+- fixed a slew of compiler warnings when compiling with Xcode 15
+- Refactored the ``PrescribedTransMsgPayload`` message by renaming the message to
+  :ref:`LinearTranslationRigidBodyMsgPayload` and renaming the message variables from ``scalarPos`` and ``scalarVel`` to
+  ``rho`` and ``rhoDot``
+- Deprecated the :ref:`prescribedMotionMsgPayload` message and replaced with two separate
+  :ref:`prescribedTranslationMsgPayload` and :ref:`prescribedRotationMsgPayload` messages.
+- added support for the new ``swig`` 4.2 version
+- updated the Windows build to compile properly with ``opNav`` flag set to true.  A
+  ``opencv`` related flag had to be updated.
+- added supoport for Vizard 2.1.6
+- Created a :ref:`prescribedLinearTranslation` dynamics module to profile prescribed linear translation for a
+  secondary rigid body connected to the spacecraft hub. This new module deprecates the ``prescribedTrans`` module.
+  To simulate the translation, this module must be connected to the :ref:`prescribedMotionStateEffector`
+  dynamics module.
+- Created a :ref:`prescribedRotation1DOF` dynamics module to profile a prescribed 1 DOF rotation for a secondary
+  rigid body connected to the spacecraft hub. This new module deprecates the ``prescribedRot1DOF`` fsw module.
+  To simulate the rotation, this module must be connected to the :ref:`prescribedMotionStateEffector` dynamics module.
+- Created a new example scenario :ref:`scenarioDeployingSolarArrays` demonstrating how to simulate hub-relative
+  multi-body prescribed motion.
+- Added support for Vizard 2.1.6.1
+- Updated :ref:`MtbEffector` to include missing swig interface file for a message definition and corrected
+  message table in the module documentation.
+- Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedLinearTranslation`
+  simulation module. Note that the optional module variable ``coastOptionRampDuration`` has been renamed to
+  ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
+  ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
+  for the current usage of this parameter and these associated methods.
+- Added a new commanded linear force array :ref:`LinearTranslationRigidBodyMsgPayload`.
+- Added a new single-axis translating effector :ref:`linearTranslationOneDOFStateEffector`.
+- Added smoothed bang-bang and smoothed bang-coast-bang profiler options to the :ref:`prescribedRotation1DOF`
+  simulation module. Note that the optional module variable ``coastOptionRampDuration`` has been renamed to
+  ``coastOptionBangDuration``. The setter and getter methods for this variable are renamed to reflect this change as
+  ``setCoastOptionBangDuration()`` and  ``getCoastOptionBangDuration()``, respectively. See the module documentation
+  for the current usage of this parameter and these associated methods.
+- Updated messaging files so that non-swig messages can be subscribed to, and data read out from.  Supports pybind-based messages notably.
+
+
+Version 2.2.1 (Dec. 22, 2023)
+-----------------------------
+- Created a new example scenario :ref:`scenarioSatelliteConstellation` demonstrating setup of a Walker-Delta constellation
+- Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
+  small body.
+- Corrected a memory leak in the ``swig`` access to standard vectors inside messages.
+- A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
+- Created a new example scenario :ref:`scenarioSpinningBodiesTwoDOF` that showcases the different capabilities of the
+  :ref:`spinningBodyTwoDOFStateEffector` module.
+- Corrected an error with :ref:`thrusterStateEffector` where if there are multiple instances of the
+  thruster state effector then the last effector will over-write all the state of the earlier thrusters.
+- Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the
+  constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only
+  used if all three components of the standard deviation parameter are initialized to a positive value.
+- Removed fswAuto and associated documentation, as the tool was outdated.
+- Changed how C modules are wrapped as C++ classes. This makes handling C modules the same as C++ modules,
+  removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
+  To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
+  syntaxt to add C-modules.
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque
+  feedback output message.
+- Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
+  gcc 9.5
+- Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
+- Basilisk minimum Python version is now formally 3.8.x (checked by build files). Previously, it was indicated to be
+  3.7.x yet in practice it was 3.8.x.
+- Added a ``TotalAccumDV_CN_N`` field in :ref:`SCStatesMsgPayload` that saves the total accumulated velocity of the
+  spacecraft's center of mass in the inertial frame.
+
+.. warning::
+
+    SWIG files (``.i``) for modules should include ``%include "sys_model.i"`` instead of ``%include "sys_model.h"``
+    to take advantage of the new module variable logging feature.
+
+- Added prescribed angle and angle rates to :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyTwoDOFStateEffector`
+  modules.
+- Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
+  and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
+- Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
+  The basic attitude flight modes are implemented using the Basilisk event system.
+- updated conan support to latest ``1.xx`` version to provide support for macOS Sonoma
+- updated macOS ``cspice`` library to be compiled with Xcode 15.  This addresses some errors that appeared
+  when calling the prior pre-built ``cspice`` library.  The new library is backwards compatible with
+  prior versions of Xcode.
+- Fixed a bug in the conanfile where the ``stderr`` output from a ``subprocess.Popen`` call was being interpreted as an
+  error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
+- The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
+- mixed bug in time to nano-seconds conversions in ``macros.py`` support file
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Updated :ref:`thrusterPlatformReference` to add an input and output thruster config msg, and integral feedback term
+  which dumps steady-state momentum in case of uncertainties on the CM location.
+- Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
+- Refactored ``GravityEffector``. Adding custom gravity models can now be done by subclassing ``GravityModel``. The
+  utility method ``useSphericalHarmonicsGravityModel`` has been added to planetary body objects, which makes the body
+  use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
+  and ``usePointMassGravityModel`` have been added.
+- Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
+- Added a new method ``setDataBuffer()`` to :ref:`simpleStorageUnit` and :ref:`partitionedStorageUnit` to add or remove data from specified partitions.
+- Refactored ``simIncludeGravBody``. The most notable change for users is that the commonly used line
+  ``scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))``
+  can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft``
+  or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
+- Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
+- Added :ref:`scenarioSepMomentumManagement` to show how to use a dual-gimbaled electric thruster to perform contunuous
+  momentum management.
+- Clarified documentation of the input variable ``FirstStart`` of the method  ``CreateNewTask()``.
+- Marked the method ``CreateNewTask()`` input variable ``InputDelay`` as depreciated.  This variable
+  was never implemented and did nothing.
+- Fixed terminal events to terminate at the time they are triggered instead of one timestep after.
+
+
+
+Version 2.2.0 (June 28, 2023)
+-----------------------------
+- Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
+  See :ref:`pyModules` for details.
+- Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
+  member at the same time.  See :ref:`bskPrinciples-9`
+- updated ZMQ version to 4.5.0.  For 2-way communication with ``opNav`` modules talking to Vizard
+  then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
+  Delete ``~/.conan`` folder if you run into ``conan`` issues.
+- The Basilisk project C++ version is advanced from C++11 to C++17
+- Disabled the following build options in the conan included OpenCV dependency; with_ffmpeg video frame encoding lib,
+  with_ade graph manipulations framework, with_tiff generate image in TIFF format, with_openexr generate image in EXR
+  format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
+  Modules CMake integration will need to manual toggle these OpenCV build options.
+- Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
+- Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the
+  radius of Mars.
+- Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
+- Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
+- Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a
+  static spacecraft.
+- fixed ``PCI2PCPF()`` and ``PCPF2PCI`` methods in :ref:`geodeticConversion` to use the correct DCM
+- updated :ref:`geodeticConversion` to be able to account for planet ellipsoidal shape if polar radius is provided
+- Google Test C/C++ testing framework added
+- Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
+  body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
+- Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
+- Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
+  [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
+- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun
+  than the spacecraft
+- fixed the time evaluation in :ref:`msisAtmosphere`
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the
+  :ref:`simpleInstrumentController` to match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are
+  not thrown
+- Fixed bug where message struct members of bool python types are returned as empty dicts instead of array of boolsgit
+- Refactored the :ref:`prescribedMotionStateEffector` dynamics module to vary the prescribed states across the dynamics
+  integration time step.
+- The encryption build option for the project's conan zmq dependency is disabled because it is uneeded.
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to
+  match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
+- Reworked how integrators are implemented. New Runge-Kutta integrators may
+  now be added simply by specifying the relevant coefficients.
+- Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
+
+Version 2.1.7 (March 24, 2023)
+------------------------------
+- Fixed ``CMake/conan`` case sensitivty issue when compiling Basilisk with ``opNav`` flag set to ``True`` on Linux platforms
+- Created fsw :ref:`hingedRigidBodyPIDMotor` to compute the commanded torque to :ref:`spinningBodyOneDOFStateEffector` using a proportional-integral-derivative controller.
+- Added :ref:`torqueScheduler` to combine two :ref:`ArrayMotorTorqueMsgPayload` into one and implement effector locking logic.
+- Refactored how ``Custom.cmake`` files are included and how they are to be constructed. ``Custom.cmake`` files
+  should no longer include an include guard (e.g. ``if(BUILD_OPNAV) ... endif(BUILD_OPNAV)`` ). Rather, to add
+  optionally compile a module, its directory name should be added to a list in
+  ``src/cmake/bskTargetExcludeBuildOptions.cmake``. Most importantly, the build target is now accessible within the
+  a ``Custom.cmake`` file as ``${TARGET_NAME}``. This enables appropriate modularization of build target specific
+  includes, dependencies, and compiler flags. For an example of the implications of this refactor review the before
+  and after of the ``src/cmake/usingOpenCV.cmake`` file.
+- updated :ref:`unitTestSupport` to create the file path in a platform agnostic manner
+- Created a :ref:`sensorThermal` module to model the temperature of a sensor using radiative heat transfer
+- Created a :ref:`tempMeasurement` module to add sensor noise/bias and fault capabilities to temperature readings
+- Added a ``terminal`` flag to the event handlers that cause the simulation to terminate when triggered; demonstrated
+  use of flag in update to :ref:`scenarioDragDeorbit`.
+- Created a :ref:`prescribedMotionStateEffector` dynamics module for appending rigid bodies with prescribed motion
+  to the spacecraft hub.
+- Created a ``prescribedRot1DOF`` fsw module to profile a prescribed rotational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Created a ``prescribedTrans`` fsw module to profile a prescribed translational maneuver for a secondary rigid body
+  connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Added :ref:`solarArrayReference` to compute the reference angle and angle rate for a rotating solar array.
+- Update python dependency documentation and check to not use ``conan`` version 2.0.0 for now
+- Changed the ``SpinningBodyStateEffector`` module name to :ref:`spinningBodyOneDOFStateEffector`.
+- Added the ability to lock the axis on the :ref:`spinningBodyOneDOFStateEffector` module.
+- Added two new unit tests to :ref:`spinningBodyOneDOFStateEffector`.
+- Updated :ref:`magneticFieldWMM` to use the latest WMM coefficient file and evaluation software
+- Added a :ref:`spinningBodyTwoDOFStateEffector` module that simulates a two-axis rotating rigid component.
+- Created :ref:`oneAxisSolarArrayPoint` to generate the reference attitude for a spacecraft that needs to point a body-fixed
+  axis along an inertial direction while ensuring maximum power generation on the solar arrays
+- Added a maximum power parameter ``maxPower`` to :ref:`reactionWheelStateEffector` for limiting supplied
+  power, independent of the modules in simulation/power.
+- Added :ref:`thrusterPlatformReference` to align the dual-gimballed thruster with the system's center of mass, or at an offset thereof to perform momentum dumping.
+- Improved reliability of opNav scenario communication between :ref:`vizInterface` and Vizard
+- provide support or Vizard 2.1.4 features
+
+
+Version 2.1.6 (Jan. 21, 2023)
+-----------------------------
+- Refactored :ref:`keplerianOrbit` to not depend on the ``gravityEffector`` class
+- Updated Basilisk install documentation to discuss accessing source code from GitHub.com
+- Fixed an issue where attaching a thruster to a body different than the hub when using ``zeroBase`` would yield very large offsets.
+- Added documentation in :ref:`bskPrinciples-4` on how to read the current message values
+- Highlighted the challege of setting up a ``recorder`` on a re-directed message in :ref:`bskPrinciples-7`
+- added the ability to add a ``recorder()`` to a C-wrapped module input message
+- Fix an issue in in :ref:`magneticFieldWMM` where a fixed width array holding a file path would result in a cutoff
+  path when basilisk is located in a directory path of greater than 100 characters.
+- Updated the build system to use newer versions of ``eigen``, ``protobuf``, ``cppzmq``
+  and ``opencv``.  This corrects some build issues with new compilers.
+- The ``linearAlgebra``, ``rigidBodyKinematics``, ``orbitalMotion`` were mistakenly exposed as part of the
+  :ref:`sim_model` module's API. They have been removed and the functions they provided are still found in
+  ``Basilisk.utilities.orbitalMotion``, ``Basilisk.architecture.linearAlgebra``, and
+  ``Basilisk.architecture.rigidBodyKinematics``.
+- Fixed an issued recording the ``timeWritten`` information of a C-wrapped message
+  with a ``recorder()`` module.
+- Updated :ref:`pullCloneBSK` to ask the user to first install ``lfs`` before pulling a copy
+  of the Basilisk repo due to some large files being stored in the GitHub large file storage
+  system.
+- Updated :ref:`scenarioGroundLocationImaging` to properly save off the ground location
+  information for Vizard
+- Added a new helper function to convert C arrays to ``Eigen::MRPd`` and vice-versa inside ``avsEigenSupport``.
+- Updated ``SpinningBodyStateEffector`` to use the :ref:`HingedRigidBodyMsgPayload` output message type for compatibility with other modules
+- Added the ability to set an inertial heading in the :ref:`boreAngCalc` module. Changed the internal module logic to use ``Eigen`` library variables and functions instead of C-style arrays and methods.
+- Added support for Vizard v2.1.3
+- Updated :ref:`simpleInstrumentController` to provide the option to consider the angular velocity tracking error norm
+  when considering to take an image.
+
+
+Version 2.1.5 (Dec. 13, 2022)
+-----------------------------
+- Made the external module custom message definitions work again with the
+  latest build system.
+- Fixed the custom RW in :ref:`simIncludeRW` to store the information regarding ``u_min`` in the RW class.
+- provide support for the swig 4.1 software
+- Added the ability in both :ref:`thrusterDynamicEffector` and :ref:`thrusterStateEffector` to connect a thruster to a moving body different than the hub.
+- The thrusters now have an additional variable called ``MaxSwirlTorque``. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.
+- Added a torsional spring and damper to the ``SpinningBodyStateEffector`` module.
+- Added support for having multiple Vizard instrument cameras setup in :ref:`vizInterface`
+
+.. warning::
+
+    The support for having multiple Vizard instrument cameras requires a change in :ref:`vizInterface`,
+    and thus breaks existing code that using direct Vizard communication.  The
+    image output message is now a vector of output messages, and the ``cameraConfigBuffer`` class variable
+    can no longer be set directly.  Rather, the camera configuration message should be added
+    using the ``viz.addCamMsgToModule()``, or the message can be created and added using the convenience method
+    ``vizSupport.createCameraConfigMsg()``.
+
+- Updated :ref:`hingedRigidBodyStateEffector` and :ref:`dualHingedRigidBodyStateEffector` such that
+  the effector inertial states are relative to the inertial frame of the simulation, not the
+  central body frame.
+- Added ``color`` keyword support to the ``vizSupport.createCustomModel()`` method
+- Updated :ref:`cppModules-4` to explain how now the swig interface to vectors of input/output messages
+  are now auto-generated when making Basilisk project
+- added documentation about creating and importing custom Unity addressable assets
+  in :ref:`vizardCustomUnityModels`.
+- fixed :ref:`scenarioAttLocPoint` to display the Earth location and the associated cone
+  again in Vizard.  Updated :ref:`vizardSettings` description of ``addLocation()`` method.
+- Added experimental support to build Basilisk on Linux with a computer using an ARM processor.
+- Updated :ref:`CameraConfigMsgPayload` to support the Vizard flag ``updateCameraParameters`` which
+  allows the camera parameters to be updated live.
+- Updated documentation to discuss downloading Basilisk from GitHub
+
+
+Version 2.1.4 (Oct. 1, 2022)
+----------------------------
+
+- revised how the build system swig's all the message objects.  This leads to compile time improvements across all
+  platforms.  In Linux in particular we are seeing a 2x reduction in compile time.  These changes also reduce
+  the memory requirements when compiling. Note: The ``basilisk.architecture.cMsgCInterfacePy`` content is
+  now included in ``basilisk.architecture.messaging`` package.  Prior scripts using ``cMsgCInterfacePy``
+  still run as a link has been created.  However, the use of ``cMsgCInterfacePy`` is depreciated and code
+  should be updated to using ``messaging`` instead.
+- added new :ref:`hingedRigidBodyMotorSensor` for adding noise, bias, and discretization to panel state message
+- added new :ref:`simpleVoltEstimator` to provide simulated voltage measurements of a neighboring space object
+- added the ability to have a RW motor torque break slow down the wheel speed if saturated.  The motor torque
+  is set to zero if it is trying to increase the wheel speed in saturation conditions.
+- updated Windows install instructions about setting path variables
+- enhanced Windows install instructions to highlight adding ``cmake`` binary to the command line path
+- added new training videos to :ref:`scenario_BasicOrbit`, :ref:`scenario_FeedbackRW` to discuss how to
+  create class based Basilisk simulations
+- added new :ref:`groundMapping` for mapping points on the surface of a spherical body.
+- added new :ref:`mappingInstrument` to pass along access from a vector of map points to a storage unit.
+- updated :ref:`locationPointing` to allow for spacecraft targeting as well
+- added new :ref:`scenarioGroundMapping` scenario to demonstrate the new mapping capabilities.
+- added new :ref:`scenarioRendezVous` scenario illustrating a servicer approaching
+  a debris object and engage several flight modes.
+- added new scenario :ref:`scenarioDragDeorbit`
+- added new scenario :ref:`scenarioLagrangePointOrbit`
+- added Vizard 2.1.1 support for spacecraft ellipsoid shapes, Unity camera parameters
+- added support for the polynomial gravity model to :ref:`gravityEffector`
+- updated the ``conanFile.py`` to fix configuration and building issues with the latest
+  version of python
+- fixed issue computing latitude angle in ``PCPF2LLA()`` in :ref:`geodeticConversion`.  This was used
+  in the helper method ``specifyLocationPCPF()`` method inside :ref:`groundLocation`, as well as
+  :ref:`msisAtmosphere` and :ref:`albedo`.
+- fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.
+- added new :ref:`scenarioMomentumDumping` to illustrate how to perform momentum dumping using thrusters.
+- updated :ref:`hingedRigidBodyStateEffector` to allow for an optional panel reference state input message
+- added new :ref:`scenarioDeployingPanel` to demonstrate panel deployment using panel reference message
+- added new :ref:`thrusterStateEffector` which is compatible with a variable time step integrator.  Here
+  the thrust on-off command is passed through a first order low-pass filter to provide smooth on- and
+  off-ramping.
+- added new attitude pointing scenario :ref:`scenarioAttitudeFeedback2T_stateEffTH` that uses
+  the new :ref:`thrusterStateEffector`
+- added ability to simulate faults within :ref:`coarseSunSensor` module
+- created a 1-DoF rotating rigid body class ``SpinningBodyStateEffector``. It is built in a general way to simulate
+  any effector with a single spinning axis.
+
+
+Version 2.1.3 (May 25, 2022)
+----------------------------
+- corrected how :ref:`planetEphemeris` computes the celestial body orientation
+- corrected issue in Monte Carlo controller class where if a single run is called that fails,
+  this was not reported
+- updated Basilisk documentation CSS to work with the latest version of ``sphinx`` and ``breathe``
+- added new :ref:`tabularAtmosphere` to calculate atmospheric density using atmosphere tables
+- created new :ref:`smallBodyNavUKF` to make an UKF filter for small body navigation
+- created new example script :ref:`scenarioSmallBodyNavUKF` to demonstrate the use of :ref:`smallBodyNavUKF`
+- added a function titled ``SpherePlot()`` that allows for plotting of charged spheres based
+  on the MSM model :ref:`msmForceTorque`
+- created new :ref:`smallBodyWaypointFeedback` module for waypoint-to-waypoint control about a small body
+- created new example script :ref:`scenarioSmallBodyFeedbackControl` to demonstrate the new module
+- added :ref:`scenario_AddRWFault` to show how to use event handlers to add faults
+- added :ref:`constrainedAttitudeManeuver` with MRP-cartesian-distance- and effort-based A* graph search algorithms
+- added :ref:`scenarioAttitudeConstrainedManeuver` to illustrate how to use :ref:`constrainedAttitudeManeuver`
+- added ``specifyLocationPCPF()`` method to :ref:`groundLocation` for specifying ground locations in planet-centered,
+  planet-fixed coordinates
+- updated :ref:`spacecraftLocation` to handle cases where the closed approach point to
+  the planet is outside the spacecraft-spacecraft interval
+- added new :ref:`scenarioAerocapture` which simulates an aerocapture scenario
+- added new :ref:`hingedBodyLinearProfiler` to provide a panel deployment angular profile
+- added new :ref:`hingedRigidBodyMotor` to provide panel motor torque control
+- added new training videos to :ref:`configureBuild`, installOptionalPackages, :ref:`scenarioBasicOrbit`,
+  :ref:`scenarioOrbitManeuver`, :ref:`scenarioOrbitMultiBody`, :ref:`scenarioCustomGravBody`
+- added support for Vizard 2.1 scripting
+
+
+Version 2.1.2 (March 12, 2022)
+------------------------------
+- enhanced :ref:`spiceInterface` to allow Spice spacecraft names to be setup to pull their
+  trajectory and attitude states from a spice kernel
+- added :ref:`scenarioSpiceSpacecraft` to illustrate using Spice to specify the trajectory of a
+  spacecraft while leaving the attitude dynamics unprescribed.
+- fixed a bug where using the generator flag to build on windows would skip a line in the conanfile.py that is crucial for building opNav.
+- added :ref:`dentonFluxModel` to compute electron and ion fluxes for the GEO regime.
+- fixed build issue with ``conan`` version 1.44 or newer
+- fixed an issue doing a clean build of ``opNav`` mode where conan failed to install ``opencv/4.1.1``
+  with the ``jasper`` dependency.
+- enhanced ability to set the planet Spice frame in the gravity factory class
+- new ability to set the Vizard celestial body name to be different from the Spice planet body name
+- added support for ``pytest`` version 7.0.0 and higher
+- updated how ``pytest`` is run to generate a resulting HTML report
+- modified :ref:`msmForceTorque` to create an output message with the MSM charge values for each spacecraft
+- added new :ref:`scenarioInertialSpiral` example scenario
+- improved robustness of Basilisk installation script
+- provide support for Vizard 2.0.4 feature scripting
+- added a new heliocentric mission simulation example using custom Spice spacecraft
+  trajectory file :ref:`scenarioHelioTransSpice`
+- added a new planetary fly-by mission example using a custom Spice translational file and
+  attitude pointing modes :ref:`scenarioFlybySpice`
+- added a new asteroid arrival mission example with attitude pointing modes :ref:`scenarioAsteroidArrival`
+- added a new scenario :ref:`scenarioTwoChargedSC` illustrating how to apply the MSM spacecraft
+  charging model to a relative motion simulation
+
+
+Version 2.1.1 (Dec. 15, 2021)
+-----------------------------
+- Updated ``OpNav`` mode dependency ``gettext`` to version 0.21 to allow BSK to be build on Windows
+  with ``OpNav`` support.
+- created two new messages that contain the information regarding scheduled burns for orbit reconfiguration in
+  formation flying scenarios. See :ref:`ReconfigBurnInfoMsgPayload` and :ref:`ReconfigBurnArrayInfoMsgPayload`.
+- the module :ref:`spacecraftReconfig` now outputs a message of type :ref:`ReconfigBurnArrayInfoMsgPayload`.
+  All internal calculation are also done using a buffer of this message type.
+- Added the time standard library to include statements in atmosphereBase.h to fix a build issue found on windows.
+- updated :ref:`spacecraft` to include an optional translational reference message to specify the trajectory
+- Added a swig array-type ``ARRAYINTASLIST`` that fixes a double to int conversion error when building the
+  ``FSWdeviceAvailability`` message on windows.
+- Updated dispersions.py to support functionality that was deprecated in python3.10. This change supports
+  python versions >=3.3.
+- Updated the Windows build process to fix a static runtime library issue with ``vizInterface`` found
+  in older versions of visual studio.
+- Added scripting support for Vizard 2.0.3
+
+Version 2.1.0 (Nov. 13, 2021)
+-----------------------------
+- added BSpline function to ``utilities`` and related UnitTest.
+- added kinematic relations between angular accelerations and second derivative of MRP set to
+  :ref:`rigidBodyKinematicsutilities` library
+- updated the installation script to function with the latest ``conan`` program and the recent
+  ``conan`` repo changes.  Note, you will have to delete the ``.conan`` folder in your home
+  directory to create a fresh copy of the software dependencies.
+- added a Developer support page :ref:`debugging`
+- fixed a memory leak with the Swig layer where an object was not released properly.  Thanks go to
+  Stephen Ritter and Toney for tracking down this issue.
+- added a new orbit maneuver example :ref:`scenarioJupiterArrival`
+- made SWIG interface to the MRP derivative variable
+- added two new variable time step integrators. See :ref:`svIntegratorRKF45` and :ref:`svIntegratorRKF78`.
+- updated the state effector base class to also provide the current integration time step in addition to the
+  current time
+- added new scenario :ref:`scenarioVariableTimeStepIntegrators`
+- updated :ref:`scenarioIntegrators` to include the ``rkf45`` and ``rkf78`` options
+- changed the way :ref:`spacecraftReconfig` gets the deputy's mass properties. It now receives that information
+  through a message of the type ``VehicleConfigMsgPayload`` instead of an internal variable. Relevant example
+  scripts have been updated.
+- new tutorial example scenario script :ref:`scenarioTAMcomparison`
+- new mass sensor that converts a ``simulation`` mass properties message to a ``FSW`` vehicle configuration message :ref:`simpleMassProps`
+- added scripting support for Vizard 2.0.1 and 2.0.2
+- This release provides a new ability to run a single Basilisk simulation in a multi-threaded manner.
+  The BSK processes can be spread across multiple threads.  See :ref:`scenario_BasicOrbitMultiSat_MT`
+  for an example of how to use this.
+
+.. warning::
+
+    The BSK v2.1 multi-threading assumes all processes assigned to a thread can run independently
+    from processes in another thread.  Further, cross thread message communication is not yet
+    thread safe!
+
+
+**Version 2.0.7**
+
+- new :ref:`forceTorqueThrForceMapping` to map commanded forces and torques to a set of thrusters
+- updated Vizard documentation on the setting flags ``orbitLinesOn`` and ``trueTrajectoryLinesOn``
+- added power and fuel tank modules to the :ref:`BSK_MultiSatDynamics` class.
+- improved the DV calculation of the spacecraft state output message by integrating the gravitational acceleration
+  using the current integration scheme rather than using a first order approximation.
+- updated install script to be able to have ``conan`` install ``opencv`` again.  Something changed with the ``conan``
+  repo that broke this.
+- updated BSK install instructions on the M1 Apple Silicon platform as Basiliks can now run natively
+
+
+**Version 2.0.6**
+
+- updated :ref:`vizInterface` to support Vizard 1.9.1 and the ability to visualize generic sensor types and
+  antenna communication status
+- updated :ref:`ephemerisConverter` to also convert the planet orientation states, not just the
+  translational states
+- added a :ref:`planetNav` module that adds noisy to planet ephemeris, similar to simpleNav.
+- created a new device command status message :ref:`DeviceCmdMsgPayload` and updated :ref:`simpleInstrumentController`,
+  :ref:`simpleInstrument` and :ref:`spaceToGroundTransmitter` to make use of it.
+- added :ref:`attRefCorrection` to adjust the reference attitude by a fixed rotation
+- added :ref:`scenarioAttitudePrescribed` to illustrate how to prescribe the spacecraft orientation
+- added new modules :ref:`mtbFeedforward`, :ref:`mtbMomentumManagementSimple`, :ref:`dipoleMapping` and
+  :ref:`torque2Dipole` which are using in combination to achieve MTB based RW momentum dumping.
+- added a new magnetic RW momentum dumping example in :ref:`scenarioMtbMomentumManagementSimple` which illustrates
+  using the above new MTB related modules to change the momentum, as well as drive the nominal momentum to
+  a desired value using :ref:`rwNullSpace`.
+- created a new architecture based on ``BskSim`` called ``MultiSatBskSim``. It exploits the new messaging system to create a simulation
+  with any number of spacecraft in a highly modular way. It allows for the addition of homogeneous or heterogeneous satellites without
+  having to hard code their properties into a single dynamics or FSW script. It will be a foundation to test the upcoming multithreading
+  capabilities of Basilisk.
+- added three example scenarios that showcase this new architecture. See :ref:`scenario_BasicOrbitMultiSat`, :ref:`scenario_AttGuidMultiSat`
+  and :ref:`scenario_StationKeepingMultiSat`.
+- added a new FSW module :ref:`formationBarycenter`. It computes the barycenter's position and velocity of a swarm of satellites. This barycenter
+  can be either computed with cartesian coordinates (usual mass-weighted average), or using orbital elements weighted average. Will be useful
+  for spacecraft formations defined around the barycenter of the swarm and not a chief spacecraft.
+- enhanced :ref:`locationPointing` to support the target input msg being either a location message or an
+  ephemeris message
+- updated install notes to ensure Linux python3 developer libraries are installed, and to ensure that ``wheel``
+  package is installed along with ``conan``
+- created :ref:`smallBodyNavEKF` to simulate autonomous navigation in proximity of a small body
+- added a :ref:`AttRefMsgPayload` output message to the :ref:`locationPointing` module.
+- added :ref:`cppModules-5` to the section on learning how to create BSK modules
+- updated :ref:`locationPointing` to support 3D rate damping as an option
+
+
+**Version 2.0.5**
+
+- fixed issue in :ref:`waypointReference` to interpolate between waypoint ``n`` and shadow set of
+  waypoint ``n+1`` when these are described by opposite MRP sets. Updated documentation and corrected
+  typos in :ref:`scenarioAttitudeConstraintViolation`.
+- Added :ref:`hillStateConverter` and :ref:`hillToAttRef` modules for formation flight navigation and attitude-driven differential drag
+- Added representative scenario :ref:`scenarioDragRendezvous` demonstrating attitude-driven differential drag formation flight
+- Added new scenario :ref:`scenarioDragSensitivity` showing how to do a differential drag
+  spacecraft control sensitivity analysis
+- updated :ref:`celestialTwoBodyPoint` to account for a case where the celestial objects are in opposite directions
+- replaced ``acos()`` and ``asin()`` with ``safeAcos()`` and ``safeAsin()`` which ensure that arguments are
+  clipped to be within and including -1 and 1
+- updated :ref:`dataFileToViz` to allow the ``Reset()`` method to be called multiple times.  If a data file
+  was already opened, then it is closed before the next data file is opened.
+- updated :ref:`groundLocation` to also output SEZ coordinates, as well as range, azimuth, elevation, south, east
+  and zenith coordinate rates.  These coordinates are always computed regardless if a spacecraft is visible to the
+  target.  Check the ``hasAccess`` message variable to see if the spacecraft is visible.
+- updated the OpNav examples script to set a black sky background in the Vizard camera images
+- added a new Python method ``isSubscribedTo()`` to query if the input and output messages between
+  two modules are connected
+- updated :ref:`gravityEffector` documentation to properly pull in the RST documentation and link to the
+  PDF describing the gravity models
+- updated ``setAllButCurrentEventActivity`` method in :ref:`SimulationBaseClass` to work with multiple satellites. We can now add an index at the
+  end of each event name that guarantees only events with the same index are affected. The ``useIndex`` flag must be set to ``True``.
+- added new magnetic torque bar effector in :ref:`MtbEffector`
+- added new FSW module to control the RW momentum using MTBs in :ref:`mtbMomentumManagement`
+- new tutorial example script :ref:`scenarioMtbMomentumManagement`
+- updated :ref:`rwNullSpace` to have an optional input message of desired RW speeds.  These desired values default to
+  zero so the module retains the earlier behavior if this optional input message is not connected.
+- added two lines in :ref:`waypointReference` to normalize the attitude quaternion that is read from file.
+
+**Version 2.0.4**
+
+- updated :ref:`spacecraft` ``Reset()`` method to write all spacecraft and effector state output messages
+  with their initial values.  This way these output messages are correct as already as calling the
+  ``InitializeSimulation()`` method.
+- fixed an issue that could prevent ``.subscribeTo`` from a C++ to C wrapped message object to not function
+  properly.
+- new :ref:`simpleInstrumentController` that sends an imaging command to a :ref:`simpleInstrument` if the attitude error
+  and access to a :ref:`groundLocation` module are within requirements.
+- new :ref:`scenarioGroundLocationImaging` example script that demonstrates the aforementioned module integrated into a
+  full on-board data system.
+- new :ref:`etSphericalControl` module that controls the relative motion of the Electrostatic Tug
+- new :ref:`scenarioDebrisReorbitET` example script that demonstrates using the Electrostatic Tug and the
+  Multi-Sphere Method
+- updated :ref:`groundLocation` to always compute the elevation, range and azimuth information, even if
+  the satellite does not have access.  The output message variable ``hasAccess`` provides access information.
+- added scripting support for Vizard 1.8.4
+- updated :ref:`scenarioGroundLocationImaging` to demonstrate the use of the
+  new ``vizSupport.createTargetLine()`` method
+
+
+
+**Version 2.0.3**
+
+- new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to display keep-in and keep-out constraint violations while
+  performing slew maneuvers.
+- new :ref:`locationPointing` module to do 2-axis attitude control which aligns a body-fixed vector to a
+  desired inertial location
+- new :ref:`scenarioAttLocPoint` example script how to point a spacecraft body axis towards Boulder
+- new integrated scenario in :ref:`scenarioAttitudeConstraintViolation`. Shows how to use the :ref:`boreAngCalc` to
+  display keep-in and keep-out constraint violations while performing slew maneuvers.
+- updated :ref:`inertial3DSpin` to make the attitude input message optional, updated documentation to be RST only
+  and more descriptive of the associated math, and changed the module variable ``omega_spin`` to ``omega_RR0_R0``
+- enables the message ``recorder()`` module to function if the message structure contains structures itself.
+- make the build system compatible with Python 3.8 and higher on Windows
+- fixed custom RW support method in ``simIncludeRW.py``
+- fixed new C++20 related compiler warnings
+
+**Version 2.0.2**
+
+- new waypoint reference module in :ref:`waypointReference`. It can be used to read an attitude maneuver from a set of waypoints on a text file, likely generated outside Basilisk.
+- updated :ref:`gravityEffector` to allow the planet message module (``spiceInterface`` or ``planetEphemeris``) to
+  be called either before or after the ``spacecraft`` module update is called
+- Fix a range of long-standing HTML Documentation build warnings and issues
+- Renamed the messages ``CirclesOpNavMsgPayload`` to ``OpNavCirclesMsgPayload`` and
+  ``OpNavLimbMsgPayload`` to ``OpNavLimbMsgPayload`` to avoid sphinx naming conflicts
+- unified the identical ``ukfUtilities.c/h`` files in ``attDetermination`` and ``opticalNavigation`` folders
+  into ``architecture/utilities``
+- added a new RW encoder simulation module :ref:`encoder`
+- Fixed a bug in the onboardDataHandling module that allowed for data that did not exist to be downlinked
+- changed default behavior of ``python3 conanfile.py`` to automatically compile the Basilisk project.  This was
+  a common stumbling point for new users.  The build flag ``--buildProject`` can be used to enable automatic
+  compiling or not.  For developers making new code this should likely be set to ``False`` when configuring
+  the project.
+- Fixed a bug in :ref:`SimulationBaseClass` that prevented creating an event with multiple conditions
+- added ``ShowExecutionOrder()`` method to :ref:`SimulationBaseClass` to print to the terminal the order that the
+  process, tasks and modules are executed.
+- added ``ShowExecutionFigure()`` method to :ref:`SimulationBaseClass` to create a figure illustration the
+  execution order.
+- added a new :ref:`bskPrinciples-2b` web page on how to visualize the BSK process, task and module execution
+- added new ``bskSim`` example scenario showing how to alternate between flight modes in :ref:`scenario_AttModes`
+- provide scripting support for Vizard 1.8.2 release
+
+
+**Version 2.0.1**
+
+- Added the ability to clear the data of a message recorder using ``.clear()``
+- Fixed a rare issue where RW data didn't stick
+- Fixed an issue subscribing to a C++ wrapped message object from python
+- Cleaned up documentation on using datashaders and bokeh to interactively plot large simulation data sets.
+  The script ``scenarioAnalyzeMonteCarlo`` is updated to discuss the particular challenges in running this
+  datashader example of plotting data.
+- enable Monte Carlo ``pytest`` test scripts to run on macOS if Python 3.9 or higher is used
+- enable opNav scenario ``pytest`` test scripts to be tested by ``pytest`` if the build flag ``--opNav``
+  is set to true and the path to :ref:`Vizard <vizard>` application is set in :ref:`BSK_OpNav`.
+- fixed an issue that prevented subscribing to a C++ msg from python
+- moved :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` to a common folder ``src/moduleTemplates``.  The
+  associated HTML documentation now appears inside the ``Documentation`` tab under ``moduleTemplates``.
+- added the ``src/utilities/makeDraftModule.py`` script that is able to create a draft module template given
+
+    - module name
+    - module description
+    - module location
+    - list of module input or output messages containing
+
+      - message variable name
+      - message payload definition
+      - message description
+      - message type (ie. ``C`` or ``C++``)
+
+  The script then generates either a C or C++ module folder that contains the elemental ``*.c/cpp``, ``*.h``, ``*.i``
+  code which compiles into a functioning prototype module.  Also included are the module ``*.rst`` file which provides
+  the basic description and message table (including hyperlinks to message payload type and message description),
+  as well as a functioning python unit test that loads the module, connects zero'd input messages and sets up
+  output message recorders.  The coder can then take this draft module code and modify to achieve the desired
+  functionality.  The page :ref:`Folder_moduleTemplates` discusses how to use it and provides to 2 sample
+  auto-generated modules that get created inside ``src/moduleTemplates`` with ``python conanfile.py``.
+- new thermal motor module in :ref:`motorThermal`.  It it be used to simulate the temperature of a RW motor.
+
+
+**Version 2.0.0**
+
+- New message system with strong type checking.  You now get a much simpler method to create message objects,
+  how to connect them within python, create stand-alone messages in python, etc.  If you engage with a message
+  of the wrong type you get immediate compiler warnings.
+- New C++ based message recording system that is much faster than the older python based message logging
+- New messaging recording now stores the message data separately from the time a message was recorded
+  and the time the message was written
+- Removed the arbitrary distinction between ``FSW``, ``SIM`` and ``INT`` messages.  All messages are now
+  available to all modules
+- Both C and C++ based message interfaces are now auto-generated when running ``python3 conanfile.py`` command
+- New ability to create zero'd message structures in the modules
+- Seamless message subscribing in Python across all modules types (C, C++ or Python)
+- New generic RW device type in :ref:`simIncludeRW` and updated the support library to work with BSK2
+- Updated :ref:`simIncludeGravBody` to work with BSK2.  If needed the :ref:`spiceInterface` and
+  :ref:`EpochMsgPayload` message is created within the gravity factory class.
+- Updated :ref:`simIncludeThruster` to work with BSK2
+- Updated :ref:`fswSetupRW` to work with BSK2
+- Updated :ref:`fswSetupThrusters` to work with BSK2
+- Update Basilisk module documentation that shows all input and output message variables, their
+  type and explanation
+- Cleaned up the Basilisk `src` folder layout by moving all Basilisk architecture support files
+  to `src/architecture`.  This impacts some include statements
+- Made the C/C++ ``#include`` statements all relative to `src` to make it easier to find the associated
+  files in the source code
+- Updated message names to now all comply with the Basilisk message naming convention.  See
+  :ref:`migratingToBsk2` for a table of how some message names have changed
+- Updated :ref:`vizSupport` to work with BSK2.  It is now much easier to include RW, thruster and CSS devices.
+  Further, the simulation gravity bodies don't have to be explicitly provided to the
+  ``vizSupport.enableUnityVisualization()`` method.  Rather, these are pulled from the spacecraft object
+  directly.
+- :ref:`reactionWheelStateEffector` is updated where the list of RW configuration parameters are now linked
+  from python, not copied.  As a result it is now possible to stop the simulation and change RW parameters on
+  the fly, emulating a failure with a physical change in the RW mechanics.
+- changed the output message type of :ref:`magnetometer` to be compatible with :ref:`tamComm`
+- Created several instructional pages in the Quick-Start documentation folder.  The examples folder
+  has moved to the Quick-Start guide as well.  The new quick start guide now discusses
+
+  - how to write Basilisk python simulation scripts
+  - how to write C++, C and Python modules
+
+- Added installation instructions to run Basilisk on a computer with the Apple M1 processor
+- added :ref:`spacecraftLocation` module to allow checking for satellite to satellite line-of-sight access
+- made ``maximumRange`` an optional variable in :ref:`groundLocation`
+- renamed ``spacecraftDynamics`` to :ref:`spacecraftSystem`, and renamed the associated ``spacecraft`` to ``spacecraftUnit()``.
+- renamed ``spacecraftPlus()`` to be now simply :ref:`spacecraft`
+- renamed the `spacecraftPlus` associated messages to :ref:`SCStatesMsgPayload` and :ref:`SCMassPropsMsgPayload`
+- renamed ``fswModuleTemplate()`` to be :ref:`cModuleTemplate`.  This makes this naming consistent with the new :ref:`cppModuleTemplate`.
+- renamed `rwMotorVoltageInterface` to :ref:`motorVoltageInterface`.  This motor model can be used for both RW and hinged panel devices.
+- added support to creating custom gravity bodies to :ref:`simIncludeGravBody`.  Including support to have custom gravity bodies shown in :ref:`Vizard <vizard>` as well.  The example script :ref:`scenarioCustomGravBody` provides an illustration of this functionality.
+
+
+
+
+**Version 1.8.10**
+
+- Added support and expanded installation instructions making use of virtual environments
+
+**Version 1.8.9**
+
+- Added support for ``Location`` scripting in Vizard 1.7.1
+- Added a new documentation page discussing how to launch Vizard from the command line
+  and what optional arguments are available
+
+**Version 1.8.8**
+
+- The protobuffer interface files are now automatically created from
+  ``src/utilities/vizProtobuffer/vizMessage.proto`` without having to manually run the
+  ``protoc`` command each time the protobuffer message definitions changed.
+- centerRadiusCNN is now supported on all the platforms
+- Support Terminal Progress bar while running a Basilisk simulation
+- Improved the build system to re-swig the module if the dependencies have changed.
+  This avoids having to do a clean build or manually deleting the swing python files from within ``dist3/Basilisk``.
+- All unit test cases are compatible with windows platform
+- Added scripting support for Vizard 1.7.0
+
+**Version 1.8.7**
+
+- Updated ``orbitalMotion`` python and C libraries to include the new methods ``hillFrame()``, ``hill2rv()`` and ``rv2hill()``
+- Updated :ref:`dualHingedRigidBodyStateEffector` to support an output message of the panel angular states, an output message of the panel inertial position and attitude states, as well as upgrading the module to support ``spacecraftDynamics``.
+- Updated :ref:`vizInterface` to support scripting of new Vizard 1.6.1 features
+
+**Version 1.8.6**
+
+- Fixed an issue where some Sim-FSW interface messages could not be written to from the Python layer
+- Fixed an issue that prevented the ``opNav`` build mode to compile the OpenCV related libraries
+  on macOS with Xcode 12 installed
+- renamed ``RWArraytorqueIntMsg`` to ``arrayMotorTorqueIntMsg``
+- updated :ref:`hingedRigidBodyStateEffector` to
+
+    - write the panel angle and angle rate output message
+    - write the panel inertial and position states as an output message
+    - updated document to make use of RST format and specify module input and output messages
+- updated ``avsEigenSupport.h`` to add new methods ``eigenMRPd2Vector3d()`` and ``eigenC2MRP()``
+- updated ``spacecraftPlus`` to allow the attitude motion to be prescribed through
+  an optional input message of type ``attRefMsg``.
+- fixed sign issue in :ref:`simpleSolarPanel`
+- support Vizard 1.6.0 scripting
+
+
+
+**Version 1.8.5**
+
+- Provide support of Vizard 1.5.1 scripting
+- Updated conan to 1.29.2 to address issues building with opNav and support xcode 12
+- Disable freetype for windows because of opencv build issues.
+
+**Version 1.8.4**
+
+- update the macOS dependency to use either ``conan~=1.24`` or ``conan>=1.28``.  The later resolves the linking issues
+  that ``conan`` had on macOS.  Other platforms can use ``conan>=1.24.0``.
+- updated ``vizInterface`` to support the latest features of Vizard 1.5, including the ability to show
+  relative trajectories
+- updated :ref:`scenarioFormationBasic` example script to show more general orbits and the use
+  of the scientific camera sensor scripting
+- On Windows the new build system now builds :ref:`vizInterface`
+
+
+**Version 1.8.3**
+
+- Removed old ``CMakeLists.txt`` files that are no longer needed
+- Improved the build process for Linux such that ``vizInterface`` and ``opNav`` related modules are available
+  again in Basilisk python scripts.  Thus Linux users can use 1.8.x onwards and still use these enhanced features.
+  The similar issue on the Windows platorm is not resolved yet.
+- Updated setup instructions to remind the user to delete ``.conan`` folder if upgrading from a BSK version
+  prior to 1.8.0
+- Added support for Vizard 1.4.1 that allows setting default and thruster group plume colors.  The built-in
+  thruster pluming length can be now be custo scaled as well.
+- Added a video gallery page to the Vizard documentation section
+
+**Version 1.8.2**
+
+- Updated :ref:`dataFileToViz` to include the ability to read thruster force values.  The spacecraft can have
+  multiple thruster sets, and this works for multiple spacecraft as well.  See :ref:`test_dataFileToViz` for an
+  example on how to set this up.
+- Updated :ref:`dataFileToViz` to include support for reaction wheel data.
+- Updated documentation and ``CMakeLists.txt`` to required 3.14 or higher
+- Updated how ``openCV`` is included to avoid false Xcode warnings about the library not being installed
+- Added :ref:`centerRadiusCNN` for doing CNN-based image processing as well as a pre-trained model
+  (read by the module) that allows to extract center and apparent diameter from Mars
+  images.  Note that for now this module is only built
+  on macOS systems.  As we are able to test on other platforms we will include it there too.
+- Added :ref:`scenario_CNNAttOD` to illustrate the use of the CNN-based image processing
+- Added support for Vizard v1.4.0 scripting
+
+**Version 1.8.1**
+
+- Added a new folder ``externalTools/fswAuto`` that contains external tools to migrate BSK simulations and modules to C-code
+- Added a new :ref:`albedo` which can simulate the average or data driven albedo of a single planet.  This works
+  also if multiple celestial bodies are setup.
+- New :ref:`scenarioAlbedo` to illustrate the use of :ref:`albedo`
+- Made the RST HTML document creation work on Windows as well (see :ref:`createHtmlDocumentation`)
+- Fixed the conan issues where the IDE only saw the Debug path of the Eigen library, not the Release path.
+  This gets rid of false warnings in Xcode that ``<Eigen/Dense>`` could not be found.
+- updated the installer script to automatically set the ``conan`` repo information.  This removes one more step
+  from the installation process.
+
+**Version 1.8.0**
+
+- updated :ref:`imuSensor` to initialize all class variables in the constructor
+- fixed a data frame issue in :ref:`groundLocation`
+- first iteration of the CMake refactor completed. The refactor updates the project CMakeList to
+
+    1) conform with more modern CMake practices,
+    2) allow developers to include custom dependencies on the module level with Custom.cmake files,
+    3) refactors existing SWIG interface files to generate significantly smaller _wrap.c(xx) files,
+    4) generates single libraries for GeneralModuleFiles rather than re-including, re-wraping, and
+       recompiling those files at the module level. The latter two changes provide significant
+       improvements in build time.
+
+- The need for folder module ``__init__.py`` files has been removed.  If local python support files should be
+  included in the swig'd module, they can be included in the module ``*.i`` file using something like
+  ``%pythoncode "parseSRPLookup.py"``.
+- The support files in ``_GeneralModuleFiles`` are now compiled into a library with the parent folder name.  Thus,
+  the ``src/simulation/dynamics/_GeneralModuleFiles`` support files yield a swig'd library ``dynamicsLib``.
+  Similarly, ``src/simulation/environment/_GeneralModuleFiles`` yields ``environmentLib``.
+- Cleaned up small RST documentation issues
+- Updated the install process to check automatically for required python packages.  They are not available,
+  then the user is prompted to install for user, for the system or cancel.
+- Updated the install process to allow a user selectable checking of all optional python packages
+  through ``allOptBsk`` flag
+- fixed memory issue in the :ref:`camera`
+- Updated the HTML documentation process to provide tools to clean out the auto-generated documentation,
+  as well as to open the HTML output from the command line
+
+**Version 1.7.5**
+
+- Added the ability to shift the HSV or BGR colors of :ref:`camera`
+- Updated :ref:`vizInterface` to allow the user to set the Vizard direct communication protocol, host name and port
+  number.
+- fixed an issues in :ref:`simIncludeGravBody` where the method ``unloadSpiceKernels`` had the order of the spice package name and the spice path reversed 😟
+- New :ref:`dataFileToViz` that reads in spacecraft simulation states from a text file and converts them into
+  BSK messages.  For example, this allows :ref:`vizInterface` store the simulation data into a Vizard compatible manner.
+- Updated :ref:`spiceInterface` to allow for optional overriding the IAU planet frame with custom values
+- Updated :ref:`vizInterface` to allow setting ``show24hrClock`` and ``showDataRateDisplay`` flags for Vizard files
+  supported in Vizard v1.3.0
+
+Version 1.7.4
+
+- hot-fix of an issue compiling Basilisk on Windows.  A ``#define _USE_MATH_DEFINES`` was missing that
+  Windows expected, but Unix systems didn't need
+
+**Version 1.7.3**
+
+- updated :ref:`scenarioFormationMeanOEFeedback` and :ref:`scenarioFormationReconfig` to increase
+  the orbit altitude to not hit the Earth. Also, added code that can be enabled to record the
+  simulation parameters for Vizard.
+- updated :ref:`vizInterface` to support the latest Vizard v1.2.0 features.  You can script that the spacecraft
+  and/or celestial objects are shown as sprites if they become very small.  This makes it easier to see where
+  satellites are in a constellation or formation, as well as where Earth is if orbiting about Mars
+- automated how the release number is pulled from a single txt file now
+
+
+**Version 1.7.2**
+
+- new spacecraft formation flying control :ref:`meanOEFeedback` that implements a mean orbit element feedback
+  control law
+- new relative orbit control tutorial example :ref:`scenarioFormationMeanOEFeedback` that uses :ref:`meanOEFeedback`
+- updated documentation of :ref:`cModuleTemplate` to show how to make much simpler lists of module messages
+  using the ``list-table`` RST command
+- new spaceraft relative motion control :ref:`spacecraftReconfig` that implements an orbit element based
+  impulsive feedback control strategy.  The control is implemented with a thruster model and an
+  attitude guidance message is used to point the spacecraft in the correct direction.
+- new example scenario :ref:`scenarioFormationReconfig` illustrating the use of the new impulsive relative motion
+  control module
+
+**Version 1.7.1**
+
+- Added the ability to detect if a satellite is visible to a ground location in the new :ref:`groundLocation`
+- Added support to script Vizard to specify spacecraft, planet and actuator labels
+- Added :ref:`spaceToGroundTransmitter` which simulates transmitting data from space to an antenna at a ground location.
+- Added a nice new integrated scenario :ref:`scenarioGroundDownlink` that shows how to use :ref:`groundLocation` and :ref:`spaceToGroundTransmitter`
+- Updated the definition of the variable noiseMatrix in ``gaussMarkov.h``, and PMatrix in ``simple_nav.h``,
+  ``imu_sensor.h`` and ``star_tracker.h``
+
+**Version 1.7.0**
+
+- Fixed a transformation issue in ``avsEigenSupport.cpp`` where ``cArray2EigenMatrix3d()`` has to deal with
+  both column and row dominant matrix formulations.  This only got used in :ref:`scenarioCSS` and the issue was offset
+  by an issue in ``setUnitDirectionVectorWithPerturbation()`` that compensated.  Now, all is as it should be.
+- Removed unneeded instances of using ``unitTestSupport.np2EigenVectorXd()`` when setting the spacecraft states
+- Many new Basilisk scenarios illustration interfacing with :ref:`Vizard <Vizard>` to simulate opNav cases:
+
+    - scenario_DoubleOpNavOD uses the two OpNav methods at once
+    - :ref:`scenario_faultDetOpNav` implements two OpNav methods and employs a fault detection
+    - :ref:`scenario_OpNavAttOD` uses the OpNav FSW stack to perform both pointing towards the target planet
+    - :ref:`scenario_OpNavAttODLimb` uses a Canny transform to extract limb points
+    - :ref:`scenario_OpNavHeading` point the spacecraft visually towards a target
+    - :ref:`scenario_OpNavOD` only performs the orbit determination component
+    - :ref:`scenario_OpNavODLimb` only performs the orbit determination component using the Limb based method
+    - :ref:`scenario_OpNavPoint` only performs the pointing component
+    - :ref:`scenario_OpNavPointLimb` only performs the pointing component using the Limb based method
+    - :ref:`scenario_LimbAttOD` performs a longer simulation using the limb based method
+    - :ref:`scenario_OpNavAttOD` performs a longer simulation using the Hough transform method
+
+- make :ref:`scenarioVizPoint` work with the latest :ref:`Vizard <Vizard>` scripting methods
+
+    - Add scripting support for the `customGUIScale` parameter
+    - All instrument cameras are now specified through `fieldOfView`, not sensor size and focal length
+    - Added scripting support to turn on camera boresight line or HUD frustum
+    - Made instrument cameras not render images to the home folder by default by setting `renderRate` to zero by default
+
+
+
+**Version 1.6.0**
+
+- Fixed the long-standing issue of not being able to run ``pytest`` on Windows from ``src``, but it only ran from
+  within sub-folders of ``src``.  Still recommended to run on Windows multi-threaded ``pytest -n XXX``
+  using ``pytest-xdist``.
+- temporary fix for opencv not finding conan gflags for opencv sfm lib on windows.  See the discussion
+  at `<https://github.com/conan-community/community/issues/210>`_
+- Updated :ref:`cModuleTemplate` to include a message I/O figure and move it's message definition to ``simMessages``
+- Updated the documentation of :ref:`Folder_mrpPD` to the RST format
+- Updated the documentation of :ref:`Folder_mrpSteering` to the RST format
+- At long last, 🍾, created :ref:`GravityGradientEffector`  which can simulate the gravity gradient torque acting on a
+  spacecraft due to the gravitational influence from one or more planets.
+- Create a new example script :ref:`scenarioAttitudeGG` that illustrates the use of the gravity gradient effector
+- Enhanced the ``GravBodyData`` class to now register the planet position, velocity, orientation and attitude
+  rate states.  This allows other effectors, such as the gravity gradient effector, to have access to the current
+  planet states at any time step.
+- added :ref:`ReactionWheelPower` which can compute the electrical power consumed by a reaction wheel device
+- added new example script :ref:`scenarioAttitudeFeedbackRWPower` that illustrates doing a RW-based attitude
+  maneuver and tracking the RW power and net battery capacity left.
+- added ``BCT_RWP015`` RW model template to the ``simIncludeRW.py`` support file
+
+
+**Version 1.5.1**
+
+- Fixed an issue running :ref:`test_reactionWheelStateEffector_integrated` using Python 2
+- fixed a ``cmake`` issue where the module renaming from ``viz_interface`` to ``vizInterface`` was applied
+
+**Version 1.5.0**
+
+- Updated documentation for :ref:`eclipse` module with new RST format
+- Updated :ref:`cModuleTemplate` documentation to show how to add equation numbers, cite equations, do bold math variables and cite a figure caption.
+- Updated :ref:`reactionWheelStateEffector` and :ref:`vscmgStateEffector` such that max speed and max torque are consistently initialized to -1.  A negative value was supposed to turn of speed and torque saturation, but this wasn't consistenly applied.
+- Updated :ref:`reactionWheelStateEffector` such that the RW state output message was not hard-coded and un-changeable.  Otherwise a BSK process could never have multiple spacecraft being simulated.  Now, the rw effector ``ModelTag`` is added to the beginning of the output message.  This auto-generate method of message output names is avoided if the user sets the vector of output names from Python during the simulation setup.  **Note:** Any prior BSK script that was logging the old auto-generated RW state messages will need to update the msg name now to work again.  See :ref:`bskKnownIssues` for more information.
+- Major enhancement to :ref:`vizInterface` where now multiple spacecraft can be added.  You can create a list of spacecraft where :ref:`vizInterface` relies on common naming rules to find the right messages, or specify the messages for each spacecraft directly.  This is demonstrated in :ref:`scenarioFormationBasic`.  For now multiple craft with RW actuators are supported.  Multi craft with thrusters will need to be added later.
+- New spacecraft formation flying scenario :ref:`scenarioFormationBasic` where 3 satellites are flying 10m apart in a lead-follower configuration.  Each has a different number of RWs.  This scenario is a nice script to demonstrate the new multi-spacecraft support in :ref:`vizard`.
+
+**Version 1.4.2**
+
+- added link to Basilisk facebook page to Sphinx-based documentation
+- made the html documentation compatible with dark mode on macOS, iOS and iPad OS browsers.  If the user sets the system interface to dark mode, then the dark version of the web site is shown automatically.
+- added a fix to cmake to get around a ``lipsodium`` and ``conan`` issue we are seeing on a Linux system
+
+**Version 1.4.1**
+
+- added :ref:`Vizard scripting <vizardSettings>` abilities to control the new spacecraft camera view panel behaviors
+- added :ref:`Vizard scripting <vizardSettings>` abilities to specify custom CAD OBJ models to replace the default satellite shape
+- added  :ref:`Folder_onboardDataHandling` modules for simulating data generated, downlinked, and stored by instruments, transmitters, and storage units onboard a spacecraft. See :ref:`scenarioDataDemo` for a demo.
+- updated :ref:`sunlineSuKF` with some general improvements
+- tweak to ``cmake`` file to make BSK be portable across Linux systems
+- changed the :ref:`bskLogging` level names to make them unique.  This avoids potential variable name conflicts, especially on Windows.
+
+**Version 1.4.0**
+
+- updates to the Monte Carlo controller and plotting algorithms to make use of better use of Pandas and Datashader
+- Added a message to the heading estimator in order to perform OpNav pointing
+- added a general message to the Sphinx HTML documentation landing page
+- updated the :ref:`bskModuleCheckoutList` with updated information and expectations
+- Added a fault detection module for optical navigation
+- Added camera module to own the message and to add corruptions to images
+- Added a new support document :ref:`makingNewBskModule` on getting started writing BSK modules
+- Added a new support document :ref:`addSphinxDoc`
+- Updated the :ref:`aboutBSK` page to include Basilisk highlights
+- Made sure the Monte Carlo unit tests didn't leave any temporary data files behind
+- Added new helper functions to the RW and Thruster factory classes to return the equivalent FSW configuration message.  Updated :ref:`scenarioAttitudeFeedbackRW` simulation script to illustrate how to use such a helper function.
+- Added a new Basilisk logging system called :ref:`bskLogging`.  This allows modules to print information with a variable verbosity level
+- Include a new example scenario :ref:`scenarioBskLog` to illustrate how to use variable verbosity BSK notices
+
+**Version 1.3.2**
+
+- added the ability to include the unit test python files, along with their documentation, within the sphinx html documentation
+- updated Vizard live streaming documentation
+- updated unit test templates to have better formatting of the html validation report obtained with ``pytest --report``
+- exclude some un-needed files from the html documenation
+- general sphinx documentation related fixed and enhancements
+
+**Version 1.3.1**
+
+- small fixes to the new HTML documentation
+- correct the path includes in Monte Carlo Integrated tests
+- updated the ``MRP_Steering`` module documentation to include plots of all test cases
+
+**Version 1.3.0**
+
+- Update template illustrating how the validation accuracy can be recording in the ``pytest`` parameters.
+- Created a new method in ``SimulationBaseClass`` called ``pullMultiMessageLogData``  This is much faster in pulling the data log from multiple messages at once.
+- It is no longer necessary to call sim.TotalSim.terminateSimulation() at the beginning of Basilisk scripts. This call has been moved to the SimBaseClass constructor and removed from scripts in the repository.
+- A new module in the environments directory, SolarFlux, provides the solar flux value at a spacecraft location including (optionally) eclipse effects
+- New module in the navigation directory, PlanetHeading, provides the heading to a planet in the spacecraft body frame. There is a corresponding new message type BodyHeadingSimMsg.
+- New Sphinx/Breathe based BSK documentation system!  All documentation is still stored in the ``basilisk/docs`` folder.  The new system provides much better directory structure to access the BSK modules, and has a cleaner way to list the tutorial examples.
+
+**Version 1.2.1**
+
+- fixed an issued with the magnetometer module tests not passing on all platforms. The tolerances are now adjusted to pass everywhere.
+- various improvements to the ``OpNav`` modules and ``vizInterface``
+
+**Version 1.2.0**
+
+- Making the Python 3 compile flag be turned on by default.  To compile with Python 2 the ``cmake`` flag ``-DUSE_PYTHON3`` can still be set to ``OFF``
+- Revised the FSW template module to use the updated in-line module documentation style which adds the description to the module ``*.h`` doxygen description, and adds the validation discussion as a doc-string to the ``test_xxx.py`` test file.
+- make sure ``mrpRotation`` is non-singular for any general referene rotation.
+- Created a Three-Axis-Magnetometer (TAM) sensor simulation model
+- Created a TAM FSW communication model
+- Changed the BSK ``ReadMessage()`` method to automatically zero the message memory space before reading in the data
+- Added a base classes for battery energy storage and power consumption/provider nodes
+- Added a simple power node module
+- Added a simpler battery module
+- Added a simple solar panel power module
+
+
+**Version 1.1.0**
+
+- The circle finding module using openCV has been cleaned up and the noise is now dynamically measured given the image
+- A new dispersion was added for Monte Carlo analysis which allows for per-axis control on an initial MRP value
+- Cleaned up opNav messages to be consistent with other messages, and simplified the limbFinding code. Only functionality change is Gaussian Blur.
+- Add new OpNav module using a planet limb. Algorithm developed by J. Christian
+- Added support for OpenCV v 4.1.1 and Eigen library 3.3.7
+- fixed issue with Windows having trouble compiling due to use of ``uint``
+- added instructions on how to use the new Xcode 11 on macOS.  This requires installing 2 more tools.  Updated the install and macOS FAW pages.
+- added the ability to ``pytest`` to use the ``--report`` flag to generate a comprehensive html test and validation document.  All future modules should use this method to discuss the module validation.  Legacy modules will be converted over time.
+- Corrected an issue with some some BSK modules in a low memory computer environment
+
+
+
+**Version 1.0.0 🍾🍾🍾🍾🍾**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added the ability to plot select BSK simulation data live as teh
+simulation is running. See the new tutorials examples and the new FAQ
+response page (under Support tab) on how to do this.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Lots of code clean up to remove compiler warnings about implicit
+signedness conversions, print types, etc.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated ``scenarioMagneticFieldWMM.py`` scenario to store images into
+the correct doxygen folder.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+[Bugfix] NRLMSISE-00 now defaults to kg/m^3 output, to be consistent
+with other atmospheric density models.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added the ability to live stream the Basilisk simulation data to Vizard!
+This functions now in addition to saving BSK data to file and playing it
+back later on.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.9.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Created a new attitude guidance module for OpNav: opNavPoint. Similar to
+sunSafePoint, it matches a target heading with the OpNav heading for a
+simple and robust solution.
+
+.. raw:: html
+
+   </li>
+
+-  added new tutorial on calling Python Spice functions within a Monte Carlo BSK simulation
+-  Added Keplerian Orbit utility class which is swig'd. This first implementation takes in elliptical orbit elements and can produce a range of related outputs like position, velocity, orbital period, etc.  This makes it easier to create Keplerian orbits within python.
+-  Added a LimbFinding module for OpNav: limbFinding. This module performs a Canny transform to find the end of the planet and saves away the non-zero pixels for pose-estimation.
+- made BSK compatible with both swig version 3 and 4
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.9.0**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Updated the MD help file on how to compile from the command line
+environment using a custom configuration of Python.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Created new optical navigation filter that estimates bias in the
+measurements. This filter takes in pixel and line data directly.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added the ability to specify Vizard settings from Basilisk
+``vizInterface`` module settings. This way Basilisk simulations can set
+the desired Vizard settings from within the simulation script.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new MD help file to discuss the helper methods that setup Vizard
+features
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a python helper function to setup cameraConfigMsg message and
+create a custom camera view.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added the ability to script what starfield Vizard should use.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Made the Vizard helper check that correct keywords are being used.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The cmake file now turns ON by default the ``USE_PROTOBUFFERS`` and
+``USE_ZMQ`` build flag options. This enables out of the box support for
+saving BSK data to Vizard binary files.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.8.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added a new kind of dispersion for Monte Carlos which disperses the
+orbit with classic orbital elements instead of cartesian postion and
+velocity.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new module that provides the Earth atmospheric neutral density
+using the MSIS model.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the Doxygen HTML documentation layout
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.8.0**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+ADDED PYTHON 3 SUPPORT! This is a major step for Basilisk. Python 2
+remains suppored, but is now treated as a depreciated capability. It is
+possible to compile BSK for P3 into a ``dist3`` folder, and for P2 into
+a ``dist`` folder at the same time.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the BSK installation notes to reflect a default installation
+using Python 3
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated all unit test BSK scripts to work in both Python 2 and 3
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated all tutorial scripts to work in both Python 3 and 2. Default
+instructions are now for Python 3
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new support file with tips on migrating a Python 2 BSK script to
+function in both Python 3 and 2. This is called Migrating BSK Scripts to
+Python 3.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.7.2**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added a new Earth magnetic field model based on the World Magnetic Model
+(WMM). The module has PDF documetnation, and extensive unit test within
+the source code folder, as well as a tutorial script demonstrating how
+to run this.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the ``spice_interface`` module to be able to read in an epoch
+message
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated scenarios to use the epoch message
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Created a new support macro to convert a general date and time string
+into an epoch message
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated the ``VizInterface`` module to now provide the reaction wheel
+and thruster states to Vizard
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Cleaned up ``VizInterface`` to only subscribe to BSK messages that are
+already created
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Adjust ``simpleNav`` to only subscribe to the sun message it is already
+created
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Update all the tutorial scenario and bskSim simulations to use the
+updated ``vizSupport.enableUnityVisualization`` method
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed and cleaned up bugs in heading and opnav UKFs, pixelLineConverter,
+houghCircles, and vizInterface
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added validity falg to OpNav messages in order to exclude potential
+measurements
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed camera orientation given the Unity camera frame definition
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated BSK installation instructions to warn about not using swig v4
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.7.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added a new plotting utility library to support interactive plotting
+using datashaders with Python3.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed a garbage collecting leak in the monte carlo controller to
+minimize impact on computer memory.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.7.0**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added the enableViz method to the bskSim scnearios.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added dvGuidance PDF module description
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added new orbital simulation tutorial on a transfer orbit from Earth to
+Jupiter using a patched-conic Delta_v
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added the first image processing FSW module using OpenCV's HoughCirlces.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added the a module to convert pixel/line and apparent diameter data from
+circle-finding algorithm to a OpNav message with relative position and
+covariance.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+New faceted model for atmospheric drag evaluation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated RW and Thruster Simulation factory classes to use ordered
+dictionary lists. This ensures that the devices are used in the order
+they are added.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed issue where the Viz would show a custom camera window on startup
+if playing back a data file from bskSim scenarios.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added relative Orbit Determination filter (relativeODuKF) in
+fswAlgorithms/opticalNavigation. This filter reads measurements treated
+by the image processing block to estimate spacecraft position and
+velocity
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Changed the C++ message ID to consitently be of type int64_t, not
+uint64_t
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Rearchitected how data is retained in BSK monte carlo runs using Pandas.
+The python pandas package is now required to run MC runs.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the CMake to handle both Microsoft Visual Studio 2017 and 2019
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new attitude control scenario that uses a cluster of thrusters
+to produce the required ADCS control torque.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.6.2**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+hot fix that adds back a missing method in sim_model.c/h that causes the
+``enableViz`` support method to not work.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated Viz_Interface module with opNavMode flag. This triggers logic to
+link Basilisk and Vizard with a TCP connection. This is ground work for
+closed loop visual navigation capabilities.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated enableUnityViz python function in utilities/vizSupport. It now
+takes in key word arguments to simplify the user interface. It also
+reliably saves Vizard files for play back in the same directory as the
+scenario that calls it.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.6.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Created a user guide MD file that is included in the BSK Doxygen HTML
+documentation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Removed the BOOST library from Basilisk as it is no longer needed. This
+makes the BSK repository much leaner. Note that this removes the
+capability to communicate with the old Qt-based Visualization that is
+now defunct and replaced with the new Vizard Visualization.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated switch unscented kalman filter for sunline estimation with code
+cleanup and documentation updates.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``pytest`` environment to have markers registered
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added a PPTX support file that explains the core Basilisk architecture.
+HTML documentation is updated to link to this.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Creates new simulation module called ``planetEphemeris`` which creates a
+planet Spice ephemeris message given a set of classical orbit elements.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated the ``thrMomentumDumping`` module to read in the
+``thrMomentumManagement`` module output message to determine if a new
+momentum dumping sequence is required.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated the hillPoint and velocityPoint scenarios on how to connect a
+planet ephemeris message.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``hillPoint`` and ``velocityPoint`` to meet BSK coding
+guidelines
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated BSK_PRINT macro to automatically now add a new line symbol at
+the end of the message
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.6.0**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added a new ``vizInterface`` module. This version is able to record a
+BSK simulation which can then be played back in the BSK Vizard
+visualization program. Vizard must be downloaded separately. To enable
+this capabilty, see the scenario tutorial files.
+``scenariosBasicOrbit.py`` discusses how to enable this. The python
+support macro ``vizSupport.enableUnityVisualization()`` is commented out
+by default. Further, to compile ``vizInterface`` the CMake flags
+``USE_PROTOBUFFERS`` and ``USE_ZEROMQ`` must be turned on. A new MD FAQ
+support file discusses the Cmake options.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated ``inertialUKF`` module documentation and unit tests.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated unit test and documentation of ``dvAccumulation``.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added a small include change to fix BSK compiling on Windows
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated unit test and documentation of ``sunlineEphem()``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated cmake files to set the policy for CMP0086 required by Cmake
+3.14.x and higher
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``thrForceMapping`` module after code review with new expansive
+unit tests and updated PDF documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.5.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+updated the ``orbitalMotion.c/h`` support library to have more robust
+``rv2elem()`` and ``elem2rv()`` functions. They now also handle
+retrograde orbits. The manner in covering parabolic cases has changed
+slightly.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+This module implements and tests a Switch Unscented Kalman Filter in
+order to estimate the sunline direction.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added documentation to the ``dvAccumulation`` module and included proper
+time info in the output message.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Providing new support functions to enable the upcoming Vizard Basilisk
+Visualization.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated the 'oeStateEphem()' module to fit radius at periapses instead
+of SMA, and have the option to fit true versus mean anomaly angles.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated
+'sunlineSuKF\ ``module which provides a switch Sunline UKF estimation filter.  New documentation and unit tests.     </li>     <li>         updated 'MRP_Steering' module documentation and unit tests     </li>     <li>         updated orbital motion library functions``\ rv2elem()\ ``and elem2rv()``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``rateServoFullNonlinear`` module documentation and unit tests.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.5.0**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+``attTrackingError`` has updated documentation and unit tests.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+navAggregate module has new documentation and unit tests.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+small FSW algorithm enhancements to ensure we never divide by zero
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+new unit test for RW-config data
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+included a new environment abstract class that creates a common
+interface to space environment modules like atmospheric density, or
+magnetic fields in the future. This currently implements the exponential
+model, but will include other models in the future. NOTE: this change
+breaks earlier simulation that used atmospheric drag. The old
+``exponentialAtmosphere`` model usage must be updated. See the
+integrated and unit tests for details, as well as the module
+documentation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added new documentation on using the new atmosphere module to simulate
+the atmospheric density and temperature information for a series of
+spacecraft locations about a planet.
+
+.. raw:: html
+
+   <li>
+
+updated documentation and unit tests of ``celestialTwoBodyPoint``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added a new planetary magnetic field module. Currently it provides
+centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and
+Neptune. This will be expanded to provide convenient access to other
+magnetic field models in the future.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``eulerRotation()`` to remove optional output message and did
+general code clean-up
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``mrpRotation()``, new PDF documentation, did code cleanup,
+updated unit tests, removed optional module output that is not needed
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated ``MRP_Feedback()``, new PDF documentation, did code cleanup,
+updated unit tests to cover all code branches.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new tutorial on using the magnetic field model.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated ``mrpMotorTorque()`` with code cleanup, updated doxygen
+comments, PDF documentation and comprehensive unit test.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added documentation to ``thrFiringRemainder`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added documentation to ``thrFiringSchmitt`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated documentation of ``thrMomentumManagement`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated documentation of ``thrMomentumDumping`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added documentation of ``MRP_PD`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added a new tutorial on how to use the planetary magnetic field model.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.4.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+cssComm has updated documentation and unit tests.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated Documentation on ``rwNullSpace`` FSW module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated how the FSW and Simulation modules are displayed with the
+DOxygen HTML documenation, as well as how the messages are shown. Now
+the use can click on the "Modules" tab in the web page to find a cleaner
+listing of all BSK modules, messages, utilities and architecture
+documentation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+modified the ``cmake`` file to allow the build type to be passed in from
+the command line
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated Doxygen documentation on ``cssWlsEst()``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated documentation and unit tests of ``cssComm()`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.4.0**
+
+
+.. raw:: html
+
+   <uL>
+
+.. raw:: html
+
+   <li>
+
+Integrated the ``conan`` package management system. This requires conan
+to be installed and configured. See the updated Basilisk installation
+instructions. It is simple to add this to a current install. Further,
+the CMake GUI application can't be used directly with this
+implementation if the app is double-clicked. Either the GUI is launched
+form a terminal (see macOS installation instructions), or ``cmake`` is
+run from the command line (again see your platform specific installation
+instructions). Using ``conan`` now enables BSK to be compiled with
+specific support packages, and will allow us to integrate other packages
+like OpenCV, Protobuffers, etc. into the near future in a flexible
+manner.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated install instructions to allow for pytest version 4.0.0 or newer
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated code to remove some depreciated python function call warnings
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new sun heading module computed exclusively from ephemeris data
+and spacecraft attitude (sunlineEphem). Documentation and a unit test
+are included.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new scenario that shows how to simulate multiple spacecraft in
+one simulation instance.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a spacecraftPointing module that allows a deputy spacecraft to
+point at a chief spacecraft. Besides that, added a scenario that
+demonstrates the use of this new module.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added the ability to the thrForceMapping FSW module to handle thruster
+saturation better by scaling the resulting force solution set.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added lots of new unit tests to BSK modules
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+rwNullSpace() module now sets ups module states in reset() instead of
+crossInit(), and includes new documentation and unit tests
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.3.3**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added a new message output with the CSS fit residuals. This is optional.
+If the output message is not set, then this information is not computed.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated ``sunSafePoint()`` to allow for a nominal spin rate to be
+commanded about the sun heading vector. The unit tests and module
+documentation is updated accordingly.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a new scenario ``scenarioAttitudeFeedbackNoEarth.py`` which
+illustrates how to do an attitude only simulation without any gravity
+bodies present.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the macOS Basilisk installation instructions to make them easier
+to follow, and illustrate how to use the macOS provided Python along
+with all the Python packages installed in the user Library directory.
+This provides for a cleaner and easier to maintain Basilisk
+installation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Created new switched CSS sun heading estimation algorithms called
+``Sunline_SuKF`` and ``Sunline_SEKF``. These switch between two body
+frames to avoid singularities, but with direct body rate estimation.
+Previous filters ``Sunline_UKF``, ``Sunline_EKF``, and ``OKeefe_EKF``
+either subtract unobservability or difference sunheading estimate for a
+rate approximation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the Windows specific install instructions to include explicit
+steps for setting up and installing Basilisk on machine with a fresh
+copy of Windows 10.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added policy statements to the CMake files. This now silences the
+warnings that were showing up in CMake 3.12 and 3.13
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Modified CMake to silence the excessive warnings in XCode that
+``register`` class is no depreciated in C++
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.3.2**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Fixed an issue with the eclipse unit test.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+updated the installation instructions to warn about an incompatibility
+between the latest version of ``pytest`` (version 3.7.1). Users should
+use a version of ``pytest`` that is 3.6.1 or older for now until this
+issue is resolved.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the ``.gitignore`` file to exclude the ``.pytest_cache`` folder
+that pytest generates with the newer versions of this program
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.3.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Tutorials added for BSK_Sim architecture. Added the ability to customize
+the frequency for FSW and/or dynamics modules.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the dynamics thruster factor classes. This streamlines how
+thrusters can be added to the dynamics. Also, a new blank thruster
+object is included in this factory class to allow the user to specify
+all the desired values.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+bskSim now adds 8 thrusters to the spacecraft. These are not used yet,
+but will be in future bskSim scenarios.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Modified how bskSim now includes CSS sensors in the spacecraft dynamics
+setup
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Modified the FSW ``sunSafePoint()`` guidance module to read in the body
+angular velocity information from standard ``NavAttIntMsg``. This will
+break any earlier simulation that uses ``sunSafePoint()``.
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+FIX: update the ``sunSafePoint()`` input connection to use the current
+message format.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed an issue with energy not conserving if the fully coupled VSCMG
+imbalance model is used. This imbalanced gimbal and wheel version now
+conserves momentum and energy!
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added initial draft of VSCMG module documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added documentation to all the bskSim scenarios inside
+``src/test/bskSimScenarios``. The documentation now outlines how the
+bskSim class can get setup and used to create complex spacecraft
+behaviors with little code.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.3.0**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Updated cssWlsEst() module to also compute a partial angular velocity
+vector.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+New FSW Guidance module ``mrpRotation()`` to perform a constant body
+rate rotation. The initial attitude is specified through a MRP set.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Enhanced Linux installation instructions
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the simIncludeThruster to use the same factor class as the RW
+factory class. This will break old scripts that use the old method of
+setting up Thrusters with this helper function.
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+FIX: Update the script to use the new factory class. Examples are seen
+in
+``src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py``.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated bskSim to use the RW factory class to setup the simulation RW
+devices, as well as to use fsw helper functions to setup the RW FSW
+config messages
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+At supportData/EphermerisData, updated the leap second kernel version to
+from 0011 to 0012.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added a force and torque calculation method in the stateEffector
+abstract class, and provided the necessary method calls in
+``spacecraft``. This allows for stateEffectors to calculate the force
+and torque that they are imparting on the rigid body hub. The
+hingedRigidBodyStateEffector and the linearSpringMassDamper classes
+provide their implementation of these calculations.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed an issue with ``extForceTorque`` effector where the flag about
+having a good input message was not being initialized properly. This
+caused a rare failure in the unit test.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Reaction wheel state effector has an updated friction model that allows
+the user to implement coulomb, viscous, and static friction.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Reaction wheel state effector now has max torque saturation logic in
+which the wheels can only implement a maximum wheel torque and max wheel
+speed saturation logic in which if the wheel speed goes over the maximum
+wheel speed, then the wheel torque is set to zero.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+A new method called writeOutputStateMessages was added to the
+stateEffector abstract class which allows for stateEffectors to write
+their states as messages in the system and the states will always be
+written out to the system after integration. This fixed an issue with
+reaction wheels where the commanded torque information needs to be
+tasked before the spacecraft but the reaction wheel state messages need
+to be written out after integration.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+A new dynamics class called ``spacecraftDynamics`` has been created.
+This allow multiple complex spacecraft systems to be either rigidly
+connected or free-flying. This allow for example a mother craft to house
+a daughter craft which has its own RWs, etc, and then release the
+daughter craft at a specified time.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Cleaned up the gravity effector class variable names, and streamlined
+the evaluation logic. The gravity effector documentation has been
+updated to include information on the the multi-body gravity
+acceleration is evaluated.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the FSW modules ``MRP_Feedback``,\ ``MRP_Steering``,
+``dvAccumulation`` and ``oeStateEphem`` to zero out the output message
+first in the ``Update()`` routine.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed an issue with the RW factory class and the Stribeck friction model
+not being turned off by default.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added a new bskSim based tutorial scenario that illustrates a
+sun-pointing control while the spacecraft goes through a planets shadow.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.2.3 (June 12, 2018)**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Improved how the ``fuelSloshSpringMassDamper`` effector class works. It
+is now renamed to ``LinearSpringMassDamper``. It can be used to simulate
+both fuel sloshing, but also structural modes. If the
+``LinearSpringMassDamper`` is connected to a fuel tank, then it's mass
+depends on the amount of fuel left. The associated unit test illustrated
+how to setup this last capability. The module also contains
+documentation on the associated math.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+A new ``SphericalPendulum`` effector class has been added. For rotations
+a spherical pendulum is a better approximation rotational fuel slosh.
+This effector can model rotational fuel slosh if connected to a tank
+(see unit test again), or it can model a torsional structural mode if
+not connected to a tank. Associated math documentation is included with
+the class.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The booleans useTranslation and useRotation have been removed from the
+``HubEffector()`` class. The defaults in hubEffector for mass
+properties: ``mHub = 1``, ``IHubPntBc_B = diag``\ (1), and
+``r_BcB_B = zeros(3)``, enable us to evaluate the same code no matter if
+the desire is only to have translational states, only rotational states,
+or both. This allows for less logic in hubEffector and removes
+possibility of fringe cases that result in unexpected results from a
+developer standpoint. The fix for if your python script is not working
+related to this change:
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+FIX: Remove any instances of useTranslation or useRotation defined in
+the hubEffector class.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+.. raw:: html
+
+   <li>
+
+Changed name of the method ``computeBodyForceTorque`` to
+``computeForceTorque`` in the ``dynamicEffector`` abstract class and any
+inheriting classes. This avoids the confusion of thinking that only body
+frame relative forces can be defined, but in reality this class gives
+the ability to define both external forces defined in the body frame and
+the inertial frame.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Fixed an issue in ``RadiationPressure`` where the cannonball model was
+not computed in the proper frame. An integrated test has been added, and
+the unit test is updated. Note that the ``RadiationPressure`` model
+specification has changes slightly. The default model is still the
+cannonball model. To specify another model, the python methods
+``setUseCannonballModel()`` or ``setUseFacetedCPUModel()`` are used.
+Note that these take no argument anymore.
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+FIX: remove the argument from ``setUseCannonballModel(true)`` and use
+the methods ``setUseCannonballModel()`` or ``setUseFacetedCPUModel()``
+without any arguments instead.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.2.2 (May 14, 2018)**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Fixed a build issues on the Windows platform is Visual Studio 2017 or
+later is used.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Unified the Coarse Sun Sensor (CSS) sun heading filtering modules to use
+the same I/O messages. All used messages are now in the fswMessage
+folder.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Made the CSS sun heading filter messages consistently use the CBias
+value. This allows particular sensors to have an individual (known)
+scaling correction factor. For example, if the return of one sensor is
+10% stronger then that of the other sensors, then CBias is set to 1.10.
+Default value is 1.0 assuming all CSS units have the same gain.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The ``src\tests\bskSimScenarios`` folder now functions properly with the
+``bskSim`` spacecraft class.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The tutorial scripts in ``src\tests\scenarios`` are now simplified to
+pull out the unit testing functionality. The unit testing is now down
+with the ``test_XXX.py`` scripts inside the ``src\tests\testScripts``
+folder.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The ``bskSim`` tutorial files are now tested through pytest as well. The
+file ``testScripts\bskTestScript.py`` calls all the ``bskSim`` tutorial
+fails and ensures they run without error.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.2.1**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Added messages for current fuel tank mass, fuel tank mDot, and thruster
+force and torque
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Changed the linearAlgebra.c/h support library to avoid using any dynamic
+memory allocation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added some new function to linearAlgebra.c/h while making the library
+use the new BSK_PRINT() function.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added ability to simulate noise to the RW devices.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Created a more complete spacecraft python simulation class called
+BSKsim, and recreated some BSK tutorial scripts to use BSKsim instead of
+the more manual spacecraft setup in the earlier scripts.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Developed general functions to add saturation, discretization and Gauss
+Markov processes to signals.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Created a new BSK_PRINT() function. Here the coder can tag a message as
+an ERROR, WARNING, DEBUG or INFORMATION status. The printout can be set
+to selectively show these print statements.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.2.0 (First public beta)**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+First open beta release of Basilisk
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Moved to a new file architecture. This means older BSK python scripts
+need to be updated as the method to import BSK has changed.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The source an now be forked from Bitbucket
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Precompiled binaries are provided through a python pip install wheel
+file.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The Doxygen documentation now pulls in the BSK module description PDF
+file and makes it available via the class definition html page.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The tutorial python scripts are now moved to ``src/test/scenarios``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The ``pytest`` common should now be run within the ``src`` sub-directory
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated fuel slosh model documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated fuel tank documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Adding noise and corruptions using a new utility to the BSK modules (in
+progress)
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+New N-panel hinged rigid body module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+New 2-panel hinged rigid body module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added CSS sun-heading estimation tutorial script
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Added O'Keefe CSS sun-heading estimation module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.7**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+New Monte-Carlo capability that uses multiple cores and hyperthreading
+to accelerate the MC evaluations. Data is retained and stored for each
+MC run for robustness. See ``test_scenarioMonteCarloAttRW.py`` for an
+example.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Coarse Sun Sensor (CSS) modules can now scale the sensor output with the
+distance from the sun.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+CSS now have updated documentation that includes validation results.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+CSS, IMU have updated means to apply sensor corruptions.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+IMU, simple_nav and star tracker modules have been updated to use now
+internally Eigen vectors rather than C-Arrays. NOTE: if you have
+simulation scripts that use these modules you may have to update the
+script to set sensor states as Eigen vectors from python.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+All the dynamics, thruster and sensor simulation modules have expanded
+documentation and valdiation unit and integrated tests. The validation
+results are automatically included in the module TeX documentation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.6**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+new unit tests to validate the multi-body gravity simulation code in
+``SimCode/dynamics/gravityEffector/_UnitTest/test_gavityDynEffector.py``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+new hinged rigid body tutorial script in
+``SimScenarios/test_scenarioAttGuideHyperbolic.py``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+new tutorial to do velicity frame pointing on a hyperbolic orbit in
+``SimScenarios/test_scenarioHingedRigidBody.py``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+fixed various unit test issues that came up on the non-macOS builds
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added reaction wheel effector documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added ``orb_elem_convert`` documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+added ``boreAngCalc`` documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.5**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Lots of new module documentation which includes a discussion of what is
+being modeled, the validation tests, as well as a user guide to the
+module. The new documentation includes:
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+Thruster ``DynEffector`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+ephemeris conversion module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Coarse Sun Sensor module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated BSK module template documentation
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated documentation for IMU Sensor module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Gravity Effector module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+SimpleNav Sensor module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Hinged Panel ``StateEffector`` module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+New tutorial scripts on
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+using CSS modules
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+using fuel tank module and the fuel slosh particle ``StateEffector``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+How to use ``MRP_Steering()`` along with the rate tracking sub-servo
+module
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The CSS modules now use the planetary shadow message information to
+simulated being in a planet's shadow
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+SRP DynEffector modules now simulates the impact of being in a planets
+shadow
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Included a method to validate all the AVS C-Function libraries like
+``rigidBodyKinematics``, ``linearAlgebra`` and ``orbitalMotion`` when
+the Basilisk ``pytest`` command is called. There is also some
+documentation on using these libraries in
+``/SimCode/utilitiesSelfCheck/_Documentation``
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to
+the simulation) to use new factory classes. If you did use the older
+``simIncludeRW.py`` or ``simIncludeGravity.py`` libraries, you'll need
+to update your python code to work with the new factory classes.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.4**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+A planetary eclipse model has been added. This allows for the shadow of
+one or multiple planets to be taken into account, including the penumbra
+region. This module writes an output message indicating if the
+spacecraft is in full sun light, partial shadow, or full shadow of the
+sun.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The body-fixed spacecraft structure frame has now been removed from the
+simulation and flight algorithm codes. All spacecraft vectors and
+tensors are now set directly in the body frame B. If the spacecraft
+parameters are given in terms of an alternate structure frame, these
+vectors and tensor must be transformed into the body frame first before
+being set in BSK.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The integrated tutorial test for using a Python based BSK module now has
+some documentation.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Created a method to compute the orbital potential and angular momentum
+energy. This allows for the kinetic energy and angular momentum checks
+to flat-line even if the satellite is in orbit. The spherical harmonics
+of the planet are taken into account as well.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Included a new Extended Kalman Filter module that determines the
+body-relative sun heading using the CSS signals.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.3**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+There is a new capability to now write BSK modules in Python, and
+integrated them directly with the C and C++ BSK modules. Documentation
+is still in progress, but a sample is found in
+SimScenarios/test_scenarioAttitudePythonPD.py.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+A new Variable Speed Control Moment Gyroscope (VSCMG) state effector
+module has been created. This module provides a torque-level VSCMG
+simulation which also includes the gyro frame or wheel being imbalanced.
+If the latter modes are engaged, the simulation does slow down
+noticeably, but you get the full physics.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+In the simulation the initial spacecraft position and velocity states
+are now specified now using the spacecraft center of mass location C,
+not the body fixed point B. This greatly simplifies the simulation
+setup. Upon initialization, the sim determines what the true center of
+mass of the spacecraft is using all time varying mass components, and
+sets the proper B point position and velocity vectors.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Specifying the initial spacecraft position and velocity states can now
+be done anywhere before the BSK initialization. The user sets init
+versions of the position and velocity vectors. The setState() method on
+the state engine thus doesn't have to be used.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+There is a new initializeSimulationAndDiscover method to init the BSK
+simulation that automatically checks if messages are shared across
+multiple simulation threads. See the modified
+SimScenarios/test_scenarioAttitudeFeedback2T.py file for how this
+simplifies the dual-threaded setup.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The MRP_Steering and PRV_Steering FSW modules have been broken up into a
+separate kinematic steering command (commanded desired angular velocity
+vector) and an associated angular velocity servo module name
+rateServoFullNonlinear. This will break any existing code that used
+either of these two attitude steering modules. The Python simulation
+code must be updated to to account for these new modules as done in the
+MRP_Steering integrated test test_MRP_steeringInt.py.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.2**
+
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+All unit and integrated tests now pass on Linux. The root issue was a
+variable length string variable in an output message. These strings have
+now been removed as they are no longer needed.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+The position and velocity of the center of mass of the spacecraft was
+added to the messaging system, so now the spacecraft's translational
+states can be logged by the center of mass of the spacecraft (r_CN_N and
+v_CN_N) or the origin of the body frame which is fixed to the hub
+(r_BN_N and v_BN_N). Additionally, the mass properties of the spacecraft
+was organized into an updateSCMassProps method that incapsulates the
+calculations of mass property calculations.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   <li>
+
+Updated UKF FSW module to be able to run on gryo only information when
+the star tracker is not available.
+
+.. raw:: html
+
+   </li>
+
+.. raw:: html
+
+   </ul>
+
+**Version 0.1.1**
+
+- On Linux, simplified the processing running BSK modules that require
+  boost. This makes the Viz related communication modules working again.
+- Added boost libs built on Ubuntu against gcc 5.4.0 20160609.
+- Added RPATH settings to allow for build directory to be placed outside
+  source directory
+- Major addition with new depleatable mass dynamic modeling, including
+  some fuel tank dynamic models.
+- minor fix for Monte Carlo dispersions
+
+
+**Version 0.1.0**
+
+
+**Simulation modules include:**
+
+.. raw:: html
+
+   <ul>
+
+.. raw:: html
+
+   <li>
+
+    Flexible integration structure with fixed time step RK1, RK2 and RK4
+    included</li>
+
+    <li>Rigid spacecraft simulated through <code>spacecraftPlus()</code> module.  The spacecraft object makes it simple to add external disturbances through <code>dynEffectors</code> and state depended actuation through <code>stateEffectors</code>.
+      <ul>
+          <li>Dynamics Effectors (actuation methods which do not have their own states to integrate)</li>
+              <ul>
+                  <li>External force or torque module</li>
+                  <li>Solar radiation pressure module</li>
+                  <li>Thruster module</li>
+              </ul>
+          <li>State Effectors (actuation methods which have states to integrate)</li>
+              <ul>
+                  <li>Fuel Tank model with fuel slosh particles</li>
+                  <li>Hinged panel model to simulate flexing structures such as solar panels</li>
+                  <li>Reaction wheel module with 3 modes (perfectly balanced, simple jitter with the disturbance modeled as an external force and torque, fully coupled imbalanced RW model)
+              </ul>
+       </ul>
+       <li>RW voltage interface module that mapes an input voltage to a RW motor torque</li>
+       <li>integrate Spice ephemeris information</li>
+       <li>simple navigation module that produces the position and attitude measurement states</li>
+       <li>IMU sensor</li>
+       <li>Star Tracker module</li>
+       <li>Coarse Sun Sensor (CSS) module</li>
+       <li>Added the ability to simulate the gravity from multiple celestial objects, as well as include spherical harmonic expansion of a particular celestial body.</li>
+
+.. raw:: html
+
+   </ul>
+
+**The AVS Lab Flight Algorithm folder contains:**
+
+- FSW template module
+- CSS based sun heading estimation module
+- UKF filter to determine inertial attitude
+- UKF filter to determine CSS based body-relative sun heading
+- Attitude Guidance modules:
+
+    - Pointing towards two celestial objects
+    - Inertial Pointing
+    - Hill Frame Pointing
+    - Euler rotation sequence to add dynamics capabilities to the attitude reference generation
+    - Spinning about an inertially fixed axis
+    - A raster manager module that can change the guidance module states
+    - Velocity frame pointing
+    - attitude tracking error evaluation module
+    - Deadband module for attitude tracking error
+- DV guidance module
+- Effector Interfaces:
+
+    - mapping of control torque onto RW motor torques
+    - Converting RW motor torques to voltages
+    - RW null motion module to equalize the wheel speeds continuously
+    - Thruster (THR) firing logic using a Schmitt trigger
+    - THR firing logic using a remainder calculation
+    - mapping of a command torque onto a set of THR devices
+    - module to evaluate the net momentum to dump with thrusters

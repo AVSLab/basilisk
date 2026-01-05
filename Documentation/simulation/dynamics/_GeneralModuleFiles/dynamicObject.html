@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: dynamicObject &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Module: extendedStateVector" href="extendedStateVector.html" />
+    <link rel="prev" title="Module: dynamicEffector" href="dynamicEffector.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/index.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/index.html">FuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/index.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/index.html">HingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/index.html">LinearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/index.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/index.html">NHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/index.html">RadiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/index.html">VSCMGs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/index.html">constraintEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/index.html">dragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/index.html">dualHingedRigidBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/index.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/index.html">facetDragEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/index.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/index.html">gravityEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/index.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/index.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/index.html">prescribedMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/index.html">reactionWheels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/index.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/index.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/index.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: dynamicObject</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/dynamicObject.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dynamicobject">
+<span id="dynamicobject"></span><h1>Module: dynamicObject<a class="headerlink" href="#module-dynamicobject" title="Link to this heading"></a></h1>
+<p>Object that is to be used by an integrator. This holds the equations of motion, integrate state, energy and
+momentum calculations. <a class="reference internal" href="#dynamicobject"><span class="std std-ref">Module: dynamicObject</span></a> is what puts all of the pieces together for your system</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413DynamicObject">
+<span id="_CPPv313DynamicObject"></span><span id="_CPPv213DynamicObject"></span><span id="DynamicObject"></span><span class="target" id="class_dynamic_object"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DynamicObject</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv413DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;dynamicObject.h&gt;</em></div>
+<p>A <a class="reference internal" href="#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> is a Basilisk model with states that must be integrated </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject13DynamicObjectEv">
+<span id="_CPPv3N13DynamicObject13DynamicObjectEv"></span><span id="_CPPv2N13DynamicObject13DynamicObjectEv"></span><span id="DynamicObject::DynamicObject"></span><span class="target" id="class_dynamic_object_1a4964ecdc1edc7ea66340de8ff6f30487"></span><span class="sig-name descname"><span class="n"><span class="pre">DynamicObject</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject13DynamicObjectEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject13DynamicObjectERK13DynamicObject">
+<span id="_CPPv3N13DynamicObject13DynamicObjectERK13DynamicObject"></span><span id="_CPPv2N13DynamicObject13DynamicObjectERK13DynamicObject"></span><span id="DynamicObject::DynamicObject__DynamicObjectCR"></span><span class="target" id="class_dynamic_object_1a3c75c2317b4967ed0eceb1376e1fd4fe"></span><span class="sig-name descname"><span class="n"><span class="pre">DynamicObject</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N13DynamicObject13DynamicObjectERK13DynamicObject" title="DynamicObject::DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject13DynamicObjectERK13DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObjectaSERK13DynamicObject">
+<span id="_CPPv3N13DynamicObjectaSERK13DynamicObject"></span><span id="_CPPv2N13DynamicObjectaSERK13DynamicObject"></span><span id="DynamicObject::assign-operator__DynamicObjectCR"></span><span class="target" id="class_dynamic_object_1a548fc1b84cc9b1fb95e9ee0b1e4f79d3"></span><a class="reference internal" href="#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13DynamicObjectaSERK13DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject13DynamicObjectERR13DynamicObject">
+<span id="_CPPv3N13DynamicObject13DynamicObjectERR13DynamicObject"></span><span id="_CPPv2N13DynamicObject13DynamicObjectERR13DynamicObject"></span><span id="DynamicObject::DynamicObject__DynamicObjectRR"></span><span class="target" id="class_dynamic_object_1adabfbcba8ed1de3f0c1829d536cb1d59"></span><span class="sig-name descname"><span class="n"><span class="pre">DynamicObject</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N13DynamicObject13DynamicObjectERR13DynamicObject" title="DynamicObject::DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject13DynamicObjectERR13DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObjectaSERR13DynamicObject">
+<span id="_CPPv3N13DynamicObjectaSERR13DynamicObject"></span><span id="_CPPv2N13DynamicObjectaSERR13DynamicObject"></span><span id="DynamicObject::assign-operator__DynamicObjectRR"></span><span class="target" id="class_dynamic_object_1a56cc03d892f7937379bb49a5f8fe06b6"></span><a class="reference internal" href="#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13DynamicObjectaSERR13DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObjectD0Ev">
+<span id="_CPPv3N13DynamicObjectD0Ev"></span><span id="_CPPv2N13DynamicObjectD0Ev"></span><span id="DynamicObject::~DynamicObject"></span><span class="target" id="class_dynamic_object_1a28722f9998ab3d1d6a4aee1676be945c"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~DynamicObject</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N13DynamicObjectD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject11UpdateStateE8uint64_t">
+<span id="_CPPv3N13DynamicObject11UpdateStateE8uint64_t"></span><span id="_CPPv2N13DynamicObject11UpdateStateE8uint64_t"></span><span id="DynamicObject::UpdateState__uint64_t"></span><span class="target" id="class_dynamic_object_1a70df814f489de722ef269ac5f387182f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Hooks the dyn-object into Basilisk architecture </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject17equationsOfMotionEdd">
+<span id="_CPPv3N13DynamicObject17equationsOfMotionEdd"></span><span id="_CPPv2N13DynamicObject17equationsOfMotionEdd"></span><span id="DynamicObject::equationsOfMotion__double.double"></span><span class="target" id="class_dynamic_object_1ac944c5aa18ddcbd5b074fb4868e966b8"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">equationsOfMotion</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject17equationsOfMotionEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes F = Xdot(X,t) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject14preIntegrationE8uint64_t">
+<span id="_CPPv3N13DynamicObject14preIntegrationE8uint64_t"></span><span id="_CPPv2N13DynamicObject14preIntegrationE8uint64_t"></span><span id="DynamicObject::preIntegration__uint64_t"></span><span class="target" id="class_dynamic_object_1a10018e812c75d85c29201e93bb1727a9"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTimeNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject14preIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs pre-integration steps </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject15postIntegrationE8uint64_t">
+<span id="_CPPv3N13DynamicObject15postIntegrationE8uint64_t"></span><span id="_CPPv2N13DynamicObject15postIntegrationE8uint64_t"></span><span id="DynamicObject::postIntegration__uint64_t"></span><span class="target" id="class_dynamic_object_1a732840dbb3d39ba1af2a53e19fa3d01e"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postIntegration</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTimeNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject15postIntegrationE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs post-integration steps </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject18initializeDynamicsEv">
+<span id="_CPPv3N13DynamicObject18initializeDynamicsEv"></span><span id="_CPPv2N13DynamicObject18initializeDynamicsEv"></span><span id="DynamicObject::initializeDynamics"></span><span class="target" id="class_dynamic_object_1aa0e986432ae6678256801f7399b93df8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initializeDynamics</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DynamicObject18initializeDynamicsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Initializes the dynamics and variables </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject21computeEnergyMomentumEd">
+<span id="_CPPv3N13DynamicObject21computeEnergyMomentumEd"></span><span id="_CPPv2N13DynamicObject21computeEnergyMomentumEd"></span><span id="DynamicObject::computeEnergyMomentum__double"></span><span class="target" id="class_dynamic_object_1afb8eb908eb91c1d67ed6745a2fb00659"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeEnergyMomentum</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DynamicObject21computeEnergyMomentumEd" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes energy and momentum of the system </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject14integrateStateE8uint64_t">
+<span id="_CPPv3N13DynamicObject14integrateStateE8uint64_t"></span><span id="_CPPv2N13DynamicObject14integrateStateE8uint64_t"></span><span id="DynamicObject::integrateState__uint64_t"></span><span class="target" id="class_dynamic_object_1a319294b2b045e92468b2dcc922228f68"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">integrateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DynamicObject14integrateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Prepares the dynamic object to be integrated, integrates the states forward in time, and finally performs the post-integration steps.</p>
+<p>This is only done if the <a class="reference internal" href="#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> integration is not sync’d to another <a class="reference internal" href="#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a></p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject13setIntegratorEP18StateVecIntegrator">
+<span id="_CPPv3N13DynamicObject13setIntegratorEP18StateVecIntegrator"></span><span id="_CPPv2N13DynamicObject13setIntegratorEP18StateVecIntegrator"></span><span id="DynamicObject::setIntegrator__StateVecIntegratorP"></span><span class="target" id="class_dynamic_object_1a6a42d740fd85501a069307fc3abe302c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setIntegrator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="stateVecIntegrator.html#_CPPv418StateVecIntegrator" title="StateVecIntegrator"><span class="n"><span class="pre">StateVecIntegrator</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">newIntegrator</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DynamicObject13setIntegratorEP18StateVecIntegrator" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets a new integrator in use </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject23syncDynamicsIntegrationEP13DynamicObject">
+<span id="_CPPv3N13DynamicObject23syncDynamicsIntegrationEP13DynamicObject"></span><span id="_CPPv2N13DynamicObject23syncDynamicsIntegrationEP13DynamicObject"></span><span id="DynamicObject::syncDynamicsIntegration__DynamicObjectP"></span><span class="target" id="class_dynamic_object_1a1758b147593f02c95a9a2b09c95fe987"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">syncDynamicsIntegration</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413DynamicObject" title="DynamicObject"><span class="n"><span class="pre">DynamicObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">dynPtr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13DynamicObject23syncDynamicsIntegrationEP13DynamicObject" title="Link to this definition"></a><br /></dt>
+<dd><p>Connects the integration of a <a class="reference internal" href="#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a> to the integration of this <a class="reference internal" href="#class_dynamic_object"><span class="std std-ref">DynamicObject</span></a>. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject10dynManagerE">
+<span id="_CPPv3N13DynamicObject10dynManagerE"></span><span id="_CPPv2N13DynamicObject10dynManagerE"></span><span id="DynamicObject::dynManager__DynParamManager"></span><span class="target" id="class_dynamic_object_1af8d461f1b85017224b07ab55dee34354"></span><a class="reference internal" href="dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dynManager</span></span></span><a class="headerlink" href="#_CPPv4N13DynamicObject10dynManagerE" title="Link to this definition"></a><br /></dt>
+<dd><p>Dynamics parameter manager for all effectors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject10integratorE">
+<span id="_CPPv3N13DynamicObject10integratorE"></span><span id="_CPPv2N13DynamicObject10integratorE"></span><span id="DynamicObject::integrator__StateVecIntegratorP"></span><span class="target" id="class_dynamic_object_1aeadb79ad676367b6a20a2eec7116ba20"></span><a class="reference internal" href="stateVecIntegrator.html#_CPPv418StateVecIntegrator" title="StateVecIntegrator"><span class="n"><span class="pre">StateVecIntegrator</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">integrator</span></span></span><a class="headerlink" href="#_CPPv4N13DynamicObject10integratorE" title="Link to this definition"></a><br /></dt>
+<dd><p>Integrator used to propagate state forward </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject9bskLoggerE">
+<span id="_CPPv3N13DynamicObject9bskLoggerE"></span><span id="_CPPv2N13DynamicObject9bskLoggerE"></span><span id="DynamicObject::bskLogger__BSKLogger"></span><span class="target" id="class_dynamic_object_1a2e8ede098402d83b29fed3b8554ee6ee"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N13DynamicObject9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject16isDynamicsSyncedE">
+<span id="_CPPv3N13DynamicObject16isDynamicsSyncedE"></span><span id="_CPPv2N13DynamicObject16isDynamicsSyncedE"></span><span id="DynamicObject::isDynamicsSynced__b"></span><span class="target" id="class_dynamic_object_1a5851d2f1e88c904de60eda131572d252"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isDynamicsSynced</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject16isDynamicsSyncedE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag indicating that another spacecraft object is controlling the integration </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject8timeStepE">
+<span id="_CPPv3N13DynamicObject8timeStepE"></span><span id="_CPPv2N13DynamicObject8timeStepE"></span><span id="DynamicObject::timeStep__double"></span><span class="target" id="class_dynamic_object_1a85d38118be9ec382ae08bf7d70f7b491"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeStep</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject8timeStepE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] integration time step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject10timeBeforeE">
+<span id="_CPPv3N13DynamicObject10timeBeforeE"></span><span id="_CPPv2N13DynamicObject10timeBeforeE"></span><span id="DynamicObject::timeBefore__double"></span><span class="target" id="class_dynamic_object_1a45ca02638ef57fdeacb3b590e739e53d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeBefore</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject10timeBeforeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] prior time value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13DynamicObject15timeBeforeNanosE">
+<span id="_CPPv3N13DynamicObject15timeBeforeNanosE"></span><span id="_CPPv2N13DynamicObject15timeBeforeNanosE"></span><span id="DynamicObject::timeBeforeNanos__uint64_t"></span><span class="target" id="class_dynamic_object_1a9a5615f1bd8a393ce70ae165eff97a0d"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeBeforeNanos</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N13DynamicObject15timeBeforeNanosE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] prior time value </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dynamicEffector.html" class="btn btn-neutral float-left" title="Module: dynamicEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="extendedStateVector.html" class="btn btn-neutral float-right" title="Module: extendedStateVector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

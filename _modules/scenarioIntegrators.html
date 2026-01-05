@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioIntegrators &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioIntegrators</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioIntegrators</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This script illustrates how to setup different integration methods for a basic 3-DOF orbit scenario.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">      python3 scenarioIntegrators.py</span>
+
+<span class="sd">The simulation layout is shown in the following illustration.  A single simulation process is created</span>
+<span class="sd">which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to</span>
+<span class="sd">simulate the gravitational accelerations.  The spacecraft object provides the states that the integration</span>
+<span class="sd">module needs to perform the time integration.</span>
+
+<span class="sd">.. image:: /_images/static/test_scenarioIntegrators.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">If :ref:`spacecraft`, or any other dynamics module, is created without specifying a particular</span>
+<span class="sd">integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a</span>
+<span class="sd">different integration scheme, the following code is used before the dynamics module is added to the</span>
+<span class="sd">python task list:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">   integratorObject = svIntegrators.svIntegratorEuler(scObject)</span>
+<span class="sd">   scObject.setIntegrator(integratorObject)</span>
+
+<span class="sd">The first line invokes an instance of the desired state vector integration module, and provides</span>
+<span class="sd">the dynamics module (spacecraft() in this case) as the input.  This specifies to the integrator</span>
+<span class="sd">module which other module will provide the ``equationOfMotion()`` function to evaluate the derivatives of</span>
+<span class="sd">the state vector.  The second line ties the integration module to the dynamics module.  After that we are</span>
+<span class="sd">done.</span>
+
+<span class="sd">The integrator scenario script is setup to evaluate the default integration method (RK4), a fourth-order variable time</span>
+<span class="sd">step integrator (RKF45), a first order Euler integration method, as well as a second order RK2 method.</span>
+
+<span class="sd">Moreover, this scenario illustrates how to set-up your own explicit Runge-Kutta</span>
+<span class="sd">methods simply by providing the coefficients in their Butcher table. The 3rd order</span>
+<span class="sd">Runge-Kutta and the (adaptive) Bogacki-Shampine methods are implemented in this way</span>
+<span class="sd">to illustrate how to create custom integrators:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    # 3rd order Runge-Kutta method</span>
+<span class="sd">    integratorObject = svIntegrators.svIntegratorRungeKutta(</span>
+<span class="sd">        scObject,</span>
+<span class="sd">        a_coefficients=[</span>
+<span class="sd">            [0,   0, 0],</span>
+<span class="sd">            [1/2, 0, 0],</span>
+<span class="sd">            [-1,  2, 0]</span>
+<span class="sd">        ],</span>
+<span class="sd">        b_coefficients=[1/6, 2/3, 1/6],</span>
+<span class="sd">        c_coefficients=[0, 0.5, 1]</span>
+<span class="sd">    )</span>
+<span class="sd">    scObject.setIntegrator(integratorObject)</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    # Bogacki-Shampine method</span>
+<span class="sd">    integratorObject = svIntegrators.svIntegratorAdaptiveRungeKutta(</span>
+<span class="sd">        scObject,</span>
+<span class="sd">        largest_order=3,</span>
+<span class="sd">        a_coefficients=[</span>
+<span class="sd">            [0,   0,   0,   0],</span>
+<span class="sd">            [1/2, 0,   0,   0],</span>
+<span class="sd">            [0  , 3/4, 0,   0],</span>
+<span class="sd">            [2/9, 1/3, 4/9, 0]</span>
+<span class="sd">        ],</span>
+<span class="sd">        b_coefficients=[7/24, 1/4, 1/3, 1/8],</span>
+<span class="sd">        b_star_coefficients=[2/9, 1/3, 4/9, 0],</span>
+<span class="sd">        c_coefficients=[0, 1/2, 3/4, 1]</span>
+<span class="sd">    )</span>
+<span class="sd">    scObject.setIntegrator(integratorObject)</span>
+
+
+<span class="sd">When the simulation completes a plot is shown for illustrating both the true and the numerically</span>
+<span class="sd">evaluated orbit.</span>
+
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, integratorCase = {&#39;rk4&#39;, &#39;rkf45&#39;, &#39;rk2&#39;, &#39;euler&#39;}</span>
+
+<span class="sd">The following figure illustrates the resulting</span>
+<span class="sd">trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.</span>
+<span class="sd">The RK4 and RKF45 method still approximate the true orbit well, while the RK2 method is starting to show some visible</span>
+<span class="sd">errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating</span>
+<span class="sd">that much smaller time steps must be used with this method in this scenario.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioIntegrators.svg</span>
+<span class="sd">   :align: center</span>
+
+
+<span class="sd">Creating New Integrator Modules</span>
+<span class="sd">-------------------------------</span>
+
+<span class="sd">New integration modules can be readily created for Basilisk.  They are all stored in the folder</span>
+<span class="sd">``Basilisk/src/simulation/dynamics/Integrators/``.</span>
+
+<span class="sd">The integrators must be created to function on a general state vector and be independent of the particular</span>
+<span class="sd">dynamics being integrated.  Note that the default integrator is placed inside the ``_GeneralModulesFiles``</span>
+<span class="sd">folder within the ``dynamics`` folder.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Demonstration of how to setup and use different integrators in</span>
+<span class="c1">#           Basilisk.  The simulation performs a 3-DOF orbit scenario.</span>
+<span class="c1"># Author:   Hanspeter Schaub</span>
+<span class="c1"># Creation Date:  Dec. 14, 2016</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># The path to the location of Basilisk</span>
+<span class="c1"># Used to get the location of supporting data.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+
+<span class="c1"># import simulation related support</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+
+<span class="c1"># import general simulation support files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">unitTestSupport</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># general support file with common unit test functions</span>
+
+<span class="c1"># attempt to import vizard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">vizSupport</span>
+
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioIntegrators.html#scenarioIntegrators.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">integratorCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        integratorCase (bool): Specify what type of integrator to use in the simulation</span>
+
+<span class="sd">            ================= ============================</span>
+<span class="sd">            String            Definition</span>
+<span class="sd">            ================= ============================</span>
+<span class="sd">            &#39;rk4&#39;             RK4 - default</span>
+<span class="sd">            &#39;rkf45&#39;           RKF45</span>
+<span class="sd">            &#39;rkf78&#39;           RKF78</span>
+<span class="sd">            &#39;rk2&#39;             RK2</span>
+<span class="sd">            &#39;euler&#39;           Euler or RK1</span>
+<span class="sd">            &#39;rk3&#39;             RK3</span>
+<span class="sd">            &#39;bogackiShampine&#39; Bogacki-Shampine adaptive</span>
+<span class="sd">            ================= ============================</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#  create the simulation process</span>
+    <span class="c1">#</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">120.0</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup the simulation tasks/objects</span>
+    <span class="c1">#</span>
+    <span class="c1"># initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;bskSat&quot;</span>
+
+    <span class="c1"># default case, RK4 is automatically setup, no extra code is needed</span>
+    <span class="k">if</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;rkf45&quot;</span><span class="p">:</span>
+        <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF45</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;rkf78&quot;</span><span class="p">:</span>
+        <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF78</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;euler&quot;</span><span class="p">:</span>
+        <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorEuler</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;rk2&quot;</span><span class="p">:</span>
+        <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK2</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;rk3&quot;</span><span class="p">:</span>
+        <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRungeKutta</span><span class="p">(</span>
+            <span class="n">scObject</span><span class="p">,</span>
+            <span class="n">a_coefficients</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>
+            <span class="n">b_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">6</span><span class="p">],</span>
+            <span class="n">c_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;bogackiShampine&quot;</span><span class="p">:</span>
+        <span class="n">integratorObject</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorAdaptiveRungeKutta</span><span class="p">(</span>
+            <span class="n">scObject</span><span class="p">,</span>
+            <span class="n">largest_order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">a_coefficients</span><span class="o">=</span><span class="p">[</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">],</span>
+            <span class="n">b_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span> <span class="o">/</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span><span class="p">],</span>
+            <span class="n">b_star_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">c_coefficients</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integratorObject</span><span class="p">)</span>
+
+    <span class="c1"># add spacecraft object to the simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1"># clear prior gravitational body and SPICE setup definitions</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="c1"># attach gravity model to spacecraft</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   setup orbit and simulation time</span>
+    <span class="c1">#</span>
+    <span class="c1"># setup the orbit using classical orbit elements</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">rLEO</span> <span class="o">=</span> <span class="mf">7000.0</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># meters</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">rLEO</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0001</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Spacecraft States with in the initialization variables</span>
+    <span class="c1">#</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span>  <span class="c1"># m - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span>  <span class="c1"># m - v_CN_N</span>
+
+    <span class="c1"># set the simulation time</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.75</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   Setup data logging before the simulation is initialized</span>
+    <span class="c1">#</span>
+    <span class="n">numDataPoints</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">samplingTime</span><span class="p">(</span>
+        <span class="n">simulationTime</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">,</span> <span class="n">numDataPoints</span>
+    <span class="p">)</span>
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="c1"># if this scenario is to interface with the BSK Viz, uncomment the following lines</span>
+    <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+        <span class="n">scSim</span><span class="p">,</span>
+        <span class="n">simTaskName</span><span class="p">,</span>
+        <span class="n">scObject</span>
+        <span class="c1"># , saveFile=fileName</span>
+    <span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   initialize Simulation</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   configure a simulation stop time and execute the simulation run</span>
+    <span class="c1">#</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   retrieve the logged data</span>
+    <span class="c1">#</span>
+    <span class="n">posData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">velData</span> <span class="o">=</span> <span class="n">dataLog</span><span class="o">.</span><span class="n">v_BN_N</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;rk4&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+
+    <span class="c1"># draw orbit in perifocal frame</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s1">&#39;rk4&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span> <span class="o">/</span> <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">))</span> <span class="o">*</span> <span class="mf">4.75</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">oe</span><span class="o">.</span><span class="n">rApoap</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">rPeriap</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">)</span>
+    <span class="c1"># draw the planet</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">planetColor</span> <span class="o">=</span> <span class="s2">&quot;#008800&quot;</span>
+    <span class="n">planetRadius</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">planetRadius</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">planetColor</span><span class="p">))</span>
+    <span class="c1"># draw the actual orbit</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">labelStrings</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;rk4&quot;</span><span class="p">,</span> <span class="s2">&quot;rkf45&quot;</span><span class="p">,</span> <span class="s2">&quot;rkf78&quot;</span><span class="p">,</span> <span class="s2">&quot;euler&quot;</span><span class="p">,</span> <span class="s2">&quot;rk2&quot;</span><span class="p">,</span> <span class="s2">&quot;rk3&quot;</span><span class="p">,</span> <span class="s2">&quot;bogackiShampine&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">posData</span><span class="p">)):</span>
+        <span class="n">oeData</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">rv2elem</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">posData</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">velData</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">rmag</span><span class="p">)</span>
+        <span class="n">fData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oeData</span><span class="o">.</span><span class="n">f</span> <span class="o">+</span> <span class="n">oeData</span><span class="o">.</span><span class="n">omega</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="c1"># , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase), len(labelStrings))</span>
+        <span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">integratorCase</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># draw the full osculating orbit from the initial conditions</span>
+    <span class="n">fData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">rData</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fData</span><span class="p">)):</span>
+        <span class="n">rData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">rData</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fData</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$i_e$ Cord. [km]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;$i_p$ Cord. [km]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># # close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="c1"># plt.close(&quot;all&quot;)</span>
+
+    <span class="k">if</span> <span class="n">integratorCase</span> <span class="o">==</span> <span class="s2">&quot;bogackiShampine&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="c1"># this check below just makes sure no sub-test failures were found</span>
+    <span class="k">return</span> <span class="n">posData</span><span class="p">,</span> <span class="n">figureList</span></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;rk4&quot;</span>  <span class="c1"># show_plots</span>
+    <span class="p">)</span>  <span class="c1"># integrator case(0 - rk4, 1 - rkf45, 2 - rkf78, 3 - euler, 4 - rk2, 5 - rk3, 6 - bogackiShampine)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

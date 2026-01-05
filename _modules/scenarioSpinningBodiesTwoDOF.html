@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioSpinningBodiesTwoDOF &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioSpinningBodiesTwoDOF</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioSpinningBodiesTwoDOF</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2023, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates the capabilities of :ref:`spinningBodyTwoDOFStateEffector`, which represents an effector with</span>
+<span class="sd">two spin axis. The two-degree-of-freedom formulation allows the simulation of one rigid body attached to the hub through</span>
+<span class="sd">a universal joint, or a chain of two rigid bodies each attached through a single hinge. The spin axis and mass</span>
+<span class="sd">distribution of the rigid bodies are arbitrary.</span>
+
+<span class="sd">The scenario can be run with either one or two rigid bodies. The one-panel formulation consists of a cylindrical flat</span>
+<span class="sd">panel that rotates about two axis in a universal-joint configuration. The panel has similar dimensions to the hub. The</span>
+<span class="sd">two-panel formulation uses two flat cuboid panels that rotate about perpendicular hinges. The first panel connects</span>
+<span class="sd">directly to the hub, whereas the second connects to the first.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by using::</span>
+
+<span class="sd">    python3 scenarioSpinningBodiesTwoDOF.py</span>
+
+<span class="sd">The scenario outputs two plots: one for the time history of both angles, and another for the time history of both angle</span>
+<span class="sd">rates. the scenario also creates a comprehensive Vizard simulation which creates appropriate to-scale models for each</span>
+<span class="sd">simulation type.</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, numberPanels = 1</span>
+
+<span class="sd">Here, only a single panel is simulated. The panel connects to the hub through a universal, dual-axis joint. The time</span>
+<span class="sd">history for both angles and angle rates is shown below. Note how decoupled the two angles are. This is because the</span>
+<span class="sd">module is simulating a universal joint, so each axis behaves independently from each other. The impact of the motion of</span>
+<span class="sd">the panel is also shown in the velocity and angular velocity plots. The initial transient in the time history of these</span>
+<span class="sd">two quantities matches the motion of the panel.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFtheta1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFthetaDot1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFvelocity1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFangularVelocity1.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">::</span>
+
+<span class="sd">    show_plots = True, numberPanels = 2</span>
+
+<span class="sd">In this case, two panels are simulated. Each rotates about a one-degree-of-freedom hinge. The spin axis are perpendicular</span>
+<span class="sd">to each other to show how any spin axis can be chosen. Note that in this case, there is much more significant coupling</span>
+<span class="sd">between the two angles, with them being in-phase with each other. As before, the transient motion of the velocity and</span>
+<span class="sd">angular velocity states match the motion of the panels.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFtheta2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFthetaDot2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFvelocity2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioSpinningBodiesTwoDOFangularVelocity2.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#</span>
+<span class="c1"># Basilisk Scenario Script and Integrated Test</span>
+<span class="c1">#</span>
+<span class="c1"># Purpose:  Illustrates the different simulation capabilities of the 2DOF modules</span>
+<span class="c1"># Author:   João Vaz Carneiro</span>
+<span class="c1"># Creation Date:  Feb 22, 2023</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">vizSupport</span><span class="p">,</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">spinningBodyTwoDOFStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">unitTestSupport</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">__path__</span>
+<span class="n">bskPath</span> <span class="o">=</span> <span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioSpinningBodiesTwoDOF.html#scenarioSpinningBodiesTwoDOF.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">numberPanels</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scenarios can be run with the followings setups parameters:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots (bool): Determines if the script should display plots</span>
+<span class="sd">        numberPanels (int): Choose how many panels to simulate (1 or 2)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create simulation variable names</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">&quot;simTask&quot;</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">&quot;simProcess&quot;</span>
+
+    <span class="c1">#  Create a sim module as an empty container</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1">#  Create the simulation process</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+
+    <span class="c1"># Create the dynamics task and specify the integration update time</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">.01</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Set up the simulation tasks/objects</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># Define the spacecraft&#39;s properties</span>
+    <span class="n">massSC</span> <span class="o">=</span> <span class="mi">400</span>
+    <span class="n">diameter</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="c1"># Initialize spacecraft object and set properties</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;scObject&quot;</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">massSC</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">massSC</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">diameter</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">massSC</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">height</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">massSC</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">diameter</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">massSC</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">height</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">massSC</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">diameter</span> <span class="o">**</span> <span class="mi">2</span><span class="p">]]</span>
+
+    <span class="c1"># Set the spacecraft&#39;s initial conditions</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># m   - r_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># m/s - v_CN_N</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">]]</span>
+
+    <span class="c1"># Create two hinged rigid bodies</span>
+    <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyTwoDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyTwoDOFStateEffector</span><span class="p">()</span>
+    <span class="n">spinningBody</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">&quot;SpinningBody&quot;</span>
+
+    <span class="c1"># Set up the spinning bodies module</span>
+    <span class="k">if</span> <span class="n">numberPanels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Define the properties of the panel (cylinder)</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">diameter</span>
+        <span class="n">thickness</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+        <span class="c1"># Define the module&#39;s properties from the panels</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass1</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass2</span> <span class="o">=</span> <span class="n">mass</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">IS1PntSc1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">IS2PntSc2_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thickness</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thickness</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">mass</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">**</span> <span class="mi">2</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S10B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S20S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc1S1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc2S2_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">radius</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S1B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">diameter</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">thickness</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S2S1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">s1Hat_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">s2Hat_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">k1</span> <span class="o">=</span> <span class="mf">100.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">k2</span> <span class="o">=</span> <span class="mf">100.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">c1</span> <span class="o">=</span> <span class="mf">50.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">c2</span> <span class="o">=</span> <span class="mf">50.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta1Init</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta2Init</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta1DotInit</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta2DotInit</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="k">elif</span> <span class="n">numberPanels</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># Define the properties of the panels (rectangular cuboids)</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">diameter</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">diameter</span>
+        <span class="n">thickness</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+        <span class="c1"># Define the module&#39;s properties from the panels</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass1</span> <span class="o">=</span> <span class="n">mass</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass2</span> <span class="o">=</span> <span class="n">mass</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">IS1PntSc1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thickness</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">thickness</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">width</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">width</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">IS2PntSc2_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">thickness</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">thickness</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">width</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">mass</span> <span class="o">/</span> <span class="mi">12</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">width</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S10B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S20S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc1S1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_Sc2S2_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S1B_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">diameter</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">thickness</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">r_S2S1_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">s1Hat_S1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">s2Hat_S2</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">k1</span> <span class="o">=</span> <span class="mf">50.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">k2</span> <span class="o">=</span> <span class="mf">50.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">c1</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">c2</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta1Init</span> <span class="o">=</span> <span class="mf">60.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta2Init</span> <span class="o">=</span> <span class="mf">60.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta1DotInit</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">theta2DotInit</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot simulate </span><span class="si">{</span><span class="n">numberPanels</span><span class="si">}</span><span class="s2"> panels.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Add spinning body to spacecraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">)</span>
+
+    <span class="c1"># Add modules to simulation process</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">spinningBody</span><span class="p">)</span>
+
+    <span class="c1"># Set up the message recorders and add them to the task</span>
+    <span class="n">datLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">theta1Data</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">spinningBodyOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">theta2Data</span> <span class="o">=</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">spinningBodyOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scStateData</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">datLog</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">theta1Data</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">theta2Data</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scStateData</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># Set up Vizard visualization</span>
+    <span class="c1">#</span>
+    <span class="n">scBodyList</span> <span class="o">=</span> <span class="p">[</span><span class="n">scObject</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">numberPanels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">scBodyList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;panel&quot;</span><span class="p">,</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">spinningBodyConfigLogOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scBodyList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;panel1&quot;</span><span class="p">,</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">spinningBodyConfigLogOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">scBodyList</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;panel2&quot;</span><span class="p">,</span> <span class="n">spinningBody</span><span class="o">.</span><span class="n">spinningBodyConfigLogOutMsgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span><span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scBodyList</span>
+                                                  <span class="c1"># , saveFile=fileName + str(numberPanels)</span>
+                                                  <span class="p">)</span>
+
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span>
+                                     <span class="p">,</span> <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">]</span>
+                                     <span class="p">,</span> <span class="n">modelPath</span><span class="o">=</span><span class="s2">&quot;CYLINDER&quot;</span>
+                                     <span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">diameter</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+                                     <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">numberPanels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span>
+                                         <span class="p">,</span> <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;panel&quot;</span><span class="p">]</span>
+                                         <span class="p">,</span> <span class="n">modelPath</span><span class="o">=</span><span class="s2">&quot;CYLINDER&quot;</span>
+                                         <span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">radius</span><span class="p">,</span> <span class="n">thickness</span><span class="p">]</span>
+                                         <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">numberPanels</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span>
+                                         <span class="p">,</span> <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;panel1&quot;</span><span class="p">]</span>
+                                         <span class="p">,</span> <span class="n">modelPath</span><span class="o">=</span><span class="s2">&quot;CUBE&quot;</span>
+                                         <span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">thickness</span><span class="p">]</span>
+                                         <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+            <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span>
+                                         <span class="p">,</span> <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;panel2&quot;</span><span class="p">]</span>
+                                         <span class="p">,</span> <span class="n">modelPath</span><span class="o">=</span><span class="s2">&quot;CUBE&quot;</span>
+                                         <span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">thickness</span><span class="p">]</span>
+                                         <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">orbitLinesOn</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="c1"># Initialize the simulation</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Configure a simulation stop time and execute the simulation run</span>
+    <span class="n">simulationTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">min2nano</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">simulationTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ShowExecutionOrder</span><span class="p">()</span>
+
+    <span class="c1"># Retrieve the logged data</span>
+    <span class="n">theta1</span> <span class="o">=</span> <span class="n">theta1Data</span><span class="o">.</span><span class="n">theta</span>
+    <span class="n">theta1Dot</span> <span class="o">=</span> <span class="n">theta1Data</span><span class="o">.</span><span class="n">thetaDot</span>
+    <span class="n">theta2</span> <span class="o">=</span> <span class="n">theta2Data</span><span class="o">.</span><span class="n">theta</span>
+    <span class="n">theta2Dot</span> <span class="o">=</span> <span class="n">theta2Data</span><span class="o">.</span><span class="n">thetaDot</span>
+    <span class="n">v_BN_N</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">omega_BN_B</span> <span class="o">=</span> <span class="n">scStateData</span><span class="o">.</span><span class="n">omega_BN_B</span>
+
+    <span class="c1">#</span>
+    <span class="c1">#   plot the results</span>
+    <span class="c1">#</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># clears out plots from earlier test runs</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta1Data</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">theta1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_1$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta2Data</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">theta2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta_2$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [s]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\theta$ [deg]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;theta&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">numberPanels</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta1Data</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">theta1Dot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_1$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta1Data</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="o">*</span> <span class="n">theta2Dot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}_2$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [s]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$ [deg/s]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;thetaDot&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">numberPanels</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta1Data</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">v_BN_N</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$v_{BN,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [s]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Velocity [m/s]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;velocity&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">numberPanels</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta1Data</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span> <span class="n">omega_BN_B</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">unitTestSupport</span><span class="o">.</span><span class="n">getLineColor</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                 <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\omega_{BN,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [s]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Angular Velocity [rad/s]&#39;</span><span class="p">)</span>
+    <span class="n">pltName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;angularVelocity&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">numberPanels</span><span class="p">))</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">pltName</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># close the plots being saved off to avoid over-writing old and new figures</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># This statement below ensures that the unit test scrip can be run as a</span>
+<span class="c1"># stand-along python script</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>  <span class="c1"># show_plots</span>
+        <span class="mi">2</span><span class="p">,</span>  <span class="c1"># numberPanels</span>
+    <span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,544 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>keplerianOrbit &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="linearAlgebra" href="linearAlgebra.html" />
+    <link rel="prev" title="geodeticConversion" href="geodeticConversion.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BSpline.html">BSpline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="astroConstants.html">astroConstants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenMRP.html">avsEigenMRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="avsEigenSupport.html">avsEigenSupport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bilinearInterpolation.html">bilinearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskLogging.html">bskLogging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bskSemaphore.html">bskSemaphore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_Print.html">bsk_Print</a></li>
+<li class="toctree-l4"><a class="reference internal" href="discretize.html">discretize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gauss_markov.html">gauss_markov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodeticConversion.html">geodeticConversion</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">keplerianOrbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearAlgebra.html">linearAlgebra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="linearInterpolation.html">linearInterpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="macroDefinitions.html">macroDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="orbitalMotion.html">orbitalMotion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rigidBodyKinematics.html">rigidBodyKinematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="saturate.html">saturate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="signalCondition.html">signalCondition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simDefinitions.html">simDefinitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="svd.html">svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ukfUtilities.html">ukfUtilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="moduleIdGenerator/index.html">moduleIdGenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">utilities</a></li>
+      <li class="breadcrumb-item active">keplerianOrbit</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/utilities/keplerianOrbit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="keplerianorbit">
+<span id="id1"></span><h1>keplerianOrbit<a class="headerlink" href="#keplerianorbit" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414KeplerianOrbit">
+<span id="_CPPv314KeplerianOrbit"></span><span id="_CPPv214KeplerianOrbit"></span><span id="KeplerianOrbit"></span><span class="target" id="class_keplerian_orbit"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">KeplerianOrbit</span></span></span><a class="headerlink" href="#_CPPv414KeplerianOrbit" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;keplerianOrbit.h&gt;</em></div>
+<p>The <a class="reference internal" href="#class_keplerian_orbit"><span class="std std-ref">KeplerianOrbit</span></a> class represents an elliptical orbit and provides a coherent set of common outputs such as position and velocity, orbital period, semi-parameter, etc. It uses the utility orbitalMotion to do orbital element to position and velocity conversion. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit14KeplerianOrbitEv">
+<span id="_CPPv3N14KeplerianOrbit14KeplerianOrbitEv"></span><span id="_CPPv2N14KeplerianOrbit14KeplerianOrbitEv"></span><span id="KeplerianOrbit::KeplerianOrbit"></span><span class="target" id="class_keplerian_orbit_1a6752eaee07d9d23602ccf89fca57017c"></span><span class="sig-name descname"><span class="n"><span class="pre">KeplerianOrbit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit14KeplerianOrbitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This constructor initialized to an arbitrary orbit </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit14KeplerianOrbitE15ClassicElementsKd">
+<span id="_CPPv3N14KeplerianOrbit14KeplerianOrbitE15ClassicElementsKd"></span><span id="_CPPv2N14KeplerianOrbit14KeplerianOrbitE15ClassicElementsKd"></span><span id="KeplerianOrbit::KeplerianOrbit__ClassicElements.doubleC"></span><span class="target" id="class_keplerian_orbit_1a00201ee717364012d12f801cc4b4737c"></span><span class="sig-name descname"><span class="n"><span class="pre">KeplerianOrbit</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">oe</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit14KeplerianOrbitE15ClassicElementsKd" title="Link to this definition"></a><br /></dt>
+<dd><p>The constructor requires orbital elements and a gravitational constant value </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit14KeplerianOrbitERK14KeplerianOrbit">
+<span id="_CPPv3N14KeplerianOrbit14KeplerianOrbitERK14KeplerianOrbit"></span><span id="_CPPv2N14KeplerianOrbit14KeplerianOrbitERK14KeplerianOrbit"></span><span id="KeplerianOrbit::KeplerianOrbit__KeplerianOrbitCR"></span><span class="target" id="class_keplerian_orbit_1aec781539ea08b83b86c4ef5ecd0cc501"></span><span class="sig-name descname"><span class="n"><span class="pre">KeplerianOrbit</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N14KeplerianOrbit14KeplerianOrbitERK14KeplerianOrbit" title="KeplerianOrbit::KeplerianOrbit"><span class="n"><span class="pre">KeplerianOrbit</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">orig</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit14KeplerianOrbitERK14KeplerianOrbit" title="Link to this definition"></a><br /></dt>
+<dd><p>The copy constructor works with python copy </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbitD0Ev">
+<span id="_CPPv3N14KeplerianOrbitD0Ev"></span><span id="_CPPv2N14KeplerianOrbitD0Ev"></span><span id="KeplerianOrbit::~KeplerianOrbit"></span><span class="target" id="class_keplerian_orbit_1a6ece9f56a19fba0b2381a0ef70107efe"></span><span class="sig-name descname"><span class="n"><span class="pre">~KeplerianOrbit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbitD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Generic Destructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit6r_BP_PEv">
+<span id="_CPPv3NK14KeplerianOrbit6r_BP_PEv"></span><span id="_CPPv2NK14KeplerianOrbit6r_BP_PEv"></span><span id="KeplerianOrbit::r_BP_PC"></span><span class="target" id="class_keplerian_orbit_1a8eed6029c8260c2b86d9b5a5b78c0070"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_BP_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit6r_BP_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>body position vector relative to planet </p>
+<p>body position vector relative to planet </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit6v_BP_PEv">
+<span id="_CPPv3NK14KeplerianOrbit6v_BP_PEv"></span><span id="_CPPv2NK14KeplerianOrbit6v_BP_PEv"></span><span id="KeplerianOrbit::v_BP_PC"></span><span class="target" id="class_keplerian_orbit_1ab33d8eee8b03a51c32e5565690688619"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_BP_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit6v_BP_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>body velocity vector relative to planet </p>
+<p>body velocity vector relative to planet </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit6h_BP_PEv">
+<span id="_CPPv3NK14KeplerianOrbit6h_BP_PEv"></span><span id="_CPPv2NK14KeplerianOrbit6h_BP_PEv"></span><span id="KeplerianOrbit::h_BP_PC"></span><span class="target" id="class_keplerian_orbit_1a474949711151c00cbba13efd2eb3e0b6"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h_BP_P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit6h_BP_PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>angular momentum of body relative to planet </p>
+<p>angular momentum of body relative to planet </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1MEv">
+<span id="_CPPv3NK14KeplerianOrbit1MEv"></span><span id="_CPPv2NK14KeplerianOrbit1MEv"></span><span id="KeplerianOrbit::MC"></span><span class="target" id="class_keplerian_orbit_1a5d627aa446b6b8869ca42812b6acccfd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">M</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1MEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return mean anomaly angle </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1nEv">
+<span id="_CPPv3NK14KeplerianOrbit1nEv"></span><span id="_CPPv2NK14KeplerianOrbit1nEv"></span><span id="KeplerianOrbit::nC"></span><span class="target" id="class_keplerian_orbit_1adae9925144d4ae1d3aef194c24ddb637"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1nEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return mean orbit rate </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1PEv">
+<span id="_CPPv3NK14KeplerianOrbit1PEv"></span><span id="_CPPv2NK14KeplerianOrbit1PEv"></span><span id="KeplerianOrbit::PC"></span><span class="target" id="class_keplerian_orbit_1a26043f2ca085a4cfa8d25fe0299f1a8d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1PEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return mean orbit rate </p>
+<p>return orbit period </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1fEv">
+<span id="_CPPv3NK14KeplerianOrbit1fEv"></span><span id="_CPPv2NK14KeplerianOrbit1fEv"></span><span id="KeplerianOrbit::fC"></span><span class="target" id="class_keplerian_orbit_1a76694571db5f90bcd2bcb49d52cab86d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1fEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return orbital period </p>
+<p>return true anomaly </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit4fDotEv">
+<span id="_CPPv3NK14KeplerianOrbit4fDotEv"></span><span id="_CPPv2NK14KeplerianOrbit4fDotEv"></span><span id="KeplerianOrbit::fDotC"></span><span class="target" id="class_keplerian_orbit_1a94a3b0322b49b219b8918473c6ab7caa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fDot</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit4fDotEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return true anomaly </p>
+<p>return true anomaly rate </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit4RAANEv">
+<span id="_CPPv3NK14KeplerianOrbit4RAANEv"></span><span id="_CPPv2NK14KeplerianOrbit4RAANEv"></span><span id="KeplerianOrbit::RAANC"></span><span class="target" id="class_keplerian_orbit_1a3925bf58ab805c11390d0021f11f560b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RAAN</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit4RAANEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return right ascencion of the ascending node </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit5omegaEv">
+<span id="_CPPv3NK14KeplerianOrbit5omegaEv"></span><span id="_CPPv2NK14KeplerianOrbit5omegaEv"></span><span id="KeplerianOrbit::omegaC"></span><span class="target" id="class_keplerian_orbit_1a2d3b7c0ecbe2cd55328f24c6a07ba911"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">omega</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit5omegaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return argument of periapses </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1iEv">
+<span id="_CPPv3NK14KeplerianOrbit1iEv"></span><span id="_CPPv2NK14KeplerianOrbit1iEv"></span><span id="KeplerianOrbit::iC"></span><span class="target" id="class_keplerian_orbit_1ae99a0f3816a4cc4db8cf4eabc714333b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1iEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return inclination angle </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1eEv">
+<span id="_CPPv3NK14KeplerianOrbit1eEv"></span><span id="_CPPv2NK14KeplerianOrbit1eEv"></span><span id="KeplerianOrbit::eC"></span><span class="target" id="class_keplerian_orbit_1a86912351a58080fbfe219ac4c73fdd14"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">e</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1eEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return eccentricty </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1aEv">
+<span id="_CPPv3NK14KeplerianOrbit1aEv"></span><span id="_CPPv2NK14KeplerianOrbit1aEv"></span><span id="KeplerianOrbit::aC"></span><span class="target" id="class_keplerian_orbit_1afc4c0efd4be4297aa02a719da473f950"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1aEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return semi-major axis </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1hEv">
+<span id="_CPPv3NK14KeplerianOrbit1hEv"></span><span id="_CPPv2NK14KeplerianOrbit1hEv"></span><span id="KeplerianOrbit::hC"></span><span class="target" id="class_keplerian_orbit_1ab14c21709960e6b769bc1b0de942487e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">h</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1hEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return orbital angular momentum magnitude </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit6EnergyEv">
+<span id="_CPPv3N14KeplerianOrbit6EnergyEv"></span><span id="_CPPv2N14KeplerianOrbit6EnergyEv"></span><span id="KeplerianOrbit::Energy"></span><span class="target" id="class_keplerian_orbit_1a023a484349234c35fefeab6230f1723d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Energy</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit6EnergyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return orbital energy </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1rEv">
+<span id="_CPPv3NK14KeplerianOrbit1rEv"></span><span id="_CPPv2NK14KeplerianOrbit1rEv"></span><span id="KeplerianOrbit::rC"></span><span class="target" id="class_keplerian_orbit_1af09ce95ecde9798f5d86dbe30f8a9697"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1rEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return orbit radius </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1vEv">
+<span id="_CPPv3NK14KeplerianOrbit1vEv"></span><span id="_CPPv2NK14KeplerianOrbit1vEv"></span><span id="KeplerianOrbit::vC"></span><span class="target" id="class_keplerian_orbit_1a088f5e7945b734e1b6f9198f662738a5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1vEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return velocity magnitude </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit3r_aEv">
+<span id="_CPPv3NK14KeplerianOrbit3r_aEv"></span><span id="_CPPv2NK14KeplerianOrbit3r_aEv"></span><span id="KeplerianOrbit::r_aC"></span><span class="target" id="class_keplerian_orbit_1af6db879bd12b0287113778ac88afc225"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_a</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit3r_aEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return radius at apoapses </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit3r_pEv">
+<span id="_CPPv3NK14KeplerianOrbit3r_pEv"></span><span id="_CPPv2NK14KeplerianOrbit3r_pEv"></span><span id="KeplerianOrbit::r_pC"></span><span class="target" id="class_keplerian_orbit_1aebdacd118e4ab6dc8d3899d104521651"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_p</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit3r_pEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return radius at periapses </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit3fpaEv">
+<span id="_CPPv3NK14KeplerianOrbit3fpaEv"></span><span id="_CPPv2NK14KeplerianOrbit3fpaEv"></span><span id="KeplerianOrbit::fpaC"></span><span class="target" id="class_keplerian_orbit_1a816ea00f714f2ded5da86c4bc865b0e8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fpa</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit3fpaEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return flight path angle </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1EEv">
+<span id="_CPPv3NK14KeplerianOrbit1EEv"></span><span id="_CPPv2NK14KeplerianOrbit1EEv"></span><span id="KeplerianOrbit::EC"></span><span class="target" id="class_keplerian_orbit_1afd811b256610573d6a54743818b58466"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">E</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1EEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return eccentric anomaly angle </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit1pEv">
+<span id="_CPPv3NK14KeplerianOrbit1pEv"></span><span id="_CPPv2NK14KeplerianOrbit1pEv"></span><span id="KeplerianOrbit::pC"></span><span class="target" id="class_keplerian_orbit_1a3d8892eb2c9de447fbe1a31fd389e2ca"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">p</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit1pEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return semi-latus rectum or the parameter </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit4rDotEv">
+<span id="_CPPv3NK14KeplerianOrbit4rDotEv"></span><span id="_CPPv2NK14KeplerianOrbit4rDotEv"></span><span id="KeplerianOrbit::rDotC"></span><span class="target" id="class_keplerian_orbit_1a22762d85aaeeca3f62bcf62148bc35e3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rDot</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit4rDotEv" title="Link to this definition"></a><br /></dt>
+<dd><p>return radius rate </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14KeplerianOrbit2c3Ev">
+<span id="_CPPv3NK14KeplerianOrbit2c3Ev"></span><span id="_CPPv2NK14KeplerianOrbit2c3Ev"></span><span id="KeplerianOrbit::c3C"></span><span class="target" id="class_keplerian_orbit_1a146609cc99b207e12446c7610f54bf87"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">c3</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14KeplerianOrbit2c3Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>return escape velocity </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit2oeEv">
+<span id="_CPPv3N14KeplerianOrbit2oeEv"></span><span id="_CPPv2N14KeplerianOrbit2oeEv"></span><span id="KeplerianOrbit::oe"></span><span class="target" id="class_keplerian_orbit_1a1ccf03a896a216a738a5f2f66b2be5d2"></span><a class="reference internal" href="orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oe</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit2oeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method returns the orbital element set for the orbit </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="orbitalMotion.html#struct_classic_elements"><span class="std std-ref">ClassicElements</span></a> oe </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit6set_muEKd">
+<span id="_CPPv3N14KeplerianOrbit6set_muEKd"></span><span id="_CPPv2N14KeplerianOrbit6set_muEKd"></span><span id="KeplerianOrbit::set_mu__doubleC"></span><span class="target" id="class_keplerian_orbit_1a69455652cf48695760d356ab25029ec4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_mu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit6set_muEKd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method sets the gravitational constants of the body being orbited </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit5set_aEd">
+<span id="_CPPv3N14KeplerianOrbit5set_aEd"></span><span id="_CPPv2N14KeplerianOrbit5set_aEd"></span><span id="KeplerianOrbit::set_a__double"></span><span class="target" id="class_keplerian_orbit_1ae2d7f48b2d5ab42de927aeb63bc47c2a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_a</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit5set_aEd" title="Link to this definition"></a><br /></dt>
+<dd><p>set semi-major axis </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit5set_eEd">
+<span id="_CPPv3N14KeplerianOrbit5set_eEd"></span><span id="_CPPv2N14KeplerianOrbit5set_eEd"></span><span id="KeplerianOrbit::set_e__double"></span><span class="target" id="class_keplerian_orbit_1aef04e804451277819b79863af1c66847"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_e</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit5set_eEd" title="Link to this definition"></a><br /></dt>
+<dd><p>set eccentricity </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit5set_iEd">
+<span id="_CPPv3N14KeplerianOrbit5set_iEd"></span><span id="_CPPv2N14KeplerianOrbit5set_iEd"></span><span id="KeplerianOrbit::set_i__double"></span><span class="target" id="class_keplerian_orbit_1a03af84a806307553a19a110177312716"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_i</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit5set_iEd" title="Link to this definition"></a><br /></dt>
+<dd><p>set inclination angle </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit9set_omegaEd">
+<span id="_CPPv3N14KeplerianOrbit9set_omegaEd"></span><span id="_CPPv2N14KeplerianOrbit9set_omegaEd"></span><span id="KeplerianOrbit::set_omega__double"></span><span class="target" id="class_keplerian_orbit_1ac414fc73863ce1488f051363cbe81991"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_omega</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">omega</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit9set_omegaEd" title="Link to this definition"></a><br /></dt>
+<dd><p>set argument of periapsis </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit8set_RAANEd">
+<span id="_CPPv3N14KeplerianOrbit8set_RAANEd"></span><span id="_CPPv2N14KeplerianOrbit8set_RAANEd"></span><span id="KeplerianOrbit::set_RAAN__double"></span><span class="target" id="class_keplerian_orbit_1a9886750f57618524005c4a71b8cafaf1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_RAAN</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">RAAN</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit8set_RAANEd" title="Link to this definition"></a><br /></dt>
+<dd><p>set right ascension of the ascending node </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit5set_fEd">
+<span id="_CPPv3N14KeplerianOrbit5set_fEd"></span><span id="_CPPv2N14KeplerianOrbit5set_fEd"></span><span id="KeplerianOrbit::set_f__double"></span><span class="target" id="class_keplerian_orbit_1a8c123067f8dff968c1b7d5f3670c826c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_f</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">f</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit5set_fEd" title="Link to this definition"></a><br /></dt>
+<dd><p>set true anomaly angle </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit12change_orbitEv">
+<span id="_CPPv3N14KeplerianOrbit12change_orbitEv"></span><span id="_CPPv2N14KeplerianOrbit12change_orbitEv"></span><span id="KeplerianOrbit::change_orbit"></span><span class="target" id="class_keplerian_orbit_1a9dc29f0394ea1cf8cb0f53b422d134fb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">change_orbit</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit12change_orbitEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method populates all outputs from orbital elements coherently if any of the classical orbital elements are changed </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit8change_fEv">
+<span id="_CPPv3N14KeplerianOrbit8change_fEv"></span><span id="_CPPv2N14KeplerianOrbit8change_fEv"></span><span id="KeplerianOrbit::change_f"></span><span class="target" id="class_keplerian_orbit_1ae3a8aa2a63ad93462868b24a185e9f3f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">change_f</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit8change_fEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method only changes the outputs dependent on true anomaly so that one orbit may be queried at various points along the orbit </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit2muE">
+<span id="_CPPv3N14KeplerianOrbit2muE"></span><span id="_CPPv2N14KeplerianOrbit2muE"></span><span id="KeplerianOrbit::mu__double"></span><span class="target" id="class_keplerian_orbit_1a3eeae93d2cdacb7c3500d352723f1c52"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">MU_EARTH</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">pow</span></span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit2muE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit15semi_major_axisE">
+<span id="_CPPv3N14KeplerianOrbit15semi_major_axisE"></span><span id="_CPPv2N14KeplerianOrbit15semi_major_axisE"></span><span id="KeplerianOrbit::semi_major_axis__double"></span><span class="target" id="class_keplerian_orbit_1a523e7fcf36947cb5c1c23258d5b06e58"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">semi_major_axis</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1E5</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="m"><span class="pre">1000</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit15semi_major_axisE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit12eccentricityE">
+<span id="_CPPv3N14KeplerianOrbit12eccentricityE"></span><span id="_CPPv2N14KeplerianOrbit12eccentricityE"></span><span id="KeplerianOrbit::eccentricity__double"></span><span class="target" id="class_keplerian_orbit_1a9609391be15345329db38d7a65e32353"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eccentricity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1E-5</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit12eccentricityE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit11inclinationE">
+<span id="_CPPv3N14KeplerianOrbit11inclinationE"></span><span id="_CPPv2N14KeplerianOrbit11inclinationE"></span><span id="KeplerianOrbit::inclination__double"></span><span class="target" id="class_keplerian_orbit_1aae46cf868c690de00a0efa94024116cb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inclination</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit11inclinationE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit21argument_of_periapsisE">
+<span id="_CPPv3N14KeplerianOrbit21argument_of_periapsisE"></span><span id="_CPPv2N14KeplerianOrbit21argument_of_periapsisE"></span><span id="KeplerianOrbit::argument_of_periapsis__double"></span><span class="target" id="class_keplerian_orbit_1a6f0f35ba412e470b1b4e4296d8f75401"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">argument_of_periapsis</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit21argument_of_periapsisE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit15right_ascensionE">
+<span id="_CPPv3N14KeplerianOrbit15right_ascensionE"></span><span id="_CPPv2N14KeplerianOrbit15right_ascensionE"></span><span id="KeplerianOrbit::right_ascension__double"></span><span class="target" id="class_keplerian_orbit_1a366cfb66b930fe824f211b71f19cf614"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">right_ascension</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit15right_ascensionE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit12true_anomalyE">
+<span id="_CPPv3N14KeplerianOrbit12true_anomalyE"></span><span id="_CPPv2N14KeplerianOrbit12true_anomalyE"></span><span id="KeplerianOrbit::true_anomaly__double"></span><span class="target" id="class_keplerian_orbit_1a54838453f19d20a561940d254d5caa65"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">true_anomaly</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit12true_anomalyE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit17true_anomaly_rateE">
+<span id="_CPPv3N14KeplerianOrbit17true_anomaly_rateE"></span><span id="_CPPv2N14KeplerianOrbit17true_anomaly_rateE"></span><span id="KeplerianOrbit::true_anomaly_rate__double"></span><span class="target" id="class_keplerian_orbit_1ae6c60e56c42863dc1c30425062256722"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">true_anomaly_rate</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit17true_anomaly_rateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit14orbital_periodE">
+<span id="_CPPv3N14KeplerianOrbit14orbital_periodE"></span><span id="_CPPv2N14KeplerianOrbit14orbital_periodE"></span><span id="KeplerianOrbit::orbital_period__double"></span><span class="target" id="class_keplerian_orbit_1a4dd153aa3924d631835998c44dfd8d60"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbital_period</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit14orbital_periodE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit14orbital_energyE">
+<span id="_CPPv3N14KeplerianOrbit14orbital_energyE"></span><span id="_CPPv2N14KeplerianOrbit14orbital_energyE"></span><span id="KeplerianOrbit::orbital_energy__double"></span><span class="target" id="class_keplerian_orbit_1a049159b3b39e10d7615bd97e9e360b27"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbital_energy</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit14orbital_energyE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit10v_infinityE">
+<span id="_CPPv3N14KeplerianOrbit10v_infinityE"></span><span id="_CPPv2N14KeplerianOrbit10v_infinityE"></span><span id="KeplerianOrbit::v_infinity__double"></span><span class="target" id="class_keplerian_orbit_1a6a4fff35017329631f71f32d9345b25f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">v_infinity</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit10v_infinityE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit12orbit_radiusE">
+<span id="_CPPv3N14KeplerianOrbit12orbit_radiusE"></span><span id="_CPPv2N14KeplerianOrbit12orbit_radiusE"></span><span id="KeplerianOrbit::orbit_radius__double"></span><span class="target" id="class_keplerian_orbit_1a7d7920a58a8b87163e3f07cded3af78b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbit_radius</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit12orbit_radiusE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit11radial_rateE">
+<span id="_CPPv3N14KeplerianOrbit11radial_rateE"></span><span id="_CPPv2N14KeplerianOrbit11radial_rateE"></span><span id="KeplerianOrbit::radial_rate__double"></span><span class="target" id="class_keplerian_orbit_1a02b5bd1c716b943517c069f89b6e96f2"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">radial_rate</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit11radial_rateE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit8r_apogeeE">
+<span id="_CPPv3N14KeplerianOrbit8r_apogeeE"></span><span id="_CPPv2N14KeplerianOrbit8r_apogeeE"></span><span id="KeplerianOrbit::r_apogee__double"></span><span class="target" id="class_keplerian_orbit_1a2971b8be88b7b046bfc0b68b971f982a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_apogee</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit8r_apogeeE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit9r_perigeeE">
+<span id="_CPPv3N14KeplerianOrbit9r_perigeeE"></span><span id="_CPPv2N14KeplerianOrbit9r_perigeeE"></span><span id="KeplerianOrbit::r_perigee__double"></span><span class="target" id="class_keplerian_orbit_1aa878b9a5983b502794e56a7d7ce97afa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">r_perigee</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit9r_perigeeE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit14semi_parameterE">
+<span id="_CPPv3N14KeplerianOrbit14semi_parameterE"></span><span id="_CPPv2N14KeplerianOrbit14semi_parameterE"></span><span id="KeplerianOrbit::semi_parameter__double"></span><span class="target" id="class_keplerian_orbit_1ad38d4fbfe214efcfb6dbb341b495d901"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">semi_parameter</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit14semi_parameterE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit17flight_path_angleE">
+<span id="_CPPv3N14KeplerianOrbit17flight_path_angleE"></span><span id="_CPPv2N14KeplerianOrbit17flight_path_angleE"></span><span id="KeplerianOrbit::flight_path_angle__double"></span><span class="target" id="class_keplerian_orbit_1af24612c812bcaae2cac9fd65824a47cc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flight_path_angle</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit17flight_path_angleE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit17eccentric_anomalyE">
+<span id="_CPPv3N14KeplerianOrbit17eccentric_anomalyE"></span><span id="_CPPv2N14KeplerianOrbit17eccentric_anomalyE"></span><span id="KeplerianOrbit::eccentric_anomaly__double"></span><span class="target" id="class_keplerian_orbit_1a6ce7cb0d8b1f69308eb550a5ba14083d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eccentric_anomaly</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit17eccentric_anomalyE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit11mean_motionE">
+<span id="_CPPv3N14KeplerianOrbit11mean_motionE"></span><span id="_CPPv2N14KeplerianOrbit11mean_motionE"></span><span id="KeplerianOrbit::mean_motion__double"></span><span class="target" id="class_keplerian_orbit_1aeaebb55928e8329fc2bc751ea7d97a4d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mean_motion</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit11mean_motionE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit12mean_anomalyE">
+<span id="_CPPv3N14KeplerianOrbit12mean_anomalyE"></span><span id="_CPPv2N14KeplerianOrbit12mean_anomalyE"></span><span id="KeplerianOrbit::mean_anomaly__double"></span><span class="target" id="class_keplerian_orbit_1aa452233f597ec518c3050a09522416b1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mean_anomaly</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit12mean_anomalyE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit26orbital_angular_momentum_PE">
+<span id="_CPPv3N14KeplerianOrbit26orbital_angular_momentum_PE"></span><span id="_CPPv2N14KeplerianOrbit26orbital_angular_momentum_PE"></span><span id="KeplerianOrbit::orbital_angular_momentum_P__Eigen::Vector3d"></span><span class="target" id="class_keplerian_orbit_1a32b944d755c5433b0047f065113fee3c"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orbital_angular_momentum_P</span></span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit26orbital_angular_momentum_PE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit13position_BP_PE">
+<span id="_CPPv3N14KeplerianOrbit13position_BP_PE"></span><span id="_CPPv2N14KeplerianOrbit13position_BP_PE"></span><span id="KeplerianOrbit::position_BP_P__Eigen::Vector3d"></span><span class="target" id="class_keplerian_orbit_1a54590f036cc7e8d92332326c176e443d"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">position_BP_P</span></span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit13position_BP_PE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14KeplerianOrbit13velocity_BP_PE">
+<span id="_CPPv3N14KeplerianOrbit13velocity_BP_PE"></span><span id="_CPPv2N14KeplerianOrbit13velocity_BP_PE"></span><span id="KeplerianOrbit::velocity_BP_P__Eigen::Vector3d"></span><span class="target" id="class_keplerian_orbit_1ad8d3b3d054d07e919567f73df2ffff96"></span><a class="reference internal" href="../../simulation/mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">velocity_BP_P</span></span></span><a class="headerlink" href="#_CPPv4N14KeplerianOrbit13velocity_BP_PE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodeticConversion.html" class="btn btn-neutral float-left" title="geodeticConversion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="linearAlgebra.html" class="btn btn-neutral float-right" title="linearAlgebra" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

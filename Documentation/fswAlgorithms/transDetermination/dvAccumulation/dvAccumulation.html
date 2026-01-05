@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: dvAccumulation &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="dvAccumulation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">transDetermination</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../chebyPosEphem/index.html">chebyPosEphem</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">dvAccumulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemDifference/index.html">ephemDifference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ephemNavConverter/index.html">ephemNavConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../navAggregate/index.html">navAggregate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../oeStateEphem/index.html">oeStateEphem</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">transDetermination</a></li>
+          <li class="breadcrumb-item"><a href="index.html">dvAccumulation</a></li>
+      <li class="breadcrumb-item active">Module: dvAccumulation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/transDetermination/dvAccumulation/dvAccumulation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dvaccumulation">
+<span id="dvaccumulation"></span><h1>Module: dvAccumulation<a class="headerlink" href="#module-dvaccumulation" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module reads in a message with an array of accelerometer measurements and integrates them to determine an accumulated <span class="math notranslate nohighlight">\(\Delta\mathbf{v}\)</span> value.</p>
+<p>On reset the net <span class="math notranslate nohighlight">\(\Delta\mathbf{v}\)</span> is set to zero.  The output navigation message contains the latest measurements time tag and the total <span class="math notranslate nohighlight">\(\Delta\mathbf{v}\)</span>. More information on can be found in the
+<a class="reference download internal" download="" href="../../../../_downloads/692900845a0533e554eeafaac2e9ac96/Basilisk-dvAccumulation-2019-03-28.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<figure class="align-center" id="id1">
+<span id="moduleio-dvaccumulation"></span><img alt="../../../../_images/moduleImgDvAccumulation.svg" src="../../../../_images/moduleImgDvAccumulation.svg" />
+<figcaption>
+<p><span class="caption-text">Figure 1: <code class="docutils literal notranslate"><span class="pre">dvAccumulation()</span></code> Module I/O Illustration</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>dvAcumOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>accumulated DV output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>accPktInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccDataMsgPayload.html#accdatamsgpayload"><span class="std std-ref">AccDataMsgPayload</span></a></p></td>
+<td><p>input accelerometer message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423SelfInit_dvAccumulationP18DVAccumulationData7int64_t">
+<span id="_CPPv323SelfInit_dvAccumulationP18DVAccumulationData7int64_t"></span><span id="_CPPv223SelfInit_dvAccumulationP18DVAccumulationData7int64_t"></span><span id="SelfInit_dvAccumulation__DVAccumulationDataP.int64_t"></span><span class="target" id="dv_accumulation_8h_1abcb38beb35d9ba7b37d85b47dc8d7ada"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_dvAccumulation</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418DVAccumulationData" title="DVAccumulationData"><span class="n"><span class="pre">DVAccumulationData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423SelfInit_dvAccumulationP18DVAccumulationData7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the configData for the nav aggregation algorithm. It initializes the output message in the messaging system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the Nav aggregation interface </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Update_dvAccumulationP18DVAccumulationData8uint64_t7int64_t">
+<span id="_CPPv321Update_dvAccumulationP18DVAccumulationData8uint64_t7int64_t"></span><span id="_CPPv221Update_dvAccumulationP18DVAccumulationData8uint64_t7int64_t"></span><span id="Update_dvAccumulation__DVAccumulationDataP.uint64_t.int64_t"></span><span class="target" id="dv_accumulation_8h_1aa9663dfa553e54ac0812e9a0d6ed7105"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_dvAccumulation</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418DVAccumulationData" title="DVAccumulationData"><span class="n"><span class="pre">DVAccumulationData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Update_dvAccumulationP18DVAccumulationData8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the navigation message snippets created by the various navigation components in the FSW and aggregates them into a single complete navigation message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the aggregate nav module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420Reset_dvAccumulationP18DVAccumulationData8uint64_t7int64_t">
+<span id="_CPPv320Reset_dvAccumulationP18DVAccumulationData8uint64_t7int64_t"></span><span id="_CPPv220Reset_dvAccumulationP18DVAccumulationData8uint64_t7int64_t"></span><span id="Reset_dvAccumulation__DVAccumulationDataP.uint64_t.int64_t"></span><span class="target" id="dv_accumulation_8h_1a0764e30403e79badfb50db55213cf172"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_dvAccumulation</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418DVAccumulationData" title="DVAccumulationData"><span class="n"><span class="pre">DVAccumulationData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420Reset_dvAccumulationP18DVAccumulationData8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419dvAccumulation_swapP20AccPktDataMsgPayloadP20AccPktDataMsgPayload">
+<span id="_CPPv319dvAccumulation_swapP20AccPktDataMsgPayloadP20AccPktDataMsgPayload"></span><span id="_CPPv219dvAccumulation_swapP20AccPktDataMsgPayloadP20AccPktDataMsgPayload"></span><span id="dvAccumulation_swap__AccPktDataMsgPayloadP.AccPktDataMsgPayloadP"></span><span class="target" id="dv_accumulation_8h_1a31a4c9904512a83ef75567ae355ddcd2"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvAccumulation_swap</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccPktDataMsgPayload.html#_CPPv420AccPktDataMsgPayload" title="AccPktDataMsgPayload"><span class="n"><span class="pre">AccPktDataMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">p</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/AccPktDataMsgPayload.html#_CPPv420AccPktDataMsgPayload" title="AccPktDataMsgPayload"><span class="n"><span class="pre">AccPktDataMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">q</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419dvAccumulation_swapP20AccPktDataMsgPayloadP20AccPktDataMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424dvAccumulation_partitionP20AccPktDataMsgPayloadii">
+<span id="_CPPv324dvAccumulation_partitionP20AccPktDataMsgPayloadii"></span><span id="_CPPv224dvAccumulation_partitionP20AccPktDataMsgPayloadii"></span><span id="dvAccumulation_partition__AccPktDataMsgPayloadP.i.i"></span><span class="target" id="dv_accumulation_8h_1a9762292834516e29d70d305b07fd7491"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvAccumulation_partition</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccPktDataMsgPayload.html#_CPPv420AccPktDataMsgPayload" title="AccPktDataMsgPayload"><span class="n"><span class="pre">AccPktDataMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">A</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424dvAccumulation_partitionP20AccPktDataMsgPayloadii" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424dvAccumulation_QuickSortP20AccPktDataMsgPayloadii">
+<span id="_CPPv324dvAccumulation_QuickSortP20AccPktDataMsgPayloadii"></span><span id="_CPPv224dvAccumulation_QuickSortP20AccPktDataMsgPayloadii"></span><span id="dvAccumulation_QuickSort__AccPktDataMsgPayloadP.i.i"></span><span class="target" id="dv_accumulation_8h_1a2575971c78d91f4ac4882056598e1a88"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvAccumulation_QuickSort</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../architecture/msgPayloadDefC/AccPktDataMsgPayload.html#_CPPv420AccPktDataMsgPayload" title="AccPktDataMsgPayload"><span class="n"><span class="pre">AccPktDataMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">A</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424dvAccumulation_QuickSortP20AccPktDataMsgPayloadii" title="Link to this definition"></a><br /></dt>
+<dd><p>Sort the AccPktDataMsgPaylaod by the measTime with an iterative quickSort.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> – –&gt; Array to be sorted, </p></li>
+<li><p><strong>start</strong> – –&gt; Starting index, </p></li>
+<li><p><strong>end</strong> – –&gt; Ending index </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418DVAccumulationData">
+<span id="_CPPv318DVAccumulationData"></span><span id="_CPPv218DVAccumulationData"></span><span id="DVAccumulationData"></span><span class="target" id="struct_d_v_accumulation_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DVAccumulationData</span></span></span><a class="headerlink" href="#_CPPv418DVAccumulationData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;dvAccumulation.h&gt;</em></div>
+<p>Top level structure for the CSS sensor interface system. Contains all parameters for the CSS interface. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData12dvAcumOutMsgE">
+<span id="_CPPv3N18DVAccumulationData12dvAcumOutMsgE"></span><span id="_CPPv2N18DVAccumulationData12dvAcumOutMsgE"></span><span id="DVAccumulationData::dvAcumOutMsg__NavTransMsg_C"></span><span class="target" id="struct_d_v_accumulation_data_1a262b68a7bef5ef4fd0f129b16e433a14"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvAcumOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData12dvAcumOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>accumulated DV output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData11accPktInMsgE">
+<span id="_CPPv3N18DVAccumulationData11accPktInMsgE"></span><span id="_CPPv2N18DVAccumulationData11accPktInMsgE"></span><span id="DVAccumulationData::accPktInMsg__AccDataMsg_C"></span><span class="target" id="struct_d_v_accumulation_data_1ad1fe5bc9d85d3bb3edd615bbbbec03ac"></span><span class="n"><span class="pre">AccDataMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">accPktInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData11accPktInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] input accelerometer message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData8msgCountE">
+<span id="_CPPv3N18DVAccumulationData8msgCountE"></span><span id="_CPPv2N18DVAccumulationData8msgCountE"></span><span id="DVAccumulationData::msgCount__uint32_t"></span><span class="target" id="struct_d_v_accumulation_data_1a9d4726bcb5059fdd085ad2d5643ea23e"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">msgCount</span></span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData8msgCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] The total number of messages read from inputs </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData13dvInitializedE">
+<span id="_CPPv3N18DVAccumulationData13dvInitializedE"></span><span id="_CPPv2N18DVAccumulationData13dvInitializedE"></span><span id="DVAccumulationData::dvInitialized__uint32_t"></span><span class="target" id="struct_d_v_accumulation_data_1a37d73ce1c33085ced6aca5a8266bd94d"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dvInitialized</span></span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData13dvInitializedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Flag indicating whether DV has been started completely </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData12previousTimeE">
+<span id="_CPPv3N18DVAccumulationData12previousTimeE"></span><span id="_CPPv2N18DVAccumulationData12previousTimeE"></span><span id="DVAccumulationData::previousTime__uint64_t"></span><span class="target" id="struct_d_v_accumulation_data_1aaeaa0e8f9fd6328495ad3eb34040ba9d"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">previousTime</span></span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData12previousTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] The clock time associated with the previous run of algorithm </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData12vehAccumDV_BE">
+<span id="_CPPv3N18DVAccumulationData12vehAccumDV_BE"></span><span id="_CPPv2N18DVAccumulationData12vehAccumDV_BE"></span><span id="DVAccumulationData::vehAccumDV_B__doubleA"></span><span class="target" id="struct_d_v_accumulation_data_1ab7697e87f9be56a93a26b2b81d2e1d7a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehAccumDV_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData12vehAccumDV_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m/s] The accumulated Delta_V in body frame components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DVAccumulationData9bskLoggerE">
+<span id="_CPPv3N18DVAccumulationData9bskLoggerE"></span><span id="_CPPv2N18DVAccumulationData9bskLoggerE"></span><span id="DVAccumulationData::bskLogger__BSKLoggerP"></span><span class="target" id="struct_d_v_accumulation_data_1a646905c278c17255a8169b80d2641389"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N18DVAccumulationData9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="dvAccumulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

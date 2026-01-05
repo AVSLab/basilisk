@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: locationPointing &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="locationPointing" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attGuidance</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../attRefCorrection/index.html">attRefCorrection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../attTrackingError/index.html">attTrackingError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../celestialTwoBodyPoint/index.html">celestialTwoBodyPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constrainedAttitudeManeuver/index.html">constrainedAttitudeManeuver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../eulerRotation/index.html">eulerRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillPoint/index.html">hillPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertial3D/index.html">inertial3D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../inertial3DSpin/index.html">inertial3DSpin</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">locationPointing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpRotation/index.html">mrpRotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../oneAxisSolarArrayPoint/index.html">oneAxisSolarArrayPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../opNavPoint/index.html">opNavPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rasterManager/index.html">rasterManager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../simpleDeadband/index.html">simpleDeadband</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sunSafePoint/index.html">sunSafePoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../velocityPoint/index.html">velocityPoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../waypointReference/index.html">waypointReference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attGuidance</a></li>
+          <li class="breadcrumb-item"><a href="index.html">locationPointing</a></li>
+      <li class="breadcrumb-item active">Module: locationPointing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-locationpointing">
+<span id="locationpointing"></span><h1>Module: locationPointing<a class="headerlink" href="#module-locationpointing" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module generates an attitude guidance message to make a specified spacecraft pointing vector target an inertial location.
+This location could be on a planet if this module is connected with <a class="reference internal" href="../../../simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">Module: groundLocation</span></a> for example, or it could point
+to a celestial object center using <a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a>, or a spacecraft location using <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a>.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scAttInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>input msg with inertial spacecraft attitude states</p></td>
+</tr>
+<tr class="row-odd"><td><p>scTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>input msg with inertial spacecraft translational states</p></td>
+</tr>
+<tr class="row-even"><td><p>locationInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/GroundStateMsgPayload.html#groundstatemsgpayload"><span class="std std-ref">GroundStateMsgPayload</span></a></p></td>
+<td><p>input msg containing the inertial point location of interest</p></td>
+</tr>
+<tr class="row-odd"><td><p>celBodyInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/EphemerisMsgPayload.html#ephemerismsgpayload"><span class="std std-ref">EphemerisMsgPayload</span></a></p></td>
+<td><p>(alternative) input msg containing the inertial point location of a celestial body of interest</p></td>
+</tr>
+<tr class="row-even"><td><p>scTargetInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>(alternative) input msg with inertial target spacecraft translational states</p></td>
+</tr>
+<tr class="row-odd"><td><p>attGuidOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#attguidmsgpayload"><span class="std std-ref">AttGuidMsgPayload</span></a></p></td>
+<td><p>output message with the attitude guidance</p></td>
+</tr>
+<tr class="row-even"><td><p>attRefOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>output message with the attitude reference</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The inertial location of interest is given by <span class="math notranslate nohighlight">\({\bf r}_{L/N}\)</span> and can be either extracted from <code class="docutils literal notranslate"><span class="pre">locationInMsg</span></code> when
+a location on a planet is provided,  <code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code> when a celestial body’s ephemeris location is provided (for pointing
+at the Sun or the Earth), or <code class="docutils literal notranslate"><span class="pre">scTargetInMsg</span></code> when pointing at another spacecraft.
+The vector pointing from the satellite location <span class="math notranslate nohighlight">\({\bf r}_{S/N}\)</span> to this location is then</p>
+<div class="math notranslate nohighlight">
+\[{\bf r}_{L/S} = {\bf r}_{L/N} - {\bf r}_{S/N}\]</div>
+<p>Let <span class="math notranslate nohighlight">\(\hat{\bf r}_{L/S}\)</span> be the normalized heading vector to this location.</p>
+<p>The unit vector <span class="math notranslate nohighlight">\(\hat{\bf p}\)</span> is a body-fixed vector and denotes the body axis which is to point towards
+the desired location <span class="math notranslate nohighlight">\(L\)</span>.  Thus this modules performs a 2-degree of freedom attitude guidance and
+control solution.</p>
+<p>The eigen-axis to rotate <span class="math notranslate nohighlight">\(\hat{\bf p}\)</span> towards <span class="math notranslate nohighlight">\(\hat{\bf r}_{L/S}\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[\hat{\bf e} = \frac{\hat{\bf p} \times \hat{\bf r}_{L/S}}{|\hat{\bf p} \times \hat{\bf r}_{L/S}|}\]</div>
+<p>The principle rotation angle <span class="math notranslate nohighlight">\(\phi\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[\phi = \arccos (\hat{\bf p} \cdot \hat{\bf r}_{L/S} )\]</div>
+<p>The attitude tracking error <span class="math notranslate nohighlight">\({\pmb\sigma}_{B/R}\)</span> is then given by</p>
+<div class="math notranslate nohighlight">
+\[{\pmb\sigma}_{B/R} = - \tan(\phi/4) \hat{\bf e}\]</div>
+<p>The tracking error rates <span class="math notranslate nohighlight">\({\pmb\omega}_{B/R}\)</span> are obtained through numerical differentiation of the
+MRP values.  During the first module <code class="docutils literal notranslate"><span class="pre">Update</span></code> evaluation the numerical differencing is not possible and
+this value is thus set to zero.</p>
+<p>Using the attitude navigation and guidance messages, this module also computes the reference information in
+the form of <code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code>. This additional output message is useful when working with modules that need
+a reference message and cannot accept a guidance message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The module checks for several conditions such as heading vectors
+being collinear, the MRP switching during the numerical differentiation, etc.</p>
+</div>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The one required variable that must be set is <code class="docutils literal notranslate"><span class="pre">pHat_B</span></code>.  This is body-fixed unit vector which is to be
+pointed at the desired inertial location.</p>
+<p>The user should only connect one location of interest input message, either <code class="docutils literal notranslate"><span class="pre">locationInMsg</span></code>, <code class="docutils literal notranslate"><span class="pre">celBodyInMsg</span></code> or <code class="docutils literal notranslate"><span class="pre">scTargetInMsg</span></code>.
+Connecting both will result in a warning and the module defaults to using the <code class="docutils literal notranslate"><span class="pre">locationInMsg</span></code> information.</p>
+<p>This 2D attitude control module provides two output messages in the form of <a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#attguidmsgpayload"><span class="std std-ref">AttGuidMsgPayload</span></a> and <a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a>.
+The first guidance message, describing body relative to reference tracking errors,
+can be directly connected to an attitude control module.  However, at times we need to have the
+attitude reference message as the output to feed to <a class="reference internal" href="../attTrackingError/attTrackingError.html#atttrackingerror"><span class="std std-ref">Module: attTrackingError</span></a>.  Here the <code class="docutils literal notranslate"><span class="pre">B/R</span></code> states are subtracted
+from the <code class="docutils literal notranslate"><span class="pre">B/N</span></code> states to obtain the equivalent <code class="docutils literal notranslate"><span class="pre">R/N</span></code> states.</p>
+<p>The variable <code class="docutils literal notranslate"><span class="pre">smallAngle</span></code> defined the minimum angular separation where two vectors are considered colinear.
+It is defaulted to zero, but can be set to any desired value in radians.</p>
+<p>By default this is a 2D attitude control module in attitude and a 2D rate control.  In particular, the rates about the
+desired heading axis are not damped.  By setting the module variable <code class="docutils literal notranslate"><span class="pre">useBoresightRateDamping</span></code> to 1,
+the body rates about about the desired heading
+angle are added to the rate tracking error yielding a 3D rate control implementation.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425SelfInit_locationPointingP22locationPointingConfig7int64_t">
+<span id="_CPPv325SelfInit_locationPointingP22locationPointingConfig7int64_t"></span><span id="_CPPv225SelfInit_locationPointingP22locationPointingConfig7int64_t"></span><span id="SelfInit_locationPointing__locationPointingConfigP.int64_t"></span><span class="target" id="location_pointing_8h_1a98162ac3e282d435ff947a0ff343b39a"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_locationPointing</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422locationPointingConfig" title="locationPointingConfig"><span class="n"><span class="pre">locationPointingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425SelfInit_locationPointingP22locationPointingConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423Update_locationPointingP22locationPointingConfig8uint64_t7int64_t">
+<span id="_CPPv323Update_locationPointingP22locationPointingConfig8uint64_t7int64_t"></span><span id="_CPPv223Update_locationPointingP22locationPointingConfig8uint64_t7int64_t"></span><span id="Update_locationPointing__locationPointingConfigP.uint64_t.int64_t"></span><span class="target" id="location_pointing_8h_1a9233992465266cd38647c475a52134b3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_locationPointing</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422locationPointingConfig" title="locationPointingConfig"><span class="n"><span class="pre">locationPointingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423Update_locationPointingP22locationPointingConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the estimated body states and position relative to the ground to compute the current attitude/attitude rate errors and pass them to control.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Reset_locationPointingP22locationPointingConfig8uint64_t7int64_t">
+<span id="_CPPv322Reset_locationPointingP22locationPointingConfig8uint64_t7int64_t"></span><span id="_CPPv222Reset_locationPointingP22locationPointingConfig8uint64_t7int64_t"></span><span id="Reset_locationPointing__locationPointingConfigP.uint64_t.int64_t"></span><span class="target" id="location_pointing_8h_1a61e37ffa7f4a89b86406c8f54d8d134f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_locationPointing</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv422locationPointingConfig" title="locationPointingConfig"><span class="n"><span class="pre">locationPointingConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Reset_locationPointingP22locationPointingConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values. Check if required input messages are connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv422locationPointingConfig">
+<span id="_CPPv322locationPointingConfig"></span><span id="_CPPv222locationPointingConfig"></span><span id="locationPointingConfig"></span><span class="target" id="structlocation_pointing_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">locationPointingConfig</span></span></span><a class="headerlink" href="#_CPPv422locationPointingConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;locationPointing.h&gt;</em></div>
+<p>This module is used to generate the attitude reference message in order to have a spacecraft point at a location on the ground. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig6pHat_BE">
+<span id="_CPPv3N22locationPointingConfig6pHat_BE"></span><span id="_CPPv2N22locationPointingConfig6pHat_BE"></span><span id="locationPointingConfig::pHat_B__doubleA"></span><span class="target" id="structlocation_pointing_config_1af564a577cd9663e6299497000008b16e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pHat_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig6pHat_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>body fixed vector that is to be aimed at a location </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig10smallAngleE">
+<span id="_CPPv3N22locationPointingConfig10smallAngleE"></span><span id="_CPPv2N22locationPointingConfig10smallAngleE"></span><span id="locationPointingConfig::smallAngle__double"></span><span class="target" id="structlocation_pointing_config_1aa5685087e1066951a4a149c3edb2f740"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">smallAngle</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig10smallAngleE" title="Link to this definition"></a><br /></dt>
+<dd><p>rad An angle value that specifies what is near 0 or 180 degrees </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig23useBoresightRateDampingE">
+<span id="_CPPv3N22locationPointingConfig23useBoresightRateDampingE"></span><span id="_CPPv2N22locationPointingConfig23useBoresightRateDampingE"></span><span id="locationPointingConfig::useBoresightRateDamping__i"></span><span class="target" id="structlocation_pointing_config_1a1d5cc6ec067c8012fa58056fa3680ac2"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">useBoresightRateDamping</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig23useBoresightRateDampingE" title="Link to this definition"></a><br /></dt>
+<dd><p>[int] flag to use rate damping about the sensor boresight </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig12sigma_BR_oldE">
+<span id="_CPPv3N22locationPointingConfig12sigma_BR_oldE"></span><span id="_CPPv2N22locationPointingConfig12sigma_BR_oldE"></span><span id="locationPointingConfig::sigma_BR_old__doubleA"></span><span class="target" id="structlocation_pointing_config_1adb818e090146bf23c080837f8e736a88"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigma_BR_old</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig12sigma_BR_oldE" title="Link to this definition"></a><br /></dt>
+<dd><p>Older sigma_BR value, stored for finite diff </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig8time_oldE">
+<span id="_CPPv3N22locationPointingConfig8time_oldE"></span><span id="_CPPv2N22locationPointingConfig8time_oldE"></span><span id="locationPointingConfig::time_old__uint64_t"></span><span class="target" id="structlocation_pointing_config_1a58a465deb8d0a1e1b6fd7c694b1951f3"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">time_old</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig8time_oldE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] prior time value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig4initE">
+<span id="_CPPv3N22locationPointingConfig4initE"></span><span id="_CPPv2N22locationPointingConfig4initE"></span><span id="locationPointingConfig::init__double"></span><span class="target" id="structlocation_pointing_config_1a436127ca69dc76f3f297b5ee56365a42"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig4initE" title="Link to this definition"></a><br /></dt>
+<dd><p>moudle initialization counter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig9eHat180_BE">
+<span id="_CPPv3N22locationPointingConfig9eHat180_BE"></span><span id="_CPPv2N22locationPointingConfig9eHat180_BE"></span><span id="locationPointingConfig::eHat180_B__doubleA"></span><span class="target" id="structlocation_pointing_config_1a20572ea0bd0c4e67b68aaf4773e7244f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">eHat180_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig9eHat180_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>&amp;#8212; Eigen axis to use if commanded axis is 180 from pHat </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig10scAttInMsgE">
+<span id="_CPPv3N22locationPointingConfig10scAttInMsgE"></span><span id="_CPPv2N22locationPointingConfig10scAttInMsgE"></span><span id="locationPointingConfig::scAttInMsg__NavAttMsg_C"></span><span class="target" id="structlocation_pointing_config_1aea52fa679e6cfcef7b80be1612f206aa"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scAttInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig10scAttInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg with inertial spacecraft attitude states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig12scTransInMsgE">
+<span id="_CPPv3N22locationPointingConfig12scTransInMsgE"></span><span id="_CPPv2N22locationPointingConfig12scTransInMsgE"></span><span id="locationPointingConfig::scTransInMsg__NavTransMsg_C"></span><span class="target" id="structlocation_pointing_config_1a0d655b8955ba463e06f7df0da8faa78a"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig12scTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg with inertial spacecraft position states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig13locationInMsgE">
+<span id="_CPPv3N22locationPointingConfig13locationInMsgE"></span><span id="_CPPv2N22locationPointingConfig13locationInMsgE"></span><span id="locationPointingConfig::locationInMsg__GroundStateMsg_C"></span><span class="target" id="structlocation_pointing_config_1afa30c47424a01017ba62203868d479ef"></span><span class="n"><span class="pre">GroundStateMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">locationInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig13locationInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg with location relative to planet </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig12celBodyInMsgE">
+<span id="_CPPv3N22locationPointingConfig12celBodyInMsgE"></span><span id="_CPPv2N22locationPointingConfig12celBodyInMsgE"></span><span id="locationPointingConfig::celBodyInMsg__EphemerisMsg_C"></span><span class="target" id="structlocation_pointing_config_1a5ef1f2f5881cf9195fcfb6adfbf16c88"></span><span class="n"><span class="pre">EphemerisMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">celBodyInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig12celBodyInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input celestial body message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig13scTargetInMsgE">
+<span id="_CPPv3N22locationPointingConfig13scTargetInMsgE"></span><span id="_CPPv2N22locationPointingConfig13scTargetInMsgE"></span><span id="locationPointingConfig::scTargetInMsg__NavTransMsg_C"></span><span class="target" id="structlocation_pointing_config_1a718bdc37872db4444c8862dff8907df7"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scTargetInMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig13scTargetInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>input msg with inertial target spacecraft position states </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig13attGuidOutMsgE">
+<span id="_CPPv3N22locationPointingConfig13attGuidOutMsgE"></span><span id="_CPPv2N22locationPointingConfig13attGuidOutMsgE"></span><span id="locationPointingConfig::attGuidOutMsg__AttGuidMsg_C"></span><span class="target" id="structlocation_pointing_config_1ac0489dabea2e1b345688d4c2bd8c3894"></span><span class="n"><span class="pre">AttGuidMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attGuidOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig13attGuidOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude guidance output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig12attRefOutMsgE">
+<span id="_CPPv3N22locationPointingConfig12attRefOutMsgE"></span><span id="_CPPv2N22locationPointingConfig12attRefOutMsgE"></span><span id="locationPointingConfig::attRefOutMsg__AttRefMsg_C"></span><span class="target" id="structlocation_pointing_config_1af16d73e06f9fc48b917572ddb34d032a"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig12attRefOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude reference output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N22locationPointingConfig9bskLoggerE">
+<span id="_CPPv3N22locationPointingConfig9bskLoggerE"></span><span id="_CPPv2N22locationPointingConfig9bskLoggerE"></span><span id="locationPointingConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structlocation_pointing_config_1ada315a9cc7abeb2110608264b6a9e8f0"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N22locationPointingConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="locationPointing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

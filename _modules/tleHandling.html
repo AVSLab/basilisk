@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tleHandling &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tleHandling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tleHandling</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.dates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SEC_PER_DAY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span> <span class="k">as</span> <span class="n">om</span>
+
+<span class="n">SPUTNIK_LAUNCHDATE</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1957</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TleData">
+<a class="viewcode-back" href="../Documentation/utilities/tleHandling.html#tleHandling.TleData">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TleData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data class to hold TLE data (orbit elements) and metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Required (Orbital elements and time when they are valid is the minimum requirement)</span>
+    <span class="n">oe</span><span class="p">:</span> <span class="n">om</span><span class="o">.</span><span class="n">ClassicElements</span>
+    <span class="n">tleEpoch</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span>
+
+    <span class="c1"># Optional</span>
+    <span class="n">satName</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;BSK-Sat-00&quot;</span><span class="p">)</span> <span class="c1"># Satellite name [str] (max 24 characters)</span>
+    <span class="n">noradID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;00000&quot;</span><span class="p">)</span> <span class="c1"># Satellite catalog number / NORAD ID [str] (5 digits)</span>
+    <span class="n">classification</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span> <span class="c1"># Satellite classification (&quot;Unclassified&quot;, &quot;Classified&quot;, &quot;Secret&quot; | default: &quot;Unknown&quot;)</span>
+    <span class="n">revAtEpoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span> <span class="c1"># Revolution number at epoch [int] (indicates how many orbits the satellite has completed at epoch time (since launch), tops out at 99999)</span>
+    <span class="n">propagator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="c1"># Ephemeris type/propagator (0: &quot;Unknown&quot;, 1: &quot;SGP4&quot;, 2: &quot;SDP4&quot;, 3: &quot;SGP8&quot;, 4: &quot;SDP8&quot; | default: &quot;Unknown&quot;)</span>
+    <span class="n">elemSetNo</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">999</span><span class="p">)</span> <span class="c1"># Element set number [int] (incremented for each newly created TLE for the same object, tops out at 999)</span>
+    <span class="n">nDot</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span> <span class="c1"># First derivative of mean motion &quot;dn/dt&quot; in [rev/day^2]</span>
+    <span class="n">nDotDot</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span> <span class="c1"># Second derivative of mean motion &quot;d^2n/dt^2&quot; in [rev/day^3]</span>
+    <span class="n">bStar</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span> <span class="c1"># B*, the drag term in [1/Earth radii]</span>
+    <span class="n">launchDate</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="c1"># Launch date of the satellite (datetime object)</span>
+    <span class="n">launchNo</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Launch number of the year [int]</span>
+    <span class="n">pol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">)</span> <span class="c1"># Piece of launch  [str] (max 3 characters)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Only allow setting attributes that are defined in the dataclass</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot set attribute &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; on TleData instance&quot;</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_calcTleChecksum</span><span class="p">(</span><span class="n">stringArray</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate TLE checksum per line.</span>
+
+<span class="sd">    :param stringArray: array of strings to calculate checksum for a TLE line</span>
+<span class="sd">    :return: checksum value (0-9) [-]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">stringArray</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">char</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">total</span> <span class="o">%</span> <span class="mi">10</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseTleYear</span><span class="p">(</span><span class="n">yearStr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert 2-digit TLE year to full 4-digit year.&quot;&quot;&quot;</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">yearStr</span><span class="p">)</span>
+    <span class="c1">#First satellite launched &amp; cataloged in 1957 (Sputnik 1) | This has to be updated in 2057</span>
+    <span class="k">return</span> <span class="mi">1900</span> <span class="o">+</span> <span class="n">year</span> <span class="k">if</span> <span class="n">year</span> <span class="o">&gt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">SPUTNIK_LAUNCHDATE</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="k">else</span> <span class="mi">2000</span> <span class="o">+</span> <span class="n">year</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_firstDeriv2ballistCoef</span><span class="p">(</span><span class="n">balisticCoeffStr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the first derivative of mean motion to physical units.</span>
+
+<span class="sd">    :param balisticCoeffStr: string representing the first derivative of mean motion</span>
+<span class="sd">    :return: first derivative of mean motion in [rev/day^2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">balisticCoeffStr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">balisticCoeffStr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_tleStr2physVal</span><span class="p">(</span><span class="n">tleStr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert either the second derivative of mean motion or the B* drag term to physical units.</span>
+
+<span class="sd">    :param: string representing either: second derivative of mean motion OR B* drag term</span>
+<span class="sd">    :return: second derivative of mean motion in [rev/day^3] OR B* drag in [1/Earth radii]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">tleStr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">expSign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">tleStr</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">mantissa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="s2">&quot;0.&quot;</span> <span class="o">+</span> <span class="n">tleStr</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tleStr</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">mantissa</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">expSign</span> <span class="o">*</span> <span class="n">exponent</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parseTle</span><span class="p">(</span><span class="n">tle</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TleData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a single TLE to classical orbital elements.</span>
+
+<span class="sd">    :param tle: a string representing either a TLE(3LE) or a 2LE</span>
+<span class="sd">    :return: elements: classical orbital elements</span>
+<span class="sd">             metadata: dictionary containing TLE metadata</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if TLE has two or three lines</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tle</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">line0</span> <span class="o">=</span> <span class="n">tle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">line1</span> <span class="o">=</span> <span class="n">tle</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">line2</span> <span class="o">=</span> <span class="n">tle</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tle</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># If there are two lines (no title line), set line0 to empty</span>
+        <span class="n">line0</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">line1</span> <span class="o">=</span> <span class="n">tle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">line2</span> <span class="o">=</span> <span class="n">tle</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tle</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() received tle with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tle</span><span class="p">)</span><span class="si">}</span><span class="s2"> lines. Most likely a concatenation of multiple TLEs. </span><span class="se">\n</span><span class="s2"> Use constTLE2Elem() for satellite constellations.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() received tle with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tle</span><span class="p">)</span><span class="si">}</span><span class="s2"> lines. The TLE should have 2 or 3 lines.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Extract orbital elements from the first TLE-line</span>
+    <span class="n">line1_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">line1_str</span> <span class="o">!=</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() received line1 starting with &#39;</span><span class="si">{</span><span class="n">line1_str</span><span class="si">}</span><span class="s2">&#39;. The first character of line1 should be &#39;1&#39;.&quot;</span><span class="p">)</span>
+    <span class="n">satId1_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span> <span class="c1"># Satellite catalog number</span>
+    <span class="n">class_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="c1"># Classification (U=Unclassified, C=Classified, S=Secret)</span>
+    <span class="n">launchYear_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span> <span class="c1"># Launch year</span>
+    <span class="n">launchNo_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">14</span><span class="p">]</span> <span class="c1"># Launch number of the year</span>
+    <span class="n">pol_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">17</span><span class="p">]</span> <span class="c1"># Piece of launch</span>
+    <span class="n">epochYear_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">18</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span> <span class="c1"># Last two digits of the year</span>
+    <span class="n">epochDay_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span> <span class="c1"># Day of the year incl fractional part [DDD.DDDDDDDD]</span>
+    <span class="n">nDot_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">33</span><span class="p">:</span><span class="mi">43</span><span class="p">]</span> <span class="c1"># String containint the first derivative of the mean motion</span>
+    <span class="n">nDotDot_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">44</span><span class="p">:</span><span class="mi">52</span><span class="p">]</span> <span class="c1"># String containing the second derivative of the mean motion (decimal point assumed)</span>
+    <span class="n">bStar_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">53</span><span class="p">:</span><span class="mi">61</span><span class="p">]</span>
+    <span class="n">ephemType_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">62</span><span class="p">:</span><span class="mi">63</span><span class="p">]</span>
+    <span class="n">elemSetNo_str</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">64</span><span class="p">:</span><span class="mi">68</span><span class="p">]</span>
+    <span class="n">checkSumLine1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line1</span><span class="p">[</span><span class="mi">68</span><span class="p">:</span><span class="mi">69</span><span class="p">])</span>
+    <span class="n">calcChecksum1</span> <span class="o">=</span> <span class="n">_calcTleChecksum</span><span class="p">([</span><span class="n">line1_str</span><span class="p">,</span> <span class="n">satId1_str</span><span class="p">,</span> <span class="n">class_str</span><span class="p">,</span> <span class="n">launchYear_str</span><span class="p">,</span>
+                                           <span class="n">launchNo_str</span><span class="p">,</span> <span class="n">pol_str</span><span class="p">,</span>
+                                           <span class="n">epochYear_str</span><span class="p">,</span> <span class="n">epochDay_str</span><span class="p">,</span> <span class="n">nDot_str</span><span class="p">,</span>
+                                           <span class="n">nDotDot_str</span><span class="p">,</span> <span class="n">bStar_str</span><span class="p">,</span> <span class="n">ephemType_str</span><span class="p">,</span>
+                                           <span class="n">elemSetNo_str</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">checkSumLine1</span> <span class="o">!=</span> <span class="n">calcChecksum1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() checksum mismatch for line1. The calculated checksum is </span><span class="si">{</span><span class="n">calcChecksum1</span><span class="si">}</span><span class="s2"> while the provided checksum is </span><span class="si">{</span><span class="n">checkSumLine1</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Extract orbital elements from the second TLE-line</span>
+    <span class="n">line2_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">line2_str</span> <span class="o">!=</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() received line2 starting with &#39;</span><span class="si">{</span><span class="n">line2_str</span><span class="si">}</span><span class="s2">&#39;. The first character of line2 should be &#39;2&#39;.&quot;</span><span class="p">)</span>
+    <span class="n">satID_2_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">satID_2_str</span> <span class="o">!=</span> <span class="n">satId1_str</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() received mismatched satellite ID numbers in line1 (&#39;</span><span class="si">{</span><span class="n">satId1_str</span><span class="si">}</span><span class="s2">&#39;) and line2 (&#39;</span><span class="si">{</span><span class="n">satID_2_str</span><span class="si">}</span><span class="s2">&#39;).&quot;</span><span class="p">)</span>
+    <span class="n">inclDeg_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span> <span class="c1"># Inclination in degrees</span>
+    <span class="n">OmegaDeg_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">25</span><span class="p">]</span> <span class="c1"># Right Ascension of Ascending Node in degrees</span>
+    <span class="n">e_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">26</span><span class="p">:</span><span class="mi">33</span><span class="p">]</span> <span class="c1"># Eccentricity (decimal point assumed)</span>
+    <span class="n">omega_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">34</span><span class="p">:</span><span class="mi">42</span><span class="p">]</span> <span class="c1"># Argument of Perigee in degrees</span>
+    <span class="n">meanAnomaly_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">43</span><span class="p">:</span><span class="mi">51</span><span class="p">]</span> <span class="c1"># Mean Anomaly in degrees</span>
+    <span class="n">meanMotion_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">52</span><span class="p">:</span><span class="mi">63</span><span class="p">]</span> <span class="c1"># Mean Motion in revolutions per day</span>
+    <span class="n">revNo_str</span> <span class="o">=</span> <span class="n">line2</span><span class="p">[</span><span class="mi">63</span><span class="p">:</span><span class="mi">68</span><span class="p">]</span> <span class="c1"># Revolution number at epoch</span>
+    <span class="n">checkSumLine2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">68</span><span class="p">:</span><span class="mi">69</span><span class="p">])</span>
+    <span class="n">calcChecksum2</span> <span class="o">=</span> <span class="n">_calcTleChecksum</span><span class="p">([</span><span class="n">line2_str</span><span class="p">,</span> <span class="n">satID_2_str</span><span class="p">,</span> <span class="n">inclDeg_str</span><span class="p">,</span> <span class="n">OmegaDeg_str</span><span class="p">,</span> <span class="n">e_str</span><span class="p">,</span> <span class="n">omega_str</span><span class="p">,</span> <span class="n">meanAnomaly_str</span><span class="p">,</span> <span class="n">meanMotion_str</span><span class="p">,</span> <span class="n">revNo_str</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">checkSumLine2</span> <span class="o">!=</span> <span class="n">calcChecksum2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_parseTle() checksum mismatch for line2. The calculated checksum is </span><span class="si">{</span><span class="n">calcChecksum2</span><span class="si">}</span><span class="s2"> while the provided checksum is </span><span class="si">{</span><span class="n">checkSumLine2</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Parsing numerical values getting</span>
+    <span class="n">satName</span> <span class="o">=</span> <span class="n">line0</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">noradId</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">satId1_str</span><span class="p">)</span>
+    <span class="n">classification</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;U&#39;</span><span class="p">:</span> <span class="s1">&#39;Unclassified&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="s1">&#39;Classified&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="s1">&#39;Secret&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">class_str</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+
+    <span class="n">epochYear</span> <span class="o">=</span> <span class="n">_parseTleYear</span><span class="p">(</span><span class="n">line1</span><span class="p">[</span><span class="mi">18</span><span class="p">:</span><span class="mi">20</span><span class="p">])</span>
+    <span class="n">tle_datetime</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">epochYear</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">epochDay_str</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># subtract one day because Jan 1 is day 1 (not day 0)</span>
+    <span class="n">tle_datetime</span> <span class="o">=</span> <span class="n">tle_datetime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+    <span class="c1"># Converting TLE strings to physical values</span>
+    <span class="n">nDot</span> <span class="o">=</span> <span class="n">_firstDeriv2ballistCoef</span><span class="p">(</span><span class="n">nDot_str</span><span class="p">)</span> <span class="c1"># dn/dt in [rev/day^2]</span>
+    <span class="n">nDotDot</span> <span class="o">=</span> <span class="n">_tleStr2physVal</span><span class="p">(</span><span class="n">nDotDot_str</span><span class="p">)</span> <span class="c1"># d^2n/dt^2 in [rev/day^3]</span>
+    <span class="n">bStar</span> <span class="o">=</span> <span class="n">_tleStr2physVal</span><span class="p">(</span><span class="n">bStar_str</span><span class="p">)</span>
+    <span class="n">propagator</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="s1">&#39;SGP4&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span> <span class="s1">&#39;SDP4&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">:</span> <span class="s1">&#39;SGP8&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">:</span> <span class="s1">&#39;SDP8&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ephemType_str</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">elemSetNo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elemSetNo_str</span><span class="p">)</span>
+
+    <span class="c1"># Converting TLE information to classical orbital elements and write to TleData class</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">inclDeg_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">OmegaDeg_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="s2">&quot;0.&quot;</span> <span class="o">+</span> <span class="n">e_str</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">omega_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+    <span class="n">revDay</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">meanMotion_str</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">MU_EARTH</span> <span class="o">/</span> <span class="p">((</span><span class="n">revDay</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="n">SEC_PER_DAY</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">meanAnomaly_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">),</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="n">tleData</span> <span class="o">=</span> <span class="n">TleData</span><span class="p">(</span><span class="n">oe</span><span class="o">=</span><span class="n">oe</span><span class="p">,</span> <span class="n">tleEpoch</span><span class="o">=</span><span class="n">tle_datetime</span><span class="p">)</span>
+    <span class="c1"># Optional data</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">satName</span> <span class="o">=</span> <span class="n">satName</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">noradID</span> <span class="o">=</span> <span class="n">noradId</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">classification</span> <span class="o">=</span> <span class="n">classification</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">revAtEpoch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">revNo_str</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">propagator</span> <span class="o">=</span> <span class="n">propagator</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">elemSetNo</span> <span class="o">=</span> <span class="n">elemSetNo</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">nDot</span> <span class="o">=</span> <span class="n">nDot</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">nDotDot</span> <span class="o">=</span> <span class="n">nDotDot</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">bStar</span> <span class="o">=</span> <span class="n">bStar</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">launchDate</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">_parseTleYear</span><span class="p">(</span><span class="n">launchYear_str</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">launchNo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">launchNo_str</span><span class="p">)</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">pol</span> <span class="o">=</span> <span class="n">pol_str</span>
+
+    <span class="k">return</span> <span class="n">tleData</span>
+
+<div class="viewcode-block" id="satTle2elem">
+<a class="viewcode-back" href="../Documentation/utilities/tleHandling.html#tleHandling.satTle2elem">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">satTle2elem</span><span class="p">(</span><span class="n">tle_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the TLEs of a constellation to classical orbital elements for each satellite.</span>
+
+<span class="sd">    :param tle_path: path to a TLE with one or multiple satellites in either 2LE or 3LE format</span>
+<span class="sd">    :return: elementsList: list of classical orbital elements for each satellite</span>
+<span class="sd">             metadataList: list of dictionaries containing TLE metadata for each satellite</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resetTleStr</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the TLE strings and flags for reading a new satellite.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">nonlocal</span> <span class="n">satTLE</span><span class="p">,</span> <span class="n">satTleReady</span><span class="p">,</span> <span class="n">readingOrderIndex</span>
+        <span class="n">readingOrderIndex</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">satTLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+            <span class="n">satTleReady</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span> <span class="c1"># flags to check if all three lines are present</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">readingOrderIndex</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">satTLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+            <span class="n">satTleReady</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span> <span class="c1"># flags to check if all three lines are present</span>
+
+    <span class="n">tle_lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tle_path</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">noLines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tle_lines</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">noLines</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;constTLE2Elem() received a TLE with </span><span class="si">{</span><span class="n">noLines</span><span class="si">}</span><span class="s2"> lines. A valid TLE must have at least two lines.&quot;</span><span class="p">)</span>
+    <span class="n">noOfLinesStartingWith1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tle_lines</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">))</span>
+    <span class="n">noOfLinesStartingWith2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tle_lines</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">))</span>
+    <span class="n">noOfLinesStartingWithOther</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tle_lines</span><span class="p">)</span> <span class="o">-</span> <span class="n">noOfLinesStartingWith1</span> <span class="o">-</span> <span class="n">noOfLinesStartingWith2</span>
+
+    <span class="c1"># Initialize variables</span>
+    <span class="n">tleDataList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">readingOrderIndex</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Basic checks on the TLE input format (Robustness)</span>
+    <span class="k">if</span> <span class="n">noOfLinesStartingWith1</span> <span class="o">!=</span> <span class="n">noOfLinesStartingWith2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;constTLE2Elem() received a TLE with </span><span class="si">{</span><span class="n">noOfLinesStartingWith1</span><span class="si">}</span><span class="s2"> lines starting with &#39;1&#39; and </span><span class="si">{</span><span class="n">noOfLinesStartingWith2</span><span class="si">}</span><span class="s2"> lines starting with &#39;2&#39;. The number of lines starting with &#39;1&#39; and &#39;2&#39; must be equal.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">noOfLinesStartingWithOther</span> <span class="o">&gt;=</span> <span class="n">noOfLinesStartingWith1</span><span class="p">:</span>
+        <span class="c1">#TLE contains at least as many titles as lines starting with &#39;1&#39; or &#39;2&#39;=&gt; 3LE datatype</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># 3LE</span>
+    <span class="k">elif</span> <span class="n">noOfLinesStartingWithOther</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">noLines</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># TLE has no title lines at least two or more lines =&gt; 2LE</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># 2LE</span>
+    <span class="k">elif</span> <span class="n">noOfLinesStartingWithOther</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">noLines</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># TLE has one title line and more than two lines =&gt; 2LE (first line likely title for 2LE-file)</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># 2LE</span>
+        <span class="k">if</span> <span class="n">tle_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">tle_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;constTLE2Elem() received a TLE with one title line but the first line starts with &#39;1&#39; or &#39;2&#39;. --- TLE not valid ---.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Define the reading order based on the TLE type</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">readingOrder</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;line1&#39;</span><span class="p">,</span> <span class="s1">&#39;line2&#39;</span><span class="p">]</span>
+        <span class="n">satTLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">satTleReady</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span> <span class="c1"># flags to check if all three lines are present</span>
+    <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">readingOrder</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;line1&#39;</span><span class="p">,</span> <span class="s1">&#39;line2&#39;</span><span class="p">]</span>
+        <span class="n">satTLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">satTleReady</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span> <span class="c1"># flags to check if all three lines are present</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># This point should be unreachable, kept here for Robustness</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;constTLE2Elem() received an invalid TLE type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">&#39;. The type must be &#39;2LE&#39; or &#39;3LE&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="n">resetTleStr</span><span class="p">()</span>
+    <span class="c1"># Read through all lines and extract TLEs</span>
+    <span class="k">for</span> <span class="n">lineNo</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tle_lines</span><span class="p">):</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">readingOrder</span><span class="p">[</span><span class="n">readingOrderIndex</span><span class="p">]</span> <span class="k">if</span> <span class="n">readingOrderIndex</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">readingOrder</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expected</span> <span class="o">==</span> <span class="s1">&#39;line1&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">satTleReady</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: constTLE2Elem() found a new TLE line1 before completing the previous TLE (line number </span><span class="si">{</span><span class="n">lineNo</span><span class="si">}</span><span class="s2">). The previous TLE will be discarded.&quot;</span><span class="p">)</span>
+                <span class="c1"># Reset for next TLE</span>
+                <span class="n">resetTleStr</span><span class="p">()</span>
+            <span class="c1"># First TLE-line</span>
+            <span class="n">satTLE</span><span class="p">[</span><span class="nb">type</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="n">satTleReady</span><span class="p">[</span><span class="nb">type</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">readingOrderIndex</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expected</span> <span class="o">==</span> <span class="s1">&#39;line2&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">satTleReady</span><span class="p">[</span><span class="nb">type</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: constTLE2Elem() found a new TLE line2 before completing the previous TLE (line number </span><span class="si">{</span><span class="n">lineNo</span><span class="si">}</span><span class="s2">). The previous TLE will be discarded.&quot;</span><span class="p">)</span>
+                <span class="c1"># Reset for next TLE</span>
+                <span class="n">resetTleStr</span><span class="p">()</span>
+            <span class="c1"># Second TLE-line</span>
+            <span class="n">satTLE</span><span class="p">[</span><span class="nb">type</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="n">satTleReady</span><span class="p">[</span><span class="nb">type</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">expected</span> <span class="o">==</span> <span class="s1">&#39;title&#39;</span> <span class="ow">and</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">satTleReady</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: constTLE2Elem() found a new TLE title line before completing the previous TLE (line number </span><span class="si">{</span><span class="n">lineNo</span><span class="si">}</span><span class="s2">). The previous TLE will be discarded.&quot;</span><span class="p">)</span>
+                <span class="c1"># Reset for next TLE</span>
+                <span class="n">resetTleStr</span><span class="p">()</span>
+            <span class="c1"># Header (satellite ID / satellite name)</span>
+            <span class="n">satTLE</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="n">satTleReady</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">readingOrderIndex</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Line does not match expected format</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: constTLE2Elem() found an unexpected line: </span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">, line number </span><span class="si">{</span><span class="n">lineNo</span><span class="si">}</span><span class="s2">. This line will be ignored. The previous TLE will be discarded.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">satTleReady</span><span class="p">):</span>
+            <span class="n">tleDataClass</span> <span class="o">=</span> <span class="n">_parseTle</span><span class="p">(</span><span class="n">satTLE</span><span class="p">)</span>
+            <span class="n">tleDataList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tleDataClass</span><span class="p">)</span>
+            <span class="c1"># Reset for next TLE</span>
+            <span class="n">resetTleStr</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">tleDataList</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_str2tleFormat</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert one of the following numbers:</span>
+<span class="sd">        - &quot;Second derivative of mean motion [rev/day^3]&quot;</span>
+<span class="sd">        - &quot;B*, the drag term [1/Earth radii]&quot;</span>
+<span class="sd">    from its numeric value to the TLE format:</span>
+
+<span class="sd">    :param value: numeric value to convert</span>
+<span class="sd">    :return: string in TLE format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sign of the value</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mi">10</span>  <span class="c1"># Multiply value by 10 to get the exponent right</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># Absolute value</span>
+    <span class="n">sci_notation</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Split the scientific notation into mantissa and exponent parts</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">sci_notation</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">)</span>
+    <span class="n">matissa</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">exponentStr</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">exponentStr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exponent</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">expSign</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">expSign</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="c1"># Format the string according to TLE format</span>
+    <span class="n">exponent_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">expSign</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span><span class="si">:</span><span class="s2">01d</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">tle_sub_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sign</span><span class="si">}{</span><span class="n">matissa</span><span class="si">}{</span><span class="n">exponent_str</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">tle_sub_str</span>
+
+<div class="viewcode-block" id="generateTle">
+<a class="viewcode-back" href="../Documentation/utilities/tleHandling.html#tleHandling.generateTle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generateTle</span><span class="p">(</span><span class="n">tleData</span><span class="p">:</span> <span class="n">TleData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate TLE based on satellite orbit_n data for one satellite. This function allows to generate a TLE</span>
+<span class="sd">    for one satellite at a time! TLEs for constellations must be concanatenated outside of this function.</span>
+<span class="sd">    :param orbitElements: Classical orbital elements of the satellite                    [om.ClassicElements object]</span>
+<span class="sd">    :param satelliteName: Name of the satellite (optional, default: &quot;BSK-Sat-00&quot;)        [string, &lt;= 24 char]</span>
+<span class="sd">    :param launchYear_dt: Launch date of the satellite (optional, default: current year) [datetime object]</span>
+<span class="sd">    :param launch_Noyear: Launch number of the year (optional, default: 1)               [int]</span>
+<span class="sd">    :param NORAD_ID: NORAD ID (5 digits) of the satellite (optional, default: &quot;00000&quot;)   [str, 5 char]</span>
+<span class="sd">    :param classification: Satellite classification (U: Unclassified, C: Classified, S: Secret | default: &quot;U&quot;) [str, 1 char]</span>
+<span class="sd">    :param PoL: Piece of the launch (optional, default: &quot;A  &quot;)                           [str, 3 char]</span>
+<span class="sd">    :param tleEpoch: Epoch of the TLE as datetime object (optional default: current UTC time) [datetime object]</span>
+<span class="sd">    :param element_set_no: Element set number (optional, default: 999)                   [int]</span>
+<span class="sd">    :param nDot: First derivative of mean motion (dn/dt)                                 [float, rev/day^2]</span>
+<span class="sd">    :param nDotDot: Second derivative of mean motion (d^2n/dt^2)                         [float, rev/day^3]</span>
+<span class="sd">    :param BStar: B* drag term (optional, default: 0.0)                                  [float, 1/Earth radii]</span>
+<span class="sd">    :return: TLE string                                                                  [str, 3 lines]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make sure NORAD_ID is an integer and no longer than 5 characters (truncate)</span>
+    <span class="n">Norad_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">noradID</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">noradID</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: NORAD_ID truncated to 5 digits: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">noradID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">launchDate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">launchDate</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: Launch date not provided, using current UTC time: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">launchDate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">launchNo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">launchNo</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: launch_Noyear not provided, defaulting to: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">launchNo</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">pol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">pol</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">pol</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: Piece of the Launch (PoL) was not provided or is invalid, defaulting to &#39;A  &#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: TLE epoch not provided, using current UTC time: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">epoch_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span><span class="si">:</span><span class="s2">%y%j</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span><span class="o">.</span><span class="n">hour</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span><span class="o">.</span><span class="n">minute</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span><span class="o">.</span><span class="n">second</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">tleData</span><span class="o">.</span><span class="n">tleEpoch</span><span class="o">.</span><span class="n">microsecond</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">SEC_PER_DAY</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">nDot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">nDot</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: First derivative of mean motion / balistic coefficient (nDot) not provided, defaulting to: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">nDot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">nDotDot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">nDotDot</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: Second derivative of mean motion (nDotDot) not provided, defaulting to: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">nDotDot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">bStar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">bStar</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TLE Writing: BStar drag term not provided, defaulting to: </span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">bStar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tleData</span><span class="o">.</span><span class="n">classification</span> <span class="o">=</span> <span class="n">tleData</span><span class="o">.</span><span class="n">classification</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">classification</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;U&#39;</span>
+    <span class="c1"># Line 0</span>
+    <span class="n">line0_str</span> <span class="o">=</span> <span class="n">tleData</span><span class="o">.</span><span class="n">satName</span>   <span class="c1"># Satellite name (User defined satellite name, Default: &quot;BSK00&quot;)</span>
+    <span class="c1"># Line 1</span>
+    <span class="n">line_no_1_str</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>  <span class="c1"># Line number &quot;1&quot;</span>
+    <span class="n">satIDStr</span> <span class="o">=</span> <span class="n">Norad_str</span>  <span class="c1"># NORAD ID or default</span>
+    <span class="n">classStr</span> <span class="o">=</span> <span class="n">tleData</span><span class="o">.</span><span class="n">classification</span>  <span class="c1"># The satellite is unclassified [Can be U: Unclassified, C: Classified, S: Secret]</span>
+    <span class="n">IntD_LYear</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">launchDate</span><span class="o">.</span><span class="n">year</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># International Designator (last two digits of launch year) COSPAR ID</span>
+    <span class="n">IntD_LNo</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">launchNo</span><span class="p">)</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># International Designator (launch no. of the year) COSPAR ID</span>
+    <span class="n">IntD_PoL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">pol</span><span class="si">:</span><span class="s2">&lt;3</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># International Designator (piece of the launch) COSPAR ID [default &#39;A&#39;]</span>
+    <span class="n">epochStr</span> <span class="o">=</span> <span class="n">epoch_str</span>  <span class="c1"># Epoch in TLE format [YYDDD.DDDDDDDD]</span>
+    <span class="n">n_dot_str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;-0&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">nDot</span><span class="si">:</span><span class="s2">10.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Balistic coeffizient / First derivative of the mean motion in TLE format</span>
+    <span class="n">n_dot_str</span> <span class="o">=</span> <span class="n">n_dot_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;0.&quot;</span><span class="p">,</span> <span class="s2">&quot; .&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">tleData</span><span class="o">.</span><span class="n">nDot</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">n_dot_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;0.&quot;</span><span class="p">,</span> <span class="s2">&quot;-.&quot;</span><span class="p">)</span>  <span class="c1"># Remove the decimal point</span>
+    <span class="n">n_dotdot_str</span> <span class="o">=</span> <span class="n">_str2tleFormat</span><span class="p">(</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">nDotDot</span>
+    <span class="p">)</span>
+    <span class="n">b_star_str</span> <span class="o">=</span> <span class="n">_str2tleFormat</span><span class="p">(</span>
+        <span class="n">tleData</span><span class="o">.</span><span class="n">bStar</span>
+    <span class="p">)</span>
+    <span class="n">ephemeris_str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="c1"># Ephemeris type is 0 for BSK</span>
+    <span class="n">elem_st_no_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tleData</span><span class="o">.</span><span class="n">elemSetNo</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Element set number (incremented for each new TLE for the same object)</span>
+    <span class="n">checksum1</span> <span class="o">=</span> <span class="n">_calcTleChecksum</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">line_no_1_str</span><span class="p">,</span>
+            <span class="n">satIDStr</span><span class="p">,</span>
+            <span class="n">IntD_LYear</span><span class="p">,</span>
+            <span class="n">IntD_LNo</span><span class="p">,</span>
+            <span class="n">epochStr</span><span class="p">,</span>
+            <span class="n">n_dot_str</span><span class="p">,</span>
+            <span class="n">n_dotdot_str</span><span class="p">,</span>
+            <span class="n">b_star_str</span><span class="p">,</span>
+            <span class="n">ephemeris_str</span><span class="p">,</span>
+            <span class="n">elem_st_no_str</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">line1_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line_no_1_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">satIDStr</span><span class="si">}{</span><span class="n">classStr</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">IntD_LYear</span><span class="si">}{</span><span class="n">IntD_LNo</span><span class="si">}{</span><span class="n">IntD_PoL</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">epochStr</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">n_dot_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">n_dotdot_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">b_star_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ephemeris_str</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">elem_st_no_str</span><span class="si">}{</span><span class="n">checksum1</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Line 2</span>
+    <span class="n">line_no_2_str</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>  <span class="c1"># Line number &quot;2&quot;</span>
+    <span class="n">satcat_str</span> <span class="o">=</span> <span class="n">satIDStr</span>  <span class="c1"># Satellite Catalog Number (5 digits) [same as satID]</span>
+    <span class="n">i_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">i</span><span class="p">)</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Inclination in degrees</span>
+    <span class="n">raan_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">Omega</span><span class="p">)</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Right Ascension of Ascending Node in degrees</span>
+    <span class="n">eccen_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1e7</span><span class="p">)</span><span class="si">:</span><span class="s2">07d</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Eccentricity  * 10^7 as decimal value / decimal point assumed</span>
+    <span class="n">per_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">)</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Argument of perigee in degrees</span>
+    <span class="c1"># Calculate M from orbital elements</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">),</span> <span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">mean_anom_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="si">:</span><span class="s2">8.4f</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Mean anomaly</span>
+    <span class="c1"># Calculate mean motion in [rev/day^2]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">MU_EARTH</span> <span class="o">/</span> <span class="p">(</span><span class="n">tleData</span><span class="o">.</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">SEC_PER_DAY</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">mean_Mot_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Revolutions per day</span>
+    <span class="n">rev_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s2">05d</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Revolution number at epoch [hardcoded to &#39;00000&#39;]</span>
+    <span class="n">checksum2</span> <span class="o">=</span> <span class="n">_calcTleChecksum</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">line_no_2_str</span><span class="p">,</span>
+            <span class="n">satcat_str</span><span class="p">,</span>
+            <span class="n">i_str</span><span class="p">,</span>
+            <span class="n">raan_str</span><span class="p">,</span>
+            <span class="n">eccen_str</span><span class="p">,</span>
+            <span class="n">per_str</span><span class="p">,</span>
+            <span class="n">mean_anom_str</span><span class="p">,</span>
+            <span class="n">mean_Mot_str</span><span class="p">,</span>
+            <span class="n">rev_str</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># Checksum for line 2 (modulo 10)</span>
+    <span class="n">line2_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line_no_2_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">satcat_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">i_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">raan_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">eccen_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">per_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mean_anom_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mean_Mot_str</span><span class="si">}{</span><span class="n">rev_str</span><span class="si">}{</span><span class="n">checksum2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Combine the lines to the full TLE</span>
+    <span class="n">tle_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line0_str</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">line1_str</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">line2_str</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">tle_str</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

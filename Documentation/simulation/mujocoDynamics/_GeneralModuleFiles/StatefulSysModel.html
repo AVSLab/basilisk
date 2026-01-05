@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: StatefulSysModel &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="pythonUtils" href="pythonUtils.html" />
+    <link rel="prev" title="Module: PIDController" href="PIDController.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">mujocoDynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../MJJointReactionForces/index.html">MJJointReactionForces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemCoM/index.html">MJSystemCoM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MJSystemMassMatrix/index.html">MJSystemMassMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NBodyGravity/index.html">NBodyGravity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PIDControllers/index.html">PIDControllers</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/index.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">mujocoDynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">Module: StatefulSysModel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-statefulsysmodel">
+<span id="statefulsysmodel"></span><h1>Module: StatefulSysModel<a class="headerlink" href="#module-statefulsysmodel" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv418DynParamRegisterer">
+<span id="_CPPv318DynParamRegisterer"></span><span id="_CPPv218DynParamRegisterer"></span><span id="DynParamRegisterer"></span><span class="target" id="class_dyn_param_registerer"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DynParamRegisterer</span></span></span><a class="headerlink" href="#_CPPv418DynParamRegisterer" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;StatefulSysModel.h&gt;</em></div>
+<p>A short-lived class passed to <a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a> for them to register their states.</p>
+<p>This class serves two purposes. First, it adds a prefix to every state name before registering it on the actual DynParamManager. This prevents state name collisions between <a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a> as long as the prefix are unique. Second, it exponses only the registerState method from the DynParamManager. This prevents <a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a> from registering properties or accessing the states of other models, which would allow for information to flow between models without going through the message system. If a model needs to access information from another model, it should do so thorugh a message, not by sharing a state or property. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18DynParamRegisterer18DynParamRegistererER15DynParamManagerNSt6stringE">
+<span id="_CPPv3N18DynParamRegisterer18DynParamRegistererER15DynParamManagerNSt6stringE"></span><span id="_CPPv2N18DynParamRegisterer18DynParamRegistererER15DynParamManagerNSt6stringE"></span><span id="DynParamRegisterer::DynParamRegisterer__DynParamManagerR.ss"></span><span class="target" id="class_dyn_param_registerer_1a2657983b997169de734879661a37ea14"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DynParamRegisterer</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">manager</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stateNamePrefix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18DynParamRegisterer18DynParamRegistererER15DynParamManagerNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0_NSt11enable_if_tINSt12is_base_of_vI9StateData13StateDataTypeEEbEEEN18DynParamRegisterer13registerStateEP13StateDataType8uint32_t8uint32_tNSt6stringE">
+<span id="_CPPv3I0_NSt11enable_if_tINSt12is_base_of_vI9StateData13StateDataTypeEEbEEEN18DynParamRegisterer13registerStateE8uint32_t8uint32_tNSt6stringE"></span><span id="_CPPv2I0_NSt11enable_if_tINSt12is_base_of_vI9StateData13StateDataTypeEEbEEEN18DynParamRegisterer13registerStateE8uint32_t8uint32_tNSt6stringE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateDataType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">enable_if_t</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">is_base_of_v</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_NSt11enable_if_tINSt12is_base_of_vI9StateData13StateDataTypeEEbEEEN18DynParamRegisterer13registerStateEP13StateDataType8uint32_t8uint32_tNSt6stringE" title="DynParamRegisterer::registerState::StateDataType"><span class="n"><span class="pre">StateDataType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="class_dyn_param_registerer_1a41afc1e6afff6630c89116d61c65c348"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_NSt11enable_if_tINSt12is_base_of_vI9StateData13StateDataTypeEEbEEEN18DynParamRegisterer13registerStateEP13StateDataType8uint32_t8uint32_tNSt6stringE" title="DynParamRegisterer::registerState::StateDataType"><span class="n"><span class="pre">StateDataType</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registerState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nRow</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nCol</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stateName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0_NSt11enable_if_tINSt12is_base_of_vI9StateData13StateDataTypeEEbEEEN18DynParamRegisterer13registerStateEP13StateDataType8uint32_t8uint32_tNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Creates and returns a new state, which will be managed by the underlying <code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code>.</p>
+<p>The state name should be unique: registering two states with the same name on this class will cause an error. Different <a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a> are allowed to use the same state name, however.</p>
+<p>This method may optionally be templated to create StateData of subclasses of StateData. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DynParamRegisterer7managerE">
+<span id="_CPPv3N18DynParamRegisterer7managerE"></span><span id="_CPPv2N18DynParamRegisterer7managerE"></span><span id="DynParamRegisterer::manager__DynParamManagerR"></span><span class="target" id="class_dyn_param_registerer_1ac15e8d6e59d38a34d8586d2f5f156c85"></span><a class="reference internal" href="../../dynamics/_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">manager</span></span></span><a class="headerlink" href="#_CPPv4N18DynParamRegisterer7managerE" title="Link to this definition"></a><br /></dt>
+<dd><p>wrapped manager </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18DynParamRegisterer15stateNamePrefixE">
+<span id="_CPPv3N18DynParamRegisterer15stateNamePrefixE"></span><span id="_CPPv2N18DynParamRegisterer15stateNamePrefixE"></span><span id="DynParamRegisterer::stateNamePrefix__ss"></span><span class="target" id="class_dyn_param_registerer_1a8c25b967609caadadc3b21ac706f572c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateNamePrefix</span></span></span><a class="headerlink" href="#_CPPv4N18DynParamRegisterer15stateNamePrefixE" title="Link to this definition"></a><br /></dt>
+<dd><p>prefix added to all registered state names </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv416StatefulSysModel">
+<span id="_CPPv316StatefulSysModel"></span><span id="_CPPv216StatefulSysModel"></span><span id="StatefulSysModel"></span><span class="target" id="class_stateful_sys_model"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StatefulSysModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><a class="headerlink" href="#_CPPv416StatefulSysModel" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;StatefulSysModel.h&gt;</em></div>
+<p>A SysModel that has continuous-time states.</p>
+<p><a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a> are added on the dynamics task of an <a class="reference internal" href="MJScene.html#class_m_j_scene"><span class="std std-ref">MJScene</span></a>. On its UpdateState method, a <a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a> should call each state’s setDerivative method. This value will be used by the integrator to update the state for the next integrator step.</p>
+<p>The sample code below shows how to get the current value of the state and how to set its derivative. In this case, <code class="docutils literal notranslate"><span class="pre">x</span></code> would follow an exponential trajectory: <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">CurrentSimNanos</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">xState</span><span class="o">-&gt;</span><span class="n">getState</span><span class="p">();</span>
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">xState</span><span class="o">-&gt;</span><span class="n">setDerivative</span><span class="p">(</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<p>Subclassed by <a class="reference internal" href="PIDController.html#class_p_i_d_controller"><span class="std std-ref">PIDController&lt; MeasuredPositionMsgPayload, MeasuredVelocityMsgPayload, OutputMsgPayload, DesiredPositionMsgPayload, DesiredVelocityMsgPayload &gt;</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16StatefulSysModel16StatefulSysModelEv">
+<span id="_CPPv3N16StatefulSysModel16StatefulSysModelEv"></span><span id="_CPPv2N16StatefulSysModel16StatefulSysModelEv"></span><span id="StatefulSysModel::StatefulSysModel"></span><span class="target" id="class_stateful_sys_model_1abb77322e1cefdc96470697d03d83e6df"></span><span class="sig-name descname"><span class="n"><span class="pre">StatefulSysModel</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N16StatefulSysModel16StatefulSysModelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Default constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N16StatefulSysModel14registerStatesE18DynParamRegisterer">
+<span id="_CPPv3N16StatefulSysModel14registerStatesE18DynParamRegisterer"></span><span id="_CPPv2N16StatefulSysModel14registerStatesE18DynParamRegisterer"></span><span id="StatefulSysModel::registerStates__DynParamRegisterer"></span><span class="target" id="class_stateful_sys_model_1a3642671f0471935c4166155b744ae217"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418DynParamRegisterer" title="DynParamRegisterer"><span class="n"><span class="pre">DynParamRegisterer</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">registerer</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N16StatefulSysModel14registerStatesE18DynParamRegisterer" title="Link to this definition"></a><br /></dt>
+<dd><p>Used to register states on the given <a class="reference internal" href="#class_dyn_param_registerer"><span class="std std-ref">DynParamRegisterer</span></a>.</p>
+<p>The main purpose of this method is for this class to call <code class="docutils literal notranslate"><span class="pre">registerState</span></code> on the registerer. Note that state names should not be repeated within the same <a class="reference internal" href="#class_stateful_sys_model"><span class="std std-ref">StatefulSysModel</span></a>.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">registerStates</span><span class="p">(</span><span class="n">DynParamRegisterer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">registerer</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">posState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">registerer</span><span class="p">.</span><span class="k">register</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pos&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">massState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">registerer</span><span class="p">.</span><span class="k">register</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mass&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// etc.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PIDController.html" class="btn btn-neutral float-left" title="Module: PIDController" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pythonUtils.html" class="btn btn-neutral float-right" title="pythonUtils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

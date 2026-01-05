@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: spacecraftReconfig &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="spacecraftReconfig" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">formationFlying</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../etSphericalControl/index.html">etSphericalControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../formationBarycenter/index.html">formationBarycenter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillStateConverter/index.html">hillStateConverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hillToAttRef/index.html">hillToAttRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanOEFeedback/index.html">meanOEFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftPointing/index.html">spacecraftPointing</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">spacecraftReconfig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">formationFlying</a></li>
+          <li class="breadcrumb-item"><a href="index.html">spacecraftReconfig</a></li>
+      <li class="breadcrumb-item active">Module: spacecraftReconfig</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/formationFlying/spacecraftReconfig/spacecraftReconfig.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spacecraftreconfig">
+<span id="spacecraftreconfig"></span><h1>Module: spacecraftReconfig<a class="headerlink" href="#module-spacecraftreconfig" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The primary purpose of this module is to schedule burn timing and attitude for spacecraft formation reconfiguration.
+Basic idea is described in section 14.8.3 of <a class="reference external" href="http://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>.
+Based on keplerian dynamics, formation reconfiguration from one initial orbital element difference to target orbital element difference
+is scheduled so that reconfiguration is completed in one orbit period.</p>
+<p>In addition to formation control algorithm described in the textbook, some extensions and improvements are included in
+this module.
+First, this module assumes that deputy spacecraft has one-axis thrusters. Therefore, attitude control is also necessary
+along with burn at certain period. When burn timing is approaching, target attitude is output as <code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code>.
+Otherwise, and if <code class="docutils literal notranslate"><span class="pre">attRefInMsg</span></code> (which is optional) is set, the reference message is output as <code class="docutils literal notranslate"><span class="pre">attRefOutMsg</span></code>.
+Second, if <span class="math notranslate nohighlight">\(\delta a\)</span> is not zero, drift of <span class="math notranslate nohighlight">\(\delta M\)</span> occurs. This module can take this drift into consideration
+. Therefore, this module can achieve formation reconfiguration in orbital period.
+Third, in general three-time burn is necessary for reconfiguration. Two of them occur at perigee and apogee each.
+The other burn timing varies depending on necessary change of orbital element difference.
+In some cases, this burn timing can be close to perigee or apogee. In these cases, two burns are integrated into one burn.
+Parameter attControlTime is used to check whether this integration is necessary or not.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<span id="moduleio-spacecraftreconfig"></span><table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 16.7%" />
+<col style="width: 16.7%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>chiefTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>chief’s position and velocity input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>deputyTransInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>deputy’s position and velocity input message</p></td>
+</tr>
+<tr class="row-even"><td><p>thrustConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayConfigMsgPayload.html#thrarrayconfigmsgpayload"><span class="std std-ref">THRArrayConfigMsgPayload</span></a></p></td>
+<td><p>deputy’s thruster configuration input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>attRefInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>(optional) deputy’s reference attitude
+input message. If set, then the deputy will point along this
+reference attitude unless it must point the thrusters in a
+control direction.</p></td>
+</tr>
+<tr class="row-even"><td><p>vehicleConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>deputy’s vehicle configuration input message</p></td>
+</tr>
+<tr class="row-odd"><td><p>attRefOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#attrefmsgpayload"><span class="std std-ref">AttRefMsgPayload</span></a></p></td>
+<td><p>deputy’s target attitude output message</p></td>
+</tr>
+<tr class="row-even"><td><p>onTimeOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.html#thrarrayontimecmdmsgpayload"><span class="std std-ref">THRArrayOnTimeCmdMsgPayload</span></a></p></td>
+<td><p>The deputy’s thruster’s on time output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>burnArrayInfoOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/ReconfigBurnArrayInfoMsgPayload.html#reconfigburnarrayinfomsgpayload"><span class="std std-ref">ReconfigBurnArrayInfoMsgPayload</span></a></p></td>
+<td><p>deputy’s scheduled burns info output message</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>This module uses classic orbital element, so this module cannot be applied to near-circular or near-equatorial orbits.</p></li>
+<li><p>Too long or too short attControlTime may result in control error.</p></li>
+<li><p>Impulsive maneuvers are approximated by steady thrust of a certain period.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>This module requires the following variables to be set as parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">attControlTime</span></code> time [s] necessary to control one attitude to another attitude</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mu</span></code> gravitational constant for a central body in m^3/s^2</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">targetClassicOED</span></code> desired orbital element difference.</p></li>
+</ul>
+<p>For <code class="docutils literal notranslate"><span class="pre">targetClassicOED</span></code>, normalized semi major axis must be used.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv427SelfInit_spacecraftReconfigP24spacecraftReconfigConfig7int64_t">
+<span id="_CPPv327SelfInit_spacecraftReconfigP24spacecraftReconfigConfig7int64_t"></span><span id="_CPPv227SelfInit_spacecraftReconfigP24spacecraftReconfigConfig7int64_t"></span><span id="SelfInit_spacecraftReconfig__spacecraftReconfigConfigP.int64_t"></span><span class="target" id="spacecraft_reconfig_8h_1af9a43fdddb12fd2d5539d0abf56a5187"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_spacecraftReconfig</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424spacecraftReconfigConfig" title="spacecraftReconfigConfig"><span class="n"><span class="pre">spacecraftReconfigConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv427SelfInit_spacecraftReconfigP24spacecraftReconfigConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the configData for this module. It checks to ensure that the inputs are sane and then creates the output message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425Update_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t">
+<span id="_CPPv325Update_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t"></span><span id="_CPPv225Update_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t"></span><span id="Update_spacecraftReconfig__spacecraftReconfigConfigP.uint64_t.int64_t"></span><span class="target" id="spacecraft_reconfig_8h_1a479b1be26d5f862a9d58195647a552d6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_spacecraftReconfig</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424spacecraftReconfigConfig" title="spacecraftReconfigConfig"><span class="n"><span class="pre">spacecraftReconfigConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425Update_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Add a description of what this main Update() routine does for this module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424Reset_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t">
+<span id="_CPPv324Reset_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t"></span><span id="_CPPv224Reset_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t"></span><span id="Reset_spacecraftReconfig__spacecraftReconfigConfigP.uint64_t.int64_t"></span><span class="target" id="spacecraft_reconfig_8h_1aecd8ff0667d77d46bb3377b2355b13b7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_spacecraftReconfig</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424spacecraftReconfigConfig" title="spacecraftReconfigConfig"><span class="n"><span class="pre">spacecraftReconfigConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424Reset_spacecraftReconfigP24spacecraftReconfigConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values. The local copy of the message output buffer should be cleared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414UpdateManeuverP24spacecraftReconfigConfig18NavTransMsgPayload18NavTransMsgPayload16AttRefMsgPayload24THRArrayConfigMsgPayload23VehicleConfigMsgPayloadP16AttRefMsgPayloadP27THRArrayOnTimeCmdMsgPayload8uint64_t7int64_t">
+<span id="_CPPv314UpdateManeuverP24spacecraftReconfigConfig18NavTransMsgPayload18NavTransMsgPayload16AttRefMsgPayload24THRArrayConfigMsgPayload23VehicleConfigMsgPayloadP16AttRefMsgPayloadP27THRArrayOnTimeCmdMsgPayload8uint64_t7int64_t"></span><span id="_CPPv214UpdateManeuverP24spacecraftReconfigConfig18NavTransMsgPayload18NavTransMsgPayload16AttRefMsgPayload24THRArrayConfigMsgPayload23VehicleConfigMsgPayloadP16AttRefMsgPayloadP27THRArrayOnTimeCmdMsgPayload8uint64_t7int64_t"></span><span id="UpdateManeuver__spacecraftReconfigConfigP.NavTransMsgPayload.NavTransMsgPayload.AttRefMsgPayload.THRArrayConfigMsgPayload.VehicleConfigMsgPayload.AttRefMsgPayloadP.THRArrayOnTimeCmdMsgPayloadP.uint64_t.int64_t"></span><span class="target" id="spacecraft_reconfig_8h_1a84fd62d338c03c77698d6fe490fda5c3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateManeuver</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424spacecraftReconfigConfig" title="spacecraftReconfigConfig"><span class="n"><span class="pre">spacecraftReconfigConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">chiefTransMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#_CPPv418NavTransMsgPayload" title="NavTransMsgPayload"><span class="n"><span class="pre">NavTransMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">deputyTransMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#_CPPv416AttRefMsgPayload" title="AttRefMsgPayload"><span class="n"><span class="pre">AttRefMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">attRefInMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayConfigMsgPayload.html#_CPPv424THRArrayConfigMsgPayload" title="THRArrayConfigMsgPayload"><span class="n"><span class="pre">THRArrayConfigMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">thrustConfigMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">vehicleConfigMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/AttRefMsgPayload.html#_CPPv416AttRefMsgPayload" title="AttRefMsgPayload"><span class="n"><span class="pre">AttRefMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">attRefOutMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.html#_CPPv427THRArrayOnTimeCmdMsgPayload" title="THRArrayOnTimeCmdMsgPayload"><span class="n"><span class="pre">THRArrayOnTimeCmdMsgPayload</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">thrustOnMsgBuffer</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414UpdateManeuverP24spacecraftReconfigConfig18NavTransMsgPayload18NavTransMsgPayload16AttRefMsgPayload24THRArrayConfigMsgPayload23VehicleConfigMsgPayloadP16AttRefMsgPayloadP27THRArrayOnTimeCmdMsgPayload8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>based on burn schedule, this function creates a message of reference attitude and thruster on time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>chiefTransMsgBuffer</strong> – chief’s position and velocity </p></li>
+<li><p><strong>deputyTransMsgBuffer</strong> – deputy’s position and velocity </p></li>
+<li><p><strong>attRefInMsgBuffer</strong> – target attitude </p></li>
+<li><p><strong>thrustConfigMsgBuffer</strong> – thruster’s config information </p></li>
+<li><p><strong>vehicleConfigMsgBuffer</strong> – deputy’s vehicle config information </p></li>
+<li><p><strong>attRefOutMsgBuffer</strong> – target attitude </p></li>
+<li><p><strong>thrustOnMsgBuffer</strong> – thruster on time </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The Basilisk module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411AdjustRangeddd">
+<span id="_CPPv311AdjustRangeddd"></span><span id="_CPPv211AdjustRangeddd"></span><span id="AdjustRange__double.double.double"></span><span class="target" id="spacecraft_reconfig_8h_1ab4ed8ba4d9fca4b0310b4dd3e8776781"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AdjustRange</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">lower</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">upper</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">angle</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411AdjustRangeddd" title="Link to this definition"></a><br /></dt>
+<dd><p>This function is used to adjust a certain value in a certain range between lower threshold and upper threshold. This function is particularily used to adjsut angles used in orbital motions such as True Anomaly, Mean Anomaly, and so on. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lower</strong> – lower threshold </p></li>
+<li><p><strong>upper</strong> – upper threshold </p></li>
+<li><p><strong>angle</strong> – an angle which you want to be between lower and upper </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411CompareTimePKvPKv">
+<span id="_CPPv311CompareTimePKvPKv"></span><span id="_CPPv211CompareTimePKvPKv"></span><span id="CompareTime__voidCP.voidCP"></span><span class="target" id="spacecraft_reconfig_8h_1acdd04d7c28a8051510cffec4aebfa853"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CompareTime</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">n1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">n2</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411CompareTimePKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>This function is used to sort an array of spacecraftReconfigConfigBurnInfo in ascending order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n1</strong> – </p></li>
+<li><p><strong>n2</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv410ScheduleDVP24spacecraftReconfigConfig15ClassicElements15ClassicElements24THRArrayConfigMsgPayload23VehicleConfigMsgPayload">
+<span id="_CPPv310ScheduleDVP24spacecraftReconfigConfig15ClassicElements15ClassicElements24THRArrayConfigMsgPayload23VehicleConfigMsgPayload"></span><span id="_CPPv210ScheduleDVP24spacecraftReconfigConfig15ClassicElements15ClassicElements24THRArrayConfigMsgPayload23VehicleConfigMsgPayload"></span><span id="ScheduleDV__spacecraftReconfigConfigP.ClassicElements.ClassicElements.THRArrayConfigMsgPayload.VehicleConfigMsgPayload"></span><span class="target" id="spacecraft_reconfig_8h_1ad0f47e8dde622a03a57ae682f0152088"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ScheduleDV</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv424spacecraftReconfigConfig" title="spacecraftReconfigConfig"><span class="n"><span class="pre">spacecraftReconfigConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <a class="reference internal" href="../../../architecture/utilities/orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">oe_c</span></span>, <a class="reference internal" href="../../../architecture/utilities/orbitalMotion.html#_CPPv415ClassicElements" title="ClassicElements"><span class="n"><span class="pre">ClassicElements</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">oe_d</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/THRArrayConfigMsgPayload.html#_CPPv424THRArrayConfigMsgPayload" title="THRArrayConfigMsgPayload"><span class="n"><span class="pre">THRArrayConfigMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">thrustConfigMsgBuffer</span></span>, <a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#_CPPv423VehicleConfigMsgPayload" title="VehicleConfigMsgPayload"><span class="n"><span class="pre">VehicleConfigMsgPayload</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">vehicleConfigMsgBuffer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410ScheduleDVP24spacecraftReconfigConfig15ClassicElements15ClassicElements24THRArrayConfigMsgPayload23VehicleConfigMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><p>This function is used to sort an array of spacecraftReconfigConfigBurnInfo in ascending order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>oe_c</strong> – chief’s orbital element </p></li>
+<li><p><strong>oe_d</strong> – deputy’s orbital element </p></li>
+<li><p><strong>thrustConfigMsgBuffer</strong> – </p></li>
+<li><p><strong>vehicleConfigMsgBuffer</strong> – deputy’s vehicle config information </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv424spacecraftReconfigConfig">
+<span id="_CPPv324spacecraftReconfigConfig"></span><span id="_CPPv224spacecraftReconfigConfig"></span><span id="spacecraftReconfigConfig"></span><span class="target" id="structspacecraft_reconfig_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spacecraftReconfigConfig</span></span></span><a class="headerlink" href="#_CPPv424spacecraftReconfigConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;spacecraftReconfig.h&gt;</em></div>
+<p>Data structure for the MRP feedback attitude control routine. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig15chiefTransInMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig15chiefTransInMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig15chiefTransInMsgE"></span><span id="spacecraftReconfigConfig::chiefTransInMsg__NavTransMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1abf10ed48e4972cbaa29860b81af4b86a"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">chiefTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig15chiefTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>chief orbit input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig16deputyTransInMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig16deputyTransInMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig16deputyTransInMsgE"></span><span id="spacecraftReconfigConfig::deputyTransInMsg__NavTransMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1ad4b886a0f49e853f513dae344b95fe49"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deputyTransInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig16deputyTransInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy orbit input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig17thrustConfigInMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig17thrustConfigInMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig17thrustConfigInMsgE"></span><span id="spacecraftReconfigConfig::thrustConfigInMsg__THRArrayConfigMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1ab14c4f0d13a714088331ee68565a67fb"></span><span class="n"><span class="pre">THRArrayConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrustConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig17thrustConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>THR configuration input msg. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig11attRefInMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig11attRefInMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig11attRefInMsgE"></span><span id="spacecraftReconfigConfig::attRefInMsg__AttRefMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1a73dd63c79249eb3ff9745864ce79c609"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig11attRefInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>nominal attitude reference input msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig18vehicleConfigInMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig18vehicleConfigInMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig18vehicleConfigInMsgE"></span><span id="spacecraftReconfigConfig::vehicleConfigInMsg__VehicleConfigMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1a29d4b0513acedcf87b4dc751063e1be0"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehicleConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig18vehicleConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>deputy vehicle config msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig12attRefOutMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig12attRefOutMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig12attRefOutMsgE"></span><span id="spacecraftReconfigConfig::attRefOutMsg__AttRefMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1a2015f14182290734b9e1711ad5b2eda6"></span><span class="n"><span class="pre">AttRefMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig12attRefOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude reference output msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig12onTimeOutMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig12onTimeOutMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig12onTimeOutMsgE"></span><span id="spacecraftReconfigConfig::onTimeOutMsg__THRArrayOnTimeCmdMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1ae8f8ea5b41091405b4ce19b81bdc57e0"></span><span class="n"><span class="pre">THRArrayOnTimeCmdMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">onTimeOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig12onTimeOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>THR on-time output msg. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig19burnArrayInfoOutMsgE">
+<span id="_CPPv3N24spacecraftReconfigConfig19burnArrayInfoOutMsgE"></span><span id="_CPPv2N24spacecraftReconfigConfig19burnArrayInfoOutMsgE"></span><span id="spacecraftReconfigConfig::burnArrayInfoOutMsg__ReconfigBurnArrayInfoMsg_C"></span><span class="target" id="structspacecraft_reconfig_config_1a69e5a003b8faa57bf153e4aab0cb5630"></span><span class="n"><span class="pre">ReconfigBurnArrayInfoMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">burnArrayInfoOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig19burnArrayInfoOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>array of burn info output msg </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig2muE">
+<span id="_CPPv3N24spacecraftReconfigConfig2muE"></span><span id="_CPPv2N24spacecraftReconfigConfig2muE"></span><span id="spacecraftReconfigConfig::mu__double"></span><span class="target" id="structspacecraft_reconfig_config_1a6bd3b7f95e733f588a9019ed411e050a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mu</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig2muE" title="Link to this definition"></a><br /></dt>
+<dd><p>[m^3/s^2] gravity constant of planet being orbited </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig14attControlTimeE">
+<span id="_CPPv3N24spacecraftReconfigConfig14attControlTimeE"></span><span id="_CPPv2N24spacecraftReconfigConfig14attControlTimeE"></span><span id="spacecraftReconfigConfig::attControlTime__double"></span><span class="target" id="structspacecraft_reconfig_config_1aa63ba2b993387d22f73a6b3da8d5efd0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attControlTime</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig14attControlTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] attitude control margin time (time necessary to change sc’s attitude) </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig16targetClassicOEDE">
+<span id="_CPPv3N24spacecraftReconfigConfig16targetClassicOEDE"></span><span id="_CPPv2N24spacecraftReconfigConfig16targetClassicOEDE"></span><span id="spacecraftReconfigConfig::targetClassicOED__doubleA"></span><span class="target" id="structspacecraft_reconfig_config_1a6e724aaf2085431c5a63ddee478c5719"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">targetClassicOED</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">6</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig16targetClassicOEDE" title="Link to this definition"></a><br /></dt>
+<dd><p>target classic orital element difference, SMA should be normalized </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig11resetPeriodE">
+<span id="_CPPv3N24spacecraftReconfigConfig11resetPeriodE"></span><span id="_CPPv2N24spacecraftReconfigConfig11resetPeriodE"></span><span id="spacecraftReconfigConfig::resetPeriod__double"></span><span class="target" id="structspacecraft_reconfig_config_1a4aa4f9c3e1a3361e19e58373c3e32dd1"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resetPeriod</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig11resetPeriodE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] burn scheduling reset period </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig8tCurrentE">
+<span id="_CPPv3N24spacecraftReconfigConfig8tCurrentE"></span><span id="_CPPv2N24spacecraftReconfigConfig8tCurrentE"></span><span id="spacecraftReconfigConfig::tCurrent__double"></span><span class="target" id="structspacecraft_reconfig_config_1a07864a359b44a99fef521771d465a5a8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tCurrent</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig8tCurrentE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] timer </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig12prevCallTimeE">
+<span id="_CPPv3N24spacecraftReconfigConfig12prevCallTimeE"></span><span id="_CPPv2N24spacecraftReconfigConfig12prevCallTimeE"></span><span id="spacecraftReconfigConfig::prevCallTime__uint64_t"></span><span class="target" id="structspacecraft_reconfig_config_1a5aea9dfe849de6dc1c762847fa1b1f3a"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prevCallTime</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig12prevCallTimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[ns] </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig12thrustOnFlagE">
+<span id="_CPPv3N24spacecraftReconfigConfig12thrustOnFlagE"></span><span id="_CPPv2N24spacecraftReconfigConfig12thrustOnFlagE"></span><span id="spacecraftReconfigConfig::thrustOnFlag__uint8_t"></span><span class="target" id="structspacecraft_reconfig_config_1ac9861dee45232c0fb5095af51f4ec5dd"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">thrustOnFlag</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig12thrustOnFlagE" title="Link to this definition"></a><br /></dt>
+<dd><p>thrust control </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig16attRefInIsLinkedE">
+<span id="_CPPv3N24spacecraftReconfigConfig16attRefInIsLinkedE"></span><span id="_CPPv2N24spacecraftReconfigConfig16attRefInIsLinkedE"></span><span id="spacecraftReconfigConfig::attRefInIsLinked__i"></span><span class="target" id="structspacecraft_reconfig_config_1ad6f1b0962df6f7541810df7fb7d698e8"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attRefInIsLinked</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig16attRefInIsLinkedE" title="Link to this definition"></a><br /></dt>
+<dd><p>flag if the attitude reference input message is linked </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig25burnArrayInfoOutMsgBufferE">
+<span id="_CPPv3N24spacecraftReconfigConfig25burnArrayInfoOutMsgBufferE"></span><span id="_CPPv2N24spacecraftReconfigConfig25burnArrayInfoOutMsgBufferE"></span><span id="spacecraftReconfigConfig::burnArrayInfoOutMsgBuffer__ReconfigBurnArrayInfoMsgPayload"></span><span class="target" id="structspacecraft_reconfig_config_1a51f84ad7a9e483106051d8193d58501c"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/ReconfigBurnArrayInfoMsgPayload.html#_CPPv431ReconfigBurnArrayInfoMsgPayload" title="ReconfigBurnArrayInfoMsgPayload"><span class="n"><span class="pre">ReconfigBurnArrayInfoMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">burnArrayInfoOutMsgBuffer</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig25burnArrayInfoOutMsgBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>msg buffer for burn array info </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N24spacecraftReconfigConfig9bskLoggerE">
+<span id="_CPPv3N24spacecraftReconfigConfig9bskLoggerE"></span><span id="_CPPv2N24spacecraftReconfigConfig9bskLoggerE"></span><span id="spacecraftReconfigConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structspacecraft_reconfig_config_1a2d38de4f42d167fae98ecd058199e3ea"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N24spacecraftReconfigConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="spacecraftReconfig" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

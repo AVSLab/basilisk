@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_PIDControllers &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_PIDControllers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_PIDControllers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">pythonVariableLogger</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">MJPIDControllers</span>
+
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="test_jointPIDController">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/PIDControllers/_UnitTest/test_PIDControllers.html#test_PIDControllers.test_jointPIDController">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Compiled Basilisk without --mujoco&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_jointPIDController</span><span class="p">(</span><span class="n">showPlots</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unit test for JointPIDController.</span>
+<span class="sd">    Verifies that the controller computes the correct output for given input messages.</span>
+<span class="sd">    Plots joint angle, velocity, and control torque if plot=True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">.1</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mi">50</span>
+
+    <span class="n">desiredPosition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">desiredVelocity</span> <span class="o">=</span> <span class="n">desiredPosition</span> <span class="o">/</span> <span class="n">tf</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="c1"># Create the MJScene from a simple cannonball body</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&lt;mujoco&gt;</span>
+<span class="sd">    &lt;option gravity=&quot;0 0 0&quot;/&gt;</span>
+<span class="sd">    &lt;worldbody&gt;</span>
+<span class="sd">        &lt;body name=&quot;arm&quot;&gt;</span>
+<span class="sd">            &lt;geom name=&quot;arm&quot; type=&quot;capsule&quot; size=&quot;0.1&quot; fromto=&quot;0 0 0 0 0 1&quot;/&gt;</span>
+<span class="sd">            &lt;joint name=&quot;arm&quot; axis=&quot;1 0 0&quot;/&gt;</span>
+<span class="sd">        &lt;/body&gt;</span>
+<span class="sd">    &lt;/worldbody&gt;</span>
+<span class="sd">&lt;/mujoco&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">armJoint</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScalarJoint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">&quot;arm&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="s2">&quot;arm&quot;</span><span class="p">)</span>
+    <span class="n">armMotor</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJSingleActuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addJointSingleActuator</span><span class="p">(</span><span class="s2">&quot;arm&quot;</span><span class="p">,</span> <span class="n">armJoint</span><span class="p">)</span>
+
+    <span class="n">desiredPosInterpolator</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">ScalarJointStateInterpolator</span><span class="p">()</span>
+    <span class="n">desiredPosInterpolator</span><span class="o">.</span><span class="n">setDataPoints</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">),</span> <span class="n">desiredPosition</span><span class="p">]</span>
+    <span class="p">])</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">desiredPosInterpolator</span><span class="p">)</span>
+
+    <span class="n">armController</span> <span class="o">=</span> <span class="n">MJPIDControllers</span><span class="o">.</span><span class="n">JointPIDController</span><span class="p">()</span>
+    <span class="n">armController</span><span class="o">.</span><span class="n">setProportionalGain</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">armController</span><span class="o">.</span><span class="n">setDerivativeGain</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">armController</span><span class="o">.</span><span class="n">setIntegralGain</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">AddModelToDynamicsTask</span><span class="p">(</span><span class="n">armController</span><span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">desiredVelocity</span> <span class="c1"># constant</span>
+    <span class="n">desiredVelMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ScalarJointStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">armController</span><span class="o">.</span><span class="n">measuredPosInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span> <span class="n">armJoint</span><span class="o">.</span><span class="n">stateOutMsg</span> <span class="p">)</span>
+    <span class="n">armController</span><span class="o">.</span><span class="n">measuredVelInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span> <span class="n">armJoint</span><span class="o">.</span><span class="n">stateDotOutMsg</span> <span class="p">)</span>
+
+    <span class="n">armController</span><span class="o">.</span><span class="n">desiredPosInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span> <span class="n">desiredPosInterpolator</span><span class="o">.</span><span class="n">interpolatedOutMsg</span> <span class="p">)</span>
+    <span class="n">armController</span><span class="o">.</span><span class="n">desiredVelInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span> <span class="n">desiredVelMsg</span> <span class="p">)</span>
+
+    <span class="n">armMotor</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span> <span class="n">armController</span><span class="o">.</span><span class="n">outputOutMsg</span> <span class="p">)</span>
+
+    <span class="n">desiredJointAngleRecorder</span> <span class="o">=</span> <span class="n">desiredPosInterpolator</span><span class="o">.</span><span class="n">interpolatedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">jointAngleRecorder</span> <span class="o">=</span> <span class="n">armJoint</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">jointVelocityRecorder</span> <span class="o">=</span> <span class="n">armJoint</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">torqueRecorder</span> <span class="o">=</span> <span class="n">armController</span><span class="o">.</span><span class="n">outputOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">integralErrorLogger</span> <span class="o">=</span> <span class="n">pythonVariableLogger</span><span class="o">.</span><span class="n">PythonVariableLogger</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">armController</span><span class="o">.</span><span class="n">getIntegralError</span><span class="p">()}</span>
+    <span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">desiredJointAngleRecorder</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">jointAngleRecorder</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">jointVelocityRecorder</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">torqueRecorder</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">integralErrorLogger</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">jointAngleRecorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+    <span class="n">pos</span>  <span class="o">=</span> <span class="n">jointAngleRecorder</span><span class="o">.</span><span class="n">state</span>
+    <span class="n">desiredPos</span> <span class="o">=</span> <span class="n">desiredJointAngleRecorder</span><span class="o">.</span><span class="n">state</span>
+    <span class="n">vel</span> <span class="o">=</span> <span class="n">jointVelocityRecorder</span><span class="o">.</span><span class="n">state</span>
+    <span class="n">torque</span> <span class="o">=</span> <span class="n">torqueRecorder</span><span class="o">.</span><span class="n">input</span>
+    <span class="n">integralError</span> <span class="o">=</span> <span class="n">integralErrorLogger</span><span class="o">.</span><span class="n">error</span>
+
+    <span class="c1"># Plot results</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Joint Angle&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">desiredPos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Desired Angle&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Angle [rad]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Joint Velocity&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;dx/dt&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">desiredVelocity</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Desired Velocity&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Velocity [rad/s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">torque</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Control Torque&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Torque [Nm]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># verify PID formula</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">torque</span><span class="p">)):</span>
+        <span class="n">expected_output</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">armController</span><span class="o">.</span><span class="n">getProportionalGain</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">desiredPos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span>
+            <span class="n">armController</span><span class="o">.</span><span class="n">getDerivativeGain</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">desiredVelocity</span> <span class="o">-</span> <span class="n">vel</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span>
+            <span class="n">armController</span><span class="o">.</span><span class="n">getIntegralGain</span><span class="p">()</span> <span class="o">*</span> <span class="n">integralError</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">torque</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_output</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">),</span> \
+            <span class="sa">f</span><span class="s2">&quot;At t=</span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s, PID output </span><span class="si">{</span><span class="n">torque</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2"> != expected </span><span class="si">{</span><span class="n">expected_output</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Assert final joint position is close to desired</span>
+    <span class="k">assert</span> <span class="n">pos</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">desiredPosition</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span> \
+        <span class="sa">f</span><span class="s2">&quot;Final joint position </span><span class="si">{</span><span class="n">pos</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> not close to desired </span><span class="si">{</span><span class="n">desiredPosition</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Assert velocity settles near zero</span>
+    <span class="k">assert</span> <span class="n">vel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">desiredVelocity</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span> \
+        <span class="sa">f</span><span class="s2">&quot;Final joint velocity </span><span class="si">{</span><span class="n">vel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> not close to desired </span><span class="si">{</span><span class="n">desiredVelocity</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_jointPIDController</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypesTestMsgPayload &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VSCMGArrayConfigMsgPayload" href="VSCMGArrayConfigMsgPayload.html" />
+    <link rel="prev" title="TransRefMsgPayload" href="TransRefMsgPayload.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">msgPayloadDefC</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="AccDataMsgPayload.html">AccDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AccPktDataMsgPayload.html">AccPktDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AccessMsgPayload.html">AccessMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AlbedoMsgPayload.html">AlbedoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayEffectorLockMsgPayload.html">ArrayEffectorLockMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorForceMsgPayload.html">ArrayMotorForceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorTorqueMsgPayload.html">ArrayMotorTorqueMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ArrayMotorVoltageMsgPayload.html">ArrayMotorVoltageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AtmoPropsMsgPayload.html">AtmoPropsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttGuidMsgPayload.html">AttGuidMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttRefMsgPayload.html">AttRefMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AttStateMsgPayload.html">AttStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BodyHeadingMsgPayload.html">BodyHeadingMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BoreAngleMsgPayload.html">BoreAngleMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CMEstDataMsgPayload.html">CMEstDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CModuleTemplateMsgPayload.html">CModuleTemplateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSArraySensorMsgPayload.html">CSSArraySensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSConfigMsgPayload.html">CSSConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSRawDataMsgPayload.html">CSSRawDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CSSUnitConfigMsgPayload.html">CSSUnitConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CameraConfigMsgPayload.html">CameraConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CameraImageMsgPayload.html">CameraImageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ClassicElementsMsgPayload.html">ClassicElementsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdForceBodyMsgPayload.html">CmdForceBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdForceInertialMsgPayload.html">CmdForceInertialMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CmdTorqueBodyMsgPayload.html">CmdTorqueBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ColorMsgPayload.html">ColorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ConstDynEffectorMsgPayload.html">ConstDynEffectorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DataNodeUsageMsgPayload.html">DataNodeUsageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DesiredVelocityMsgPayload.html">DesiredVelocityMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeviceCmdMsgPayload.html">DeviceCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DeviceStatusMsgPayload.html">DeviceStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DipoleRequestBodyMsgPayload.html">DipoleRequestBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DvBurnCmdMsgPayload.html">DvBurnCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DvExecutionDataMsgPayload.html">DvExecutionDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EclipseMsgPayload.html">EclipseMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EphemerisMsgPayload.html">EphemerisMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="EpochMsgPayload.html">EpochMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ForceAtSiteMsgPayload.html">ForceAtSiteMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="FuelTankMsgPayload.html">FuelTankMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GravityGradientMsgPayload.html">GravityGradientMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GroundStateMsgPayload.html">GroundStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HeadingFilterMsgPayload.html">HeadingFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HillRelStateMsgPayload.html">HillRelStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="HingedRigidBodyMsgPayload.html">HingedRigidBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="IMUSensorBodyMsgPayload.html">IMUSensorBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="IMUSensorMsgPayload.html">IMUSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="InertialFilterMsgPayload.html">InertialFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="InertialHeadingMsgPayload.html">InertialHeadingMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertPerformanceMsgPayload.html">LambertPerformanceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertProblemMsgPayload.html">LambertProblemMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertSolutionMsgPayload.html">LambertSolutionMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LambertValidatorMsgPayload.html">LambertValidatorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LandmarkMsgPayload.html">LandmarkMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LinearTranslationRigidBodyMsgPayload.html">LinearTranslationRigidBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBArrayConfigMsgPayload.html">MTBArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBCmdMsgPayload.html">MTBCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MTBMsgPayload.html">MTBMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MagneticFieldMsgPayload.html">MagneticFieldMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MotorStepCommandMsgPayload.html">MotorStepCommandMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NavAttMsgPayload.html">NavAttMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="NavTransMsgPayload.html">NavTransMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavCirclesMsgPayload.html">OpNavCirclesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavFilterMsgPayload.html">OpNavFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavLimbMsgPayload.html">OpNavLimbMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="OpNavMsgPayload.html">OpNavMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PixelLineFilterMsgPayload.html">PixelLineFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PlasmaFluxMsgPayload.html">PlasmaFluxMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerNodeStatusMsgPayload.html">PowerNodeStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerNodeUsageMsgPayload.html">PowerNodeUsageMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerStorageFaultMsgPayload.html">PowerStorageFaultMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PowerStorageStatusMsgPayload.html">PowerStorageStatusMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedMotionMsgPayload.html">PrescribedMotionMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedRotationMsgPayload.html">PrescribedRotationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PrescribedTranslationMsgPayload.html">PrescribedTranslationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="PyBatteryMsgPayload.html">PyBatteryMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWArrayConfigMsgPayload.html">RWArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWAvailabilityMsgPayload.html">RWAvailabilityMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWCmdMsgPayload.html">RWCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConfigElementMsgPayload.html">RWConfigElementMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConfigLogMsgPayload.html">RWConfigLogMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWConstellationMsgPayload.html">RWConstellationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RWSpeedMsgPayload.html">RWSpeedMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RateCmdMsgPayload.html">RateCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="RealTimeFactorMsgPayload.html">RealTimeFactorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ReconfigBurnArrayInfoMsgPayload.html">ReconfigBurnArrayInfoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ReconfigBurnInfoMsgPayload.html">ReconfigBurnInfoMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCEnergyMomentumMsgPayload.html">SCEnergyMomentumMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCMassPropsMsgPayload.html">SCMassPropsMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SCStatesMsgPayload.html">SCStatesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="STAttMsgPayload.html">STAttMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="STSensorMsgPayload.html">STSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ScalarJointStateMsgPayload.html">ScalarJointStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SingleActuatorMsgPayload.html">SingleActuatorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SmallBodyNavMsgPayload.html">SmallBodyNavMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SmallBodyNavUKFMsgPayload.html">SmallBodyNavUKFMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SolarFluxMsgPayload.html">SolarFluxMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SpicePlanetStateMsgPayload.html">SpicePlanetStateMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SpiceTimeMsgPayload.html">SpiceTimeMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="StepperMotorMsgPayload.html">StepperMotorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SunlineFilterMsgPayload.html">SunlineFilterMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SwDataMsgPayload.html">SwDataMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="SynchClockMsgPayload.html">SynchClockMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TAMSensorBodyMsgPayload.html">TAMSensorBodyMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TAMSensorMsgPayload.html">TAMSensorMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TDBVehicleClockCorrelationMsgPayload.html">TDBVehicleClockCorrelationMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayCmdForceMsgPayload.html">THRArrayCmdForceMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayConfigMsgPayload.html">THRArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRArrayOnTimeCmdMsgPayload.html">THRArrayOnTimeCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="THRConfigMsgPayload.html">THRConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TemperatureMsgPayload.html">TemperatureMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TorqueAtSiteMsgPayload.html">TorqueAtSiteMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="TransRefMsgPayload.html">TransRefMsgPayload</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">TypesTestMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGArrayConfigMsgPayload.html">VSCMGArrayConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGArrayTorqueMsgPayload.html">VSCMGArrayTorqueMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGCmdMsgPayload.html">VSCMGCmdMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGConfigElementMsgPayload.html">VSCMGConfigElementMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGRefStatesMsgPayload.html">VSCMGRefStatesMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VSCMGSpeedMsgPayload.html">VSCMGSpeedMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VehicleConfigMsgPayload.html">VehicleConfigMsgPayload</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VoltMsgPayload.html">VoltMsgPayload</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">msgPayloadDefC</a></li>
+      <li class="breadcrumb-item active">TypesTestMsgPayload</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/msgPayloadDefC/TypesTestMsgPayload.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="typestestmsgpayload">
+<span id="id1"></span><h1>TypesTestMsgPayload<a class="headerlink" href="#typestestmsgpayload" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.TYPES_TEST_ARRAY_SIZE">
+<span class="target" id="_types_test_msg_payload_8h_1a117e013b16a20cbeb88203b394cd5ffe"></span><span class="sig-name descname"><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span></span><a class="headerlink" href="#c.TYPES_TEST_ARRAY_SIZE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv419TypesTestMsgPayload">
+<span id="_CPPv319TypesTestMsgPayload"></span><span id="_CPPv219TypesTestMsgPayload"></span><span id="TypesTestMsgPayload"></span><span class="target" id="struct_types_test_msg_payload"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TypesTestMsgPayload</span></span></span><a class="headerlink" href="#_CPPv419TypesTestMsgPayload" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;TypesTestMsgPayload.h&gt;</em></div>
+<p>Structure used to test the handling of various built-in types in message payloads across SWIG C/Python bridge. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload6i8TestE">
+<span id="_CPPv3N19TypesTestMsgPayload6i8TestE"></span><span id="_CPPv2N19TypesTestMsgPayload6i8TestE"></span><span id="TypesTestMsgPayload::i8Test__int8_t"></span><span class="target" id="struct_types_test_msg_payload_1acc172821fa74246a82a2d7ae3390e1c5"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i8Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload6i8TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of int8_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload7ui8TestE">
+<span id="_CPPv3N19TypesTestMsgPayload7ui8TestE"></span><span id="_CPPv2N19TypesTestMsgPayload7ui8TestE"></span><span id="TypesTestMsgPayload::ui8Test__uint8_t"></span><span class="target" id="struct_types_test_msg_payload_1ae7ae89338d2a86c8ce687dbbfe492519"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui8Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload7ui8TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of uint8_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload7i16TestE">
+<span id="_CPPv3N19TypesTestMsgPayload7i16TestE"></span><span id="_CPPv2N19TypesTestMsgPayload7i16TestE"></span><span id="TypesTestMsgPayload::i16Test__int16_t"></span><span class="target" id="struct_types_test_msg_payload_1ace487a5e5a9189b8bfe560ab167d1b7c"></span><span class="n"><span class="pre">int16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i16Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload7i16TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of int16_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload8ui16TestE">
+<span id="_CPPv3N19TypesTestMsgPayload8ui16TestE"></span><span id="_CPPv2N19TypesTestMsgPayload8ui16TestE"></span><span id="TypesTestMsgPayload::ui16Test__uint16_t"></span><span class="target" id="struct_types_test_msg_payload_1aead0eb25bbe7e99e779b7d74585c8343"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui16Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload8ui16TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of uint16_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload7i32TestE">
+<span id="_CPPv3N19TypesTestMsgPayload7i32TestE"></span><span id="_CPPv2N19TypesTestMsgPayload7i32TestE"></span><span id="TypesTestMsgPayload::i32Test__int32_t"></span><span class="target" id="struct_types_test_msg_payload_1ade30720ae0ce31bfbe89df155a6a59ec"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i32Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload7i32TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of int32_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload8ui32TestE">
+<span id="_CPPv3N19TypesTestMsgPayload8ui32TestE"></span><span id="_CPPv2N19TypesTestMsgPayload8ui32TestE"></span><span id="TypesTestMsgPayload::ui32Test__uint32_t"></span><span class="target" id="struct_types_test_msg_payload_1a59ce2f27e62a5f22e916224f18ddf993"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui32Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload8ui32TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of uint32_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload7i64TestE">
+<span id="_CPPv3N19TypesTestMsgPayload7i64TestE"></span><span id="_CPPv2N19TypesTestMsgPayload7i64TestE"></span><span id="TypesTestMsgPayload::i64Test__int64_t"></span><span class="target" id="struct_types_test_msg_payload_1ae1c1ac2f1cc325e4ca0ce0c8e0f23cce"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i64Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload7i64TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of int64_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload8ui64TestE">
+<span id="_CPPv3N19TypesTestMsgPayload8ui64TestE"></span><span id="_CPPv2N19TypesTestMsgPayload8ui64TestE"></span><span id="TypesTestMsgPayload::ui64Test__uint64_t"></span><span class="target" id="struct_types_test_msg_payload_1a8680a0262ffceb87bafcd926466628ee"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui64Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload8ui64TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of uint64_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload7f32TestE">
+<span id="_CPPv3N19TypesTestMsgPayload7f32TestE"></span><span id="_CPPv2N19TypesTestMsgPayload7f32TestE"></span><span id="TypesTestMsgPayload::f32Test__float"></span><span class="target" id="struct_types_test_msg_payload_1a3724c8f1ae4034fc587d9bf9241ba518"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f32Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload7f32TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of float. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload7f64TestE">
+<span id="_CPPv3N19TypesTestMsgPayload7f64TestE"></span><span id="_CPPv2N19TypesTestMsgPayload7f64TestE"></span><span id="TypesTestMsgPayload::f64Test__double"></span><span class="target" id="struct_types_test_msg_payload_1a1401a9d2c7974564f2884384a5ba2763"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f64Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload7f64TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of double. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload9uint8TestE">
+<span id="_CPPv3N19TypesTestMsgPayload9uint8TestE"></span><span id="_CPPv2N19TypesTestMsgPayload9uint8TestE"></span><span id="TypesTestMsgPayload::uint8Test__uint8_t"></span><span class="target" id="struct_types_test_msg_payload_1a9e56770fa3d3ece3c910054bf104fa06"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">uint8Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload9uint8TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of uint8_t (alias). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload9ucharTestE">
+<span id="_CPPv3N19TypesTestMsgPayload9ucharTestE"></span><span id="_CPPv2N19TypesTestMsgPayload9ucharTestE"></span><span id="TypesTestMsgPayload::ucharTest__unsigned-c"></span><span class="target" id="struct_types_test_msg_payload_1a495e34429369b1cdaa6ed0328e88a8d0"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ucharTest</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload9ucharTestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of unsigned char. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload8int8TestE">
+<span id="_CPPv3N19TypesTestMsgPayload8int8TestE"></span><span id="_CPPv2N19TypesTestMsgPayload8int8TestE"></span><span id="TypesTestMsgPayload::int8Test__int8_t"></span><span class="target" id="struct_types_test_msg_payload_1a6ae4a70a1c791b4847cb65b58d4caeab"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">int8Test</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload8int8TestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of int8_t (alias). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload9scharTestE">
+<span id="_CPPv3N19TypesTestMsgPayload9scharTestE"></span><span id="_CPPv2N19TypesTestMsgPayload9scharTestE"></span><span id="TypesTestMsgPayload::scharTest__signed-c"></span><span class="target" id="struct_types_test_msg_payload_1a9ea19e1174690e0f7ea540429b0fceae"></span><span class="kt"><span class="pre">signed</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scharTest</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload9scharTestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of signed char. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload8boolTestE">
+<span id="_CPPv3N19TypesTestMsgPayload8boolTestE"></span><span id="_CPPv2N19TypesTestMsgPayload8boolTestE"></span><span id="TypesTestMsgPayload::boolTest__b"></span><span class="target" id="struct_types_test_msg_payload_1aaf5bb73486dd4fbaf61f54caf824cc5c"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">boolTest</span></span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload8boolTestE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of bool. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload12i16TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload12i16TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload12i16TestArrayE"></span><span id="TypesTestMsgPayload::i16TestArray__int16_tA"></span><span class="target" id="struct_types_test_msg_payload_1ae80bff6f870effcf9f9c19dd4822a40f"></span><span class="n"><span class="pre">int16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i16TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload12i16TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of int16_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13ui16TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload13ui16TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload13ui16TestArrayE"></span><span id="TypesTestMsgPayload::ui16TestArray__uint16_tA"></span><span class="target" id="struct_types_test_msg_payload_1a0f54a5e85fb72af3063bb75ba58f54de"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui16TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13ui16TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of uint16_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload12i32TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload12i32TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload12i32TestArrayE"></span><span id="TypesTestMsgPayload::i32TestArray__int32_tA"></span><span class="target" id="struct_types_test_msg_payload_1a0d5c79289cbefd325430a3907b335f4a"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i32TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload12i32TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of int32_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13ui32TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload13ui32TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload13ui32TestArrayE"></span><span id="TypesTestMsgPayload::ui32TestArray__uint32_tA"></span><span class="target" id="struct_types_test_msg_payload_1afe5fefbff99d695501910f2ada3aa0fc"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui32TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13ui32TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of uint32_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload12i64TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload12i64TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload12i64TestArrayE"></span><span id="TypesTestMsgPayload::i64TestArray__int64_tA"></span><span class="target" id="struct_types_test_msg_payload_1aebf45249b0b3c8fbab29885565365025"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i64TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload12i64TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of int64_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13ui64TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload13ui64TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload13ui64TestArrayE"></span><span id="TypesTestMsgPayload::ui64TestArray__uint64_tA"></span><span class="target" id="struct_types_test_msg_payload_1a049a1f13e51719649306925ff60d29b3"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui64TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13ui64TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of uint64_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14uint8TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload14uint8TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload14uint8TestArrayE"></span><span id="TypesTestMsgPayload::uint8TestArray__uint8_tA"></span><span class="target" id="struct_types_test_msg_payload_1abc5d9b69db8b9d2fa70f06485cfa93d8"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">uint8TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14uint8TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array test of uint8_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14ucharTestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload14ucharTestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload14ucharTestArrayE"></span><span id="TypesTestMsgPayload::ucharTestArray__unsigned-cA"></span><span class="target" id="struct_types_test_msg_payload_1a96ab144a9e89ff52d2e9b26c57a963ec"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ucharTestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14ucharTestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array test of unsigned char. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13int8TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload13int8TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload13int8TestArrayE"></span><span id="TypesTestMsgPayload::int8TestArray__int8_tA"></span><span class="target" id="struct_types_test_msg_payload_1aa519bd3f7bbaa136338d55f66932e4f6"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">int8TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13int8TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array test of int8_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14scharTestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload14scharTestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload14scharTestArrayE"></span><span id="TypesTestMsgPayload::scharTestArray__signed-cA"></span><span class="target" id="struct_types_test_msg_payload_1a8629bb3efc85db7ccfa861663d5e204c"></span><span class="kt"><span class="pre">signed</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scharTestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14scharTestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array test of signed char. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13boolTestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload13boolTestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload13boolTestArrayE"></span><span id="TypesTestMsgPayload::boolTestArray__bA"></span><span class="target" id="struct_types_test_msg_payload_1a2685977efadd96fe28572c6c41ff1f3b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">boolTestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13boolTestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Array test of bool. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13i16TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload13i16TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload13i16TestArray2E"></span><span id="TypesTestMsgPayload::i16TestArray2__int16_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a0bcd1909bd6ea54b21cc5ba2e9c2a6e6"></span><span class="n"><span class="pre">int16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i16TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13i16TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of int16_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14ui16TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload14ui16TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload14ui16TestArray2E"></span><span id="TypesTestMsgPayload::ui16TestArray2__uint16_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a756c5af508d60aa21c2ab8064933a432"></span><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui16TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14ui16TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of uint16_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13i32TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload13i32TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload13i32TestArray2E"></span><span id="TypesTestMsgPayload::i32TestArray2__int32_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a5ed3eb8a875334e0942d7416e7e8b471"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i32TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13i32TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of int32_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14ui32TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload14ui32TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload14ui32TestArray2E"></span><span id="TypesTestMsgPayload::ui32TestArray2__uint32_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a73b7119cd4e618862e02914823d983e3"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui32TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14ui32TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of uint32_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13i64TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload13i64TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload13i64TestArray2E"></span><span id="TypesTestMsgPayload::i64TestArray2__int64_tAA"></span><span class="target" id="struct_types_test_msg_payload_1ac9a61ce6529d84748f72083393135139"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">i64TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13i64TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of int64_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14ui64TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload14ui64TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload14ui64TestArray2E"></span><span id="TypesTestMsgPayload::ui64TestArray2__uint64_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a770510f3fff02f7ef57b61996d00d64c"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ui64TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14ui64TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of uint64_t. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload15uint8TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload15uint8TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload15uint8TestArray2E"></span><span id="TypesTestMsgPayload::uint8TestArray2__uint8_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a27bc6c0c6d6fe828963be32270f45ca6"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">uint8TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload15uint8TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>2D Array test of uint8_t </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload15ucharTestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload15ucharTestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload15ucharTestArray2E"></span><span id="TypesTestMsgPayload::ucharTestArray2__unsigned-cAA"></span><span class="target" id="struct_types_test_msg_payload_1a725228050282005a2d2842c0389aabcb"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ucharTestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload15ucharTestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>2D Array test of unsigned char </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14int8TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload14int8TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload14int8TestArray2E"></span><span id="TypesTestMsgPayload::int8TestArray2__int8_tAA"></span><span class="target" id="struct_types_test_msg_payload_1a475b0986e8258ae43b8974adab805272"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">int8TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14int8TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>2D Array test of int8_t </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload15scharTestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload15scharTestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload15scharTestArray2E"></span><span id="TypesTestMsgPayload::scharTestArray2__signed-cAA"></span><span class="target" id="struct_types_test_msg_payload_1a8fcc06cde846ec3e540dc719e7a1efc2"></span><span class="kt"><span class="pre">signed</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scharTestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload15scharTestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>2D Array test of signed char </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload14boolTestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload14boolTestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload14boolTestArray2E"></span><span id="TypesTestMsgPayload::boolTestArray2__bAA"></span><span class="target" id="struct_types_test_msg_payload_1a820eb0f4a230e327c015779df10129f1"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">boolTestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload14boolTestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>2D Array test of bool </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload12f32TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload12f32TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload12f32TestArrayE"></span><span id="TypesTestMsgPayload::f32TestArray__floatA"></span><span class="target" id="struct_types_test_msg_payload_1a54f142932d2ea0d16608959bc32a7921"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f32TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload12f32TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of float. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload12f64TestArrayE">
+<span id="_CPPv3N19TypesTestMsgPayload12f64TestArrayE"></span><span id="_CPPv2N19TypesTestMsgPayload12f64TestArrayE"></span><span id="TypesTestMsgPayload::f64TestArray__doubleA"></span><span class="target" id="struct_types_test_msg_payload_1a2ccdc22a7795a0162054743c849525d3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f64TestArray</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload12f64TestArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of array of double. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13f32TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload13f32TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload13f32TestArray2E"></span><span id="TypesTestMsgPayload::f32TestArray2__floatAA"></span><span class="target" id="struct_types_test_msg_payload_1aa264f95cd8ab4efb2389038645146dac"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f32TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13f32TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of float. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N19TypesTestMsgPayload13f64TestArray2E">
+<span id="_CPPv3N19TypesTestMsgPayload13f64TestArray2E"></span><span id="_CPPv2N19TypesTestMsgPayload13f64TestArray2E"></span><span id="TypesTestMsgPayload::f64TestArray2__doubleAA"></span><span class="target" id="struct_types_test_msg_payload_1ae2443c930ae9df96c1cfe5b3b1879683"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">f64TestArray2</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">TYPES_TEST_ARRAY_SIZE</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N19TypesTestMsgPayload13f64TestArray2E" title="Link to this definition"></a><br /></dt>
+<dd><p>Test variable of 2D array of double. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="TransRefMsgPayload.html" class="btn btn-neutral float-left" title="TransRefMsgPayload" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VSCMGArrayConfigMsgPayload.html" class="btn btn-neutral float-right" title="VSCMGArrayConfigMsgPayload" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

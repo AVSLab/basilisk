@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: faultDetection &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="faultDetection" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">opticalNavigation</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">faultDetection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pixelLineBiasUKF/index.html">pixelLineBiasUKF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../relativeODuKF/index.html">relativeODuKF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">opticalNavigation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">faultDetection</a></li>
+      <li class="breadcrumb-item active">Module: faultDetection</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/opticalNavigation/faultDetection/faultDetection.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-faultdetection">
+<span id="faultdetection"></span><h1>Module: faultDetection<a class="headerlink" href="#module-faultdetection" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module is a fault detection module for optical navigation. It uses a scenario in which two image processing methods
+are implemented, and then can be compared in different ways.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>There are no direct assumptions in this module. The performance and limitations are tied to the two methods that are
+input.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 16.7%" />
+<col style="width: 16.7%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navMeasPrimaryInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavMsgPayload.html#opnavmsgpayload"><span class="std std-ref">OpNavMsgPayload</span></a></p></td>
+<td><p>Input primary nav message</p></td>
+</tr>
+<tr class="row-odd"><td><p>navMeasSecondaryInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavMsgPayload.html#opnavmsgpayload"><span class="std std-ref">OpNavMsgPayload</span></a></p></td>
+<td><p>Input secondary nav message</p></td>
+</tr>
+<tr class="row-even"><td><p>cameraConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CameraConfigMsgPayload.html#cameraconfigmsgpayload"><span class="std std-ref">CameraConfigMsgPayload</span></a></p></td>
+<td><p>Input camera message</p></td>
+</tr>
+<tr class="row-odd"><td><p>attInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavAttMsgPayload.html#navattmsgpayload"><span class="std std-ref">NavAttMsgPayload</span></a></p></td>
+<td><p>Input attitude message</p></td>
+</tr>
+<tr class="row-even"><td><p>opNavOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavMsgPayload.html#opnavmsgpayload"><span class="std std-ref">OpNavMsgPayload</span></a></p></td>
+<td><p>Ouput navigation message given the two inputs</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The document provides details that are reminded here:
+Three fault modes are possible:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FaultMode</span></code> = 0: is the less restrictive: it uses either of the measurements available and merges them if they are both available</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FaultMode</span></code> = 1: is more restrictive: only the primary is used if both are available and the secondary is only used for a dissimilar check</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FaultMode</span></code> = 2: is most restrictive: the primary is not used in the absence of the secondary measurement</p></li>
+</ul>
+<section id="equations">
+<h3>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h3>
+<p>The important merging equations for the state and covariance of the two inputs are given here</p>
+<div class="math notranslate nohighlight">
+\[P = (P1^{-1} + P2^{-1})^{-1}
+x = P (P1^{-1}x1 + P2^{-1}x2)\]</div>
+<p>The rest of the module is logic driven as explained in the doxygen documentation.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>An example setup is provided here:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">faults</span> <span class="o">=</span> <span class="n">faultDetection</span><span class="o">.</span><span class="n">FaultDetectionData</span><span class="p">()</span>
+<span class="linenos">2</span><span class="n">faults</span><span class="o">.</span><span class="n">sigmaFault</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="linenos">3</span><span class="n">faults</span><span class="o">.</span><span class="n">faultMode</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>The sigmaFault parameter is the multiplier on the covariances that needs to be passed for the faults to be triggered</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv423SelfInit_faultDetectionP18FaultDetectionData7int64_t">
+<span id="_CPPv323SelfInit_faultDetectionP18FaultDetectionData7int64_t"></span><span id="_CPPv223SelfInit_faultDetectionP18FaultDetectionData7int64_t"></span><span id="SelfInit_faultDetection__FaultDetectionDataP.int64_t"></span><span class="target" id="fault_detection_8h_1a0183656753ad9893bf73852bd223fe7e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_faultDetection</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418FaultDetectionData" title="FaultDetectionData"><span class="n"><span class="pre">FaultDetectionData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423SelfInit_faultDetectionP18FaultDetectionData7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Self-init for the fault detection module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the model </p></li>
+<li><p><strong>moduleID</strong> – The module identification integer </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Update_faultDetectionP18FaultDetectionData8uint64_t7int64_t">
+<span id="_CPPv321Update_faultDetectionP18FaultDetectionData8uint64_t7int64_t"></span><span id="_CPPv221Update_faultDetectionP18FaultDetectionData8uint64_t7int64_t"></span><span id="Update_faultDetection__FaultDetectionDataP.uint64_t.int64_t"></span><span class="target" id="fault_detection_8h_1a2de78f34d3b70c683af3c24650567f4d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_faultDetection</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418FaultDetectionData" title="FaultDetectionData"><span class="n"><span class="pre">FaultDetectionData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Update_faultDetectionP18FaultDetectionData8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method reads in the two compared navigation messages and outputs the best measurement possible. It compares the faults of each and uses camera and attitude knowledge to output the information in all necessary frames. Three fault modes are possible. FaultMode = 0 is the less restricitve: it uses either of the measurements availabe and merges them if they are both available FaultMode = 1 is more restricitve: only the primary is used if both are available and the secondary is only used for a dissimilar check FaultMode = 2 is most restricive: the primary is not used in the abscence of the secondary measurement</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the model </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identification integer </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv420Reset_faultDetectionP18FaultDetectionData8uint64_t7int64_t">
+<span id="_CPPv320Reset_faultDetectionP18FaultDetectionData8uint64_t7int64_t"></span><span id="_CPPv220Reset_faultDetectionP18FaultDetectionData8uint64_t7int64_t"></span><span id="Reset_faultDetection__FaultDetectionDataP.uint64_t.int64_t"></span><span class="target" id="fault_detection_8h_1aa0eb2777541b87bb4828b19942dceb8f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_faultDetection</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv418FaultDetectionData" title="FaultDetectionData"><span class="n"><span class="pre">FaultDetectionData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420Reset_faultDetectionP18FaultDetectionData8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This resets the module to original states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the model </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identification integer </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418FaultDetectionData">
+<span id="_CPPv318FaultDetectionData"></span><span id="_CPPv218FaultDetectionData"></span><span id="FaultDetectionData"></span><span class="target" id="struct_fault_detection_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FaultDetectionData</span></span></span><a class="headerlink" href="#_CPPv418FaultDetectionData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;faultDetection.h&gt;</em></div>
+<p>Module data structure. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData11opNavOutMsgE">
+<span id="_CPPv3N18FaultDetectionData11opNavOutMsgE"></span><span id="_CPPv2N18FaultDetectionData11opNavOutMsgE"></span><span id="FaultDetectionData::opNavOutMsg__OpNavMsg_C"></span><span class="target" id="struct_fault_detection_data_1a37a66fd57ecccd74498f29a0f5c15f65"></span><span class="n"><span class="pre">OpNavMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opNavOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData11opNavOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] output navigation message for relative position </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData8attInMsgE">
+<span id="_CPPv3N18FaultDetectionData8attInMsgE"></span><span id="_CPPv2N18FaultDetectionData8attInMsgE"></span><span id="FaultDetectionData::attInMsg__NavAttMsg_C"></span><span class="target" id="struct_fault_detection_data_1a0350bcbb35ee3421f60bbc33345462d7"></span><span class="n"><span class="pre">NavAttMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">attInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData8attInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>attitude input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData19navMeasPrimaryInMsgE">
+<span id="_CPPv3N18FaultDetectionData19navMeasPrimaryInMsgE"></span><span id="_CPPv2N18FaultDetectionData19navMeasPrimaryInMsgE"></span><span id="FaultDetectionData::navMeasPrimaryInMsg__OpNavMsg_C"></span><span class="target" id="struct_fault_detection_data_1a459159db8a456d1bbd80bfd2b9d105c9"></span><span class="n"><span class="pre">OpNavMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navMeasPrimaryInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData19navMeasPrimaryInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>first measurement input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData21navMeasSecondaryInMsgE">
+<span id="_CPPv3N18FaultDetectionData21navMeasSecondaryInMsgE"></span><span id="_CPPv2N18FaultDetectionData21navMeasSecondaryInMsgE"></span><span id="FaultDetectionData::navMeasSecondaryInMsg__OpNavMsg_C"></span><span class="target" id="struct_fault_detection_data_1afe3f05f96ae1e05c82ab7f494bad9ef9"></span><span class="n"><span class="pre">OpNavMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navMeasSecondaryInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData21navMeasSecondaryInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>second measurement input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData17cameraConfigInMsgE">
+<span id="_CPPv3N18FaultDetectionData17cameraConfigInMsgE"></span><span id="_CPPv2N18FaultDetectionData17cameraConfigInMsgE"></span><span id="FaultDetectionData::cameraConfigInMsg__CameraConfigMsg_C"></span><span class="target" id="struct_fault_detection_data_1a5f548854165c898717aeb95cc4c65398"></span><span class="n"><span class="pre">CameraConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cameraConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData17cameraConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>camera config inut message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData12planetTargetE">
+<span id="_CPPv3N18FaultDetectionData12planetTargetE"></span><span id="_CPPv2N18FaultDetectionData12planetTargetE"></span><span id="FaultDetectionData::planetTarget__int32_t"></span><span class="target" id="struct_fault_detection_data_1ab0059c628bdcc79cd2b138638996c19b"></span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetTarget</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData12planetTargetE" title="Link to this definition"></a><br /></dt>
+<dd><p>The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData9faultModeE">
+<span id="_CPPv3N18FaultDetectionData9faultModeE"></span><span id="_CPPv2N18FaultDetectionData9faultModeE"></span><span id="FaultDetectionData::faultMode__double"></span><span class="target" id="struct_fault_detection_data_1a90805d2400f822d04bb2629192bcc77c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">faultMode</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData9faultModeE" title="Link to this definition"></a><br /></dt>
+<dd><p>What fault mode to go in: 0 is dissimilar (use the primary measurement and compare with secondary), 1 merges the measurements if they are both valid and similar. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData10sigmaFaultE">
+<span id="_CPPv3N18FaultDetectionData10sigmaFaultE"></span><span id="_CPPv2N18FaultDetectionData10sigmaFaultE"></span><span id="FaultDetectionData::sigmaFault__double"></span><span class="target" id="struct_fault_detection_data_1a383b2a34957a99095cdede4ebadd86dc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sigmaFault</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData10sigmaFaultE" title="Link to this definition"></a><br /></dt>
+<dd><p>What is the sigma multiplication factor when comparing measurements. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18FaultDetectionData9bskLoggerE">
+<span id="_CPPv3N18FaultDetectionData9bskLoggerE"></span><span id="_CPPv2N18FaultDetectionData9bskLoggerE"></span><span id="FaultDetectionData::bskLogger__BSKLoggerP"></span><span class="target" id="struct_fault_detection_data_1afbe2f8a47edb7b4ab3fdcea2d8635d37"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N18FaultDetectionData9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="faultDetection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

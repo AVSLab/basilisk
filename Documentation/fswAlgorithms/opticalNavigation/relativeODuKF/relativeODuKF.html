@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module: relativeODuKF &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="relativeODuKF" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../attControl/index.html">attControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">opticalNavigation</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../faultDetection/index.html">faultDetection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pixelLineBiasUKF/index.html">pixelLineBiasUKF</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">relativeODuKF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">opticalNavigation</a></li>
+          <li class="breadcrumb-item"><a href="index.html">relativeODuKF</a></li>
+      <li class="breadcrumb-item active">Module: relativeODuKF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/opticalNavigation/relativeODuKF/relativeODuKF.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-relativeodukf">
+<span id="relativeodukf"></span><h1>Module: relativeODuKF<a class="headerlink" href="#module-relativeodukf" title="Link to this heading"></a></h1>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This module filters position measurements that have been processed from planet images in order to estimate spacecraft relative position to an observed body in the inertial frame. The filter used is an unscented Kalman filter, and the images are first processed by houghCricles and pixelLineConverter in order to produce this filter’s measurements.</p>
+<p>The module
+<a class="reference download internal" download="" href="../../../../_downloads/28acaceaa10b23aa440a2c6a5962a9e3/Basilisk-relativeOD-20190620.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>navStateOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/NavTransMsgPayload.html#navtransmsgpayload"><span class="std std-ref">NavTransMsgPayload</span></a></p></td>
+<td><p>navigation translation output message</p></td>
+</tr>
+<tr class="row-odd"><td><p>filtDataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavFilterMsgPayload.html#opnavfiltermsgpayload"><span class="std std-ref">OpNavFilterMsgPayload</span></a></p></td>
+<td><p>output filter data message</p></td>
+</tr>
+<tr class="row-even"><td><p>opNavInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavMsgPayload.html#opnavmsgpayload"><span class="std std-ref">OpNavMsgPayload</span></a></p></td>
+<td><p>opnav input message</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417SelfInit_relODuKFP14RelODuKFConfig7int64_t">
+<span id="_CPPv317SelfInit_relODuKFP14RelODuKFConfig7int64_t"></span><span id="_CPPv217SelfInit_relODuKFP14RelODuKFConfig7int64_t"></span><span id="SelfInit_relODuKF__RelODuKFConfigP.int64_t"></span><span class="target" id="relative_o_du_k_f_8h_1adeb1ce7e2e6bd6968889f12fc81d6fe4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_relODuKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417SelfInit_relODuKFP14RelODuKFConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method creates the two moduel output messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>moduleId</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415Update_relODuKFP14RelODuKFConfig8uint64_t7int64_t">
+<span id="_CPPv315Update_relODuKFP14RelODuKFConfig8uint64_t7int64_t"></span><span id="_CPPv215Update_relODuKFP14RelODuKFConfig8uint64_t7int64_t"></span><span id="Update_relODuKF__RelODuKFConfigP.uint64_t.int64_t"></span><span class="target" id="relative_o_du_k_f_8h_1acfb17520d1c4a52cfe67a6e6274b34df"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_relODuKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415Update_relODuKFP14RelODuKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method takes the relative position measurements and outputs an estimate of the spacecraft states in the intertial frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleId</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414Reset_relODuKFP14RelODuKFConfig8uint64_t7int64_t">
+<span id="_CPPv314Reset_relODuKFP14RelODuKFConfig8uint64_t7int64_t"></span><span id="_CPPv214Reset_relODuKFP14RelODuKFConfig8uint64_t7int64_t"></span><span id="Reset_relODuKF__RelODuKFConfigP.uint64_t.int64_t"></span><span class="target" id="relative_o_du_k_f_8h_1ae4214cdc7167b08b5af28da6ee713a0b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_relODuKF</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleId</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414Reset_relODuKFP14RelODuKFConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method resets the relative OD filter to an initial state and initializes the internal estimation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleId</strong> – The ID associated with the configData </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418relODuKFTwoBodyDynA14ODUKF_N_STATES_ddPd">
+<span id="_CPPv318relODuKFTwoBodyDynA14ODUKF_N_STATES_ddPd"></span><span id="_CPPv218relODuKFTwoBodyDynAODUKF_N_STATES_ddPd"></span><span id="relODuKFTwoBodyDyn__doubleA.double.doubleP"></span><span class="target" id="relative_o_du_k_f_8h_1ab0cf81c20965315b7090e6def6e6a8e6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODuKFTwoBodyDyn</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">state</span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">mu</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateDeriv</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418relODuKFTwoBodyDynA14ODUKF_N_STATES_ddPd" title="Link to this definition"></a><br /></dt>
+<dd><p>Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – The starting state </p></li>
+<li><p><strong>muPlanet</strong> – Planet gravity constant </p></li>
+<li><p><strong>stateDeriv</strong> – State derivative vector </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>double Next state </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418relODuKFTimeUpdateP14RelODuKFConfigd">
+<span id="_CPPv318relODuKFTimeUpdateP14RelODuKFConfigd"></span><span id="_CPPv218relODuKFTimeUpdateP14RelODuKFConfigd"></span><span id="relODuKFTimeUpdate__RelODuKFConfigP.double"></span><span class="target" id="relative_o_du_k_f_8h_1a04f96d384cc1b3d97591db7ecc89c747"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODuKFTimeUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">updateTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418relODuKFTimeUpdateP14RelODuKFConfigd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the time update for the relative OD kalman filter. It propagates the sigma points forward in time and then gets the current covariance and state estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>updateTime</strong> – The time that we need to fix the filter to (seconds) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418relODuKFMeasUpdateP14RelODuKFConfig">
+<span id="_CPPv318relODuKFMeasUpdateP14RelODuKFConfig"></span><span id="_CPPv218relODuKFMeasUpdateP14RelODuKFConfig"></span><span id="relODuKFMeasUpdate__RelODuKFConfigP"></span><span class="target" id="relative_o_du_k_f_8h_1a091fa7c77d17610252a608fc60ccd4a4"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODuKFMeasUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418relODuKFMeasUpdateP14RelODuKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method performs the measurement update for the kalman filter. It applies the observations in the obs vectors to the current state estimate and updates the state/covariance with that information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the OD filter </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv419relODuKFCleanUpdateP14RelODuKFConfig">
+<span id="_CPPv319relODuKFCleanUpdateP14RelODuKFConfig"></span><span id="_CPPv219relODuKFCleanUpdateP14RelODuKFConfig"></span><span id="relODuKFCleanUpdate__RelODuKFConfigP"></span><span class="target" id="relative_o_du_k_f_8h_1ace568cb3f451c1253aa5444b9fda701b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODuKFCleanUpdate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419relODuKFCleanUpdateP14RelODuKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method cleans the filter states after a bad upadate on the fly. It removes the potentially corrupted previous estimates and puts the filter back to a working state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the OD filter </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414relODStatePropP14RelODuKFConfigPdd">
+<span id="_CPPv314relODStatePropP14RelODuKFConfigPdd"></span><span id="_CPPv214relODStatePropP14RelODuKFConfigPdd"></span><span id="relODStateProp__RelODuKFConfigP.doubleP.double"></span><span class="target" id="relative_o_du_k_f_8h_1a7acae4f65b7059a21b8b7eaf7274a332"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODStateProp</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">stateInOut</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dt</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414relODStatePropP14RelODuKFConfigPdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method propagates a relative OD state vector forward in time. Note that the calling parameter is updated in place to save on data copies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the OD filter </p></li>
+<li><p><strong>stateInOut</strong> – The state that is propagated </p></li>
+<li><p><strong>dt</strong> – Time step (s) </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv417relODuKFMeasModelP14RelODuKFConfig">
+<span id="_CPPv317relODuKFMeasModelP14RelODuKFConfig"></span><span id="_CPPv217relODuKFMeasModelP14RelODuKFConfig"></span><span id="relODuKFMeasModel__RelODuKFConfigP"></span><span class="target" id="relative_o_du_k_f_8h_1aa2d262aa331150ef1f5f52c86903828f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">relODuKFMeasModel</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv414RelODuKFConfig" title="RelODuKFConfig"><span class="n"><span class="pre">RelODuKFConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417relODuKFMeasModelP14RelODuKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><p>This method computes the measurement model. Given that the data is coming from the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configData</strong> – The configuration data associated with the OD filter </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv414RelODuKFConfig">
+<span id="_CPPv314RelODuKFConfig"></span><span id="_CPPv214RelODuKFConfig"></span><span id="RelODuKFConfig"></span><span class="target" id="struct_rel_o_du_k_f_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RelODuKFConfig</span></span></span><a class="headerlink" href="#_CPPv414RelODuKFConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;relativeODuKF.h&gt;</em></div>
+<p>Top level structure for the relative OD unscented kalman filter. Used to estimate the spacecraft’s inertial position relative to a body. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig14navStateOutMsgE">
+<span id="_CPPv3N14RelODuKFConfig14navStateOutMsgE"></span><span id="_CPPv2N14RelODuKFConfig14navStateOutMsgE"></span><span id="RelODuKFConfig::navStateOutMsg__NavTransMsg_C"></span><span class="target" id="struct_rel_o_du_k_f_config_1a46b496856032c23d4333065bf9608560"></span><span class="n"><span class="pre">NavTransMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">navStateOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig14navStateOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>navigation output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig14filtDataOutMsgE">
+<span id="_CPPv3N14RelODuKFConfig14filtDataOutMsgE"></span><span id="_CPPv2N14RelODuKFConfig14filtDataOutMsgE"></span><span id="RelODuKFConfig::filtDataOutMsg__OpNavFilterMsg_C"></span><span class="target" id="struct_rel_o_du_k_f_config_1a3a0ce6eecbe053e4d03914383689cce7"></span><span class="n"><span class="pre">OpNavFilterMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">filtDataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig14filtDataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>output filter data message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig10opNavInMsgE">
+<span id="_CPPv3N14RelODuKFConfig10opNavInMsgE"></span><span id="_CPPv2N14RelODuKFConfig10opNavInMsgE"></span><span id="RelODuKFConfig::opNavInMsg__OpNavMsg_C"></span><span class="target" id="struct_rel_o_du_k_f_config_1a79a33db2aa30db0783460abe67eae136"></span><span class="n"><span class="pre">OpNavMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opNavInMsg</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig10opNavInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>opnav input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9numStatesE">
+<span id="_CPPv3N14RelODuKFConfig9numStatesE"></span><span id="_CPPv2N14RelODuKFConfig9numStatesE"></span><span id="RelODuKFConfig::numStates__s"></span><span class="target" id="struct_rel_o_du_k_f_config_1a6099d23fbb5a8faed135b8bde5af68fe"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numStates</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9numStatesE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of states for this filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig12countHalfSPsE">
+<span id="_CPPv3N14RelODuKFConfig12countHalfSPsE"></span><span id="_CPPv2N14RelODuKFConfig12countHalfSPsE"></span><span id="RelODuKFConfig::countHalfSPs__s"></span><span class="target" id="struct_rel_o_du_k_f_config_1a17b8876a74e3d8bd6020eacca3d98a22"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">countHalfSPs</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig12countHalfSPsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of sigma points over 2 </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig6numObsE">
+<span id="_CPPv3N14RelODuKFConfig6numObsE"></span><span id="_CPPv2N14RelODuKFConfig6numObsE"></span><span id="RelODuKFConfig::numObs__s"></span><span class="target" id="struct_rel_o_du_k_f_config_1ae9d59265eb7c9b8b8c57763d819ec336"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">numObs</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig6numObsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Number of measurements this cycle </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig4betaE">
+<span id="_CPPv3N14RelODuKFConfig4betaE"></span><span id="_CPPv2N14RelODuKFConfig4betaE"></span><span id="RelODuKFConfig::beta__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a80c17aa7485f99d6718198a4c76b3d69"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beta</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig4betaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Beta parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig5alphaE">
+<span id="_CPPv3N14RelODuKFConfig5alphaE"></span><span id="_CPPv2N14RelODuKFConfig5alphaE"></span><span id="RelODuKFConfig::alpha__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1adb7d40dedad2a3dfb099b209f3f8510c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alpha</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig5alphaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Alpha parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig5kappaE">
+<span id="_CPPv3N14RelODuKFConfig5kappaE"></span><span id="_CPPv2N14RelODuKFConfig5kappaE"></span><span id="RelODuKFConfig::kappa__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1acc4347bb179823edc554ae6dd22e969c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kappa</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig5kappaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Kappa parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9lambdaValE">
+<span id="_CPPv3N14RelODuKFConfig9lambdaValE"></span><span id="_CPPv2N14RelODuKFConfig9lambdaValE"></span><span id="RelODuKFConfig::lambdaVal__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a488aed8a2072c204a2e6a1fe8577c63a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lambdaVal</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9lambdaValE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Lambda parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig5gammaE">
+<span id="_CPPv3N14RelODuKFConfig5gammaE"></span><span id="_CPPv2N14RelODuKFConfig5gammaE"></span><span id="RelODuKFConfig::gamma__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1af1a7b1507519030baf7d0a3ac8bbb33c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gamma</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig5gammaE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Gamma parameter for filter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9switchMagE">
+<span id="_CPPv3N14RelODuKFConfig9switchMagE"></span><span id="_CPPv2N14RelODuKFConfig9switchMagE"></span><span id="RelODuKFConfig::switchMag__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a50cc1e78fad7ea87e4212870b9d7e16d"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">switchMag</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9switchMagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Threshold for where we switch MRP set </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig2dtE">
+<span id="_CPPv3N14RelODuKFConfig2dtE"></span><span id="_CPPv2N14RelODuKFConfig2dtE"></span><span id="RelODuKFConfig::dt__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a01f977c2a311a973249caceefbaf99e4"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dt</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig2dtE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] seconds since last data epoch </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig7timeTagE">
+<span id="_CPPv3N14RelODuKFConfig7timeTagE"></span><span id="_CPPv2N14RelODuKFConfig7timeTagE"></span><span id="RelODuKFConfig::timeTag__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a27b2783319d30c685b0fecc653f9395f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTag</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig7timeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time tag for statecovar/etc </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig13gyrAggTimeTagE">
+<span id="_CPPv3N14RelODuKFConfig13gyrAggTimeTagE"></span><span id="_CPPv2N14RelODuKFConfig13gyrAggTimeTagE"></span><span id="RelODuKFConfig::gyrAggTimeTag__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a8592d14b60e300218028b3dcad257e4c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gyrAggTimeTag</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig13gyrAggTimeTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Time-tag for aggregated gyro data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig13aggSigma_b2b1E">
+<span id="_CPPv3N14RelODuKFConfig13aggSigma_b2b1E"></span><span id="_CPPv2N14RelODuKFConfig13aggSigma_b2b1E"></span><span id="RelODuKFConfig::aggSigma_b2b1__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a2c0d1a5c0d18d6ae7247c87b92b75f36"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">aggSigma_b2b1</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig13aggSigma_b2b1E" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Aggregated attitude motion from gyros </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig14dcm_BdyGyrpltfE">
+<span id="_CPPv3N14RelODuKFConfig14dcm_BdyGyrpltfE"></span><span id="_CPPv2N14RelODuKFConfig14dcm_BdyGyrpltfE"></span><span id="RelODuKFConfig::dcm_BdyGyrpltf__doubleAA"></span><span class="target" id="struct_rel_o_du_k_f_config_1ad4a1b2563778622c122e648f6433a9ab"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dcm_BdyGyrpltf</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig14dcm_BdyGyrpltfE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] DCM for converting gyro data to body frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig2wME">
+<span id="_CPPv3N14RelODuKFConfig2wME"></span><span id="_CPPv2N14RelODuKFConfig2wME"></span><span id="RelODuKFConfig::wM__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1af7c4629fb75d54868d4c6044b05ac569"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wM</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig2wME" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Weighting vector for sigma points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig2wCE">
+<span id="_CPPv3N14RelODuKFConfig2wCE"></span><span id="_CPPv2N14RelODuKFConfig2wCE"></span><span id="RelODuKFConfig::wC__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a23d1a80c41cde3c57b169434c089d712"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wC</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig2wCE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Weighting vector for sigma points </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9stateInitE">
+<span id="_CPPv3N14RelODuKFConfig9stateInitE"></span><span id="_CPPv2N14RelODuKFConfig9stateInitE"></span><span id="RelODuKFConfig::stateInit__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1afcef086ecff618ebcbe894c7cbc59083"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateInit</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9stateInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate to initialize filter to </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig5stateE">
+<span id="_CPPv3N14RelODuKFConfig5stateE"></span><span id="_CPPv2N14RelODuKFConfig5stateE"></span><span id="RelODuKFConfig::state__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1ab9f14d188a5f2945006c23a4d0931ccc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9statePrevE">
+<span id="_CPPv3N14RelODuKFConfig9statePrevE"></span><span id="_CPPv2N14RelODuKFConfig9statePrevE"></span><span id="RelODuKFConfig::statePrev__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1aa79af59f9908f648bfad2eac4b9d3478"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">statePrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9statePrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] State estimate for time TimeTag at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig4sBarE">
+<span id="_CPPv3N14RelODuKFConfig4sBarE"></span><span id="_CPPv2N14RelODuKFConfig4sBarE"></span><span id="RelODuKFConfig::sBar__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a5f19cdb6b8148a0c24e9811f7b221d5a"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig4sBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig8sBarPrevE">
+<span id="_CPPv3N14RelODuKFConfig8sBarPrevE"></span><span id="_CPPv2N14RelODuKFConfig8sBarPrevE"></span><span id="RelODuKFConfig::sBarPrev__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a623c497ffed9d539e0cc1f29ac2e2a05"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sBarPrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig8sBarPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Time updated covariance at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig5covarE">
+<span id="_CPPv3N14RelODuKFConfig5covarE"></span><span id="_CPPv2N14RelODuKFConfig5covarE"></span><span id="RelODuKFConfig::covar__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a13c0aab1ead1a830fadb680de8e06e74"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig5covarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9covarPrevE">
+<span id="_CPPv3N14RelODuKFConfig9covarPrevE"></span><span id="_CPPv2N14RelODuKFConfig9covarPrevE"></span><span id="RelODuKFConfig::covarPrev__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1ada002a24bf1bc24e851d4217ba94546e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarPrev</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9covarPrevE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] covariance at previous time </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9covarInitE">
+<span id="_CPPv3N14RelODuKFConfig9covarInitE"></span><span id="_CPPv2N14RelODuKFConfig9covarInitE"></span><span id="RelODuKFConfig::covarInit__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a0d65b5f86c4e9ffd8f445ae18222303e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">covarInit</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9covarInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Covariance to init filter with </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig4xBarE">
+<span id="_CPPv3N14RelODuKFConfig4xBarE"></span><span id="_CPPv2N14RelODuKFConfig4xBarE"></span><span id="RelODuKFConfig::xBar__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a31613d39b86a1947dd75973db107e57c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">xBar</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig4xBarE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Current mean state estimate </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig3obsE">
+<span id="_CPPv3N14RelODuKFConfig3obsE"></span><span id="_CPPv2N14RelODuKFConfig3obsE"></span><span id="RelODuKFConfig::obs__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1ad9429ed887f8eed85406f91336fc8997"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">obs</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig3obsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Observation vector for frame </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig5yMeasE">
+<span id="_CPPv3N14RelODuKFConfig5yMeasE"></span><span id="_CPPv2N14RelODuKFConfig5yMeasE"></span><span id="RelODuKFConfig::yMeas__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1ae3b10f05c3c280f7d8d4bab38cb93b1c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">yMeas</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig5yMeasE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement model data </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig2SPE">
+<span id="_CPPv3N14RelODuKFConfig2SPE"></span><span id="_CPPv2N14RelODuKFConfig2SPE"></span><span id="RelODuKFConfig::SP__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a208796034227884301177c59b349d762"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SP</span></span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">+</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig2SPE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] sigma point matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig6qNoiseE">
+<span id="_CPPv3N14RelODuKFConfig6qNoiseE"></span><span id="_CPPv2N14RelODuKFConfig6qNoiseE"></span><span id="RelODuKFConfig::qNoise__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1afcbfe2aecffde4c1a6b436eb2b2d61fa"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig6qNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] process noise matrix </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig7sQnoiseE">
+<span id="_CPPv3N14RelODuKFConfig7sQnoiseE"></span><span id="_CPPv2N14RelODuKFConfig7sQnoiseE"></span><span id="RelODuKFConfig::sQnoise__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a9c5acfdf0e637e1fdceaaed5c9e2f07b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sQnoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_STATES</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig7sQnoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] cholesky of Qnoise </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9measNoiseE">
+<span id="_CPPv3N14RelODuKFConfig9measNoiseE"></span><span id="_CPPv2N14RelODuKFConfig9measNoiseE"></span><span id="RelODuKFConfig::measNoise__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1ac24fb281915029655a64c5750f9a91bb"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">measNoise</span></span></span><span class="p"><span class="pre">[</span></span><span class="n"><span class="pre">ODUKF_N_MEAS</span></span><span class="w"> </span><span class="o"><span class="pre">*</span></span><span class="w"> </span><span class="n"><span class="pre">ODUKF_N_MEAS</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9measNoiseE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Measurement Noise </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig7noiseSFE">
+<span id="_CPPv3N14RelODuKFConfig7noiseSFE"></span><span id="_CPPv2N14RelODuKFConfig7noiseSFE"></span><span id="RelODuKFConfig::noiseSF__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a2dab49dc42d17a6f44ef6ba2e5850199"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseSF</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig7noiseSFE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Scale factor for Measurement Noise </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig12planetIdInitE">
+<span id="_CPPv3N14RelODuKFConfig12planetIdInitE"></span><span id="_CPPv2N14RelODuKFConfig12planetIdInitE"></span><span id="RelODuKFConfig::planetIdInit__i"></span><span class="target" id="struct_rel_o_du_k_f_config_1a37b9b25cc2ebc02fcc412151a8e99a93"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetIdInit</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig12planetIdInitE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Planet being navigated inital value </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig8planetIdE">
+<span id="_CPPv3N14RelODuKFConfig8planetIdE"></span><span id="_CPPv2N14RelODuKFConfig8planetIdE"></span><span id="RelODuKFConfig::planetId__i"></span><span class="target" id="struct_rel_o_du_k_f_config_1ace5b7d075ec10f8a28266ff65d3313db"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">planetId</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig8planetIdE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Planet being navigated as per measurement </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig17firstPassCompleteE">
+<span id="_CPPv3N14RelODuKFConfig17firstPassCompleteE"></span><span id="_CPPv2N14RelODuKFConfig17firstPassCompleteE"></span><span id="RelODuKFConfig::firstPassComplete__uint32_t"></span><span class="target" id="struct_rel_o_du_k_f_config_1a33aab2cd8eafcbce1084b35bf3e24ba4"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstPassComplete</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig17firstPassCompleteE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Flag to know if first filter update </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig8postFitsE">
+<span id="_CPPv3N14RelODuKFConfig8postFitsE"></span><span id="_CPPv2N14RelODuKFConfig8postFitsE"></span><span id="RelODuKFConfig::postFits__doubleA"></span><span class="target" id="struct_rel_o_du_k_f_config_1a8d255171e95ee863341e9aedefae56ae"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postFits</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig8postFitsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] PostFit residuals </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig10timeTagOutE">
+<span id="_CPPv3N14RelODuKFConfig10timeTagOutE"></span><span id="_CPPv2N14RelODuKFConfig10timeTagOutE"></span><span id="RelODuKFConfig::timeTagOut__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a8d3a4408b3a381e1f6f50370b40592d3"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeTagOut</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig10timeTagOutE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Output time-tag information </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig11maxTimeJumpE">
+<span id="_CPPv3N14RelODuKFConfig11maxTimeJumpE"></span><span id="_CPPv2N14RelODuKFConfig11maxTimeJumpE"></span><span id="RelODuKFConfig::maxTimeJump__double"></span><span class="target" id="struct_rel_o_du_k_f_config_1a6ece1fe1571211b4b9fcff341ea3d5cd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">maxTimeJump</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig11maxTimeJumpE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Maximum time jump to allow in propagation </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig13opNavInBufferE">
+<span id="_CPPv3N14RelODuKFConfig13opNavInBufferE"></span><span id="_CPPv2N14RelODuKFConfig13opNavInBufferE"></span><span id="RelODuKFConfig::opNavInBuffer__OpNavMsgPayload"></span><span class="target" id="struct_rel_o_du_k_f_config_1a9f0c6f9097b7077770e3e9d10a893112"></span><a class="reference internal" href="../../../architecture/msgPayloadDefC/OpNavMsgPayload.html#_CPPv415OpNavMsgPayload" title="OpNavMsgPayload"><span class="n"><span class="pre">OpNavMsgPayload</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">opNavInBuffer</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig13opNavInBufferE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] ST sensor data read in from message bus </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14RelODuKFConfig9bskLoggerE">
+<span id="_CPPv3N14RelODuKFConfig9bskLoggerE"></span><span id="_CPPv2N14RelODuKFConfig9bskLoggerE"></span><span id="RelODuKFConfig::bskLogger__BSKLoggerP"></span><span class="target" id="struct_rel_o_du_k_f_config_1a2c32e666eb72a4c474670dc459412935"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N14RelODuKFConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="relativeODuKF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

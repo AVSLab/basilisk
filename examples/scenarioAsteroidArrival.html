@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAsteroidArrival &mdash; Basilisk 2.8.41
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=57a44e8a" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=53003e83"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenarioAerocapture" href="scenarioAerocapture.html" />
+    <link rel="prev" title="scenarioFlybySpice" href="scenarioFlybySpice.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#mission-simulations">Mission Simulations</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="scenarioHelioTransSpice.html">Heliocentric Translation Using Custom Spice Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioFlybySpice.html">Planetary Flybys Using Custom Spice File</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Asteroid Arrival</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioAerocapture.html">Aerocapture Scenario</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioAsteroidArrival</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/scenarioAsteroidArrival.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenarioasteroidarrival">
+<span id="id1"></span><h1>scenarioAsteroidArrival<a class="headerlink" href="#scenarioasteroidarrival" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<span id="module-scenarioAsteroidArrival"></span><h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This simulation demonstrates how to put a spacecraft in orbit about a custom gravitational body while conducting several
+attitude changes. Several attitude pointing modes are implemented, along with other visual tools including antenna
+transmission and thruster visualization.</p>
+<p>The spacecraft starts on a elliptical orbit towards the asteroid Bennu. The spacecraft conducts a
+burn at periapsis of the elliptical orbit, transferring to a circular orbit about Bennu with a radius of 800
+meters. The spacecraft then completes a series of Hohmann transfers while also conducting several attitude changes
+until reaching a final elliptical orbit about the asteroid.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples</span></code> and executed by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioAsteroidArrival</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>To see the asteroid Bennu in Vizard the asteroid asset bundle must be installed.  See
+the Vizard <a class="reference external" href="http://hanspeterschaub.info/basilisk/Vizard/VizardDownload.html">Download</a> web page.</p>
+</div>
+</section>
+<section id="setting-up-the-custom-gravitational-body">
+<h2>Setting Up The Custom Gravitational Body<a class="headerlink" href="#setting-up-the-custom-gravitational-body" title="Link to this heading"></a></h2>
+<p>Because Spice will not be used to generate the ephemeris information for Bennu, an instance of the module
+<code class="docutils literal notranslate"><span class="pre">planetEphemeris</span></code> is created to generate Bennu’s ephemeris:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gravBodyEphem</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">()</span>
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s1">&#39;planetEphemeris&#39;</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">gravBodyEphem</span><span class="p">)</span>
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">setPlanetNames</span><span class="p">(</span><span class="n">planetEphemeris</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="s2">&quot;Bennu&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Next, the module is configured by specifying the orbital parameters of Bennu:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">timeInitString</span> <span class="o">=</span> <span class="s2">&quot;2011 January 1 0:00:00.0&quot;</span>
+<span class="n">diam</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="mf">245.03</span>  <span class="c1"># m</span>
+<span class="n">G</span> <span class="o">=</span> <span class="mf">6.67408</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="o">-</span><span class="mi">11</span><span class="p">)</span>  <span class="c1"># m^3 / kg*s^2</span>
+<span class="n">massBennu</span> <span class="o">=</span> <span class="mf">7.329</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># kg</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="n">G</span> <span class="o">*</span> <span class="n">massBennu</span>  <span class="c1"># Bennu grav. parameter, m^3/s^2</span>
+<span class="n">oeAsteroid</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+<span class="n">oeAsteroid</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">1.1264</span> <span class="o">*</span> <span class="n">astroConstants</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># m</span>
+<span class="n">oeAsteroid</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.20375</span>
+<span class="n">oeAsteroid</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">6.0349</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+<span class="n">oeAsteroid</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">2.0609</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+<span class="n">oeAsteroid</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">66.2231</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+<span class="n">oeAsteroid</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">planetElements</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">classicElementVector</span><span class="p">([</span><span class="n">oeAsteroid</span><span class="p">])</span>
+
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">rightAscension</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="mf">85.65</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">])</span>
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">declination</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="o">-</span><span class="mf">60.17</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">])</span>
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">lst0</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="mf">0.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">])</span>
+<span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">rotRate</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="mi">360</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.296057</span> <span class="o">*</span> <span class="mf">3600.</span><span class="p">)])</span>  <span class="c1"># rad/sec</span>
+</pre></div>
+</div>
+<p>Next, Bennu can be created as a gravitational body using the <code class="docutils literal notranslate"><span class="pre">createCustomGravObject()</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asteroid</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createCustomGravObject</span><span class="p">(</span><span class="s2">&quot;Bennu&quot;</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+<span class="n">asteroid</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ensure this is the central gravitational body</span>
+</pre></div>
+</div>
+<p>Finally, subscribe the custom gravitational body <code class="docutils literal notranslate"><span class="pre">planetBodyInMsg</span></code> to the planetEphemeris output message
+<code class="docutils literal notranslate"><span class="pre">planetOutMsgs</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asteroid</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The spacecraft object is then created and all gravitational bodies are connected to the spacecraft.</p>
+<p>Recall that when configuring the ephemeris converter module, Bennu was not created with Spice. Therefore its input
+message is of type <code class="docutils literal notranslate"><span class="pre">planetEphemeris</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ephemObject</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">gravBodyEphem</span><span class="o">.</span><span class="n">planetOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="implementing-attitude-pointing-modes">
+<h2>Implementing Attitude Pointing Modes<a class="headerlink" href="#implementing-attitude-pointing-modes" title="Link to this heading"></a></h2>
+<p>After the spacecraft’s initial orbital elements about Bennu are set using the <code class="docutils literal notranslate"><span class="pre">orbitalMotion</span></code> module, the attitude
+modules and modes are created and configured. The four attitude pointing modes incorporated into this script include
+Earth-pointing using the spacecraft’s antenna with transmission visualization, Sun-pointing with the spacecraft’s
+solar panel normal axis, orbital velocity pointing while conducting thruster burn visualizations, and science-pointing
+towards the asteroid using a sensor created on the spacecraft.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Refer to the integrated example script <a class="reference internal" href="scenarioFlybySpice.html#scenarioflybyspice"><span class="std std-ref">scenarioFlybySpice</span></a> for a more detailed discussion on
+configuring attitude modules and modes for a mission scenario.</p>
+</div>
+<p>To execute the desired attitude-pointing mode, the run flight mode function must be called
+with the desired simulation time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runAntennaEarthPointing</span><span class="p">(</span><span class="n">desiredSimTimeSec</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-visualization-features">
+<h2>Additional Visualization Features<a class="headerlink" href="#additional-visualization-features" title="Link to this heading"></a></h2>
+<p>To add a visualization of antenna transmission back to Earth during the Earth-pointing mode we
+can’t use the typical way of adding these generic sensors, thrusters, etc.  The reason is that we want to illustrate a
+thruster, but we are not using a thruster effector.  Thus, to add a thruster to the Vizard binary
+we need to manually add these to the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> spacecraft data structure.</p>
+<p>First, as is typical, a transceiver is created through the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">transceiverHUD</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">Transceiver</span><span class="p">()</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.38</span><span class="p">]</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">fieldOfView</span> <span class="o">=</span> <span class="mf">40.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">normalVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;antenna&quot;</span>
+<span class="n">transceiverHUD</span><span class="o">.</span><span class="n">animationSpeed</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>To add a sensor visualization for the science-pointing mode, a sensor is created using the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">genericSensor</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericSensor</span><span class="p">()</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">r_SB_B</span> <span class="o">=</span> <span class="n">cameraLocation</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">fieldOfView</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">fieldOfView</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">)</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">normalVector</span> <span class="o">=</span> <span class="n">cameraLocation</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">IntVector</span><span class="p">(</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;scienceCamera&quot;</span>
+<span class="n">genericSensor</span><span class="o">.</span><span class="n">genericSensorCmd</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>To add a camera to the science-pointing mode, the <code class="docutils literal notranslate"><span class="pre">createStandardCamera</span></code> method is used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vizSupport</span><span class="o">.</span><span class="n">createStandardCamera</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span> <span class="n">setMode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spacecraftName</span><span class="o">=</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">,</span>
+                                <span class="n">fieldOfView</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span><span class="p">,</span>
+                                <span class="n">pointingVector_B</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">position_B</span><span class="o">=</span><span class="n">cameraLocation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, to add a thruster visualization for the thruster burn mode, the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> is again invoked.
+Here we manually add the Vizard interface elements back in to redo what the <code class="docutils literal notranslate"><span class="pre">enableUnityVisualization()</span></code>
+normally does for us.  The main difference is that we are manually setting the thruster information as
+the spacecraft dynamics does not contain a thruster effector:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scData</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">VizSpacecraftData</span><span class="p">()</span>
+<span class="n">scData</span><span class="o">.</span><span class="n">spacecraftName</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span>
+<span class="n">scData</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+<span class="n">scData</span><span class="o">.</span><span class="n">transceiverList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">TransceiverVector</span><span class="p">([</span><span class="n">transceiverHUD</span><span class="p">])</span>
+<span class="n">scData</span><span class="o">.</span><span class="n">genericSensorList</span> <span class="o">=</span> <span class="n">vizInterface</span><span class="o">.</span><span class="n">GenericSensorVector</span><span class="p">([</span><span class="n">genericSensor</span><span class="p">])</span>
+
+<span class="n">thrusterMsgInfo</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THROutputMsgPayload</span><span class="p">()</span>
+<span class="n">thrusterMsgInfo</span><span class="o">.</span><span class="n">maxThrust</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Newtons</span>
+<span class="n">thrusterMsgInfo</span><span class="o">.</span><span class="n">thrustForce</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Newtons</span>
+<span class="n">thrusterMsgInfo</span><span class="o">.</span><span class="n">thrusterLocation</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">]</span>
+<span class="n">thrusterMsgInfo</span><span class="o">.</span><span class="n">thrusterDirection</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">thrMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THROutputMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">thrusterMsgInfo</span><span class="p">)</span>
+<span class="n">scData</span><span class="o">.</span><span class="n">thrInMsgs</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">THROutputInMsgsVector</span><span class="p">([</span><span class="n">thrMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()])</span>
+</pre></div>
+</div>
+<p>After running the <code class="docutils literal notranslate"><span class="pre">enableUnityVisualization()</span></code> method, we need to clear the <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> spacecraft
+data container <code class="docutils literal notranslate"><span class="pre">scData</span></code> and push our custom copy to it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">viz</span><span class="o">.</span><span class="n">scData</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">scData</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">scData</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<p>The following image illustrates the expected simulation run return for the case when plots are requested.</p>
+<img alt="../_images/scenarioAsteroidArrival1.svg" class="align-center" src="../_images/scenarioAsteroidArrival1.svg" />
+</section>
+<section id="visualization-in-vizard">
+<h2>Visualization In Vizard<a class="headerlink" href="#visualization-in-vizard" title="Link to this heading"></a></h2>
+<p>The following image illustrates the expected visualization of this simulation script.</p>
+<img alt="../_images/scenarioAsteroidArrival2.jpg" class="align-center" src="../_images/scenarioAsteroidArrival2.jpg" />
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioAsteroidArrival.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioAsteroidArrival.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_plots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scenarioAsteroidArrival.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioAsteroidArrival.run" title="Link to this definition"></a></dt>
+<dd><p>The scenarios can be run with the followings setups parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>show_plots</strong> (<em>bool</em>) – Determines if the script should display plots</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioFlybySpice.html" class="btn btn-neutral float-left" title="scenarioFlybySpice" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioAerocapture.html" class="btn btn-neutral float-right" title="scenarioAerocapture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
