@@ -914,7 +914,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                         }
                     }
                     for (int i=0; i<3; i++){
-                        thr->add_position(scIt->thrOutputMessage[idx].thrusterLocation[i]);
+                        thr->add_position(scIt->thrOutputMessage[idx].thrusterLocation[i] - scIt->thrInfo[idx].thrOffset[i]);
                         thr->add_thrustvector(scIt->thrOutputMessage[idx].thrusterDirection[i]);
                     }
                     //thrMsgID[idx].dataFresh = false;

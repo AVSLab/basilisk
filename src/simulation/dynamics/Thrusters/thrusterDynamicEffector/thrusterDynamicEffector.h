@@ -78,6 +78,7 @@ public:
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialAttitudeProperty;  //!< attitude relative to inertial frame
     Eigen::MatrixXd* inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
+    Eigen::Vector3d r_PcP_P;                     //!< [m] position vector of parent body CoM w.r.t. parent body frame origin (only used if thrusters attached to non-hub body)
 
     BSKLogger bskLogger;                      //!< -- BSK Logging
 

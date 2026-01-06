@@ -236,7 +236,7 @@ class thrusterFactory(object):
 
         return
 
-    def addToSpacecraftSubcomponent(self, modelTag, thEffector, baseEffector, segment=0):
+    def addToSpacecraftSubcomponent(self, modelTag, thEffector, baseEffector, segment=0, r_PcP_P=None):
         """
             This function is for adding a thruster cluster to intermediate bodies
 
@@ -264,6 +264,10 @@ class thrusterFactory(object):
             baseEffector.addStateEffector(thEffector, segment)
         else:
             print("This isn't a thruster effector. You did something wrong.")
+
+        # If visualizing the thruster plume, assign the CoM offset of the parent body here
+        if r_PcP_P is not None:
+            thEffector.r_PcP_P = r_PcP_P
 
         return
 

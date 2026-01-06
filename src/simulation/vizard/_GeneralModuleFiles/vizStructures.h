@@ -46,6 +46,7 @@ ThrClusterMap
 {
     std::string thrTag;   //!< ModelTag associated with the thruster grouping
     int color[4] = {-1};  //!< RGBA thruster plume color for all thrusters in this group
+    Eigen::Vector3d thrOffset = Eigen::Vector3d::Zero(); //!< [m] optional position offset for all thrusters in this group
 }ThrClusterMap;
 
 
