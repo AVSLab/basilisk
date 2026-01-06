@@ -99,21 +99,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from Basilisk.utilities import SimulationBaseClass, vizSupport, simIncludeGravBody
-from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector
-from Basilisk.utilities import macros, orbitalMotion, unitTestSupport
+from Basilisk.simulation import spacecraft, spinningBodyTwoDOFStateEffector, thrusterDynamicEffector, gravityEffector, linearTranslationOneDOFStateEffector, spinningBodyOneDOFStateEffector
+from Basilisk.utilities import macros, orbitalMotion, unitTestSupport, simIncludeThruster
+from Basilisk.architecture import messaging
 
 from Basilisk import __path__
 bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
-def run(show_plots, numberPanels):
+def run(show_plots):
     """
     The scenarios can be run with the followings setups parameters:
 
     Args:
         show_plots (bool): Determines if the script should display plots
-        numberPanels (int): Choose how many panels to simulate (1 or 2)
 
     """
 
@@ -149,95 +149,172 @@ def run(show_plots, numberPanels):
                                 [0.0, massSC / 16 * diameter ** 2 + massSC / 12 * height ** 2, 0.0],
                                 [0.0, 0.0, massSC / 8 * diameter ** 2]]
 
+    earthGravBody = gravityEffector.GravBodyData()
+    earthGravBody.planetName = "earth_planet_data"
+    earthGravBody.mu = 0.3986004415E+15  # [meters^3/s^2]
+    earthGravBody.isCentralBody = True
+    scObject.gravField.gravBodies = spacecraft.GravBodyVector([earthGravBody])
+
+    oe = orbitalMotion.ClassicElements()
+    oe.a = earthGravBody.radEquator + 7500e3  # meters
+    oe.e = 0.01
+    oe.i = 30.0 * macros.D2R
+    oe.Omega = 60.0 * macros.D2R
+    oe.omega = 15.0 * macros.D2R
+    oe.f = 90.0 * macros.D2R
+    r_CN, rDot_CN = orbitalMotion.elem2rv(earthGravBody.mu, oe)
+
     # Set the spacecraft's initial conditions
-    scObject.hub.r_CN_NInit = np.array([0, 0, 0])  # m   - r_CN_N
-    scObject.hub.v_CN_NInit = np.array([0, 0, 0])  # m/s - v_CN_N
+    scObject.hub.r_CN_NInit = r_CN
+    scObject.hub.v_CN_NInit = rDot_CN
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.05], [-0.05], [0.05]]
+    scObject.hub.omega_BN_BInit = [[0.005], [-0.005], [0.005]]
 
     # Create two hinged rigid bodies
-    spinningBody = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
-    spinningBody.ModelTag = "SpinningBody"
+    spinningBody_a = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
+    spinningBody_a.ModelTag = "SpinningBody_a"
+    spinningBody_b = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
+    spinningBody_b.ModelTag = "SpinningBody_b"
 
-    # Set up the spinning bodies module
-    if numberPanels == 1:
-        # Define the properties of the panel (cylinder)
-        mass = 50
-        radius = diameter
-        thickness = 0.1
+    # Set up the spinning bodies modules
+    # Define the properties of the panels (rectangular cuboids)
+    mass = 20
+    length = 1.5 * diameter
+    width = 0.1
+    thickness = 0.1
 
-        # Define the module's properties from the panels
-        spinningBody.mass1 = 0.0
-        spinningBody.mass2 = mass
-        spinningBody.IS1PntSc1_S1 = [[0.0, 0.0, 0.0],
-                                     [0.0, 0.0, 0.0],
-                                     [0.0, 0.0, 0.0]]
-        spinningBody.IS2PntSc2_S2 = [[mass / 12 * (3 * radius ** 2 + thickness ** 2), 0.0, 0.0],
-                                     [0.0, mass / 12 * (3 * radius ** 2 + thickness ** 2), 0.0],
-                                     [0.0, 0.0, mass / 2 * radius ** 2]]
-        spinningBody.dcm_S10B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        spinningBody.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        spinningBody.r_Sc1S1_S1 = [[0.0], [0.0], [0.0]]
-        spinningBody.r_Sc2S2_S2 = [[0.0], [radius], [0.0]]
-        spinningBody.r_S1B_B = [[0.0], [diameter / 2], [height / 2 - thickness / 2]]
-        spinningBody.r_S2S1_S1 = [[0.0], [0.0], [0.0]]
-        spinningBody.s1Hat_S1 = [[1], [0], [0]]
-        spinningBody.s2Hat_S2 = [[0], [1], [0]]
-        spinningBody.k1 = 100.0
-        spinningBody.k2 = 100.0
-        spinningBody.c1 = 50.0
-        spinningBody.c2 = 50.0
-        spinningBody.theta1Init = 30 * macros.D2R
-        spinningBody.theta2Init = 30 * macros.D2R
-        spinningBody.theta1DotInit = 0.0 * macros.D2R
-        spinningBody.theta2DotInit = 0.0 * macros.D2R
-    elif numberPanels == 2:
-        # Define the properties of the panels (rectangular cuboids)
-        mass = 20
-        length = 2 * diameter
-        width = diameter
-        thickness = 0.1
+    # Define the module's properties from the panels
+    spinningBody_a.mass1 = mass
+    spinningBody_a.mass2 = mass
+    spinningBody_a.IS1PntSc1_S1 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
+                                    [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
+                                    [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
+    spinningBody_a.IS2PntSc2_S2 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
+                                    [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
+                                    [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
+    spinningBody_a.dcm_S10B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody_a.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody_a.r_Sc1S1_S1 = [[0.0], [length / 4], [0.0]]
+    spinningBody_a.r_Sc2S2_S2 = [[0.0], [length / 4], [0.0]]
+    spinningBody_a.r_S1B_B = [[0.0], [diameter / 2], [-height / 2 + thickness / 2]]
+    spinningBody_a.r_S2S1_S1 = [[0.0], [length/2], [0.0]]
+    spinningBody_a.s1Hat_S1 = [[1], [0], [0]]
+    spinningBody_a.s2Hat_S2 = [[1], [0], [0]]
+    spinningBody_a.k1 = 50.0
+    spinningBody_a.k2 = 50.0
+    spinningBody_a.c1 = 30.0
+    spinningBody_a.c2 = 30.0
+    spinningBody_a.theta1Init = 0.0 * macros.D2R
+    spinningBody_a.theta2Init = -30.0 * macros.D2R
+    spinningBody_a.theta1DotInit = 0.0 * macros.D2R
+    spinningBody_a.theta2DotInit = 0.0 * macros.D2R
 
-        # Define the module's properties from the panels
-        spinningBody.mass1 = mass
-        spinningBody.mass2 = mass
-        spinningBody.IS1PntSc1_S1 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
-                                     [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
-                                     [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
-        spinningBody.IS2PntSc2_S2 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
-                                     [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
-                                     [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
-        spinningBody.dcm_S10B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        spinningBody.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        spinningBody.r_Sc1S1_S1 = [[0.0], [length / 2], [0.0]]
-        spinningBody.r_Sc2S2_S2 = [[-width / 2], [0.0], [0.0]]
-        spinningBody.r_S1B_B = [[0.0], [diameter / 2], [height / 2 - thickness / 2]]
-        spinningBody.r_S2S1_S1 = [[- width / 2], [length / 2], [0.0]]
-        spinningBody.s1Hat_S1 = [[1], [0], [0]]
-        spinningBody.s2Hat_S2 = [[0], [1], [0]]
-        spinningBody.k1 = 50.0
-        spinningBody.k2 = 50.0
-        spinningBody.c1 = 30.0
-        spinningBody.c2 = 30.0
-        spinningBody.theta1Init = 60.0 * macros.D2R
-        spinningBody.theta2Init = 60.0 * macros.D2R
-        spinningBody.theta1DotInit = 0.0 * macros.D2R
-        spinningBody.theta2DotInit = 0.0 * macros.D2R
-    else:
-        print(f"Cannot simulate {numberPanels} panels.")
-        return
+    # Define the module's properties from the panels
+    spinningBody_b.mass1 = mass
+    spinningBody_b.mass2 = mass
+    spinningBody_b.IS1PntSc1_S1 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
+                                    [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
+                                    [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
+    spinningBody_b.IS2PntSc2_S2 = [[mass / 12 * (length ** 2 + thickness ** 2), 0.0, 0.0],
+                                    [0.0, mass / 12 * (thickness ** 2 + width ** 2), 0.0],
+                                    [0.0, 0.0, mass / 12 * (length ** 2 + width ** 2)]]
+    spinningBody_b.dcm_S10B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody_b.dcm_S20S1 = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody_b.r_Sc1S1_S1 = [[0.0], [length / 4], [0.0]]
+    spinningBody_b.r_Sc2S2_S2 = [[0.0], [length / 4], [0.0]]
+    spinningBody_b.r_S1B_B = [[0.0], [-diameter / 2], [-height / 2 + thickness / 2]]
+    spinningBody_b.r_S2S1_S1 = [[0.0], [length/2], [0.0]]
+    spinningBody_b.s1Hat_S1 = [[1], [0], [0]]
+    spinningBody_b.s2Hat_S2 = [[1], [0], [0]]
+    spinningBody_b.k1 = 50.0
+    spinningBody_b.k2 = 50.0
+    spinningBody_b.c1 = 30.0
+    spinningBody_b.c2 = 30.0
+    spinningBody_b.theta1Init = 0.0 * macros.D2R
+    spinningBody_b.theta2Init = -30.0 * macros.D2R
+    spinningBody_b.theta1DotInit = 0.0 * macros.D2R
+    spinningBody_b.theta2DotInit = 0.0 * macros.D2R
+
+    # Create reference angle input messages
+    angle1Ref = messaging.HingedRigidBodyMsgPayload()
+    angle1Ref.theta = 0.0
+    angle1Ref.thetaDot = 0.0
+    angle1RefMsg = messaging.HingedRigidBodyMsg().write(angle1Ref)
+    spinningBody_a.spinningBodyRefInMsgs[0].subscribeTo(angle1RefMsg)
+    spinningBody_b.spinningBodyRefInMsgs[0].subscribeTo(angle1RefMsg)
+
+    angle2Ref = messaging.HingedRigidBodyMsgPayload()
+    angle2Ref.theta = -30.0 * macros.D2R
+    angle2Ref.thetaDot = 0.0
+    angle2RefMsg = messaging.HingedRigidBodyMsg().write(angle2Ref)
+    spinningBody_a.spinningBodyRefInMsgs[1].subscribeTo(angle2RefMsg)
+    spinningBody_b.spinningBodyRefInMsgs[1].subscribeTo(angle2RefMsg)
 
     # Add spinning body to spacecraft
-    scObject.addStateEffector(spinningBody)
+    scObject.addStateEffector(spinningBody_a)
+    scObject.addStateEffector(spinningBody_b)
+
+    # Use translating body to represent second vehicle
+    hub2 = linearTranslationOneDOFStateEffector.LinearTranslationOneDOFStateEffector()
+    hub2.ModelTag = "hub2"
+    hub2.setMass(scObject.hub.mHub/2)
+    hub2.setFHat_B([[-1.0], [0.0], [0.0]])
+    hub2.setR_FcF_F([[0.0], [0.0], [-height/4]])
+    hub2.setR_F0B_B([[0.0], [0.0], [-height/2]])
+    hub2.setIPntFc_F([[50.0, 0.0, 0.0],
+                                 [0.0, 80.0, 0.0],
+                                 [0.0, 0.0, 60.0]])
+    hub2.setDCM_FB([[1.0, 0.0, 0.0],
+                               [0.0, 1.0, 0.0],
+                               [0.0, 0.0, 1.0]])
+    lockArray = messaging.ArrayEffectorLockMsgPayload()
+    lockArray.effectorLockFlag = [1]
+    lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+    hub2.motorLockInMsg.subscribeTo(lockMsg)
+    scObject.addStateEffector(hub2)
+
+    # hub2 = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+    # hub2.mass = scObject.hub.mHub/2
+    # hub2.IPntSc_S = [[50.0, 0.0, 0.0], [0.0, 30.0, 0.0], [0.0, 0.0, 40.0]]
+    # hub2.dcm_S0B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    # hub2.r_ScS_S = [[0.0], [0.0], [0.0]]
+    # hub2.r_SB_B = [[0.0], [0.0], [0.0]]
+    # hub2.sHat_S = [[0], [-1], [0]]
+    # hub2.thetaInit = 0.0 * macros.D2R
+    # hub2.thetaDotInit = 0.0 * macros.D2R
+    # hub2.k = 100.0
+    # hub2.c = 50
+    # hub2.ModelTag = "SpinningBody"
+
+    # Setup thrusters on arms
+    thruster_a = thrusterDynamicEffector.ThrusterDynamicEffector()
+    thruster_b = thrusterDynamicEffector.ThrusterDynamicEffector()
+    thFactory = simIncludeThruster.thrusterFactory()
+
+    pos_B = [0, length/4, 0]
+    dir_B = [0, 0, 1]
+    thFactory.create('MOOG_Monarc_5', pos_B, dir_B)
+    thFactory.addToSpacecraftSubcomponent("dynThruster_a", thruster_a, spinningBody_a, 2, r_PcP_P=spinningBody_a.r_Sc2S2_S2)
+    thFactory.addToSpacecraftSubcomponent("dynThruster_b", thruster_b, spinningBody_b, 2, r_PcP_P=spinningBody_b.r_Sc2S2_S2)
+
+    thr_msg = messaging.THRArrayOnTimeCmdMsgPayload()
+    thr_msg.OnTimeRequest = [30, 30]
+    thr_cmd_msgs = messaging.THRArrayOnTimeCmdMsg().write(thr_msg)
+    thruster_a.cmdsInMsg.subscribeTo(thr_cmd_msgs)
+    thruster_b.cmdsInMsg.subscribeTo(thr_cmd_msgs)
 
     # Add modules to simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-    scSim.AddModelToTask(simTaskName, spinningBody)
+    scSim.AddModelToTask(simTaskName, spinningBody_a)
+    scSim.AddModelToTask(simTaskName, spinningBody_b)
+    scSim.AddModelToTask(simTaskName, thruster_a)
+    scSim.AddModelToTask(simTaskName, thruster_b)
+    scSim.AddModelToTask(simTaskName, hub2)
 
     # Set up the message recorders and add them to the task
     datLog = scObject.scStateOutMsg.recorder()
-    theta1Data = spinningBody.spinningBodyOutMsgs[0].recorder()
-    theta2Data = spinningBody.spinningBodyOutMsgs[1].recorder()
+    theta1Data = spinningBody_a.spinningBodyOutMsgs[0].recorder()
+    theta2Data = spinningBody_a.spinningBodyOutMsgs[1].recorder()
     scStateData = scObject.scStateOutMsg.recorder()
     scSim.AddModelToTask(simTaskName, datLog)
     scSim.AddModelToTask(simTaskName, theta1Data)
@@ -248,15 +325,19 @@ def run(show_plots, numberPanels):
     # Set up Vizard visualization
     #
     scBodyList = [scObject]
-    if numberPanels == 1:
-        scBodyList.append(["panel", spinningBody.spinningBodyConfigLogOutMsgs[1]])
-    else:
-        scBodyList.append(["panel1", spinningBody.spinningBodyConfigLogOutMsgs[0]])
-        scBodyList.append(["panel2", spinningBody.spinningBodyConfigLogOutMsgs[1]])
+    scBodyList.append(["panela1", spinningBody_a.spinningBodyConfigLogOutMsgs[0]])
+    scBodyList.append(["panela2", spinningBody_a.spinningBodyConfigLogOutMsgs[1]])
+    scBodyList.append(["panelb1", spinningBody_b.spinningBodyConfigLogOutMsgs[0]])
+    scBodyList.append(["panelb2", spinningBody_b.spinningBodyConfigLogOutMsgs[1]])
+    scBodyList.append(["hub2", hub2.translatingBodyConfigLogOutMsg])
+
+    thrList = [None] * 6
+    thrList[2] = [thruster_a]
+    thrList[4] = [thruster_b]
 
     if vizSupport.vizFound:
-        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList
-                                                  # , saveFile=fileName + str(numberPanels)
+        viz = vizSupport.enableUnityVisualization(scSim, simTaskName, scBodyList, thrEffectorList=thrList
+                                                  , saveFile=fileName
                                                   )
 
         vizSupport.createCustomModel(viz
@@ -264,23 +345,48 @@ def run(show_plots, numberPanels):
                                      , modelPath="CYLINDER"
                                      , scale=[diameter, diameter, height / 2]
                                      , color=vizSupport.toRGBA255("blue"))
-        if numberPanels == 1:
-            vizSupport.createCustomModel(viz
-                                         , simBodiesToModify=["panel"]
-                                         , modelPath="CYLINDER"
-                                         , scale=[2 * radius, 2 * radius, thickness]
-                                         , color=vizSupport.toRGBA255("green"))
-        elif numberPanels == 2:
-            vizSupport.createCustomModel(viz
-                                         , simBodiesToModify=["panel1"]
-                                         , modelPath="CUBE"
-                                         , scale=[width, length, thickness]
-                                         , color=vizSupport.toRGBA255("green"))
-            vizSupport.createCustomModel(viz
-                                         , simBodiesToModify=["panel2"]
-                                         , modelPath="CUBE"
-                                         , scale=[width, length, thickness]
-                                         , color=vizSupport.toRGBA255("green"))
+        vizSupport.createCustomModel(viz
+                                        , simBodiesToModify=["panela1"]
+                                        , modelPath="CUBE"
+                                        , scale=[width, length/2, thickness]
+                                        , color=vizSupport.toRGBA255("green"))
+        vizSupport.createCustomModel(viz
+                                        , simBodiesToModify=["panela2"]
+                                        , modelPath="CUBE"
+                                        , scale=[width, length/2, thickness]
+                                        , color=vizSupport.toRGBA255("green"))
+        vizSupport.createCustomModel(viz
+                                        , simBodiesToModify=["panelb1"]
+                                        , modelPath="CUBE"
+                                        , scale=[width, length/2, thickness]
+                                        , color=vizSupport.toRGBA255("green"))
+        vizSupport.createCustomModel(viz
+                                        , simBodiesToModify=["panelb2"]
+                                        , modelPath="CUBE"
+                                        , scale=[width, length/2, thickness]
+                                        , color=vizSupport.toRGBA255("green"))
+        vizSupport.createCustomModel(viz
+                                        , simBodiesToModify=["hub2"]
+                                        , modelPath="CYLINDER"
+                                        , scale=[diameter/2, diameter/2, height/4]
+                                        , color=vizSupport.toRGBA255("red"))
+
+        # scData = vizInterface.VizSpacecraftData()
+        # scData.spacecraftName = scNames[c]
+        # scData.scStateInMsg.subscribeTo(testModule.scStateOutMsgs[c])
+
+        # thrList = []
+        # thrInfo = []
+        # for thrLogMsg in testModule.thrScOutMsgs[c]:  # loop over the THR cluster log message
+        #     thrList.append(thrLogMsg.addSubscriber())
+        # k = 0
+        # for info in testModule.thrMsgDataSC[c]:
+        #     for i in range(thrNumList[c][k]):
+        #         thrInfo.append(info)
+        #     k += 1
+        # scData.thrInMsgs = messaging.THROutputMsgInMsgsVector(thrList)
+        # scData.thrInfo = vizInterface.ThrClusterVector(thrInfo)
+
         viz.settings.orbitLinesOn = -1
 
     # Initialize the simulation
@@ -313,7 +419,7 @@ def run(show_plots, numberPanels):
     plt.legend()
     plt.xlabel('time [s]')
     plt.ylabel(r'$\theta$ [deg]')
-    pltName = fileName + "theta" + str(int(numberPanels))
+    pltName = fileName + "theta"
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
@@ -323,7 +429,7 @@ def run(show_plots, numberPanels):
     plt.legend()
     plt.xlabel('time [s]')
     plt.ylabel(r'$\dot{\theta}$ [deg/s]')
-    pltName = fileName + "thetaDot" + str(int(numberPanels))
+    pltName = fileName + "thetaDot"
     figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
@@ -335,7 +441,7 @@ def run(show_plots, numberPanels):
     plt.legend()
     plt.xlabel('time [s]')
     plt.ylabel(r'Velocity [m/s]')
-    pltName = fileName + "velocity" + str(int(numberPanels))
+    pltName = fileName + "velocity"
     figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
@@ -347,7 +453,7 @@ def run(show_plots, numberPanels):
     plt.legend()
     plt.xlabel('time [s]')
     plt.ylabel(r'Angular Velocity [rad/s]')
-    pltName = fileName + "angularVelocity" + str(int(numberPanels))
+    pltName = fileName + "angularVelocity"
     figureList[pltName] = plt.figure(4)
 
     if show_plots:
@@ -366,5 +472,4 @@ def run(show_plots, numberPanels):
 if __name__ == "__main__":
     run(
         True,  # show_plots
-        2,  # numberPanels
     )
